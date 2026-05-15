@@ -17,808 +17,740 @@
       min-height: 100vh;
     }
     #root { min-height: 100vh; }
-
-    .app {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    .app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
 
     /* Header */
     .header {
       background: #1e293b;
-      padding: 16px 20px 12px;
+      padding: 14px 20px 10px;
       border-bottom: 1px solid #334155;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position: sticky; top: 0; z-index: 10;
     }
-    .header-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #94a3b8;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .progress-bar {
-      margin-top: 8px;
-      height: 3px;
-      background: #334155;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #3b82f6, #06b6d4);
-      border-radius: 2px;
-      transition: width 0.4s ease;
-    }
-
-    /* Main content */
-    .content {
-      flex: 1;
-      padding: 24px 20px 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    .header-row { display: flex; align-items: center; justify-content: space-between; }
+    .header-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; }
+    .header-mode { font-size: 11px; color: #3b82f6; font-weight: 700; background: #1e3a5f; padding: 2px 8px; border-radius: 6px; }
+    .progress-bar { margin-top: 8px; height: 2px; background: #334155; border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 2px; transition: width 0.4s ease; }
 
     /* Start screen */
     .start-screen {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      gap: 24px;
-      padding: 40px 20px;
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; gap: 28px; padding: 40px 24px;
     }
-    .start-icon {
-      font-size: 48px;
+    .start-icon { font-size: 52px; }
+    .start-title { font-size: 22px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
+    .start-sub { font-size: 14px; color: #64748b; line-height: 1.8; }
+    .mode-select { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+    .mode-btn {
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 14px;
+      padding: 16px 20px; text-align: left; color: #e2e8f0;
+      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 14px;
     }
-    .start-title {
-      font-size: 22px;
-      font-weight: 800;
-      color: #f1f5f9;
-      line-height: 1.3;
-    }
-    .start-sub {
-      font-size: 14px;
-      color: #94a3b8;
-      line-height: 1.7;
-    }
-    .start-btn {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white;
-      border: none;
-      border-radius: 14px;
-      padding: 16px 40px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      max-width: 280px;
-      transition: transform 0.15s, opacity 0.15s;
-    }
-    .start-btn:active { transform: scale(0.97); opacity: 0.9; }
+    .mode-btn:active { background: #1e3a5f; border-color: #3b82f6; transform: scale(0.98); }
+    .mode-btn-icon { font-size: 24px; flex-shrink: 0; }
+    .mode-btn-text { display: flex; flex-direction: column; gap: 2px; }
+    .mode-btn-label { font-size: 15px; font-weight: 700; }
+    .mode-btn-desc { font-size: 12px; color: #64748b; }
 
-    /* Question card */
-    .question-number {
-      font-size: 12px;
-      font-weight: 700;
-      color: #3b82f6;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+    /* Content */
+    .content { flex: 1; padding: 20px 20px 36px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* Q0 感情トリガー */
+    .emotion-screen {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      gap: 24px; padding: 24px 20px;
     }
-    .question-text {
-      font-size: 19px;
-      font-weight: 700;
-      color: #f1f5f9;
-      line-height: 1.5;
+    .emotion-title { font-size: 20px; font-weight: 800; color: #f1f5f9; line-height: 1.5; text-align: center; }
+    .emotion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .emotion-btn {
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 14px;
+      padding: 18px 12px; text-align: center; cursor: pointer;
+      transition: all 0.15s; display: flex; flex-direction: column; gap: 6px; align-items: center;
+    }
+    .emotion-btn:active { transform: scale(0.96); }
+    .emotion-btn.bad { border-color: #ef4444; background: #1f1315; }
+    .emotion-btn.good { border-color: #22c55e; background: #0f1f15; }
+    .emotion-btn.confused { border-color: #f59e0b; background: #1f1a0f; }
+    .emotion-btn.blank { border-color: #64748b; background: #1a1f2e; }
+    .emotion-emoji { font-size: 28px; }
+    .emotion-label { font-size: 13px; font-weight: 700; }
+    .emotion-btn.bad .emotion-label { color: #fca5a5; }
+    .emotion-btn.good .emotion-label { color: #86efac; }
+    .emotion-btn.confused .emotion-label { color: #fcd34d; }
+    .emotion-btn.blank .emotion-label { color: #94a3b8; }
+    .skip-btn {
+      background: transparent; border: none; color: #475569; font-size: 13px;
+      cursor: pointer; padding: 8px; text-align: center;
     }
 
-    /* Choices */
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    /* Question */
+    .q-label { font-size: 11px; font-weight: 800; color: #3b82f6; letter-spacing: 0.1em; text-transform: uppercase; }
+    .q-text { font-size: 18px; font-weight: 700; color: #f1f5f9; line-height: 1.6; margin-top: 6px; }
+    .q-hint { font-size: 12px; color: #475569; line-height: 1.6; margin-top: 8px; background: #1e293b; border-radius: 8px; padding: 10px 12px; }
+
+    .choices { display: flex; flex-direction: column; gap: 10px; }
     .choice-btn {
-      background: #1e293b;
-      border: 1.5px solid #334155;
-      border-radius: 12px;
-      padding: 14px 16px;
-      text-align: left;
-      color: #e2e8f0;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s;
-      line-height: 1.5;
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 12px;
+      padding: 14px 16px; text-align: left; color: #e2e8f0;
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; line-height: 1.5;
     }
-    .choice-btn:active {
-      background: #1e3a5f;
-      border-color: #3b82f6;
-      transform: scale(0.98);
-    }
-    .choice-btn.selected {
-      background: #1e3a5f;
-      border-color: #3b82f6;
-      color: #93c5fd;
-    }
+    .choice-btn:active { background: #1e3a5f; border-color: #3b82f6; transform: scale(0.98); }
+    .choice-btn.selected { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
 
-    /* Free text */
-    .free-text-label {
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 6px;
+    .free-input {
+      width: 100%; background: #1e293b; border: 1.5px solid #334155;
+      border-radius: 12px; padding: 12px 14px; color: #e2e8f0;
+      font-size: 14px; font-family: inherit; resize: none; min-height: 72px;
+      outline: none; transition: border-color 0.15s;
     }
-    .free-text-input {
-      width: 100%;
-      background: #1e293b;
-      border: 1.5px solid #334155;
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: #e2e8f0;
-      font-size: 15px;
-      font-family: inherit;
-      resize: none;
-      min-height: 80px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .free-text-input:focus {
-      border-color: #3b82f6;
-    }
-    .free-text-input::placeholder { color: #475569; }
+    .free-input:focus { border-color: #3b82f6; }
+    .free-input::placeholder { color: #475569; }
+    .free-label { font-size: 12px; color: #475569; margin-bottom: 6px; }
 
-    /* Next button */
     .next-btn {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 15px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      transition: transform 0.15s, opacity 0.15s;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white;
+      border: none; border-radius: 12px; padding: 15px; font-size: 15px;
+      font-weight: 700; cursor: pointer; width: 100%; transition: all 0.15s;
     }
-    .next-btn:disabled {
-      background: #334155;
-      color: #64748b;
-      cursor: not-allowed;
-    }
+    .next-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
     .next-btn:not(:disabled):active { transform: scale(0.97); opacity: 0.9; }
 
-    /* Result card */
-    .result-header {
+    /* Insight / Result screen */
+    .insight-card {
       background: linear-gradient(135deg, #1e3a5f, #1e293b);
-      border: 1.5px solid #3b82f6;
-      border-radius: 16px;
-      padding: 20px;
+      border: 1.5px solid #3b82f6; border-radius: 16px; padding: 20px;
     }
-    .result-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: #3b82f6;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .result-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #f1f5f9;
-      line-height: 1.4;
-      margin-bottom: 10px;
-    }
-    .result-summary {
-      font-size: 14px;
-      color: #94a3b8;
-      line-height: 1.7;
-    }
+    .insight-label { font-size: 11px; font-weight: 800; color: #3b82f6; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+    .insight-title { font-size: 17px; font-weight: 800; color: #f1f5f9; line-height: 1.4; margin-bottom: 10px; }
+    .insight-body { font-size: 14px; color: #94a3b8; line-height: 1.8; }
 
-    /* Knowledge box */
-    .knowledge-box {
-      background: #1a2744;
-      border: 1.5px solid #1d4ed8;
-      border-radius: 12px;
-      padding: 14px 16px;
+    /* Ecological situation */
+    .eco-section { display: flex; flex-direction: column; gap: 10px; }
+    .eco-header { font-size: 12px; font-weight: 700; color: #06b6d4; letter-spacing: 0.08em; text-transform: uppercase; }
+    .eco-card {
+      background: #0d2436; border: 1.5px solid #164e63; border-radius: 12px; padding: 14px 16px;
     }
-    .knowledge-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: #60a5fa;
-      letter-spacing: 0.1em;
-      margin-bottom: 6px;
+    .eco-situation { font-size: 14px; color: #a5f3fc; line-height: 1.7; font-weight: 600; margin-bottom: 10px; }
+    .eco-divider { font-size: 11px; color: #475569; margin: 8px 0 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .approach-list { display: flex; flex-direction: column; gap: 8px; }
+    .approach-item {
+      background: #1e293b; border-radius: 10px; padding: 12px 14px;
+      border-left: 3px solid #334155; cursor: pointer; transition: all 0.15s;
     }
-    .knowledge-text {
-      font-size: 14px;
-      color: #bfdbfe;
-      line-height: 1.7;
-    }
+    .approach-item:active { border-left-color: #3b82f6; background: #1e3a5f; }
+    .approach-tag { font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+    .approach-text { font-size: 13px; color: #cbd5e1; line-height: 1.6; }
 
-    /* Steps */
-    .steps-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #94a3b8;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    /* Next step write */
+    .next-step-section { display: flex; flex-direction: column; gap: 10px; }
+    .next-step-label { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+    .next-step-hint { font-size: 12px; color: #64748b; }
+    .next-step-input {
+      width: 100%; background: #1e293b; border: 1.5px solid #3b82f6;
+      border-radius: 12px; padding: 14px; color: #e2e8f0;
+      font-size: 14px; font-family: inherit; resize: none; min-height: 88px;
+      outline: none;
     }
-    .step-card {
-      background: #1e293b;
-      border: 1.5px solid #334155;
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-    }
-    .step-card.done {
-      border-color: #166534;
-      background: #14532d1a;
-    }
-    .step-left {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      min-width: 36px;
-    }
-    .step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #334155;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 800;
-      color: #94a3b8;
-      flex-shrink: 0;
-    }
-    .step-card.done .step-num {
-      background: #166534;
-      color: #86efac;
-    }
-    .step-type {
-      font-size: 10px;
-      font-weight: 700;
-      color: #475569;
-      text-align: center;
-      letter-spacing: 0.05em;
-    }
-    .step-card.done .step-type { color: #4ade80; }
-    .step-right { flex: 1; }
-    .step-desc {
-      font-size: 14px;
-      color: #cbd5e1;
-      line-height: 1.6;
-    }
-    .step-card.done .step-desc { color: #86efac; }
-    .step-check {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-    .check-box {
-      width: 20px;
-      height: 20px;
-      border: 2px solid #334155;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.15s;
-    }
-    .step-card.done .check-box {
-      background: #16a34a;
-      border-color: #16a34a;
-    }
-    .check-label {
-      font-size: 12px;
-      color: #64748b;
-    }
-    .step-card.done .check-label { color: #4ade80; }
+    .next-step-input::placeholder { color: #475569; }
 
-    /* Reset button */
     .reset-btn {
-      background: transparent;
-      border: 1.5px solid #334155;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #64748b;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.15s;
+      background: transparent; border: 1.5px solid #334155; border-radius: 12px;
+      padding: 14px; font-size: 14px; font-weight: 600; color: #64748b;
+      cursor: pointer; width: 100%; transition: all 0.15s;
     }
     .reset-btn:active { background: #1e293b; color: #94a3b8; }
 
     /* Breadcrumb */
-    .breadcrumb {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .crumb {
-      font-size: 11px;
-      color: #475569;
-      background: #1e293b;
-      border-radius: 6px;
-      padding: 2px 8px;
-    }
-    .crumb.current { color: #3b82f6; background: #1e3a5f; }
+    .breadcrumb { display: flex; gap: 4px; flex-wrap: wrap; }
+    .crumb { font-size: 11px; color: #475569; background: #1e293b; border-radius: 6px; padding: 2px 8px; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-
-const { useState, useCallback } = React;
+const { useState } = React;
 
 // ─────────────────────────────────────────────
-// 問いの定義
+// 問いの定義（感情トリガー → 分岐）
 // ─────────────────────────────────────────────
 const QUESTIONS = {
+  // OF共通
   q1: {
-    id: 'q1',
-    label: 'Q1',
-    text: 'ボールをもらう前に、相手DFの位置を確認できていたか？',
+    label: 'Q1', mode: 'of',
+    text: 'そのプレーでボールを引き出せたか？',
+    hint: '「引き出す」= 隣が動き始めた瞬間から、隣がプレーし終わるまでの間に、自分がボールをもらえた状態',
     choices: [
-      { label: 'ほとんどできなかった', next: 'q2a' },
-      { label: '時々できた', next: 'q2b' },
-      { label: 'できていた', next: 'q2c' },
+      { label: 'もらえた', next: 'q2' },
+      { label: 'もらえなかった', next: 'q1b' },
     ],
   },
-  q2a: {
-    id: 'q2a',
-    label: 'Q2',
-    text: 'なぜ、もらう前に見られなかった？',
+  q1b: {
+    label: 'Q2', mode: 'of',
+    text: 'どのあたりで詰まった感じがある？',
     choices: [
-      { label: 'ボールが来てから動き出していた', next: 'result_timing' },
-      { label: '次のプレーを先に決めてしまっていた', next: 'result_preset' },
-      { label: '何を見ればいいかわからなかった', next: 'result_knowledge' },
+      { label: '隣がボールを触る前に、自分の動き出しが遅れた', next: 'r_timing' },
+      { label: '隣がプレーしている最中に、どこに動くか決まらなかった', next: 'r_preset' },
+      { label: '動いたけど、隣の視野に入れなかった', next: 'r_visibility' },
+      { label: 'どこで止まったかわからない', next: 'r_unknown' },
     ],
   },
-  q2b: {
-    id: 'q2b',
-    label: 'Q2',
-    text: '見られた時、何を確認していたか？',
+  q2: {
+    label: 'Q2', mode: 'of',
+    text: 'もらったとき、DFとの関係はどちらに近かった？',
     choices: [
-      { label: '自分のマーク（1枚）だけ見ていた', next: 'result_onematch' },
-      { label: 'クローズ/ワイドと隣のDFを意識していた', next: 'q2c' },
-      { label: 'なんとなく見ていた（何を見るか曖昧）', next: 'result_knowledge' },
+      { label: 'クローズ　― DFが詰めていて体の向きが制限されていた', next: 'q2_close' },
+      { label: 'ワイド　― DFとの間に空間があり、次の動作を選べる状態だった', next: 'q2_wide' },
     ],
   },
-  q2c: {
-    id: 'q2c',
-    label: 'Q3',
-    text: '識別はできた。どこで詰まった？',
+  q2_close: {
+    label: 'Q3', mode: 'of',
+    text: 'クローズの状況で、隣のDFはどう動いていた？',
     choices: [
-      { label: 'アクションの選択が状況に合っていなかった', next: 'q3_action' },
-      { label: 'アクション後の相手の変化に対応できなかった', next: 'q3_reaction' },
-      { label: '顔横ポジションが作れず実行が遅れた', next: 'result_kaoyoko' },
+      { label: '寄せてきていた（守りに来た）', next: 'r_close_pass' },
+      { label: 'パスを警戒して引いた', next: 'r_close_cutin' },
+      { label: '動きが読めなかった / 見ていなかった', next: 'r_reaction_blind' },
     ],
   },
-  q3_action: {
-    id: 'q3_action',
-    label: 'Q4',
-    text: 'もらう前、自分のマークはどこにいた？',
-    choices: [
-      { label: 'クローズ　— ボール寄りにいた', next: 'result_close' },
-      { label: 'ワイド　— 自分寄りにいた', next: 'q3_wide' },
-    ],
-  },
-  q3_wide: {
-    id: 'q3_wide',
-    label: 'Q5',
-    text: '隣のDFが自分に向かってクロスアタックに来ていたか？',
+  q2_wide: {
+    label: 'Q3', mode: 'of',
+    text: 'ワイドの状況で、隣のDFはクロスアタックに来ていたか？',
     choices: [
       { label: '来ていた', next: 'q3_cross' },
-      { label: '来ていなかった', next: 'result_wide_nocross' },
-      { label: 'わからなかった（見ていなかった）', next: 'result_onematch' },
+      { label: '来ていなかった', next: 'r_wide_normal' },
+      { label: 'わからなかった（見ていなかった）', next: 'r_reaction_blind' },
     ],
   },
   q3_cross: {
-    id: 'q3_cross',
-    label: 'Q6',
+    label: 'Q4', mode: 'of',
     text: '内側に割り込んだとき、自分のマークはどこにいた？',
     choices: [
-      { label: 'その場（内側）にとどまっていた', next: 'result_cross_pass' },
-      { label: 'クロスアタックDF側に動いていた', next: 'result_cross_cutin' },
-      { label: '確認できていなかった', next: 'result_reaction_blind' },
+      { label: '内側にとどまっていた', next: 'r_cross_pass' },
+      { label: 'クロスアタックDF側に動いていた', next: 'r_cross_cutin' },
+      { label: '確認できていなかった', next: 'r_reaction_blind' },
     ],
   },
+  // リアクション系
   q3_reaction: {
-    id: 'q3_reaction',
-    label: 'Q4',
-    text: 'アクション後、どう詰まった？',
+    label: 'Q3', mode: 'of',
+    text: 'アクションの後、何が起きた？',
     choices: [
-      { label: '相手が動いたのを見ていなかった', next: 'result_reaction_blind' },
-      { label: '見たが何をすべきかわからなかった', next: 'q3_action' },
-      { label: 'わかったが体が間に合わなかった', next: 'result_kaoyoko' },
+      { label: '相手が動いたのを見ていなかった', next: 'r_reaction_blind' },
+      { label: '見たが次に何をすればいいかわからなかった', next: 'q3_reaction_b' },
+      { label: 'わかったが体が間に合わなかった', next: 'r_kaoyoko' },
+    ],
+  },
+  q3_reaction_b: {
+    label: 'Q4', mode: 'of',
+    text: '状況（クローズ/ワイド）は識別できていた？',
+    choices: [
+      { label: 'クローズかワイドかもわからなかった', next: 'q2' },
+      { label: 'わかったが何を選べばいいかわからなかった', next: 'r_decision' },
+    ],
+  },
+  // DF系
+  qd1: {
+    label: 'Q1', mode: 'df',
+    text: 'そのプレーで守れた感覚があるか？',
+    choices: [
+      { label: '守れた / 止められた', next: 'qd_good' },
+      { label: '崩された / 対応できなかった', next: 'qd2' },
+    ],
+  },
+  qd_good: {
+    label: 'Q2', mode: 'df',
+    text: 'どこが良かった？',
+    choices: [
+      { label: '相手の予備動作を先に読めた', next: 'r_df_read' },
+      { label: '体勢・ポジションが正しかった', next: 'r_df_position' },
+      { label: '連動・カバーがうまくいった', next: 'r_df_team' },
+    ],
+  },
+  qd2: {
+    label: 'Q2', mode: 'df',
+    text: 'どこで崩された感覚がある？',
+    choices: [
+      { label: 'フェイントに反応してしまった（体が先に動いた）', next: 'r_df_fake' },
+      { label: '相手の動きを見る前に判断してしまった', next: 'r_df_preset' },
+      { label: 'カバーのタイミングが合わなかった', next: 'r_df_cover' },
+      { label: 'マークを手放した後、次のDF動作に移れなかった', next: 'r_df_release' },
+    ],
+  },
+  // スキル系
+  qs1: {
+    label: 'Q1', mode: 'skill',
+    text: 'どのスキルで詰まった感覚がある？',
+    choices: [
+      { label: 'パス（タイミング・精度）', next: 'qs_pass' },
+      { label: 'シュート（判断・精度）', next: 'qs_shoot' },
+      { label: 'ボールキャッチ・顔横ポジション', next: 'r_kaoyoko' },
+      { label: '1対1の仕掛け方', next: 'qs_121' },
+    ],
+  },
+  qs_pass: {
+    label: 'Q2', mode: 'skill',
+    text: 'パスで詰まったのはどこ？',
+    choices: [
+      { label: 'タイミング（早すぎ / 遅すぎ）', next: 'r_pass_timing' },
+      { label: '出す先の判断（どこに出せばいいか）', next: 'r_reaction_blind' },
+      { label: 'ボールポジションが低くて読まれた', next: 'r_kaoyoko' },
+    ],
+  },
+  qs_shoot: {
+    label: 'Q2', mode: 'skill',
+    text: 'シュートで詰まったのはどこ？',
+    choices: [
+      { label: '打つタイミングの判断', next: 'r_shoot_timing' },
+      { label: 'フォーム・精度', next: 'r_shoot_form' },
+      { label: 'シュートかパスかの選択', next: 'r_decision' },
+    ],
+  },
+  qs_121: {
+    label: 'Q2', mode: 'skill',
+    text: '1対1で詰まったのはどこ？',
+    choices: [
+      { label: 'アクションしたが相手が動かなかった', next: 'r_121_noreact' },
+      { label: 'アクション後のリアクションに対応できなかった', next: 'q3_reaction' },
+      { label: 'そもそも仕掛けられなかった', next: 'r_121_freeze' },
     ],
   },
 };
 
 // ─────────────────────────────────────────────
-// 結果と練習ステップの定義
+// 結果・気づき・エコロジカル練習の定義
 // ─────────────────────────────────────────────
 const RESULTS = {
-  result_timing: {
-    title: '課題：もらい出しの認知が遅れている',
-    summary: 'ボールが来てから見始めている。認知はもらう前から始める必要がある。',
-    steps: [
-      { type: 'スキル', desc: '壁当てで、ボールを投げる前に必ず「クローズ」「ワイド」など状況を声に出してから投げる。声が出なかったら投げない。' },
-      { type: 'スキル', desc: 'パートナーにパスをもらう前に、「クローズ」「ワイド」のどちらかを一言言ってからもらう。言えなかったらやり直し。' },
-      { type: 'エコロジカル', desc: '2対1の状況で、もらう前に自分のマークの状況を声で言えた時だけアクションを起こすルールで練習する。' },
+  // OF系
+  r_timing: {
+    insight: '気づき：動き出しのタイミングが後手になっている',
+    body: '隣がボールを触ってから自分が動いている。相手の動きを先に読んで、一歩先に体を動かせるかがポイント。',
+    situation: '【状況設定】隣がパスを受ける直前から、自分がもらい出しの動作を始めるルールで2対1を繰り返す。声で「今」と言ってから動く制約をつける。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: '動き出しを一歩早めるだけで勝負できる。タイミングだけに集中して体を動かす。' },
+      { tag: '読みで勝負する人', text: '隣がボールを触る「直前の予備動作」（重心移動・視線）を見て動き出すタイミングを作る。' },
+      { tag: 'ポジショニングで勝負する人', text: '動き出す前に立ち位置を整えておく。良いポジションから動けば一歩早くなる。' },
     ],
   },
-  result_preset: {
-    title: '課題：プレーを先に決めすぎている',
-    summary: '状況を見る前に「これをやろう」と決めてしまっている。認知→判断の順番が逆になっている。',
-    steps: [
-      { type: 'スキル', desc: 'コーチがDFのポジションを口頭で言う（「クローズ」「ワイド」「クロスアタックあり」など）→選手が対応アクションを即答する。止まった状態から始める。' },
-      { type: 'スキル', desc: 'パスをもらう前に「シュート・カットイン・パス」の3択を全て頭に持った状態でもらい、もらってから選ぶ練習。' },
-      { type: 'エコロジカル', desc: 'DF2名が動く状況でパスをもらう。もらった後のアクションはその場で判断する（事前に決めない）。' },
+  r_preset: {
+    insight: '気づき：動く前にプレーを決めすぎている',
+    body: '状況を見る前に「これをやろう」と決めてしまっている。もらってから選ぶ余白を持てると変わる。',
+    situation: '【状況設定】パスをもらう直前まで「シュート・カットイン・パス」のどれも決めない状態で2対1をやる。もらった瞬間に相手を見て初めて選ぶ。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: '「見て→すぐ動く」の速さを活かす。決め打ちをやめるだけで選択肢が増える。' },
+      { tag: '判断力が武器な人', text: 'もらう前に3つの選択肢を頭に持ったままもらい、もらった0.5秒で選ぶ練習。' },
+      { tag: '体の強さが武器な人', text: '体で相手を制しながら選べる。焦らずキープして見てから動く。' },
     ],
   },
-  result_knowledge: {
-    title: '課題：見るべき対象の知識が整理されていない',
-    summary: '何を見れば判断できるかが曖昧。まずインプットが必要。',
-    steps: [
-      { type: 'インプット', desc: '見るべき2点を確認する。①自分のマーク：クローズ（ボール寄り）かワイド（自分寄り）か。②隣のDF：クロスアタックに来ているか。この2点で判断が変わる。' },
-      { type: 'スキル', desc: 'コーチがDFのポジションを言う→選手が「クローズ/ワイド＋クロスアタックあり/なし」を答える→最適なアクションを言う。体を動かす前に頭に入れる。' },
-      { type: 'エコロジカル', desc: '50%強度の軽い練習で、声を出しながら状況を識別してプレーする。正確さを優先、スピードは後から上げる。' },
+  r_visibility: {
+    insight: '気づき：隣の視野に入れていない',
+    body: '動いたけど出し手から見えていなかった。自分の動き出しの方向とタイミングを出し手に合わせる。',
+    situation: '【状況設定】出し手と受け手のペアで、受け手が「今！」と声を出したタイミングでパスを出す。声が出せる位置＝視野に入っている位置。',
+    approaches: [
+      { tag: '走力が武器な人', text: '視野に入る位置を全力で作りにいく。遅れてもスピードで帳消しにする。' },
+      { tag: 'ポジショニングが武器な人', text: '動き出す前に出し手の視線と向きを確認してから動く。' },
+      { tag: '連携が武器な人', text: 'もらい出しのタイミングを事前にパートナーと共有しておく。' },
     ],
   },
-  result_onematch: {
-    title: '課題：自分のマーク1枚しか見ていない',
-    summary: '判断に必要な情報は「自分のマーク＋隣のDF」の2点。自分のマークだけでは情報が半分しか入らない。',
-    steps: [
-      { type: 'スキル', desc: 'DF2名を立たせて（動かさずに）、①自分のマークがクローズかワイドか、②隣のDFがクロスアタック位置かどうか、を声で答える練習を繰り返す。' },
-      { type: 'スキル', desc: 'もらう前に「マーク：クローズ、隣：クロスなし」のように2点セットで声に出してからもらう制約練習。片方だけではやり直し。' },
-      { type: 'エコロジカル', desc: '2対1で、2名のDFの動きを見て状況を識別してからアクションを選ぶ練習。' },
+  r_unknown: {
+    insight: '気づき：何が起きたか言語化できていない',
+    body: '詰まった場所がわからない状態。次のプレーで「どこを見ていたか」だけをメモしてみる。分析は後回しでいい。',
+    situation: '【状況設定】次の練習で同じ場面が来たとき、プレー直後に「自分はどこを見ていたか」を一言だけ声に出す。正解不正解は関係ない。',
+    approaches: [
+      { tag: 'どのタイプでも', text: 'まず「見た」「見ていなかった」の2択だけに絞って確認する。詳しい分析はその後。' },
     ],
   },
-  result_kaoyoko: {
-    title: '課題：顔横ポジションが作れていない',
-    summary: '判断してから実行するまでにラグがある。顔横ポジションを作れば判断した瞬間に実行できる。',
-    steps: [
-      { type: 'スキル', desc: '壁当てで、受けた瞬間に即顔横へ持っていく動作を反復。お腹から上げる動作をゼロにする意識で。' },
-      { type: 'スキル', desc: 'パートナーからパスを受けて、顔横に持っていくまでの時間を短くする反復練習。「受けた瞬間に顔横」を合言葉に。' },
-      { type: 'エコロジカル', desc: '顔横に持っていけたら好きなタイミングでパスかシュートを選べる2対1練習。顔横に持っていけない場合はやり直し。' },
+  r_close_pass: {
+    insight: '気づき：クローズ＋隣が寄ってきた→パスが正解',
+    body: '隣のDFが守りに来た。その動きで数的優位が生まれている。クロスアタックDF側の味方にパスを出す場所が空いている。',
+    situation: '【状況設定】クローズの状況を設定した2対1＋サポート。隣のDFが寄ってきたタイミングでパスを出す判断を繰り返す。DFの動きを見てから出す。',
+    approaches: [
+      { tag: 'パスが武器な人', text: '隣のDFが動いた瞬間を見てすぐ出す。タイミングの精度を上げる。' },
+      { tag: 'ドライブが武器な人', text: '「パスを見せてから引きつける→出す」で隣のDFをより大きく動かす。' },
+      { tag: '体の強さが武器な人', text: 'クローズの圧力をキープしながら視野を保って出す。' },
     ],
   },
-  result_close: {
-    title: 'クローズの対応：隣のDFを攻める',
-    summary: '自分のマークがボール寄りにずれている。自分のマークではなく、寄せてきている隣のDFを攻める。隣のDFのリアクションで判断が変わる。',
-    knowledge: '隣の寄せてきているDFを狙う。隣のDFが守りに来たら→パスで数的優位。隣のDFがパスを警戒して戻っていったら→カットイン。',
-    steps: [
-      { type: 'スキル', desc: '止まった状態でDFの配置を見て「クローズ→隣を攻める」と声に出す。次に「隣が来る→パス」「隣が戻る→カットイン」の2択を声に出して確認。' },
-      { type: 'スキル', desc: 'パートナーに隣DF役をしてもらい、来る/戻るをランダムに動いてもらう。その動きに対してパスかカットインかを判断して実行する反復練習。' },
-      { type: 'エコロジカル', desc: 'クローズの状況を設定した2対1＋サポートの練習。隣のDFの動きを見てパスかカットインを判断し、顔横ポジションで即実行。' },
+  r_close_cutin: {
+    insight: '気づき：クローズ＋隣が引いた→カットインが正解',
+    body: '隣のDFがパスを警戒して引いた。その動きでカットインのスペースが生まれている。引いた瞬間が仕掛けどき。',
+    situation: '【状況設定】クローズの状況で隣のDFが意図的にスペースを空ける。引いた瞬間にカットインを仕掛けるタイミングの練習。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: '引いた瞬間を見て一気に加速する。迷わずに踏み込む。' },
+      { tag: 'フェイントが武器な人', text: 'パスフェイクで引かせてからカットイン。意図的に「引かせる」設計で。' },
+      { tag: '体の強さが武器な人', text: '引いたスペースに体ごと入る。接触を恐れない。' },
     ],
   },
-  result_wide_nocross: {
-    title: 'ワイドの対応：普通のワイドプレー',
-    summary: '自分のマークが自分寄り、隣のDFのクロスアタックなし。通常のワイドでの1対1の打開。',
-    knowledge: '普通のワイドプレー。自分のマークに対して1対1で仕掛ける。もらい出し方・顔や体の向き・シュートかカットインかパスを見せて相手のリアクションを引き出す。',
-    steps: [
-      { type: 'スキル', desc: 'もらい出しのバリエーションを確認する。顔・体の向き、シュートを見せる、カットインを見せる、それぞれで相手がどう反応するか一人でイメージしながら動く。' },
-      { type: 'スキル', desc: 'パートナーにDF役をしてもらい、もらい出しで相手を動かす→リアクションを見て判断→顔横から実行、の流れを反復。' },
-      { type: 'エコロジカル', desc: '1対1でワイドの状況を設定。アクションで相手を動かし、リアクションに対応する。事前に決めず見てから判断する。' },
+  r_wide_normal: {
+    insight: '気づき：ワイドでクロスなし→自分のマークと1対1',
+    body: 'ワイドでスペースがある。クロスアタックもない。自分の長所を出せる1対1の状況。もらい出し方・体の向き・見せ方で相手のリアクションを引き出す。',
+    situation: '【状況設定】ワイドの1対1。もらい出しのバリエーション（シュートを見せる・カットインを見せる）で相手を動かして、リアクションに対応する練習。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: 'フェイクを最小限にして速さで勝負。シュートモーションから一気に抜く。' },
+      { tag: 'フェイントが武器な人', text: 'シュートフェイク・カットインフェイクで相手の重心を崩してから動く。' },
+      { tag: '体の強さが武器な人', text: 'ポジション争いで有利を作ってから仕掛ける。ボールポジションを高く保つ。' },
     ],
   },
-  result_cross_pass: {
-    title: 'ワイド＋クロスアタック：クロスアタックDF側へパス',
-    summary: '内側に割り込んだとき、自分のマークがその場（内側）にとどまっていた。クロスアタックしてきたDF側の味方へパスが最適解。',
-    knowledge: '内側に割り込む→自分のマークがとどまっている→クロスアタックDF側（隣）の味方へパス。そのスペースが空いている。',
-    steps: [
-      { type: 'スキル', desc: '内側への割り込み動作→マークの位置確認→パスの判断、という順番を声に出しながらゆっくり繰り返す。「割り込み→マーク確認→パス」。' },
-      { type: 'スキル', desc: 'パートナーにDFとパスレシーバー役をしてもらい、内側割り込み後にマークの動きを見てパスを実行する反復練習。' },
-      { type: 'エコロジカル', desc: '2対1＋サポートの状況を設定。クロスアタックに対して内側に割り込み、マークがとどまっているのを確認してからクロスアタックDF側へパス。' },
+  r_cross_pass: {
+    insight: '気づき：クロスアタック＋マークが残った→パス',
+    body: 'クロスアタックに対して内側に割り込んだ。自分のマークがとどまっているなら、クロスアタックDF側の味方へのパスが空いている。',
+    situation: '【状況設定】クロスアタックのある2対1＋サポート。内側に割り込んだ直後にマークの位置を見て、残っていたらパス・動いていたらカットインを判断する。',
+    approaches: [
+      { tag: 'パスが武器な人', text: 'マークが残った瞬間を見てすぐ出す。視野とパスを同時に準備。' },
+      { tag: 'ドライブが武器な人', text: 'カットインをちらつかせてからパス。相手が迷った瞬間に出す。' },
+      { tag: '判断が武器な人', text: 'マークが動くか残るかを割り込みながら予測して判断を早める。' },
     ],
   },
-  result_cross_cutin: {
-    title: 'ワイド＋クロスアタック：そのままカットイン',
-    summary: '内側に割り込んだとき、自分のマークがクロスアタックDF側に動いていた。前が空いているのでそのままカットインが最適解。',
-    knowledge: '内側に割り込む→自分のマークがクロスアタックDF側に動いた→マークがいなくなったのでそのままカットイン。',
-    steps: [
-      { type: 'スキル', desc: '内側への割り込み動作→マークがどちらに動いたか確認→カットイン、という順番を声に出しながらゆっくり繰り返す。「割り込み→マーク動いた→カットイン」。' },
-      { type: 'スキル', desc: 'パートナーにマーク役をしてもらい、クロスアタックDF側に動いた瞬間を見てカットインに切り替える反復練習。' },
-      { type: 'エコロジカル', desc: '2対1の状況でクロスアタックに対して内側に割り込み、マークがクロスアタックDF側に動いたのを確認してそのままカットイン。顔横ポジションを保ちながら。' },
+  r_cross_cutin: {
+    insight: '気づき：クロスアタック＋マークが動いた→カットイン',
+    body: '内側に割り込んだとき、自分のマークがクロスアタックDF側に動いた。前が空いた。そのままカットインが最適解。',
+    situation: '【状況設定】クロスアタックのある1対1+クロス役。マークが動いた瞬間にそのままカットインする判断の反復。止まったらやり直し。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: 'マークが動いた瞬間に一気に加速。迷いをなくして踏み込む。' },
+      { tag: 'ボールキープが武器な人', text: '顔横ポジションを保ちながらカットイン。見ながら動く。' },
+      { tag: 'フェイントが武器な人', text: 'パスを見せてからカットイン。マークを動かした上でさらに揺さぶる。' },
     ],
   },
-  result_reaction_blind: {
-    title: '課題：アクション後にリアクションを見ていない',
-    summary: 'アクションすること自体が目的になっている。アクションは相手を動かすための「手段」。動いた後の相手を見ることが次のステップ。',
-    steps: [
-      { type: 'スキル', desc: '「仕掛け→一瞬止まる→相手の動きを確認→次のプレーを選ぶ」の順番を口に出しながらゆっくり練習。' },
-      { type: 'スキル', desc: 'パートナーがDFとしてランダムに動く。仕掛け後に「見た！」と声を出してから次のプレーを実行するルールで練習。' },
-      { type: 'エコロジカル', desc: '2対1で、アクション後のリアクションを見て判断する状況を繰り返す。顔横ポジションを保ちながら。' },
+  r_reaction_blind: {
+    insight: '気づき：アクション中に相手を見ていない',
+    body: '動くことに集中して、相手の変化が視野から消えている。アクションは相手を動かすための手段。動いた後の相手を見ることが次のステップ。',
+    situation: '【状況設定】2対1でアクションをした直後、「今相手はどこにいる？」を声に出してからプレーを選ぶルールを設ける。声が出なかったらやり直し。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: '動きながら横目で見る感覚を作る。見る→動くを一連の動作にする。' },
+      { tag: '判断が武器な人', text: 'アクションの「大きさ」を抑えて、相手の動きを確認する余白を作る。' },
+      { tag: '体の強さが武器な人', text: 'ボールポジションを高く保って見る時間を確保してからプレーを選ぶ。' },
+    ],
+  },
+  r_kaoyoko: {
+    insight: '気づき：判断から実行までにラグがある',
+    body: 'ボールが顔横の位置にあれば、見た瞬間に実行できる。お腹から上げる動作がラグを生んでいる。キャッチした瞬間に顔横へ。',
+    situation: '【状況設定】パスを受けた直後に顔横ポジションを作り、そこからDFを見て好きなタイミングでパス/シュートを選ぶ1対1。顔横が作れなかったらやり直し。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: 'キャッチと同時に顔横へ。「受ける＝顔横」を一つの動作として体に入れる。' },
+      { tag: 'フェイントが武器な人', text: '顔横からフェイクを入れる。ポジションが高いと選択肢が増える。' },
+      { tag: '体の強さが武器な人', text: '顔横でキープして見る時間を作る。焦って下げない。' },
+    ],
+  },
+  r_decision: {
+    insight: '気づき：状況はわかるが何を選べばいいかわからない',
+    body: '識別はできている。次のステップは「この状況では何が有利か」の優先順位を自分の長所と照らし合わせること。',
+    situation: '【状況設定】クローズ/ワイドの状況をコーチが設定して、どれを選ぶかを声に出してからプレーする練習。選んだ理由を言えたら正解。',
+    approaches: [
+      { tag: 'クローズの状況', text: 'まず：隣のDFを見る → 寄ってきたらパス → 引いたらカットイン' },
+      { tag: 'ワイドの状況', text: 'まず：シュートを狙う体勢を作る → 相手が反応したらその動きに対応する' },
+      { tag: 'どちらかわからない時', text: '顔横ポジションで一拍待つ。見えてから動く。' },
+    ],
+  },
+  // DF系
+  r_df_read: {
+    insight: '気づき：相手の予備動作を読めた。その感覚を言語化する',
+    body: '何を見て読めたのかを一つ言葉にしておく。次に同じ状況で再現するための手がかりになる。',
+    situation: '【状況設定】1対1でDFをしながら、フェイクに反応しそうになった瞬間を「今！」と声に出す。反応した理由を確認する。',
+    approaches: [
+      { tag: 'どのタイプでも', text: '「重心を見た」「目線を見た」「足の向きを見た」——どれかを特定する。それが自分の読みの入り口。' },
+    ],
+  },
+  r_df_position: {
+    insight: '気づき：ポジションが正しかった。どこが良かったかを確認する',
+    body: '良いポジションは良い選択肢を生む。何が良かったかを特定して次も再現する。',
+    situation: '【状況設定】DF練習の中で「今のポジションは正しいか？」を声に出して確認しながら動く。正しい位置に入れたら「OK」と言う。',
+    approaches: [
+      { tag: 'どのタイプでも', text: '良かったポジションを「体の向き・距離・角度」の3点で確認して記憶する。' },
+    ],
+  },
+  r_df_team: {
+    insight: '気づき：連動・カバーがうまくいった。何がきっかけだったか',
+    body: '隣との連動が機能した。何がトリガーになって動けたかを特定する。',
+    situation: '【状況設定】DF練習で「手放す」タイミングを声に出してから動く。「今、手放す」と言えたら成功。',
+    approaches: [
+      { tag: 'どのタイプでも', text: '「どこを見て手放したか」を1つ特定する。それが連動のトリガー。' },
+    ],
+  },
+  r_df_fake: {
+    insight: '気づき：フェイクに食いついた（体が先に動いた）',
+    body: '全国レベルほど反応速度が速いから食いつく。「速さ」が「弱さ」になっている。一瞬待つ力を別に育てる必要がある。',
+    situation: '【状況設定】1対1DFで、相手が動いてから「1」と数えてから動く制約を入れる。0.5秒待ってから反応する練習。最初はゆっくり始めてスピードを上げる。',
+    approaches: [
+      { tag: '反応速度が武器な人', text: '「どこを見てから動くか」を一点に絞る。全部に反応しようとしない。' },
+      { tag: '読みが武器な人', text: '動く前に「これはフェイクか本番か」の一択を予測してから動く。' },
+      { tag: '体の強さが武器な人', text: '食いつかず体で制する。ポジションで圧をかけてフェイクを出させない。' },
+    ],
+  },
+  r_df_preset: {
+    insight: '気づき：相手を見る前に動いた',
+    body: '判断が先行して体が動いている。「相手を見てから動く」の順番を体に入れ直す。',
+    situation: '【状況設定】1対1DFで「相手のどこを見てから動いたか」をプレー直後に声に出す。「見る→動く」の順番を言語化できたら成功。',
+    approaches: [
+      { tag: 'どのタイプでも', text: '見るものを1つに絞る（重心/目線/足）。それだけ見てから動く。絞ることで速くなる。' },
+    ],
+  },
+  r_df_cover: {
+    insight: '気づき：カバーのタイミングが合わなかった',
+    body: '隣が動くタイミングと自分が動くタイミングにズレがある。何を見てカバーに入るかのトリガーを決める。',
+    situation: '【状況設定】2対2で、隣のDFが相手に抜かれた瞬間を「今！」と声に出してカバーに入る練習。声より体が先に動いたらやり直し。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: 'トリガーを決めたら迷わず動く。速さを連動に使う。' },
+      { tag: '読みが武器な人', text: '隣が抜かれる前に予測してポジションを準備しておく。' },
+      { tag: '体の強さが武器な人', text: 'カバーポジションを体で作っておく。相手が来てから動くのではなく先に塞ぐ。' },
+    ],
+  },
+  r_df_release: {
+    insight: '気づき：手放した後の次の動作が遅い',
+    body: 'マークを手放すこと自体はできている。手放した後に何をするかが決まっていない。次の動作のトリガーを決める。',
+    situation: '【状況設定】手放した直後に「次は○○に行く」と声に出してから動く。声なしで動いたらやり直し。',
+    approaches: [
+      { tag: 'どのタイプでも', text: '「手放したら即ゾーンに戻る」「手放したら空いたスペースを埋める」——どちらかを事前に決めておく。状況判断は動きながらする。' },
+    ],
+  },
+  // スキル系
+  r_pass_timing: {
+    insight: '気づき：パスのタイミングが合っていない',
+    body: '早すぎると相手に読まれる。遅すぎるとDFが戻る。出し手と受け手のタイミングを合わせる練習が必要。',
+    situation: '【状況設定】2人でパス交換しながら、受け手が「今！」と言った瞬間にパスを出す練習。受け手のタイミングに合わせる感覚を作る。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: '早めに準備して「今」に合わせる。準備が早ければタイミングに余裕が生まれる。' },
+      { tag: '判断が武器な人', text: '受け手の動きを見て「ここで出せる」の瞬間を先に読む。' },
+      { tag: 'パス精度が武器な人', text: 'タイミングより精度を優先。確実に届けられる瞬間を選ぶ。' },
+    ],
+  },
+  r_shoot_timing: {
+    insight: '気づき：シュートを打つタイミングの判断が遅い',
+    body: '勝負できる瞬間を見逃している。DFが「打てる状態」になった瞬間が打ちどき。',
+    situation: '【状況設定】1対1でDFがクローズになった瞬間にシュートを打つ練習。「クローズになった」と声に出してから打つ。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: 'クローズになった瞬間を逃さず打つ。迷わない。' },
+      { tag: 'フェイントが武器な人', text: 'シュートフェイクでDFを動かしてからクローズを作って打つ。' },
+      { tag: 'パワーが武器な人', text: '距離があっても打てる。遠い位置から脅かしてクローズを引き出す。' },
+    ],
+  },
+  r_shoot_form: {
+    insight: '気づき：シュートフォーム・精度の課題',
+    body: 'フォームの課題はゲームの中では修正しにくい。練習の中で繰り返して体に入れる。',
+    situation: '【状況設定】壁当てや一人練習でフォームを反復。速さより正確さを優先して繰り返す。慣れたらスピードを上げる。',
+    approaches: [
+      { tag: 'どのタイプでも', text: '「どこが崩れるか」を一点に絞って修正する。全部一度に直そうとしない。' },
+    ],
+  },
+  r_121_noreact: {
+    insight: '気づき：アクションしたが相手が動かなかった',
+    body: '相手にとって脅威になっていない。何を「見せるか」を変える必要がある。',
+    situation: '【状況設定】1対1で「相手が動いた場面」だけを数えてプレーを終える。動かなかった場面では何が違ったかを確認する。',
+    approaches: [
+      { tag: 'スピードが武器な人', text: 'まず全速力でドライブして相手を動かす。脅威を見せてから次を選ぶ。' },
+      { tag: 'シュートが武器な人', text: 'シュートを強く見せることから始める。DFがシュートを警戒しないとドライブが生きない。' },
+      { tag: 'パスが武器な人', text: 'パスフェイクで相手を動かしてからドライブ。パスの脅威を先に作る。' },
+    ],
+  },
+  r_121_freeze: {
+    insight: '気づき：仕掛けられずに止まってしまった',
+    body: '何をすべきか決まらないまま時間が経っている。最初の一歩だけ決めておくと動きやすくなる。',
+    situation: '【状況設定】1対1で「もらったら必ず一歩前に出る」ルールで練習。一歩出てから次を選ぶ。最初の動作だけ決めておく。',
+    approaches: [
+      { tag: 'どのタイプでも', text: 'まず一歩動く。動きながら次を選ぶ。止まったまま考えない。最初の一歩は決め打ちでいい。' },
     ],
   },
 };
 
 // ─────────────────────────────────────────────
-// 進捗計算
+// モード設定
 // ─────────────────────────────────────────────
-const MAX_DEPTH = 6;
-const DEPTH_MAP = {
-  q1: 1, q2a: 2, q2b: 2, q2c: 3, q3_action: 4, q3_reaction: 4,
-  q3_wide: 5, q3_cross: 6,
+const MODES = {
+  of: { label: 'OF', color: '#3b82f6', firstQ: 'q1' },
+  df: { label: 'DF', color: '#ef4444', firstQ: 'qd1' },
+  skill: { label: 'スキル', color: '#a78bfa', firstQ: 'qs1' },
 };
 
-function getProgress(state) {
-  if (state.phase === 'start') return 0;
-  if (state.phase === 'result') return 100;
-  const depth = DEPTH_MAP[state.currentQ] || 2;
-  return Math.round((depth / MAX_DEPTH) * 85);
-}
+const EMOTIONS = [
+  { id: 'bad', emoji: '😤', label: '悔しい', cls: 'bad' },
+  { id: 'good', emoji: '😊', label: 'よかった', cls: 'good' },
+  { id: 'confused', emoji: '😕', label: '迷った', cls: 'confused' },
+  { id: 'blank', emoji: '😶', label: 'わからん', cls: 'blank' },
+];
 
-// ─────────────────────────────────────────────
-// Components
-// ─────────────────────────────────────────────
-function StepCard({ step, index, checked, onToggle }) {
-  const typeColor = step.type === 'エコロジカル' ? '#06b6d4'
-    : step.type === 'インプット' ? '#a78bfa' : '#3b82f6';
-  return (
-    <div className={`step-card ${checked ? 'done' : ''}`}>
-      <div className="step-left">
-        <div className="step-num">{index + 1}</div>
-        <div className="step-type" style={{ color: checked ? undefined : typeColor }}>
-          {step.type}
-        </div>
-      </div>
-      <div className="step-right">
-        <div className="step-desc">{step.desc}</div>
-        <div className="step-check" onClick={onToggle}>
-          <div className="check-box">
-            {checked && (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            )}
-          </div>
-          <span className="check-label">{checked ? 'やった！' : 'やった'}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QuestionScreen({ state, onChoose, onFreeTextChange, onNext }) {
-  const q = QUESTIONS[state.currentQ];
-  const hasChoice = state.selectedChoice !== null;
-
-  return (
-    <div className="content">
-      {state.history.length > 0 && (
-        <div className="breadcrumb">
-          {state.history.map((h, i) => (
-            <span key={i} className="crumb">{h.label}: {h.choice}</span>
-          ))}
-          <span className="crumb current">{q.label}</span>
-        </div>
-      )}
-
-      <div>
-        <div className="question-number">{q.label}</div>
-        <div className="question-text" style={{ marginTop: 6 }}>{q.text}</div>
-      </div>
-
-      <div className="choices">
-        {q.choices.map((c, i) => (
-          <button
-            key={i}
-            className={`choice-btn ${state.selectedChoice === i ? 'selected' : ''}`}
-            onClick={() => onChoose(i)}
-          >
-            {c.label}
-          </button>
-        ))}
-      </div>
-
-      <div>
-        <div className="free-text-label">または、自分の言葉で書く（任意）</div>
-        <textarea
-          className="free-text-input"
-          placeholder="気になっていることを自由に..."
-          value={state.freeText}
-          onChange={e => onFreeTextChange(e.target.value)}
-        />
-      </div>
-
-      <button
-        className="next-btn"
-        disabled={!hasChoice && !state.freeText.trim()}
-        onClick={onNext}
-      >
-        次へ →
-      </button>
-    </div>
-  );
-}
-
-function ResultScreen({ state, onReset }) {
-  const [checked, setChecked] = useState({});
-  const result = RESULTS[state.resultId];
-  if (!result) return null;
-
-  const toggle = (i) => setChecked(prev => ({ ...prev, [i]: !prev[i] }));
-  const doneCount = Object.values(checked).filter(Boolean).length;
-
-  return (
-    <div className="content">
-      {state.history.length > 0 && (
-        <div className="breadcrumb">
-          {state.history.map((h, i) => (
-            <span key={i} className="crumb">{h.label}: {h.choice}</span>
-          ))}
-        </div>
-      )}
-
-      <div className="result-header">
-        <div className="result-label">今日の課題</div>
-        <div className="result-title">{result.title}</div>
-        <div className="result-summary">{result.summary}</div>
-      </div>
-
-      {result.knowledge && (
-        <div className="knowledge-box">
-          <div className="knowledge-label">最適解の知識</div>
-          <div className="knowledge-text">{result.knowledge}</div>
-        </div>
-      )}
-
-      <div>
-        <div className="steps-title" style={{ marginBottom: 12 }}>
-          個人練習ステップ　{doneCount > 0 && `（${doneCount}/${result.steps.length} 完了）`}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {result.steps.map((step, i) => (
-            <StepCard
-              key={i}
-              step={step}
-              index={i}
-              checked={!!checked[i]}
-              onToggle={() => toggle(i)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {state.freeText && (
-        <div style={{ background: '#1e293b', border: '1.5px solid #334155', borderRadius: 12, padding: 14 }}>
-          <div style={{ fontSize: 11, color: '#64748b', marginBottom: 6, fontWeight: 700 }}>自分のメモ</div>
-          <div style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.6 }}>{state.freeText}</div>
-        </div>
-      )}
-
-      <button className="reset-btn" onClick={onReset}>
-        もう一度チェックする
-      </button>
-    </div>
-  );
+function getProgress(phase, histLen) {
+  if (phase === 'start') return 0;
+  if (phase === 'result') return 100;
+  if (phase === 'emotion') return 10;
+  return Math.min(20 + histLen * 20, 85);
 }
 
 // ─────────────────────────────────────────────
 // App
 // ─────────────────────────────────────────────
 function App() {
-  const [state, setState] = useState({
-    phase: 'start',
-    currentQ: 'q1',
-    selectedChoice: null,
-    freeText: '',
-    history: [],
-    resultId: null,
-  });
+  const [phase, setPhase] = useState('start'); // start|emotion|question|result
+  const [mode, setMode] = useState(null);
+  const [emotion, setEmotion] = useState(null);
+  const [currentQ, setCurrentQ] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [resultId, setResultId] = useState(null);
+  const [nextStep, setNextStep] = useState('');
 
-  const progress = getProgress(state);
+  const progress = getProgress(phase, history.length);
+  const modeInfo = mode ? MODES[mode] : null;
 
-  const handleStart = () => {
-    setState(s => ({ ...s, phase: 'question' }));
+  const handleModeSelect = (m) => {
+    setMode(m);
+    setPhase('emotion');
   };
 
-  const handleChoose = (i) => {
-    setState(s => ({ ...s, selectedChoice: i }));
+  const handleEmotion = (e) => {
+    setEmotion(e);
+    setCurrentQ(MODES[mode].firstQ);
+    setPhase('question');
   };
 
-  const handleFreeTextChange = (val) => {
-    setState(s => ({ ...s, freeText: val }));
-  };
+  const handleChoice = (i) => setSelected(i);
 
-  const handleNext = useCallback(() => {
-    const q = QUESTIONS[state.currentQ];
-    let nextId = null;
-    let choiceLabel = '（自由記述）';
-
-    if (state.selectedChoice !== null) {
-      const choice = q.choices[state.selectedChoice];
-      nextId = choice.next;
-      choiceLabel = choice.label.length > 16 ? choice.label.slice(0, 16) + '…' : choice.label;
+  const handleNext = () => {
+    const q = QUESTIONS[currentQ];
+    const choice = q.choices[selected];
+    const newHist = [...history, { label: q.label, text: choice.label.split('　')[0] }];
+    setHistory(newHist);
+    setSelected(null);
+    if (RESULTS[choice.next]) {
+      setResultId(choice.next);
+      setPhase('result');
+    } else if (QUESTIONS[choice.next]) {
+      setCurrentQ(choice.next);
     }
-
-    const newHistory = [...state.history, { label: q.label, choice: choiceLabel }];
-
-    if (nextId && RESULTS[nextId]) {
-      setState(s => ({
-        ...s,
-        phase: 'result',
-        resultId: nextId,
-        history: newHistory,
-      }));
-    } else if (nextId && QUESTIONS[nextId]) {
-      setState(s => ({
-        ...s,
-        currentQ: nextId,
-        selectedChoice: null,
-        freeText: '',
-        history: newHistory,
-      }));
-    }
-  }, [state]);
+  };
 
   const handleReset = () => {
-    setState({
-      phase: 'start',
-      currentQ: 'q1',
-      selectedChoice: null,
-      freeText: '',
-      history: [],
-      resultId: null,
-    });
+    setPhase('start'); setMode(null); setEmotion(null);
+    setCurrentQ(null); setSelected(null); setHistory([]);
+    setResultId(null); setNextStep('');
   };
+
+  const result = resultId ? RESULTS[resultId] : null;
+  const q = currentQ ? QUESTIONS[currentQ] : null;
 
   return (
     <div className="app">
       <div className="header">
-        <div className="header-title">ハンドボール 自己問答</div>
+        <div className="header-row">
+          <div className="header-title">ハンドボール 自己問答</div>
+          {modeInfo && <div className="header-mode" style={{ color: modeInfo.color }}>{modeInfo.label}</div>}
+        </div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
-      {state.phase === 'start' && (
+      {/* スタート画面 */}
+      {phase === 'start' && (
         <div className="start-screen">
           <div className="start-icon">🤾</div>
-          <div className="start-title">今日の練習を<br />振り返る</div>
-          <div className="start-sub">
-            認知 → アクション → リアクション対応<br />
-            どこで詰まったかを掘り下げて、<br />
-            今日やるべき練習に落とす。
+          <div className="start-title">今日の自分と<br />向き合う</div>
+          <div className="start-sub">どの場面を振り返る？</div>
+          <div className="mode-select">
+            {Object.entries(MODES).map(([key, m]) => (
+              <button key={key} className="mode-btn" onClick={() => handleModeSelect(key)}>
+                <div className="mode-btn-icon">
+                  {key === 'of' ? '⚡' : key === 'df' ? '🛡️' : '🎯'}
+                </div>
+                <div className="mode-btn-text">
+                  <div className="mode-btn-label" style={{ color: m.color }}>{m.label}</div>
+                  <div className="mode-btn-desc">
+                    {key === 'of' ? 'もらい出し・判断・アクション' : key === 'df' ? '守備・連動・読み' : 'パス・シュート・1対1'}
+                  </div>
+                </div>
+              </button>
+            ))}
           </div>
-          <button className="start-btn" onClick={handleStart}>
-            チェックをはじめる
+        </div>
+      )}
+
+      {/* 感情トリガー */}
+      {phase === 'emotion' && (
+        <div className="emotion-screen">
+          <div className="emotion-title">そのプレーで<br />何を感じた？</div>
+          <div className="emotion-grid">
+            {EMOTIONS.map(e => (
+              <button key={e.id} className={`emotion-btn ${e.cls}`} onClick={() => handleEmotion(e.id)}>
+                <div className="emotion-emoji">{e.emoji}</div>
+                <div className="emotion-label">{e.label}</div>
+              </button>
+            ))}
+          </div>
+          <button className="skip-btn" onClick={() => handleEmotion('none')}>
+            感情は関係なく振り返る →
           </button>
         </div>
       )}
 
-      {state.phase === 'question' && (
-        <QuestionScreen
-          state={state}
-          onChoose={handleChoose}
-          onFreeTextChange={handleFreeTextChange}
-          onNext={handleNext}
-        />
+      {/* 問い */}
+      {phase === 'question' && q && (
+        <div className="content">
+          {history.length > 0 && (
+            <div className="breadcrumb">
+              {history.map((h, i) => <span key={i} className="crumb">{h.text}</span>)}
+            </div>
+          )}
+          <div>
+            <div className="q-label">{q.label}</div>
+            <div className="q-text">{q.text}</div>
+            {q.hint && <div className="q-hint">{q.hint}</div>}
+          </div>
+          <div className="choices">
+            {q.choices.map((c, i) => (
+              <button key={i}
+                className={`choice-btn ${selected === i ? 'selected' : ''}`}
+                onClick={() => handleChoice(i)}>
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <button className="next-btn" disabled={selected === null} onClick={handleNext}>
+            次へ →
+          </button>
+        </div>
       )}
 
-      {state.phase === 'result' && (
-        <ResultScreen state={state} onReset={handleReset} />
+      {/* 結果・気づき */}
+      {phase === 'result' && result && (
+        <div className="content">
+          {history.length > 0 && (
+            <div className="breadcrumb">
+              {history.map((h, i) => <span key={i} className="crumb">{h.text}</span>)}
+            </div>
+          )}
+
+          <div className="insight-card">
+            <div className="insight-label">今日の気づき</div>
+            <div className="insight-title">{result.insight}</div>
+            <div className="insight-body">{result.body}</div>
+          </div>
+
+          <div className="eco-section">
+            <div className="eco-header">課題解決の練習環境</div>
+            <div className="eco-card">
+              <div className="eco-situation">{result.situation}</div>
+              <div className="eco-divider">自分の長所で解決する</div>
+              <div className="approach-list">
+                {result.approaches.map((a, i) => (
+                  <div key={i} className="approach-item">
+                    <div className="approach-tag">{a.tag}</div>
+                    <div className="approach-text">{a.text}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="next-step-section">
+            <div className="next-step-label">次のプレーで一つだけ試すことを書く</div>
+            <div className="next-step-hint">正解はない。自分が「これを試したい」と思うこと。</div>
+            <textarea
+              className="next-step-input"
+              placeholder="例：もらう前に隣のDFを一回見てから動き出す"
+              value={nextStep}
+              onChange={e => setNextStep(e.target.value)}
+            />
+          </div>
+
+          <button className="reset-btn" onClick={handleReset}>
+            もう一度振り返る
+          </button>
+        </div>
       )}
     </div>
   );
