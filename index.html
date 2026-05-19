@@ -361,6 +361,8 @@ function escapeHtml(s) {
 
 function renderMarkdown(md) {
   if (!md) return '';
+  // CRLF / CR を正規化（Windows改行対応）
+  md = md.replace(/\r\n?/g, '\n');
   const lines = md.split('\n');
   let html = '';
   let i = 0;
@@ -497,6 +499,8 @@ function renderMarkdown(md) {
 // 辞書テキストをセクションに分割（## 見出しで区切る）
 // ─────────────────────────────────────────────
 function splitSections(md, fileMeta) {
+  // CRLF / CR を正規化（Windows改行対応）
+  md = md.replace(/\r\n?/g, '\n');
   const lines = md.split('\n');
   const sections = [];
   let current = null;
@@ -526,7 +530,7 @@ function splitSections(md, fileMeta) {
         fileTitle: fileMeta.title,
         fileIcon: fileMeta.icon,
         fileTags: fileMeta.tags,
-        title: m[2].replace(/^[【「]/, '').replace(/[】」]$/, ''),
+        title: m[2].replace(/【([^】]+)】/g, '$1').replace(/「([^」]+)」/g, '$1'),
         level: m[1].length,
         body: line + '\n',
       };
@@ -1847,15 +1851,28 @@ function App() {
     });
   }, [dictSections, dictQuery, dictActiveTag, dictLoaded]);
 
+  // マークダウン記法を抜粋用にクリーンアップ（ハイフン・パイプは保持）
+  const cleanExcerpt = (raw) => {
+    return raw
+      .replace(/```[\s\S]*?```/g, ' ')          // コードブロック削除
+      .replace(/^#{1,6}\s+/gm, '')               // 見出しマーカー
+      .replace(/^[->*]\s+/gm, '')                // 箇条書き・引用マーカー
+      .replace(/^\|.*\|\s*$/gm, '')              // 表の行
+      .replace(/\*\*([^*]+)\*\*/g, '$1')         // 太字
+      .replace(/`([^`]+)`/g, '$1')               // インラインコード
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
   // 検索結果から抜粋ハイライト用テキストを取得
   const getExcerpt = (section, q) => {
-    if (!q) return section.body.slice(0, 200).replace(/[#`*>|\-]+/g, '').replace(/\s+/g, ' ').trim();
+    if (!q) return cleanExcerpt(section.body.slice(0, 280));
     const lower = section.body.toLowerCase();
     const idx = lower.indexOf(q.toLowerCase());
-    if (idx === -1) return section.body.slice(0, 160).replace(/[#`*>|\-]+/g, '').replace(/\s+/g, ' ').trim();
-    const start = Math.max(0, idx - 50);
-    const end = Math.min(section.body.length, idx + 120);
-    let excerpt = section.body.slice(start, end).replace(/[#`*>|\-]+/g, '').replace(/\s+/g, ' ').trim();
+    if (idx === -1) return cleanExcerpt(section.body.slice(0, 240));
+    const start = Math.max(0, idx - 60);
+    const end = Math.min(section.body.length, idx + 160);
+    let excerpt = cleanExcerpt(section.body.slice(start, end));
     if (start > 0) excerpt = '… ' + excerpt;
     if (end < section.body.length) excerpt = excerpt + ' …';
     return excerpt;
@@ -1960,7 +1977,10 @@ function App() {
       <div className="header">
         <div className="header-row">
           <div className="header-title">
-            {phase === 'hub' ? 'ハンドボール 戦術ハブ' : 'ハンドボール 自己問答'}
+            {phase === 'hub' && 'ハンドボール 戦術ハブ'}
+            {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
+            {(phase === 'solve' || phase === 'plan') && 'ハンドボール 戦術ハブ'}
+            {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る — 自己問答'}
           </div>
           {modeInfo && (
             <div className="header-mode" style={{ color: modeInfo.color, background: 'none', border: `1px solid ${modeInfo.color}33`, padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
