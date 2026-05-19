@@ -91,6 +91,7 @@
 | `dictionary/13_global_tactics.md` | 欧州ハンドボール国別戦術分析（グローバル戦術辞書） | デンマーク/フランス/ドイツ/スペイン/クロアチア/スロベニア/ポルトガル/ノルウェー/アイスランド、IHF2025分析、Jacobsenコードワード、6-0の3動作（独語）、普遍原則13-15 |
 | `dictionary/14_position_roles_international.md` | 各国言語別ポジション役割・スキル・戦術辞書 | バックプレーヤー（丁/独/仏/西）、ピボット（独/西/葡）、ウィング（仏）、Par/Impar理論、Freilaufen/Sperren/Absetzen |
 | `dictionary/15_norway_gk_df_school.md` | ノルウェー式GK・DF育成メソッド（Målvaktskolen/Forsvarsskolen） | GK4フェーズ（Forflytning/Posisjonering/Redning/Initiering）、DF10技術（Beredsskapsstilling〜Hjelpe）、Utviklingstrappa4段階、ノルウェー語30用語対訳 |
+| `dictionary/16_of_combinations.md` | コンビネーション・OFタイプ・攻撃トリガー辞書 | 攻撃トリガー3分類（速攻/セットOF/インプレー）、OFタイプ5分類、OFタイプ×DFタイプ対応マトリクス、2人・3人コンビネーション8種、クロアチア/ユーゴ学派個人技術体系（Fintiranje/Prodiranje/Šutiranje等）、各国コンビネーション用語対照 |
 
 ---
 
