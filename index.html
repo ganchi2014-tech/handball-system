@@ -155,12 +155,389 @@
 
     /* 試合状況モード用 */
     .ctx-intro { font-size: 13px; color: #94a3b8; line-height: 1.8; background: #1e293b; border-radius: 10px; padding: 12px 14px; }
+
+    /* ──────────────── ハブ画面 ──────────────── */
+    .hub-screen {
+      flex: 1; display: flex; flex-direction: column;
+      gap: 20px; padding: 28px 20px 36px; align-items: center;
+    }
+    .hub-title { font-size: 24px; font-weight: 800; color: #f1f5f9; text-align: center; line-height: 1.4; }
+    .hub-sub { font-size: 13px; color: #64748b; text-align: center; line-height: 1.7; margin-top: -8px; max-width: 320px; }
+    .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 360px; margin-top: 8px; }
+    .hub-card {
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 16px;
+      padding: 18px 18px; text-align: left; color: #e2e8f0; cursor: pointer;
+      transition: all 0.15s; display: flex; align-items: flex-start; gap: 14px;
+      position: relative;
+    }
+    .hub-card:active { transform: scale(0.98); background: #1e3a5f; border-color: #3b82f6; }
+    .hub-card.disabled { opacity: 0.5; cursor: not-allowed; }
+    .hub-card.disabled:active { transform: none; background: #1e293b; border-color: #334155; }
+    .hub-card-icon { font-size: 30px; flex-shrink: 0; line-height: 1; }
+    .hub-card-body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .hub-card-title { font-size: 16px; font-weight: 800; }
+    .hub-card-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+    .hub-card-target { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .hub-card-soon {
+      position: absolute; top: 10px; right: 10px;
+      background: #475569; color: #cbd5e1; font-size: 9px; font-weight: 800;
+      padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .hub-card.reflect { border-color: #3b82f644; }
+    .hub-card.reflect .hub-card-title { color: #93c5fd; }
+    .hub-card.dict { border-color: #22d3ee44; }
+    .hub-card.dict .hub-card-title { color: #67e8f9; }
+    .hub-card.solve { border-color: #c084fc44; }
+    .hub-card.solve .hub-card-title { color: #d8b4fe; }
+    .hub-card.plan { border-color: #f59e0b44; }
+    .hub-card.plan .hub-card-title { color: #fcd34d; }
+    .hub-footer { font-size: 11px; color: #475569; text-align: center; margin-top: 12px; padding: 0 16px; line-height: 1.7; }
+
+    /* ──────────────── 辞書ブラウザ ──────────────── */
+    .dict-screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .dict-bar {
+      padding: 12px 16px 8px; background: #0f172a; border-bottom: 1px solid #1e293b;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .dict-back {
+      background: none; border: none; color: #94a3b8; font-size: 14px;
+      cursor: pointer; padding: 4px 0 10px; display: flex; align-items: center; gap: 6px;
+    }
+    .dict-search-input {
+      width: 100%; background: #1e293b; border: 1.5px solid #334155; border-radius: 10px;
+      padding: 12px 14px; color: #e2e8f0; font-size: 15px; font-family: inherit; outline: none;
+    }
+    .dict-search-input:focus { border-color: #22d3ee; }
+    .dict-search-input::placeholder { color: #475569; }
+    .dict-tags {
+      display: flex; gap: 6px; padding: 10px 16px 12px; overflow-x: auto;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch; background: #0f172a;
+    }
+    .dict-tags::-webkit-scrollbar { display: none; }
+    .dict-tag {
+      flex-shrink: 0; background: #1e293b; border: 1px solid #334155; border-radius: 999px;
+      padding: 6px 12px; font-size: 12px; font-weight: 700; color: #94a3b8;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .dict-tag.active { background: #155e75; border-color: #22d3ee; color: #67e8f9; }
+    .dict-tag:active { transform: scale(0.95); }
+    .dict-results { flex: 1; overflow-y: auto; padding: 4px 16px 36px; -webkit-overflow-scrolling: touch; }
+    .dict-meta-line { font-size: 11px; color: #475569; padding: 8px 0 4px; }
+    .dict-result-card {
+      background: #1e293b; border: 1px solid #334155; border-radius: 12px;
+      padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s;
+    }
+    .dict-result-card:active { background: #1e3a5f; border-color: #22d3ee; }
+    .dict-result-filename {
+      font-size: 10px; color: #67e8f9; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .dict-result-section {
+      font-size: 15px; font-weight: 700; color: #f1f5f9; line-height: 1.4; margin-bottom: 4px;
+    }
+    .dict-result-excerpt {
+      font-size: 12px; color: #94a3b8; line-height: 1.6;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .dict-result-excerpt mark {
+      background: #fbbf2422; color: #fbbf24; padding: 0 2px; border-radius: 2px;
+    }
+    .dict-empty { text-align: center; color: #475569; font-size: 13px; padding: 40px 20px; line-height: 1.7; }
+    .dict-loading { text-align: center; color: #64748b; font-size: 13px; padding: 60px 20px; }
+
+    /* 辞書詳細ビュー */
+    .dict-detail-header {
+      padding: 12px 16px 8px; background: #0f172a; border-bottom: 1px solid #1e293b;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .dict-detail-file { font-size: 10px; font-weight: 700; color: #67e8f9; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+    .dict-detail-title { font-size: 18px; font-weight: 800; color: #f1f5f9; line-height: 1.4; margin-bottom: 8px; }
+    .dict-detail-tags { display: flex; gap: 4px; flex-wrap: wrap; padding-bottom: 8px; }
+    .dict-detail-tag { font-size: 10px; color: #94a3b8; background: #1e293b; border: 1px solid #334155; border-radius: 999px; padding: 2px 8px; }
+    .dict-detail-body {
+      flex: 1; overflow-y: auto; padding: 16px 18px 40px;
+      font-size: 14px; color: #cbd5e1; line-height: 1.8;
+      -webkit-overflow-scrolling: touch;
+    }
+    .dict-detail-body h1, .dict-detail-body h2, .dict-detail-body h3, .dict-detail-body h4 {
+      color: #f1f5f9; font-weight: 800; margin: 18px 0 10px; line-height: 1.4;
+    }
+    .dict-detail-body h1 { font-size: 18px; border-bottom: 1px solid #334155; padding-bottom: 6px; }
+    .dict-detail-body h2 { font-size: 16px; color: #67e8f9; }
+    .dict-detail-body h3 { font-size: 14px; color: #93c5fd; }
+    .dict-detail-body h4 { font-size: 13px; color: #cbd5e1; }
+    .dict-detail-body p { margin: 8px 0; }
+    .dict-detail-body ul, .dict-detail-body ol { margin: 8px 0 8px 20px; }
+    .dict-detail-body li { margin: 3px 0; }
+    .dict-detail-body strong { color: #f1f5f9; font-weight: 700; }
+    .dict-detail-body em { color: #fbbf24; font-style: normal; }
+    .dict-detail-body code {
+      background: #0f172a; color: #67e8f9; padding: 1px 6px; border-radius: 4px;
+      font-family: 'SF Mono', Consolas, monospace; font-size: 12px;
+    }
+    .dict-detail-body pre {
+      background: #020617; border: 1px solid #1e293b; border-radius: 8px;
+      padding: 12px 14px; overflow-x: auto; margin: 10px 0;
+      font-family: 'SF Mono', Consolas, monospace; font-size: 12px;
+      color: #cbd5e1; line-height: 1.6;
+    }
+    .dict-detail-body pre code { background: none; padding: 0; color: inherit; }
+    .dict-detail-body blockquote {
+      border-left: 3px solid #22d3ee; padding: 6px 14px; margin: 10px 0;
+      background: #0f1f2a; color: #94a3b8; font-size: 13px; border-radius: 0 6px 6px 0;
+    }
+    .dict-detail-body table {
+      width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px;
+      border: 1px solid #334155;
+    }
+    .dict-detail-body th, .dict-detail-body td {
+      border: 1px solid #334155; padding: 6px 10px; text-align: left;
+    }
+    .dict-detail-body th { background: #1e293b; color: #f1f5f9; font-weight: 700; }
+    .dict-detail-body td { color: #cbd5e1; }
+    .dict-detail-body hr { border: none; border-top: 1px solid #1e293b; margin: 18px 0; }
+    .dict-detail-related {
+      margin: 24px 0 8px; padding-top: 16px; border-top: 1px solid #1e293b;
+    }
+    .dict-detail-related-label { font-size: 11px; color: #67e8f9; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 8px; text-transform: uppercase; }
+    .dict-related-item {
+      background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+      padding: 8px 12px; font-size: 13px; color: #cbd5e1; cursor: pointer; margin-bottom: 4px;
+    }
+    .dict-related-item:active { background: #1e3a5f; border-color: #22d3ee; }
+
+    /* Coming soon プレースホルダー */
+    .soon-screen {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      align-items: center; padding: 60px 24px; gap: 20px; text-align: center;
+    }
+    .soon-icon { font-size: 60px; opacity: 0.6; }
+    .soon-title { font-size: 18px; font-weight: 700; color: #f1f5f9; }
+    .soon-desc { font-size: 13px; color: #94a3b8; line-height: 1.8; max-width: 320px; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState } = React;
+const { useState, useEffect, useMemo } = React;
+
+// ─────────────────────────────────────────────
+// 辞書ファイル メタデータ（20ファイル）
+// ─────────────────────────────────────────────
+const DICT_FILES = [
+  { id: '00', name: '00_janken_map.md',                    title: 'じゃんけんマップ（全カテゴリ横断統合）',     icon: '🗺️', tags: ['横断', '索引', 'じゃんけん', '原則'] },
+  { id: '01', name: '01_basics.md',                         title: '基礎技術：パス・シュート・コンタクト',         icon: '🧱', tags: ['基礎', 'OF', 'シュート', 'ドリブル', 'パス', '山側谷側'] },
+  { id: '02', name: '02_individual.md',                     title: '個人対決：1on1・フェイント・突破',             icon: '⚡', tags: ['OF', '1on1', 'フェイント', '突破', '勝ち位置'] },
+  { id: '03', name: '03_numerical.md',                      title: '数的状況・速攻・バックチェック',               icon: '🏃', tags: ['数的', '速攻', 'バックチェック', '5on6', '7on6'] },
+  { id: '04', name: '04_cognition.md',                      title: '認知・判断・行動・声掛け',                     icon: '👁️', tags: ['認知', '判断', '行動', '声掛け', '2秒の壁'] },
+  { id: '05', name: '05_gk_df.md',                          title: 'GK・DF陣形',                                  icon: '🛡️', tags: ['DF', 'GK', '陣形', '0-6', '5-1', '2-4', '3-2-1'] },
+  { id: '06', name: '06_post.md',                           title: 'ポストプレー（OF・DF）',                       icon: '🎯', tags: ['ポスト', 'V字位置', 'OF', 'DF'] },
+  { id: '07', name: '07_formations.md',                     title: 'クローズ/ワイド・セットOF・ウィングプレー',    icon: '📐', tags: ['陣形', 'クローズ', 'ワイド', 'セットOF', 'ウィング'] },
+  { id: '08', name: '08_game_management.md',                title: 'ゲームマネジメント・ファウル戦略',             icon: '⏱️', tags: ['ファウル', 'パッシブ', '7on6', 'タイムアウト', 'クローズ'] },
+  { id: '09', name: '09_individual_differences.md',         title: '個人差・身体特性が戦術選択に与える影響',       icon: '👥', tags: ['個人差', '身長', 'スピード', '利き手', '左利き右バック'] },
+  { id: '10', name: '10_opponent_scouting.md',              title: '相手チームの視点・スカウティング',             icon: '🔍', tags: ['スカウト', 'ハーフタイム', 'アジャスト'] },
+  { id: '11', name: '11_game_context.md',                   title: '試合文脈による戦術変化',                       icon: '🧭', tags: ['試合文脈', 'スコア差', '時間帯', '退場'] },
+  { id: '12', name: '12_set_plays.md',                      title: 'セットプレー・サインプレー・スクリーン技術',   icon: '📋', tags: ['セットプレー', 'サイン', 'スクリーン', 'フリースロー'] },
+  { id: '13', name: '13_global_tactics.md',                 title: 'グローバル戦術辞書（国別・クラブ別）',         icon: '🌍', tags: ['国別', 'グローバル', 'クラブ', '監督', '普遍原則', 'バルセロナ', 'PSG', 'Magdeburg', 'Kiel', 'Veszprém', 'Gidsel'] },
+  { id: '14', name: '14_position_roles_international.md',   title: 'ポジション役割（多言語）',                     icon: '🌐', tags: ['ポジション', '多言語', 'ピボット', 'バック', 'ウィング', 'センター'] },
+  { id: '15', name: '15_norway_gk_df_school.md',            title: 'ノルウェー式GK・DF育成メソッド',               icon: '🇳🇴', tags: ['ノルウェー', 'GK育成', 'DF育成', 'メンタル', 'ジュニア'] },
+  { id: '16', name: '16_of_combinations.md',                title: 'コンビネーション・OFタイプ・攻撃トリガー',     icon: '🔗', tags: ['コンビネーション', 'OFタイプ', '攻撃トリガー', 'クロス', 'ピック&ロール'] },
+  { id: '17', name: '17_scene_index.md',                    title: '場面→技術 逆引きインデックス + 振り返り',     icon: '🔁', tags: ['逆引き', '振り返り', 'チェックリスト', '即時参考'] },
+  { id: '18', name: '18_mental.md',                         title: 'メンタルマネジメント・自己診断',               icon: '🧠', tags: ['メンタル', 'セルフトーク', 'プレッシャー', 'レベル診断'] },
+  { id: '19', name: '19_drills.md',                         title: '練習メニュー辞書',                             icon: '🏋️', tags: ['練習', '個人練習', 'ペア練習', 'チーム練習', '週間計画'] },
+  { id: '20', name: '20_back_player_playbook.md',           title: 'バックプレーヤー判断プレイブック',             icon: '⚔️', tags: ['バックプレーヤー', '判断ツリー', '状況別', 'プレイブック'] },
+];
+
+// 全タグ（フィルタチップ用、重複排除）
+const ALL_TAGS = Array.from(new Set(DICT_FILES.flatMap(f => f.tags))).sort();
+
+// ─────────────────────────────────────────────
+// 簡易Markdownレンダラ（必要最小限）
+// ─────────────────────────────────────────────
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderMarkdown(md) {
+  if (!md) return '';
+  const lines = md.split('\n');
+  let html = '';
+  let i = 0;
+  let inCode = false, inTable = false, tableHeader = false;
+  let codeLang = '';
+
+  const flushPara = (buf) => {
+    if (!buf.length) return '';
+    const text = buf.join(' ').trim();
+    if (!text) return '';
+    return '<p>' + inlineMd(text) + '</p>';
+  };
+
+  function inlineMd(t) {
+    t = escapeHtml(t);
+    // コードインライン
+    t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // 太字
+    t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    // 斜体
+    t = t.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+    // [text](url) → そのまま装飾だけ
+    t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<span style="color:#67e8f9">$1</span>');
+    // [[ref]] 内部参照
+    t = t.replace(/\[\[([^\]]+)\]\]/g, '<span style="color:#fbbf24">[[$1]]</span>');
+    return t;
+  }
+
+  let paraBuf = [];
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // コードブロック
+    if (line.startsWith('```')) {
+      html += flushPara(paraBuf); paraBuf = [];
+      if (!inCode) {
+        inCode = true; codeLang = line.slice(3).trim();
+        html += '<pre><code>';
+      } else {
+        inCode = false; codeLang = '';
+        html += '</code></pre>';
+      }
+      i++; continue;
+    }
+    if (inCode) {
+      html += escapeHtml(line) + '\n';
+      i++; continue;
+    }
+
+    // テーブル
+    if (line.includes('|') && line.trim().startsWith('|')) {
+      html += flushPara(paraBuf); paraBuf = [];
+      if (!inTable) {
+        inTable = true; tableHeader = true;
+        html += '<table>';
+      }
+      // ヘッダ区切り行（---）をスキップ
+      if (/^\|\s*[-:|\s]+\|/.test(line)) {
+        tableHeader = false; i++; continue;
+      }
+      const cells = line.split('|').slice(1, -1).map(c => inlineMd(c.trim()));
+      if (tableHeader) {
+        html += '<tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr>';
+      } else {
+        html += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+      }
+      i++; continue;
+    }
+    if (inTable && !line.includes('|')) {
+      inTable = false;
+      html += '</table>';
+    }
+
+    // 見出し
+    const h = line.match(/^(#{1,6})\s+(.*)$/);
+    if (h) {
+      html += flushPara(paraBuf); paraBuf = [];
+      const level = h[1].length;
+      html += `<h${level}>${inlineMd(h[2])}</h${level}>`;
+      i++; continue;
+    }
+
+    // 区切り
+    if (/^---+\s*$/.test(line)) {
+      html += flushPara(paraBuf); paraBuf = [];
+      html += '<hr/>';
+      i++; continue;
+    }
+
+    // 引用
+    if (line.startsWith('> ')) {
+      html += flushPara(paraBuf); paraBuf = [];
+      html += '<blockquote>' + inlineMd(line.slice(2)) + '</blockquote>';
+      i++; continue;
+    }
+
+    // リスト
+    if (/^[-*]\s+/.test(line)) {
+      html += flushPara(paraBuf); paraBuf = [];
+      let listHtml = '<ul>';
+      while (i < lines.length && /^[-*]\s+/.test(lines[i])) {
+        listHtml += '<li>' + inlineMd(lines[i].replace(/^[-*]\s+/, '')) + '</li>';
+        i++;
+      }
+      listHtml += '</ul>';
+      html += listHtml; continue;
+    }
+    if (/^\d+\.\s+/.test(line)) {
+      html += flushPara(paraBuf); paraBuf = [];
+      let listHtml = '<ol>';
+      while (i < lines.length && /^\d+\.\s+/.test(lines[i])) {
+        listHtml += '<li>' + inlineMd(lines[i].replace(/^\d+\.\s+/, '')) + '</li>';
+        i++;
+      }
+      listHtml += '</ol>';
+      html += listHtml; continue;
+    }
+
+    // 空行
+    if (!line.trim()) {
+      html += flushPara(paraBuf); paraBuf = [];
+      i++; continue;
+    }
+
+    paraBuf.push(line);
+    i++;
+  }
+  if (inTable) html += '</table>';
+  html += flushPara(paraBuf);
+  return html;
+}
+
+// ─────────────────────────────────────────────
+// 辞書テキストをセクションに分割（## 見出しで区切る）
+// ─────────────────────────────────────────────
+function splitSections(md, fileMeta) {
+  const lines = md.split('\n');
+  const sections = [];
+  let current = null;
+  let preamble = [];
+
+  for (const line of lines) {
+    const m = line.match(/^(#{1,3})\s+(.*)$/);
+    if (m && m[1].length <= 2) {
+      if (current) sections.push(current);
+      else if (preamble.length) {
+        sections.push({
+          id: fileMeta.id + '-pre',
+          fileId: fileMeta.id,
+          fileName: fileMeta.name,
+          fileTitle: fileMeta.title,
+          fileIcon: fileMeta.icon,
+          fileTags: fileMeta.tags,
+          title: '冒頭',
+          level: m[1].length,
+          body: preamble.join('\n').trim(),
+        });
+      }
+      current = {
+        id: fileMeta.id + '-' + sections.length,
+        fileId: fileMeta.id,
+        fileName: fileMeta.name,
+        fileTitle: fileMeta.title,
+        fileIcon: fileMeta.icon,
+        fileTags: fileMeta.tags,
+        title: m[2].replace(/^[【「]/, '').replace(/[】」]$/, ''),
+        level: m[1].length,
+        body: line + '\n',
+      };
+    } else {
+      if (current) current.body += line + '\n';
+      else preamble.push(line);
+    }
+  }
+  if (current) sections.push(current);
+  return sections;
+}
 
 // ─────────────────────────────────────────────
 // 問いの定義
@@ -1367,17 +1744,48 @@ const EMOTIONS = [
 ];
 
 function getProgress(phase, histLen) {
-  if (phase === 'start') return 0;
+  if (phase === 'hub' || phase === 'start') return 0;
+  if (phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan') return 0;
   if (phase === 'result') return 100;
   if (phase === 'emotion') return 10;
   return Math.min(20 + histLen * 20, 85);
 }
 
 // ─────────────────────────────────────────────
+// ハブのモジュール定義
+// ─────────────────────────────────────────────
+const HUB_MODULES = [
+  {
+    id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
+    title: '振り返る',
+    desc: '試合・練習のプレーを6モードで自己問答 → 良かった点／課題／改善案',
+    enabled: true,
+  },
+  {
+    id: 'dictionary', cls: 'dict', icon: '📖', target: '選手・指導者',
+    title: '辞書を読む',
+    desc: '20ファイルの戦術辞書を横断検索・タグでフィルタ',
+    enabled: true,
+  },
+  {
+    id: 'solve', cls: 'solve', icon: '🎯', target: '選手・指導者',
+    title: '課題を解決する',
+    desc: '「○○ができない」「分からない」を入力 → 辞書から処方箋（Coming soon）',
+    enabled: false,
+  },
+  {
+    id: 'plan', cls: 'plan', icon: '📋', target: '指導者',
+    title: '練習を組む',
+    desc: 'テーマ・レベルから練習メニューを組み立ててPDF出力（Coming soon）',
+    enabled: false,
+  },
+];
+
+// ─────────────────────────────────────────────
 // App
 // ─────────────────────────────────────────────
 function App() {
-  const [phase, setPhase] = useState('start');
+  const [phase, setPhase] = useState('hub');
   const [mode, setMode] = useState(null);
   const [emotion, setEmotion] = useState(null);
   const [currentQ, setCurrentQ] = useState(null);
@@ -1385,6 +1793,81 @@ function App() {
   const [history, setHistory] = useState([]);
   const [resultId, setResultId] = useState(null);
   const [nextStep, setNextStep] = useState('');
+
+  // 辞書ブラウザの状態
+  const [dictLoaded, setDictLoaded] = useState(false);
+  const [dictSections, setDictSections] = useState([]);
+  const [dictError, setDictError] = useState(null);
+  const [dictQuery, setDictQuery] = useState('');
+  const [dictActiveTag, setDictActiveTag] = useState(null);
+  const [dictDetail, setDictDetail] = useState(null); // 選択中のセクション
+
+  // 辞書ファイルを一度だけfetch
+  useEffect(() => {
+    if (dictLoaded || dictError) return;
+    if (phase !== 'dictionary' && phase !== 'dictionary-detail') return;
+
+    (async () => {
+      try {
+        const allSections = [];
+        await Promise.all(DICT_FILES.map(async (f) => {
+          try {
+            const res = await fetch(`./dictionary/${f.name}`);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const md = await res.text();
+            const sections = splitSections(md, f);
+            allSections.push(...sections);
+          } catch (e) {
+            console.warn('Failed to load', f.name, e);
+          }
+        }));
+        // ファイルID順 + セクション順を維持
+        allSections.sort((a, b) => {
+          if (a.fileId !== b.fileId) return a.fileId.localeCompare(b.fileId);
+          return 0;
+        });
+        setDictSections(allSections);
+        setDictLoaded(true);
+      } catch (e) {
+        setDictError(String(e));
+      }
+    })();
+  }, [phase, dictLoaded, dictError]);
+
+  // 検索＋フィルタ結果
+  const filteredSections = useMemo(() => {
+    if (!dictLoaded) return [];
+    const q = dictQuery.trim().toLowerCase();
+    return dictSections.filter(s => {
+      if (dictActiveTag && !s.fileTags.includes(dictActiveTag)) return false;
+      if (!q) return true;
+      return s.title.toLowerCase().includes(q) ||
+             s.body.toLowerCase().includes(q) ||
+             s.fileTitle.toLowerCase().includes(q);
+    });
+  }, [dictSections, dictQuery, dictActiveTag, dictLoaded]);
+
+  // 検索結果から抜粋ハイライト用テキストを取得
+  const getExcerpt = (section, q) => {
+    if (!q) return section.body.slice(0, 200).replace(/[#`*>|\-]+/g, '').replace(/\s+/g, ' ').trim();
+    const lower = section.body.toLowerCase();
+    const idx = lower.indexOf(q.toLowerCase());
+    if (idx === -1) return section.body.slice(0, 160).replace(/[#`*>|\-]+/g, '').replace(/\s+/g, ' ').trim();
+    const start = Math.max(0, idx - 50);
+    const end = Math.min(section.body.length, idx + 120);
+    let excerpt = section.body.slice(start, end).replace(/[#`*>|\-]+/g, '').replace(/\s+/g, ' ').trim();
+    if (start > 0) excerpt = '… ' + excerpt;
+    if (end < section.body.length) excerpt = excerpt + ' …';
+    return excerpt;
+  };
+
+  // ハイライトHTMLに変換
+  const highlightExcerpt = (text, q) => {
+    if (!q) return text;
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(escaped, 'gi');
+    return text.replace(re, m => `<mark>${m}</mark>`);
+  };
 
   const progress = getProgress(phase, history.length);
   const modeInfo = mode ? MODES[mode] : null;
@@ -1427,6 +1910,36 @@ function App() {
     setResultId(null); setNextStep('');
   };
 
+  const handleBackToHub = () => {
+    setPhase('hub'); setMode(null); setEmotion(null);
+    setCurrentQ(null); setSelected(null); setHistory([]);
+    setResultId(null); setNextStep('');
+    setDictDetail(null);
+  };
+
+  const handleHubSelect = (modId) => {
+    const mod = HUB_MODULES.find(m => m.id === modId);
+    if (!mod || !mod.enabled) return;
+    if (modId === 'reflect') setPhase('start');
+    else if (modId === 'dictionary') {
+      setDictDetail(null);
+      setPhase('dictionary');
+    }
+    else setPhase(modId); // 'solve' / 'plan' → Coming soon 画面
+  };
+
+  const handleDictSectionOpen = (section) => {
+    setDictDetail(section);
+    setPhase('dictionary-detail');
+    // スクロール位置を一番上にリセット
+    setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+
+  const handleDictBack = () => {
+    setDictDetail(null);
+    setPhase('dictionary');
+  };
+
   // 国別深掘り：現在のmodeから「じゃんけん→国別逆引き」へジャンプ
   const handleJumpToCountry = () => {
     setMode('janken');
@@ -1446,10 +1959,22 @@ function App() {
     <div className="app">
       <div className="header">
         <div className="header-row">
-          <div className="header-title">ハンドボール 自己問答</div>
+          <div className="header-title">
+            {phase === 'hub' ? 'ハンドボール 戦術ハブ' : 'ハンドボール 自己問答'}
+          </div>
           {modeInfo && (
             <div className="header-mode" style={{ color: modeInfo.color, background: 'none', border: `1px solid ${modeInfo.color}33`, padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
               {modeInfo.label}
+            </div>
+          )}
+          {(phase === 'dictionary' || phase === 'dictionary-detail') && (
+            <div className="header-mode" style={{ color: '#22d3ee', background: 'none', border: '1px solid #22d3ee33', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+              辞書
+            </div>
+          )}
+          {(phase === 'solve' || phase === 'plan') && (
+            <div className="header-mode" style={{ color: '#94a3b8', background: 'none', border: '1px solid #33415588', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+              準備中
             </div>
           )}
         </div>
@@ -1458,9 +1983,148 @@ function App() {
         </div>
       </div>
 
-      {/* スタート画面 */}
+      {/* ハブ画面（最初の入口） */}
+      {phase === 'hub' && (
+        <div className="hub-screen">
+          <div style={{ fontSize: 44 }}>🤾‍♂️</div>
+          <div className="hub-title">高校ハンドボールの<br />「わからない」を解決する</div>
+          <div className="hub-sub">選手と指導者のための戦術辞書アプリ。<br />20ファイルの辞書資産を、4つのモジュールで使う。</div>
+          <div className="hub-cards">
+            {HUB_MODULES.map(mod => (
+              <button
+                key={mod.id}
+                className={`hub-card ${mod.cls} ${mod.enabled ? '' : 'disabled'}`}
+                onClick={() => handleHubSelect(mod.id)}
+              >
+                <div className="hub-card-icon">{mod.icon}</div>
+                <div className="hub-card-body">
+                  <div className="hub-card-target">{mod.target}</div>
+                  <div className="hub-card-title">{mod.title}</div>
+                  <div className="hub-card-desc">{mod.desc}</div>
+                </div>
+                {!mod.enabled && <div className="hub-card-soon">Soon</div>}
+              </button>
+            ))}
+          </div>
+          <div className="hub-footer">
+            辞書ファイル：20本（約260KB） ／ 普遍原則：10 ／<br />
+            国・クラブ別戦術分析を含む包括的ハンドボール戦術辞書
+          </div>
+        </div>
+      )}
+
+      {/* 辞書ブラウザ（一覧・検索） */}
+      {phase === 'dictionary' && (
+        <div className="dict-screen">
+          <div className="dict-bar">
+            <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
+            <input
+              type="text"
+              className="dict-search-input"
+              placeholder="キーワードで検索（例: クローズ、5-1、フェイント）"
+              value={dictQuery}
+              onChange={e => setDictQuery(e.target.value)}
+              autoFocus
+            />
+          </div>
+          <div className="dict-tags">
+            <button
+              className={`dict-tag ${dictActiveTag === null ? 'active' : ''}`}
+              onClick={() => setDictActiveTag(null)}
+            >すべて</button>
+            {ALL_TAGS.map(tag => (
+              <button
+                key={tag}
+                className={`dict-tag ${dictActiveTag === tag ? 'active' : ''}`}
+                onClick={() => setDictActiveTag(dictActiveTag === tag ? null : tag)}
+              >{tag}</button>
+            ))}
+          </div>
+          <div className="dict-results">
+            {!dictLoaded && !dictError && (
+              <div className="dict-loading">辞書を読み込み中… 📖</div>
+            )}
+            {dictError && (
+              <div className="dict-empty">読み込みエラー：{dictError}<br /><br />ローカルで開いている場合、CORS制限でfetchが失敗することがあります。GitHub Pages 上で動作確認してください。</div>
+            )}
+            {dictLoaded && (
+              <>
+                <div className="dict-meta-line">
+                  {filteredSections.length} 件のセクション
+                  {dictQuery && ` ／ 検索: "${dictQuery}"`}
+                  {dictActiveTag && ` ／ タグ: ${dictActiveTag}`}
+                </div>
+                {filteredSections.length === 0 && (
+                  <div className="dict-empty">該当するセクションがありません。<br />キーワードやタグを変えてみてください。</div>
+                )}
+                {filteredSections.map(s => {
+                  const excerpt = getExcerpt(s, dictQuery);
+                  const highlighted = highlightExcerpt(excerpt, dictQuery);
+                  return (
+                    <div key={s.id} className="dict-result-card" onClick={() => handleDictSectionOpen(s)}>
+                      <div className="dict-result-filename">{s.fileIcon} {s.fileName}</div>
+                      <div className="dict-result-section">{s.title}</div>
+                      <div className="dict-result-excerpt" dangerouslySetInnerHTML={{__html: highlighted}} />
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 辞書セクションの詳細 */}
+      {phase === 'dictionary-detail' && dictDetail && (
+        <div className="dict-screen">
+          <div className="dict-detail-header">
+            <button className="dict-back" onClick={handleDictBack}>← 一覧へ戻る</button>
+            <div className="dict-detail-file">{dictDetail.fileIcon} {dictDetail.fileName}</div>
+            <div className="dict-detail-title">{dictDetail.title}</div>
+            <div className="dict-detail-tags">
+              {dictDetail.fileTags.map(t => (
+                <span key={t} className="dict-detail-tag">{t}</span>
+              ))}
+            </div>
+          </div>
+          <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body)}} />
+          {/* 同じファイルの他セクション */}
+          {(() => {
+            const related = dictSections.filter(s => s.fileId === dictDetail.fileId && s.id !== dictDetail.id).slice(0, 8);
+            if (!related.length) return null;
+            return (
+              <div className="dict-detail-related" style={{padding: '0 18px 24px'}}>
+                <div className="dict-detail-related-label">▶ 同じファイルの他セクション</div>
+                {related.map(s => (
+                  <div key={s.id} className="dict-related-item" onClick={() => handleDictSectionOpen(s)}>
+                    {s.title}
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* Coming Soon プレースホルダ（solve / plan） */}
+      {(phase === 'solve' || phase === 'plan') && (
+        <div className="soon-screen">
+          <div className="soon-icon">{phase === 'solve' ? '🎯' : '📋'}</div>
+          <div className="soon-title">{phase === 'solve' ? '課題を解決する' : '練習を組む'}</div>
+          <div className="soon-desc">
+            このモジュールは Phase 2 で実装予定です。<br /><br />
+            {phase === 'solve'
+              ? '「○○ができない」「分からない」を入力すると、辞書から処方箋を提案するツール。'
+              : 'テーマ・レベル・期間を選ぶと、辞書19（練習メニュー）と20（判断ツリー）から練習計画を組み立ててPDF出力するツール。'}
+          </div>
+          <button className="reset-btn" style={{maxWidth: 320}} onClick={handleBackToHub}>← ホームに戻る</button>
+        </div>
+      )}
+
+      {/* スタート画面（振り返るモード入口） */}
       {phase === 'start' && (
         <div className="start-screen">
+          <button className="dict-back" style={{alignSelf: 'flex-start', padding: '4px 0'}} onClick={handleBackToHub}>← ホーム</button>
           <div className="start-icon">🤾</div>
           <div className="start-title">今日の自分と<br />向き合う</div>
           <div className="start-sub">どのモードで振り返る？</div>
@@ -1599,6 +2263,9 @@ function App() {
 
           <button className="reset-btn" onClick={handleReset}>
             もう一度振り返る
+          </button>
+          <button className="reset-btn" style={{marginTop: 8}} onClick={handleBackToHub}>
+            ← ホームに戻る
           </button>
         </div>
       )}
