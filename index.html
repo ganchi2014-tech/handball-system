@@ -1012,6 +1012,40 @@ const RESULTS = {
 };
 
 // ─────────────────────────────────────────────
+// 4軸マップ（どの問いがどの軸か）
+// ① 自分の立場 = モード選択（OF/DF/スキル）
+// ② 相手の状況 = DFの陣形・状態・試合スコア
+// ③ リアクション理解 = 自分のアクションに対して相手がどう動いたか
+// ④ 自分の対応 = 自分が何をしたか / 何ができなかったか
+// ─────────────────────────────────────────────
+const AXIS_MAP = {
+  // OF
+  q1: '④ 自分の対応', q1b: '④ 自分の対応',
+  q2: '② 相手の状況', q2_close: '③ リアクション理解', q2_wide: '③ リアクション理解',
+  q3_cross: '③ リアクション理解', q3_reaction: '③ リアクション理解', q3_reaction_b: '③ リアクション理解',
+  // DF
+  qd1: '④ 自分の対応', qd_good: '③ リアクション理解',
+  qd_good_read: '③ リアクション理解', qd_good_pos: '③ リアクション理解', qd_good_team: '③ リアクション理解',
+  qd2: '③ リアクション理解',
+  // スキル
+  qs1: '④ 自分の対応', qs_pass: '④ 自分の対応', qs_shoot: '④ 自分の対応', qs_121: '④ 自分の対応',
+  // 試合状況
+  qc1: '② 試合の状況', qc2_biglead: '② 試合の状況', qc2_lead: '② 試合の状況',
+  qc2_behind: '② 試合の状況', qc2_bigbehind: '② 試合の状況',
+  // じゃんけん
+  qj1: '② 相手の状況', qj2_06: '② 相手の状況', qj2_15: '② 相手の状況',
+  qj2_man: '② 相手の状況', qj_self: '② 相手の状況',
+};
+
+function axisStyle(axis) {
+  if (!axis) return null;
+  if (axis.startsWith('②')) return { color: '#fbbf24', border: '1px solid #92400e' };
+  if (axis.startsWith('③')) return { color: '#22d3ee', border: '1px solid #155e75' };
+  if (axis.startsWith('④')) return { color: '#c084fc', border: '1px solid #6b21a8' };
+  return { color: '#94a3b8', border: '1px solid #334155' };
+}
+
+// ─────────────────────────────────────────────
 // モード設定
 // ─────────────────────────────────────────────
 const MODES = {
@@ -1156,6 +1190,14 @@ function App() {
             </div>
           )}
           <div>
+            {AXIS_MAP[currentQ] && (() => {
+              const s = axisStyle(AXIS_MAP[currentQ]);
+              return (
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.1em', color: s.color, border: s.border, borderRadius: 6, padding: '2px 8px', display: 'inline-block', marginBottom: 6, background: '#0f172a' }}>
+                  {AXIS_MAP[currentQ]}
+                </div>
+              );
+            })()}
             <div className="q-label">{q.label}</div>
             <div className="q-text">{q.text}</div>
             {q.hint && <div className="q-hint">{q.hint}</div>}
