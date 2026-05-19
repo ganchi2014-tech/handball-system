@@ -307,6 +307,81 @@
     }
     .dict-related-item:active { background: #1e3a5f; border-color: #22d3ee; }
 
+    /* ──────────────── 課題を解決する（Phase 2A） ──────────────── */
+    .solve-screen { flex: 1; display: flex; flex-direction: column; padding: 16px 16px 40px; gap: 12px; }
+    .solve-bar { display: flex; align-items: center; gap: 10px; padding-bottom: 4px; }
+    .solve-step-label { font-size: 11px; font-weight: 800; color: #c084fc; letter-spacing: 0.1em; text-transform: uppercase; }
+    .solve-step-pill { background: #1e1530; border: 1px solid #6b21a8; color: #d8b4fe; font-size: 11px; padding: 2px 10px; border-radius: 999px; font-weight: 700; }
+    .solve-title { font-size: 19px; font-weight: 800; color: #f1f5f9; line-height: 1.4; margin-bottom: 4px; }
+    .solve-sub { font-size: 13px; color: #94a3b8; line-height: 1.7; margin-bottom: 8px; }
+
+    .solve-role-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .solve-role-btn {
+      background: #1e293b; border: 1.5px solid #6b21a8; border-radius: 14px;
+      padding: 18px 18px; text-align: left; color: #e2e8f0; cursor: pointer;
+      display: flex; align-items: center; gap: 14px; transition: all 0.15s;
+    }
+    .solve-role-btn:active { transform: scale(0.98); background: #2a1f3d; border-color: #c084fc; }
+    .solve-role-icon { font-size: 30px; }
+    .solve-role-label { font-size: 15px; font-weight: 800; color: #d8b4fe; }
+
+    .solve-cat-list { display: flex; flex-direction: column; gap: 10px; }
+    .solve-cat-btn {
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 12px;
+      padding: 14px 16px; text-align: left; color: #e2e8f0; cursor: pointer;
+      display: flex; align-items: center; gap: 12px; transition: all 0.15s;
+    }
+    .solve-cat-btn:active { transform: scale(0.98); background: #2a1f3d; border-color: #c084fc; }
+    .solve-cat-icon { font-size: 22px; flex-shrink: 0; }
+    .solve-cat-title { font-size: 14px; font-weight: 700; }
+
+    .solve-sym-list { display: flex; flex-direction: column; gap: 10px; }
+    .solve-sym-btn {
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 12px;
+      padding: 14px 16px; text-align: left; color: #e2e8f0; cursor: pointer;
+      transition: all 0.15s; display: flex; flex-direction: column; gap: 4px;
+    }
+    .solve-sym-btn:active { transform: scale(0.98); background: #2a1f3d; border-color: #c084fc; }
+    .solve-sym-title { font-size: 15px; font-weight: 700; color: #f1f5f9; line-height: 1.4; }
+    .solve-sym-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+
+    /* 処方箋 */
+    .solve-rx { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
+    .solve-rx-card {
+      background: #1e293b; border-radius: 12px; padding: 14px 16px;
+      border-left: 4px solid #c084fc;
+    }
+    .solve-rx-label { font-size: 10px; font-weight: 800; color: #c084fc; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+    .solve-rx-title { font-size: 16px; font-weight: 800; color: #f1f5f9; line-height: 1.4; margin-bottom: 6px; }
+    .solve-rx-desc { font-size: 13px; color: #cbd5e1; line-height: 1.7; }
+
+    .solve-rx-actions { display: flex; flex-direction: column; gap: 8px; }
+    .solve-rx-action {
+      background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; color: #cbd5e1; line-height: 1.6;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .solve-rx-action-num {
+      flex-shrink: 0; background: #6b21a8; color: #f5d0fe; font-size: 11px; font-weight: 800;
+      width: 22px; height: 22px; border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center;
+    }
+
+    .solve-rx-related-list { display: flex; flex-direction: column; gap: 6px; }
+    .solve-rx-related-item {
+      background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+      padding: 10px 12px; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .solve-rx-related-item:active { background: #1a1f2e; border-color: #c084fc; }
+    .solve-rx-related-icon { font-size: 16px; }
+    .solve-rx-related-meta { flex: 1; min-width: 0; }
+    .solve-rx-related-file { font-size: 10px; color: #c084fc; font-weight: 700; letter-spacing: 0.05em; }
+    .solve-rx-related-title { font-size: 13px; color: #e2e8f0; line-height: 1.4; margin-top: 2px; }
+    .solve-rx-arrow { color: #475569; flex-shrink: 0; }
+
+    .solve-rx-missing { font-size: 11px; color: #64748b; padding: 6px 0; }
+
     /* Coming soon プレースホルダー */
     .soon-screen {
       flex: 1; display: flex; flex-direction: column; justify-content: center;
@@ -351,6 +426,388 @@ const DICT_FILES = [
 
 // 全タグ（フィルタチップ用、重複排除）
 const ALL_TAGS = Array.from(new Set(DICT_FILES.flatMap(f => f.tags))).sort();
+
+// ─────────────────────────────────────────────
+// Phase 2A：症状診断のデータ
+// ─────────────────────────────────────────────
+const SOLVE_DATA = {
+  player: {
+    label: '選手として相談する', icon: '🤾',
+    categories: [
+      {
+        id: 'skill', icon: '⚡', title: '個人技で困っている',
+        symptoms: [
+          {
+            id: 's1', title: '1on1でDFが抜けない',
+            desc: 'フェイントを使っても相手DFが反応してくれない、または読まれている。',
+            related: [
+              { fileId: '02', match: 'フェイント7種類' },
+              { fileId: '01', match: 'コンタクト技術' },
+              { fileId: '20', match: 'A】DF個人の位置' },
+            ],
+            actions: [
+              'DFが「何を見ているか」を観察する：腕／肩／足／骨盤のどれを基準に動いているか',
+              '見ているもの別の対応フェイントを選ぶ：腕→③シュート、肩→⑥ボディ、足→⑤ステップ、骨盤→②ターン or ⑦スピード',
+              '1回で抜けないなら「ダブルフェイントの原則」で2種連続にする',
+            ],
+          },
+          {
+            id: 's2', title: 'シュートがGKに止められる',
+            desc: 'GKに読まれている／コースが甘い。シュートが入らない。',
+            related: [
+              { fileId: '05', match: 'GK（ゴールキーパー）' },
+              { fileId: '01', match: 'シュート' },
+              { fileId: '20', match: 'C】GK状況' },
+            ],
+            actions: [
+              'まず3〜5本「普通に打って」GKのタイプを観察：動く=先読み型、動かない=コース絞り型',
+              '先読み型 → 早打ち（上昇中の打点）or ③-Bバックハンドフェイク',
+              'コース絞り型 → 引きつけてから角度変化／空き2エリア（多くは低コーナー）に正確に打つ',
+            ],
+          },
+          {
+            id: 's3', title: 'パスがインターセプトされる',
+            desc: 'DFにパスコースを切られる。隣の選手に届かない。',
+            related: [
+              { fileId: '01', match: 'パスキャッチ' },
+              { fileId: '04', match: 'ボールを受ける前' },
+              { fileId: '06', match: 'ポスト' },
+            ],
+            actions: [
+              'パスする前に「DFがどこを見ているか」を確認。インターセプトを狙うDFは前傾している',
+              'パスフェイントで一度DFを動かしてから別方向へ出す',
+              '高い顔横ポジションでボールを持ち、低弾道や角度を使い分ける',
+            ],
+          },
+          {
+            id: 's4', title: 'ポストへのパスが通らない',
+            desc: 'ピボットを使いたいのに、パスコースが見つからない。',
+            related: [
+              { fileId: '06', match: 'ポストOFの核心' },
+              { fileId: '06', match: 'ポストOFのじゃんけん' },
+              { fileId: '14', match: 'ピボット' },
+            ],
+            actions: [
+              'ピボットと Blickkontakt（目合わせ）を作る。目が合った瞬間が合図',
+              'DFを引きつけてから出す（自分のドライブでDFを動かす→ピボット周辺が空く）',
+              'バウンスパス／ロブパスでDFの腕を越える',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'defense', icon: '🛡️', title: '守備で困っている',
+        symptoms: [
+          {
+            id: 'd1', title: '相手のフェイントに釣られる',
+            desc: '体が先に動いてしまって、本物の動きについていけない。',
+            related: [
+              { fileId: '02', match: 'カウンターDFの原則' },
+              { fileId: '04', match: '認知' },
+              { fileId: '20', match: 'G】DFが見ているもの' },
+            ],
+            actions: [
+              '腕／肩／足ではなく「骨盤」を見る訓練をする：骨盤が動いていない動作はフェイク',
+              '1回のフェイントで動かない訓練：「2回目で動く」ルールにする',
+              '距離を保ってポジションを維持。前に出すぎない',
+            ],
+          },
+          {
+            id: 'd2', title: 'カバーのタイミングが合わない',
+            desc: '隣のDFが抜かれたとき、カバーが遅れる／間に合わない。',
+            related: [
+              { fileId: '05', match: 'DF陣形' },
+              { fileId: '15', match: 'DF' },
+              { fileId: '04', match: '声掛け' },
+            ],
+            actions: [
+              'Verschieben（ボール側へのシフト）を常に意識：ボールが動いたら全員が動く',
+              '声掛けで「俺カバー！」「スイッチ！」を明確化する',
+              'ノルウェー式 Hjelpe（ヘルプ）の練習：困っている味方の状況を予測して先回りする',
+            ],
+          },
+          {
+            id: 'd3', title: 'ポストを止められない',
+            desc: 'ポストにパスが通ってシュートを許してしまう。',
+            related: [
+              { fileId: '06', match: 'ポストDFの原則' },
+              { fileId: '06', match: 'ポストDFのじゃんけん' },
+              { fileId: '20', match: 'D】ポスト連携' },
+            ],
+            actions: [
+              'V字位置取り：ポストとゴールを結ぶ線上に常に体を置く',
+              'ポストOFの動きを先読みして先回りする（追いかける守備は遅い）',
+              'バックプレーヤーとの連携：「俺ポスト見る」「お前バックお願い」の声掛け',
+            ],
+          },
+          {
+            id: 'd4', title: '速攻を止められない',
+            desc: '相手の速攻に何度もやられる／バックチェックが遅い。',
+            related: [
+              { fileId: '03', match: 'バックチェック' },
+              { fileId: '03', match: '速攻' },
+              { fileId: '17', match: '数的状況' },
+            ],
+            actions: [
+              'シュートを打った瞬間から帰陣を始める（シュートの結果を見ない）',
+              '最低2名が即時帰陣のルールをチームで徹底',
+              '5on6の場面ではコンパクトゾーンで「2分間を0点で凌ぐ」',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'game', icon: '⏱️', title: '試合運びで困っている',
+        symptoms: [
+          {
+            id: 'g1', title: '接戦終盤で焦って判断ミス',
+            desc: '残り時間や点差が気になって、視野が狭くなる。',
+            related: [
+              { fileId: '18', match: 'プレッシャー下の集中' },
+              { fileId: '18', match: '接戦終盤の心理' },
+              { fileId: '11', match: '残り' },
+            ],
+            actions: [
+              '深呼吸4回で副交感神経をオンにする（心拍を下げる）',
+              '「次の1プレー」だけに意識を絞る／残り時間を見ない',
+              '第一選択を即実行：迷いを断つ。「2秒以内にそこそこ良い」が最善',
+            ],
+          },
+          {
+            id: 'g2', title: 'ミスを引きずる',
+            desc: '1つのミスから3〜5プレー連続でミスが出る。',
+            related: [
+              { fileId: '18', match: 'ミス直後の立て直し' },
+              { fileId: '18', match: 'メンタルの5要素' },
+              { fileId: '20', match: 'I】メンタル状態' },
+            ],
+            actions: [
+              '3秒ルール：0〜1秒ミス認識／1〜2秒Indre dialog／2〜3秒Triggere／3秒以降は完全切替',
+              'Indre dialog：「次は○○する」と未来に向ける（「最悪」「あー」はNG）',
+              '次のプレーで簡単な成功を作る → Mestring（達成感）→ Selvtillit（自信）回復',
+            ],
+          },
+          {
+            id: 'g3', title: 'パッシブプレー警告を取られる',
+            desc: 'ボールを回しすぎて警告が出る／その後ミスして失点する。',
+            related: [
+              { fileId: '08', match: 'パッシブプレー' },
+              { fileId: '11', match: '大量リード' },
+              { fileId: '08', match: '7on6' },
+            ],
+            actions: [
+              '警告が出たら6回以内に必ずシュート。ピボット当てパスで「脅威」を見せながら時間調整',
+              '常にシュートの脅威を見せる：止まったボール回しはNG',
+              '点差が大きい時は速攻を選ばない／確実なシュートのみ',
+            ],
+          },
+          {
+            id: 'g4', title: 'モメンタムを失う',
+            desc: '相手に連続得点されると、流れを取り戻せない。',
+            related: [
+              { fileId: '08', match: 'モメンタム管理' },
+              { fileId: '11', match: 'モメンタム' },
+              { fileId: '20', match: 'F-6' },
+            ],
+            actions: [
+              '連続失点3点で即タイムアウト：モメンタムを切る最優先手段',
+              '選手交代で空気を変える／DF陣形変更でパターンを崩す',
+              'GKへの声かけで精神的サポート（GKの自信が連鎖する）',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'tactics', icon: '🧠', title: '戦術理解で困っている',
+        symptoms: [
+          {
+            id: 't1', title: 'DF陣形の見分けがつかない',
+            desc: '0-6か5-1か、相手の陣形が読めない。',
+            related: [
+              { fileId: '05', match: 'DF陣形' },
+              { fileId: '05', match: '0-6（シックスゼロ）' },
+              { fileId: '17', match: 'DF陣形' },
+            ],
+            actions: [
+              'まず「前衛が何人いるか」だけ数える：0なら0-6、1なら5-1、2なら2-4',
+              '次に「前衛が動いているか」を見る：動く=積極型、動かない=ゾーン型',
+              '相手のシフト方向（Verschieben）を観察：それが攻撃チャンスの起点',
+            ],
+          },
+          {
+            id: 't2', title: 'クローズとワイドの違いがわからない',
+            desc: '自分のDFが「クローズ」か「ワイド」か瞬時に判断できない。',
+            related: [
+              { fileId: '07', match: 'クローズ/ワイド' },
+              { fileId: '20', match: 'A】DF個人の位置' },
+              { fileId: '17', match: 'DF状況別' },
+            ],
+            actions: [
+              'DFが「あなたとゴールの線上」より内側ならクローズ、外側ならワイド',
+              'クローズ→外シュート・サイド展開、ワイド→内突破・ピボットパス',
+              '受ける前から確認する習慣：隣にボールが渡った瞬間からDFの位置を見る',
+            ],
+          },
+          {
+            id: 't3', title: 'フェイント7種を覚えきれない',
+            desc: 'フェイントの種類が多くて、試合で使えない。',
+            related: [
+              { fileId: '02', match: 'フェイント7種類' },
+              { fileId: '02', match: '実戦でのフェイント選択フレーム' },
+              { fileId: '20', match: 'G】DFが見ているもの' },
+            ],
+            actions: [
+              'まず①廻旋（接触対応）と③シュートフェイント（GKもDFも騙せる万能型）の2つだけ覚える',
+              '次に⑤ステップフェイントを追加（足の動きで偽る、最も視認性高い）',
+              '残りは試合で「DFが何を見ているか」別に1つずつ追加していく',
+            ],
+          },
+          {
+            id: 't4', title: '相手の戦術が分析できない',
+            desc: '対戦相手のクセや得意プレーが見えない。',
+            related: [
+              { fileId: '10', match: 'スカウティング' },
+              { fileId: '13', match: 'グローバルトレンド' },
+              { fileId: '10', match: 'ハーフタイム修正' },
+            ],
+            actions: [
+              '前半序盤は「偵察フェーズ」：相手のDF陣形・GKタイプ・エースを特定する',
+              'ハーフタイムで「何が来てるか」「どこに穴があるか」を3つだけ明確にする',
+              'リアルタイムアジャストの引き出しを持つ：相手の変化に対応する手順を覚える',
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  coach: {
+    label: '指導者として相談する', icon: '👔',
+    categories: [
+      {
+        id: 'teach', icon: '📚', title: '指導で困っている',
+        symptoms: [
+          {
+            id: 'c1', title: 'フェイントの体系をどう教えるか',
+            desc: '選手にフェイントを段階的に教えたい。順序が分からない。',
+            related: [
+              { fileId: '02', match: 'フェイント7種類' },
+              { fileId: '19', match: 'フェイント練習' },
+              { fileId: '02', match: 'クロアチア/ユーゴ学派' },
+            ],
+            actions: [
+              '最初に教えるのは①廻旋（接触対応の基礎）と③シュートフェイント（万能型）の2つ',
+              '中級者には⑤ステップ・⑥ボディの「DFが何を見ているか別」を導入',
+              '上級者にはダブルフェイント原則（2種連続）とクロアチア式200種への展開',
+            ],
+          },
+          {
+            id: 'c2', title: 'DF練習のメニュー設計',
+            desc: '6-0の3原則やノルウェー式10技術をどう練習に落とすか。',
+            related: [
+              { fileId: '05', match: '0-6（シックスゼロ）' },
+              { fileId: '15', match: 'DFの10コア技術' },
+              { fileId: '19', match: 'DF練習' },
+            ],
+            actions: [
+              '基礎：Verschieben（シフト）のみを20分繰り返す（ボール側へラインで動く）',
+              '応用：Herausrücken（飛び出し）→ Übergeben（受け渡し）の連動練習',
+              'ノルウェー式10技術を週単位で1-2技術ずつ取り組む（Snapp / Stenge / Hjelpe…）',
+            ],
+          },
+          {
+            id: 'c3', title: 'ポスト指導の体系がほしい',
+            desc: 'ポストプレーヤーの4プレーをどう順序立てて教えるか。',
+            related: [
+              { fileId: '06', match: 'ポストの4プレー' },
+              { fileId: '06', match: 'ポストのポジション取り' },
+              { fileId: '14', match: 'ピボット' },
+            ],
+            actions: [
+              '最初に V字位置取り（ポストとゴールの線）を体に覚えさせる：これが全ての基盤',
+              '4プレーは「回転→フェイク→フラッシュ→スクリーン」の順で導入',
+              'バックとの Blickkontakt 練習で連携の起点を作る',
+            ],
+          },
+          {
+            id: 'c4', title: 'メンタル指導をどうするか',
+            desc: '選手のプレッシャー耐性・ミス対応をどう育てるか。',
+            related: [
+              { fileId: '18', match: 'メンタルの5要素' },
+              { fileId: '18', match: 'レベル別 次の学習ステップ' },
+              { fileId: '15', match: 'メンタル' },
+            ],
+            actions: [
+              'ノルウェー式5要素を共通言語に：Mestring / Selvtillit / Visualisering / Indre dialog / Triggere',
+              '3秒ルールを練習に組み込む：ミス後に「次は○○」と声に出してから次プレーへ',
+              '個別Triggereを作らせる：選手ごとに「集中スイッチ」となる行動を見つけて反復',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'prep', icon: '🎯', title: '試合準備で困っている',
+        symptoms: [
+          {
+            id: 'p1', title: '相手チームの戦術分析',
+            desc: 'スカウティングの観点が漏れる。何を見ればいいか体系化したい。',
+            related: [
+              { fileId: '10', match: 'スカウティング項目' },
+              { fileId: '13', match: 'グローバル' },
+              { fileId: '10', match: 'コンディション' },
+            ],
+            actions: [
+              'スカウティング項目を「攻撃面／守備面／コンディション面」の3軸で記録する',
+              'エース選手のシュートコース偏り・利き手・跳躍方向を必ず特定',
+              '国別戦術DNAから推定：「この相手はデンマーク型か韓国型か」で打ち手の引き出しを変える',
+            ],
+          },
+          {
+            id: 'p2', title: 'ハーフタイム修正',
+            desc: '前半終了後の15分で何を伝えるか。順序がほしい。',
+            related: [
+              { fileId: '10', match: 'ハーフタイム修正' },
+              { fileId: '11', match: '時間帯による戦術変化' },
+              { fileId: '08', match: 'モメンタム' },
+            ],
+            actions: [
+              '修正は「3つだけ」：①攻撃で1つ、②守備で1つ、③メンタル/モメンタムで1つ',
+              '具体的なアクションで指示：「○○を○○する」（「もっと頑張れ」はNG）',
+              '相手の変化に対するカウンター修正の準備：相手がDF変えてきたらこう、と事前共有',
+            ],
+          },
+          {
+            id: 'p3', title: 'タイムアウトの使い時',
+            desc: 'タイムアウトをいつ取るべきか判断に迷う。',
+            related: [
+              { fileId: '08', match: 'タイムアウト' },
+              { fileId: '08', match: 'モメンタム管理' },
+              { fileId: '11', match: 'モメンタム' },
+            ],
+            actions: [
+              '取るべき場面：相手3連続得点（モメンタム切断）／相手モメンタム明確／重要セットプレー前',
+              '取ってはいけない場面：自チームのモメンタム中／序盤（後半に温存）／相手DFが崩れている時',
+              'タイムアウト後の1本目は事前に準備したセットプレーを即実行',
+            ],
+          },
+          {
+            id: 'p4', title: '7on6の発動判断',
+            desc: 'GK外し（7on6）をいつ発動すべきか／本当に有効か疑問。',
+            related: [
+              { fileId: '08', match: '7on6（GK外し）' },
+              { fileId: '13', match: '7on6（GK外し）戦術の実態データ' },
+              { fileId: '20', match: 'E-6' },
+            ],
+            actions: [
+              '定番タイミング：2点差ビハインドで残り2分（フリースロー時か GK スロー時に発動）',
+              '事前準備：3-3／2-4／4-2の3フォーメーションのどれを使うかチームで共有済みか',
+              '空ゴール失点リスク（ロスト17.7%が直結）→ ボールキープが絶対条件',
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
 
 // ─────────────────────────────────────────────
 // 簡易Markdownレンダラ（必要最小限）
@@ -1774,8 +2231,8 @@ const HUB_MODULES = [
   {
     id: 'solve', cls: 'solve', icon: '🎯', target: '選手・指導者',
     title: '課題を解決する',
-    desc: '「○○ができない」「分からない」を入力 → 辞書から処方箋（Coming soon）',
-    enabled: false,
+    desc: '「○○ができない」「わからない」を選ぶ → 辞書から処方箋＋具体アクション',
+    enabled: true,
   },
   {
     id: 'plan', cls: 'plan', icon: '📋', target: '指導者',
@@ -1806,10 +2263,16 @@ function App() {
   const [dictActiveTag, setDictActiveTag] = useState(null);
   const [dictDetail, setDictDetail] = useState(null); // 選択中のセクション
 
+  // 課題を解決する（Phase 2A）の状態
+  const [solveRole, setSolveRole] = useState(null);       // 'player' | 'coach'
+  const [solveCategory, setSolveCategory] = useState(null);
+  const [solveSymptom, setSolveSymptom] = useState(null);
+
   // 辞書ファイルを一度だけfetch
   useEffect(() => {
     if (dictLoaded || dictError) return;
-    if (phase !== 'dictionary' && phase !== 'dictionary-detail') return;
+    // 辞書は dictionary 系のほか、solve の処方箋遷移でも使う
+    if (phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve') return;
 
     (async () => {
       try {
@@ -1932,6 +2395,22 @@ function App() {
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
     setDictDetail(null);
+    setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
+  };
+
+  // 課題を解決する：処方箋の「関連辞書」をタップしたとき
+  const handleOpenRelated = (related) => {
+    // dictSections から fileId + match を含むセクションを探す
+    const target = dictSections.find(s => s.fileId === related.fileId && s.title.includes(related.match));
+    if (target) {
+      setDictDetail(target);
+      setPhase('dictionary-detail');
+      setTimeout(() => window.scrollTo(0, 0), 0);
+    }
+  };
+
+  const handleSolveReset = () => {
+    setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
   };
 
   const handleHubSelect = (modId) => {
@@ -1942,7 +2421,11 @@ function App() {
       setDictDetail(null);
       setPhase('dictionary');
     }
-    else setPhase(modId); // 'solve' / 'plan' → Coming soon 画面
+    else if (modId === 'solve') {
+      handleSolveReset();
+      setPhase('solve');
+    }
+    else setPhase(modId); // 'plan' → Coming soon 画面
   };
 
   const handleDictSectionOpen = (section) => {
@@ -1979,7 +2462,8 @@ function App() {
           <div className="header-title">
             {phase === 'hub' && 'ハンドボール 戦術ハブ'}
             {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
-            {(phase === 'solve' || phase === 'plan') && 'ハンドボール 戦術ハブ'}
+            {phase === 'solve' && '課題を解決する'}
+            {phase === 'plan' && 'ハンドボール 戦術ハブ'}
             {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る — 自己問答'}
           </div>
           {modeInfo && (
@@ -1992,7 +2476,12 @@ function App() {
               辞書
             </div>
           )}
-          {(phase === 'solve' || phase === 'plan') && (
+          {phase === 'solve' && (
+            <div className="header-mode" style={{ color: '#c084fc', background: 'none', border: '1px solid #c084fc33', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+              診断
+            </div>
+          )}
+          {phase === 'plan' && (
             <div className="header-mode" style={{ color: '#94a3b8', background: 'none', border: '1px solid #33415588', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
               準備中
             </div>
@@ -2126,16 +2615,159 @@ function App() {
         </div>
       )}
 
-      {/* Coming Soon プレースホルダ（solve / plan） */}
-      {(phase === 'solve' || phase === 'plan') && (
+      {/* 課題を解決する（Phase 2A） */}
+      {phase === 'solve' && (() => {
+        const roleData = solveRole ? SOLVE_DATA[solveRole] : null;
+        const catData = roleData && solveCategory
+          ? roleData.categories.find(c => c.id === solveCategory) : null;
+        const symData = catData && solveSymptom
+          ? catData.symptoms.find(s => s.id === solveSymptom) : null;
+
+        // ステップ1：役割選択
+        if (!solveRole) {
+          return (
+            <div className="solve-screen">
+              <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
+              <div className="solve-bar">
+                <span className="solve-step-pill">STEP 1 / 3</span>
+                <span className="solve-step-label">どの立場で相談</span>
+              </div>
+              <div className="solve-title">あなたは？</div>
+              <div className="solve-sub">立場に合わせて症状リストが変わります。</div>
+              <div className="solve-role-grid">
+                {Object.entries(SOLVE_DATA).map(([role, data]) => (
+                  <button key={role} className="solve-role-btn" onClick={() => setSolveRole(role)}>
+                    <span className="solve-role-icon">{data.icon}</span>
+                    <span className="solve-role-label">{data.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // ステップ2：カテゴリ選択
+        if (!solveCategory) {
+          return (
+            <div className="solve-screen">
+              <button className="dict-back" onClick={() => setSolveRole(null)}>← 立場の選び直し</button>
+              <div className="solve-bar">
+                <span className="solve-step-pill">STEP 2 / 3</span>
+                <span className="solve-step-label">どんな種類の困りごと</span>
+              </div>
+              <div className="solve-title">どこで困っている？</div>
+              <div className="solve-sub">{roleData.label}</div>
+              <div className="solve-cat-list">
+                {roleData.categories.map(c => (
+                  <button key={c.id} className="solve-cat-btn" onClick={() => setSolveCategory(c.id)}>
+                    <span className="solve-cat-icon">{c.icon}</span>
+                    <span className="solve-cat-title">{c.title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // ステップ3：症状選択
+        if (!solveSymptom) {
+          return (
+            <div className="solve-screen">
+              <button className="dict-back" onClick={() => setSolveCategory(null)}>← カテゴリの選び直し</button>
+              <div className="solve-bar">
+                <span className="solve-step-pill">STEP 3 / 3</span>
+                <span className="solve-step-label">具体的な症状</span>
+              </div>
+              <div className="solve-title">どれが一番近い？</div>
+              <div className="solve-sub">{catData.icon} {catData.title}</div>
+              <div className="solve-sym-list">
+                {catData.symptoms.map(s => (
+                  <button key={s.id} className="solve-sym-btn" onClick={() => setSolveSymptom(s.id)}>
+                    <div className="solve-sym-title">{s.title}</div>
+                    <div className="solve-sym-desc">{s.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // 処方箋表示
+        return (
+          <div className="solve-screen">
+            <button className="dict-back" onClick={() => setSolveSymptom(null)}>← 症状を選び直す</button>
+            <div className="solve-bar">
+              <span className="solve-step-pill">処方箋</span>
+              <span className="solve-step-label">辞書からのアドバイス</span>
+            </div>
+            <div className="solve-rx">
+              {/* 症状サマリー */}
+              <div className="solve-rx-card">
+                <div className="solve-rx-label">⚠ 症状</div>
+                <div className="solve-rx-title">{symData.title}</div>
+                <div className="solve-rx-desc">{symData.desc}</div>
+              </div>
+              {/* 具体的アクション */}
+              <div className="solve-rx-card">
+                <div className="solve-rx-label">✓ 具体的なアクション</div>
+                <div className="solve-rx-actions">
+                  {symData.actions.map((a, i) => (
+                    <div key={i} className="solve-rx-action">
+                      <span className="solve-rx-action-num">{i + 1}</span>
+                      <span>{a}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* 関連辞書 */}
+              <div className="solve-rx-card">
+                <div className="solve-rx-label">📖 関連する辞書セクション</div>
+                {dictLoaded ? (
+                  <div className="solve-rx-related-list">
+                    {symData.related.map((r, i) => {
+                      const fileMeta = DICT_FILES.find(f => f.id === r.fileId);
+                      const section = dictSections.find(s => s.fileId === r.fileId && s.title.includes(r.match));
+                      return (
+                        <div
+                          key={i}
+                          className="solve-rx-related-item"
+                          onClick={() => section && handleOpenRelated(r)}
+                          style={!section ? {opacity: 0.5, cursor: 'default'} : {}}
+                        >
+                          <span className="solve-rx-related-icon">{fileMeta?.icon}</span>
+                          <div className="solve-rx-related-meta">
+                            <div className="solve-rx-related-file">{r.fileId} / {fileMeta?.title}</div>
+                            <div className="solve-rx-related-title">{section ? section.title : `「${r.match}」を含むセクション`}</div>
+                          </div>
+                          <span className="solve-rx-arrow">›</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="solve-rx-missing">辞書を読み込み中…</div>
+                )}
+              </div>
+            </div>
+            {/* 操作ボタン */}
+            <button className="reset-btn" style={{borderColor: '#6b21a8', color: '#c084fc', marginTop: 8}} onClick={handleSolveReset}>
+              ← もう一度診断する
+            </button>
+            <button className="reset-btn" style={{marginTop: 6}} onClick={handleBackToHub}>
+              ホームに戻る
+            </button>
+          </div>
+        );
+      })()}
+
+      {/* Coming Soon プレースホルダ（plan のみ） */}
+      {phase === 'plan' && (
         <div className="soon-screen">
-          <div className="soon-icon">{phase === 'solve' ? '🎯' : '📋'}</div>
-          <div className="soon-title">{phase === 'solve' ? '課題を解決する' : '練習を組む'}</div>
+          <div className="soon-icon">📋</div>
+          <div className="soon-title">練習を組む</div>
           <div className="soon-desc">
-            このモジュールは Phase 2 で実装予定です。<br /><br />
-            {phase === 'solve'
-              ? '「○○ができない」「分からない」を入力すると、辞書から処方箋を提案するツール。'
-              : 'テーマ・レベル・期間を選ぶと、辞書19（練習メニュー）と20（判断ツリー）から練習計画を組み立ててPDF出力するツール。'}
+            このモジュールは Phase 2B で実装予定です。<br /><br />
+            テーマ・レベル・期間を選ぶと、辞書19（練習メニュー）と20（判断ツリー）から練習計画を組み立てるツール。
           </div>
           <button className="reset-btn" style={{maxWidth: 320}} onClick={handleBackToHub}>← ホームに戻る</button>
         </div>
