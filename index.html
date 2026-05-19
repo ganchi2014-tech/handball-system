@@ -291,7 +291,10 @@
       scrollbar-width: none; -webkit-overflow-scrolling: touch;
     }
     .dict-tags::-webkit-scrollbar { display: none; }
-    .dict-tags.expanded { flex-wrap: wrap; overflow: visible; }
+    .dict-tags.expanded {
+      flex-wrap: wrap; overflow-y: auto; max-height: 36vh;
+      padding-bottom: 4px;
+    }
     .dict-tag {
       flex-shrink: 0; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
       padding: 8px 14px; font-size: var(--fs-xs); font-weight: 700; color: var(--tx-muted);
@@ -365,6 +368,11 @@
       background: #0f172a; color: #67e8f9; padding: 1px 6px; border-radius: 4px;
       font-family: 'SF Mono', Consolas, monospace; font-size: 12px;
     }
+    .dict-inline-link {
+      color: var(--c-dict); text-decoration: underline;
+      text-decoration-style: dotted; text-underline-offset: 3px; cursor: pointer;
+    }
+    .dict-inline-link:active { color: #67e8f9; }
     .dict-detail-body pre {
       background: #020617; border: 1px solid #1e293b; border-radius: 8px;
       padding: 12px 14px; overflow-x: auto; margin: 10px 0;
@@ -715,6 +723,98 @@
       .plan-constraint-tag { background: #555 !important; color: white !important; }
     }
 
+    /* ──────────────── 用語集モーダル＋フェイント凡例 ──────────────── */
+    .help-btn {
+      background: var(--surface-1); border: 1.5px solid var(--border); border-radius: 999px;
+      padding: 6px 12px; font-size: var(--fs-xs); font-weight: 700; color: var(--tx-secondary);
+      cursor: pointer; font-family: inherit; min-height: 32px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .help-btn:active { background: #2a3148; }
+    .glossary-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 100; display: flex; align-items: flex-end; justify-content: center;
+      animation: fadeIn 0.2s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .glossary-modal {
+      background: var(--surface-1); width: 100%; max-width: 480px;
+      max-height: 88vh; border-radius: 18px 18px 0 0; overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+      animation: slideUp 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .glossary-head {
+      padding: 16px 18px 12px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .glossary-title { font-size: var(--fs-lg); font-weight: 800; color: var(--tx-primary); }
+    .glossary-close {
+      background: none; border: none; color: var(--tx-muted); font-size: 24px;
+      cursor: pointer; width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit;
+    }
+    .glossary-close:active { background: var(--surface-2); color: var(--tx-primary); }
+    .glossary-body { flex: 1; overflow-y: auto; padding: 12px 18px 32px; }
+    .glossary-group {
+      font-size: var(--fs-xs); font-weight: 800; color: var(--c-dict);
+      letter-spacing: 0.06em; margin: 14px 0 6px;
+      text-transform: uppercase;
+    }
+    .glossary-group:first-child { margin-top: 0; }
+    .glossary-item {
+      padding: 10px 12px; border-radius: var(--r-sm);
+      background: var(--surface-2); margin-bottom: 6px;
+    }
+    .glossary-term {
+      font-size: var(--fs-sm); font-weight: 800; color: var(--tx-primary);
+      margin-bottom: 3px;
+    }
+    .glossary-desc {
+      font-size: var(--fs-xs); color: var(--tx-muted); line-height: 1.6;
+    }
+
+    /* フェイント凡例（処方箋・プランで使う） */
+    .feint-legend {
+      background: var(--surface-2); border: 1px dashed color-mix(in oklab, var(--c-solve) 30%, transparent);
+      border-radius: var(--r-sm); padding: 10px 12px; margin-top: 8px;
+    }
+    .feint-legend-label {
+      font-size: 10px; font-weight: 800; color: var(--c-solve);
+      letter-spacing: 0.06em; margin-bottom: 6px;
+    }
+    .feint-legend-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px;
+    }
+    .feint-legend-row { display: flex; align-items: baseline; gap: 4px; font-size: 11px; line-height: 1.5; }
+    .feint-legend-num { color: var(--c-solve); font-weight: 800; }
+    .feint-legend-name { color: var(--tx-primary); font-weight: 700; }
+    .feint-legend-desc { color: var(--tx-muted); font-size: 10px; margin-left: 2px; }
+
+    /* 用語集FAB（右下固定） */
+    .help-fab {
+      position: fixed; right: 16px; bottom: 16px; z-index: 20;
+      background: var(--surface-1); border: 1.5px solid var(--c-dict);
+      color: #67e8f9; border-radius: 999px; padding: 10px 16px;
+      font-size: var(--fs-sm); font-weight: 800; cursor: pointer;
+      font-family: inherit; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .help-fab:active { transform: scale(0.96); background: #0f2837; }
+
+    /* お気に入りボタン */
+    .fav-btn {
+      background: none; border: 1px solid var(--border);
+      border-radius: 999px; padding: 5px 12px; font-size: var(--fs-xs);
+      font-weight: 700; color: var(--tx-muted); cursor: pointer;
+      font-family: inherit; display: inline-flex; align-items: center; gap: 4px;
+      transition: all var(--t-fast); min-height: 32px;
+    }
+    .fav-btn.active { color: #fbbf24; border-color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
+    .fav-btn:active { transform: scale(0.96); }
+
     /* Coming soon プレースホルダー */
     .soon-screen {
       flex: 1; display: flex; flex-direction: column; justify-content: center;
@@ -759,6 +859,79 @@ const DICT_FILES = [
 
 // 全タグ（フィルタチップ用、重複排除）
 const ALL_TAGS = Array.from(new Set(DICT_FILES.flatMap(f => f.tags))).sort();
+
+// ─────────────────────────────────────────────
+// 用語集（知識浅めユーザー向け）
+// ─────────────────────────────────────────────
+const GLOSSARY = [
+  { group: '基本ポジション', items: [
+    { term: 'バックプレーヤー（バック）', desc: '外側からシュートを打つ役。攻撃の中心。左バック・右バック・センターバックの3人' },
+    { term: 'ピボット', desc: '相手ゴール6mライン上に張り付くポストプレーヤー。「ピボ」「ポスト」とも' },
+    { term: 'ウィング', desc: '左右の端で角度から攻めるサイドプレーヤー' },
+    { term: 'センター（CB）', desc: '攻撃を組み立てる司令塔。バックの真ん中' },
+    { term: 'GK', desc: 'ゴールキーパー。守りの最後の砦' },
+  ]},
+  { group: 'DF用語', items: [
+    { term: 'クローズ', desc: 'DFが内側（ゴール寄り）に詰めている状態。外が空く' },
+    { term: 'ワイド', desc: 'DFが外側に立っている状態。内が空く' },
+    { term: '0-6（シックスゼロ）', desc: '6人全員がゴール前一列に並ぶ守備陣形。基本' },
+    { term: '5-1（ファイブワン）', desc: '前衛1人＋後衛5人の陣形。前衛がプレッシャー' },
+    { term: '2-4 / 3-2-1 / 3-3', desc: '前衛と後衛の人数を示す数字。前のことから書く' },
+    { term: 'マンツーマン', desc: '1対1で相手を担当する守備' },
+  ]},
+  { group: 'OF用語', items: [
+    { term: '速攻', desc: 'GKがボールを取った直後の素早い攻撃。1stウェーブ・2ndウェーブの2段階' },
+    { term: 'セットOF', desc: 'ゆっくり並んでから始める攻撃。陣形を組み立てる' },
+    { term: '7on6', desc: 'GKを外して7人で攻める数的優位戦術。負け試合終盤の博打' },
+    { term: '5on6', desc: '退場で1人少なく守る状況' },
+    { term: 'クロス', desc: '2人が交差する動きでマーカーを混乱させる' },
+    { term: 'ギブ＆ゴー', desc: 'パスを出した後にゴールへ走り込んでリターンを受ける' },
+    { term: 'ピック＆ロール', desc: 'ピボットがスクリーンしてからゴール方向に転身' },
+  ]},
+  { group: '技術用語', items: [
+    { term: 'フェイント7種', desc: '①廻旋／②ターン／③シュート／④パス／⑤ステップ／⑥ボディ／⑦スピードの7種類' },
+    { term: 'ダブルフェイント原則', desc: '上記7種から2種を連続でかける使い方。1回耐えるDFを超える' },
+    { term: '早打ち', desc: 'ジャンプの最高点に達する前に放つシュート。先読み型GK対策' },
+    { term: 'バックハンドフェイク', desc: 'シュートフォームを作って手首を逆方向に返す技。GK予測撹乱' },
+    { term: '山側／谷側', desc: 'DFが斜め構えしたときの体の高い側（山）／低い側（谷）' },
+    { term: '勝ち位置', desc: 'ボールを受ける前にDFより先に有利な位置を取ること' },
+  ]},
+  { group: '海外用語（独・西・ノル）', items: [
+    { term: 'Verschieben（独：フェルシーベン）', desc: 'DFがボール側へ一斉に横移動するシフト。6-0の基本動作' },
+    { term: 'Herausrücken（独：ヘラウスリューケン）', desc: 'DFが前に飛び出してプレッシャーをかける' },
+    { term: 'Übergeben（独：ユーバーゲーベン）', desc: '飛び出した後、隣のDFにマークを渡す' },
+    { term: 'Par/Impar（西：パル／インパル）', desc: '直接マークのDF＝Par、隣のDF＝Impar。スペイン式戦術' },
+    { term: 'Blickkontakt（独：ブリックコンタクト）', desc: 'バックとピボットの目合わせ。連携の合図' },
+    { term: 'Mestring（ノル：メストリング）', desc: '達成感・できた実感。ノルウェー式メンタル5要素の1つ' },
+    { term: 'Selvtillit（ノル）', desc: '自信。Mestring と循環する' },
+  ]},
+  { group: '世界の有名選手・監督', items: [
+    { term: 'Mathias Gidsel', desc: '3年連続IHF世界最優秀選手（2023-25）。デンマーク代表・Füchse Berlin。右バック' },
+    { term: 'Nikolaj Jacobsen', desc: 'デンマーク代表監督。コードワード戦術の名手' },
+    { term: 'Carlos Ortega', desc: 'FC Barcelona監督。スペイン式の頂点' },
+    { term: 'Xavi Pascual', desc: 'One Veszprém HC監督（元バルセロナ）。数的優劣の戦術専門家' },
+    { term: 'Stefan Madsen', desc: 'PSG監督（元Aalborg）。デンマーク式速攻と国際フィジカル' },
+    { term: 'Bennet Wiegert', desc: 'SC Magdeburg監督。CL 2025優勝。「戦術の狐」' },
+  ]},
+  { group: 'コンセプト', items: [
+    { term: 'じゃんけん構造', desc: 'コーチ哲学：「絶対最強の戦術はない、相性のみ」。3すくみの考え方' },
+    { term: 'エコロジカルアプローチ', desc: '練習に「制約」を入れて試合に近い状況を再現する。選手が自分で考えて動く力を育てる' },
+    { term: '制約主導（タスク／環境／選手）', desc: 'タスク＝ルール、環境＝道具・配置、選手＝役割の3種類' },
+    { term: '認知→判断→行動', desc: '全プレーの3段階構造。どこかで遅れると相手の先手を取られる' },
+    { term: '2秒の壁', desc: 'ボールを受けてから2秒以内に判断できているか試合後に振り返る基準' },
+  ]},
+];
+
+// フェイント7種の凡例（コンパクト版）
+const FEINT_LEGEND = [
+  { n: '①', name: '廻旋', desc: 'DFの腕を回して外す' },
+  { n: '②', name: 'ターン', desc: '体ごと回転' },
+  { n: '③', name: 'シュート', desc: 'シュートフォームで打たない' },
+  { n: '④', name: 'パス', desc: 'パスフリして出さない' },
+  { n: '⑤', name: 'ステップ', desc: '踏み込む足の方向を偽る' },
+  { n: '⑥', name: 'ボディ', desc: '肩・上半身だけ傾ける' },
+  { n: '⑦', name: 'スピード', desc: '急停止→再加速の緩急' },
+];
 
 // ─────────────────────────────────────────────
 // Phase 2A：症状診断のデータ
@@ -1557,12 +1730,18 @@ function buildPlan(themeIds, levelId, totalMinutes) {
 
   themeDrills.forEach((td, idx) => {
     const baseSum = td.drills.reduce((s, d) => s + d.minutes, 0);
-    const share = perThemeBaseSum > 0 ? Math.round(remaining * (baseSum / perThemeBaseSum)) : 0;
+    let share = perThemeBaseSum > 0 ? Math.round(remaining * (baseSum / perThemeBaseSum)) : 0;
+    // 1テーマ時の極端な縮小を防ぐ：そのテーマのフルベース時間が share より大きく、
+    // 残時間に余裕があれば share を増やす（最大 remaining まで）
+    if (themeDrills.length === 1) share = remaining;
     let used = 0;
     const items = [];
     for (const d of td.drills) {
       if (used >= share) break;
-      const allotted = Math.min(d.minutes, share - used);
+      // share に対する drill ベース時間の比率で配分 → ベース合計を超えるなら倍率かける
+      const ratio = baseSum > 0 ? share / baseSum : 1;
+      const scaled = Math.max(5, Math.round(d.minutes * Math.max(1, ratio)));
+      const allotted = Math.min(scaled, share - used);
       if (allotted >= 5) {
         items.push({ ...d, minutes: allotted });
         used += allotted;
@@ -1619,6 +1798,8 @@ function renderMarkdown(md) {
     t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<span style="color:#67e8f9">$1</span>');
     // [[ref]] 内部参照
     t = t.replace(/\[\[([^\]]+)\]\]/g, '<span style="color:#fbbf24">[[$1]]</span>');
+    // 辞書ファイル名（XX_name.md 形式）→ クリック可能リンクに
+    t = t.replace(/(\d{2})_([a-z_]+)\.md/g, '<a class="dict-inline-link" data-file-id="$1" href="#" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent(\'dict-jump\', {detail: \'$1\'}));">$1_$2.md</a>');
     return t;
   }
 
@@ -1761,7 +1942,13 @@ function splitSections(md, fileMeta) {
         fileTitle: fileMeta.title,
         fileIcon: fileMeta.icon,
         fileTags: fileMeta.tags,
-        title: m[2].replace(/【([^】]+)】/g, '$1').replace(/「([^」]+)」/g, '$1'),
+        // 【A】→ A の連結バグ防止：単一英数字括弧は「A. 」形式、複数文字は中身のみ＋スペース
+        title: m[2]
+          .replace(/【([A-Za-z0-9]{1,2})】/g, '$1. ')
+          .replace(/【([^】]+)】/g, '$1 ')
+          .replace(/「([^」]+)」/g, '$1 ')
+          .replace(/\s+/g, ' ')
+          .trim(),
         level: m[1].length,
         body: line + '\n',
       };
@@ -3005,7 +3192,7 @@ const HUB_MODULES = [
   {
     id: 'solve', cls: 'solve', icon: '🎯', target: '選手・指導者',
     title: '課題を解決する',
-    desc: '「○○ができない」「わからない」を選ぶ → 辞書から処方箋＋具体アクション',
+    desc: '「○○ができない」「わからない」を選ぶ → 辞書からアドバイス＋具体アクション',
     enabled: true,
   },
   {
@@ -3051,6 +3238,25 @@ function App() {
   const [planResult, setPlanResult] = useState(null);     // 生成結果
   const [planSaved, setPlanSaved] = useState([]);         // 保存済みプラン
   const [planCopyMsg, setPlanCopyMsg] = useState('');     // コピー成功表示
+
+  // 用語集モーダル
+  const [glossaryOpen, setGlossaryOpen] = useState(false);
+
+  // 辞書お気に入り
+  const [dictFavs, setDictFavs] = useState([]); // [section.id, ...]
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('dict-favs');
+      if (raw) setDictFavs(JSON.parse(raw));
+    } catch (e) {}
+  }, []);
+  const toggleFav = (sectionId) => {
+    setDictFavs(prev => {
+      const next = prev.includes(sectionId) ? prev.filter(x => x !== sectionId) : [sectionId, ...prev];
+      try { localStorage.setItem('dict-favs', JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
+  };
 
   // 起動時に保存済みプランを読み込む
   useEffect(() => {
@@ -3144,6 +3350,21 @@ function App() {
       if (raw) setSolveHistory(JSON.parse(raw));
     } catch (e) { /* ignore */ }
   }, []);
+
+  // 辞書詳細内のファイル名リンク→対象ファイルの先頭セクションへ遷移
+  useEffect(() => {
+    const handler = (e) => {
+      const fileId = e.detail;
+      const target = dictSections.find(s => s.fileId === fileId);
+      if (target) {
+        setDictDetail(target);
+        setPhase('dictionary-detail');
+        setTimeout(() => window.scrollTo(0, 0), 0);
+      }
+    };
+    window.addEventListener('dict-jump', handler);
+    return () => window.removeEventListener('dict-jump', handler);
+  }, [dictSections]);
 
   // 履歴に追加する
   const addSolveHistory = (role, category, symptom) => {
@@ -3522,6 +3743,22 @@ function App() {
             )}
             {dictLoaded && (
               <>
+                {/* お気に入りセクション */}
+                {dictFavs.length > 0 && !dictQuery && dictActiveTag === null && (() => {
+                  const favSections = dictFavs.map(fid => dictSections.find(s => s.id === fid)).filter(Boolean);
+                  if (favSections.length === 0) return null;
+                  return (
+                    <div style={{marginBottom: 12}}>
+                      <div className="dict-meta-line" style={{color: '#fbbf24'}}>★ お気に入り（{favSections.length}）</div>
+                      {favSections.map(s => (
+                        <div key={s.id} className="dict-result-card" onClick={() => handleDictSectionOpen(s)} style={{borderColor: 'rgba(251, 191, 36, 0.4)'}}>
+                          <div className="dict-result-filename">{s.fileIcon} {s.fileTitle}（{s.fileId}）</div>
+                          <div className="dict-result-section">{s.title}</div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
                 <div className="dict-meta-line">
                   {filteredSections.length} 件のセクション
                   {dictQuery && ` ／ 検索: "${dictQuery}"`}
@@ -3554,10 +3791,18 @@ function App() {
             <button className="dict-back" onClick={handleDictBack}>← 戻る（辞書一覧）</button>
             <div className="dict-detail-file">{dictDetail.fileIcon} {dictDetail.fileTitle}（{dictDetail.fileId}）</div>
             <div className="dict-detail-title">{dictDetail.title}</div>
-            <div className="dict-detail-tags">
-              {dictDetail.fileTags.map(t => (
-                <span key={t} className="dict-detail-tag">{t}</span>
-              ))}
+            <div className="dict-detail-tags" style={{justifyContent: 'space-between', alignItems: 'center'}}>
+              <div style={{display: 'flex', gap: 4, flexWrap: 'wrap', flex: 1}}>
+                {dictDetail.fileTags.map(t => (
+                  <span key={t} className="dict-detail-tag">{t}</span>
+                ))}
+              </div>
+              <button
+                className={`fav-btn ${dictFavs.includes(dictDetail.id) ? 'active' : ''}`}
+                onClick={() => toggleFav(dictDetail.id)}
+              >
+                {dictFavs.includes(dictDetail.id) ? '★ お気に入り済み' : '☆ お気に入り'}
+              </button>
             </div>
           </div>
           <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body)}} />
@@ -3725,24 +3970,31 @@ function App() {
           );
         }
 
-        // 処方箋表示
+        // 処方箋（=結果）表示
         return (
           <div className="solve-screen">
             <button className="dict-back" onClick={() => setSolveSymptom(null)}>← 戻る（症状を選び直す）</button>
             <div className="solve-bar">
-              <span className="solve-step-pill">処方箋</span>
-              <span className="solve-step-label">辞書からのアドバイス</span>
+              <span className="solve-step-pill">アドバイス</span>
+              <span className="solve-step-label">辞書からのヒント</span>
+            </div>
+            <div className="step-dots">
+              <span className="step-dot done"></span>
+              <span className="step-bar done"></span>
+              <span className="step-dot done"></span>
+              <span className="step-bar done"></span>
+              <span className="step-dot done"></span>
             </div>
             <div className="solve-rx">
               {/* 症状サマリー */}
               <div className="solve-rx-card">
-                <div className="solve-rx-label">⚠ 症状</div>
+                <div className="solve-rx-label">⚠ 困っていること</div>
                 <div className="solve-rx-title">{symData.title}</div>
                 <div className="solve-rx-desc">{symData.desc}</div>
               </div>
               {/* 具体的アクション */}
               <div className="solve-rx-card">
-                <div className="solve-rx-label">✓ 具体的なアクション</div>
+                <div className="solve-rx-label">✓ 試してみよう（具体的アクション）</div>
                 <div className="solve-rx-actions">
                   {symData.actions.map((a, i) => (
                     <div key={i} className="solve-rx-action">
@@ -3751,6 +4003,21 @@ function App() {
                     </div>
                   ))}
                 </div>
+                {/* アクションに①〜⑦が含まれていたらフェイント凡例を出す */}
+                {symData.actions.some(a => /[①②③④⑤⑥⑦]/.test(a)) && (
+                  <div className="feint-legend">
+                    <div className="feint-legend-label">🔖 フェイント番号の意味（①〜⑦）</div>
+                    <div className="feint-legend-grid">
+                      {FEINT_LEGEND.map(f => (
+                        <div key={f.n} className="feint-legend-row">
+                          <span className="feint-legend-num">{f.n}</span>
+                          <span className="feint-legend-name">{f.name}</span>
+                          <span className="feint-legend-desc">{f.desc}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               {/* 関連辞書 */}
               <div className="solve-rx-card">
@@ -3984,6 +4251,36 @@ function App() {
 
           {/* トースト */}
           {planCopyMsg && <div className="plan-toast">{planCopyMsg}</div>}
+        </div>
+      )}
+
+      {/* 用語集FAB（hub以外で表示） */}
+      {phase !== 'hub' && (
+        <button className="help-fab" onClick={() => setGlossaryOpen(true)} title="用語集">📘 用語</button>
+      )}
+
+      {/* 用語集モーダル */}
+      {glossaryOpen && (
+        <div className="glossary-overlay" onClick={() => setGlossaryOpen(false)}>
+          <div className="glossary-modal" onClick={e => e.stopPropagation()}>
+            <div className="glossary-head">
+              <span className="glossary-title">📘 用語集</span>
+              <button className="glossary-close" onClick={() => setGlossaryOpen(false)} aria-label="閉じる">×</button>
+            </div>
+            <div className="glossary-body">
+              {GLOSSARY.map((g, gi) => (
+                <div key={gi}>
+                  <div className="glossary-group">{g.group}</div>
+                  {g.items.map((it, ii) => (
+                    <div key={ii} className="glossary-item">
+                      <div className="glossary-term">{it.term}</div>
+                      <div className="glossary-desc">{it.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
