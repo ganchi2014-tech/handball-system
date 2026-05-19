@@ -413,6 +413,153 @@
     .solve-history-meta { flex: 1; min-width: 0; font-size: 12px; color: #cbd5e1; }
     .solve-history-time { font-size: 10px; color: #475569; }
 
+    /* ──────────────── 練習を組む（Phase 2B） ──────────────── */
+    .plan-screen { flex: 1; display: flex; flex-direction: column; padding: 14px 16px 36px; gap: 12px; }
+    .plan-step-pill { background: #1f1610; border: 1px solid #92400e; color: #fcd34d; font-size: 11px; padding: 2px 10px; border-radius: 999px; font-weight: 700; }
+    .plan-step-label { font-size: 11px; font-weight: 800; color: #f59e0b; letter-spacing: 0.1em; text-transform: uppercase; }
+    .plan-title { font-size: 19px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
+    .plan-sub { font-size: 13px; color: #94a3b8; line-height: 1.7; }
+
+    /* テーマ複数選択チップ */
+    .plan-themes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .plan-theme-chip {
+      background: #1e293b; border: 1.5px solid #334155; border-radius: 999px;
+      padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+      color: #cbd5e1; font-size: 13px; font-weight: 600; transition: all 0.15s;
+    }
+    .plan-theme-chip:active { transform: scale(0.96); }
+    .plan-theme-chip.active { background: #2a1f0a; border-color: #f59e0b; color: #fcd34d; }
+    .plan-theme-chip-icon { font-size: 15px; }
+
+    /* レベル選択（セグメント） */
+    .plan-levels { display: flex; gap: 8px; }
+    .plan-level-btn {
+      flex: 1; background: #1e293b; border: 1.5px solid #334155; border-radius: 10px;
+      padding: 12px 8px; text-align: center; color: #cbd5e1; cursor: pointer;
+      transition: all 0.15s; display: flex; flex-direction: column; gap: 3px;
+    }
+    .plan-level-btn.active { background: #2a1f0a; border-color: #f59e0b; }
+    .plan-level-label { font-size: 14px; font-weight: 800; color: #fcd34d; }
+    .plan-level-desc { font-size: 10px; color: #94a3b8; line-height: 1.4; }
+
+    /* 時間選択 */
+    .plan-durations { display: flex; gap: 8px; }
+    .plan-duration-btn {
+      flex: 1; background: #1e293b; border: 1.5px solid #334155; border-radius: 10px;
+      padding: 14px 8px; text-align: center; color: #cbd5e1; cursor: pointer;
+      font-size: 14px; font-weight: 800; transition: all 0.15s;
+    }
+    .plan-duration-btn.active { background: #2a1f0a; border-color: #f59e0b; color: #fcd34d; }
+    .plan-duration-btn small { display: block; font-size: 10px; font-weight: 500; color: #94a3b8; margin-top: 2px; }
+
+    .plan-gen-btn {
+      background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
+      border: none; border-radius: 12px; padding: 16px; font-size: 15px;
+      font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px;
+      transition: all 0.15s;
+    }
+    .plan-gen-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .plan-gen-btn:not(:disabled):active { transform: scale(0.98); opacity: 0.9; }
+
+    /* 練習プラン表示 */
+    .plan-output { display: flex; flex-direction: column; gap: 10px; }
+    .plan-header {
+      background: linear-gradient(135deg, #2a1f0a, #1e293b); border: 1px solid #92400e;
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .plan-header-time { font-size: 22px; font-weight: 800; color: #fcd34d; }
+    .plan-header-meta { font-size: 12px; color: #94a3b8; margin-top: 4px; line-height: 1.6; }
+
+    .plan-block {
+      background: #1e293b; border-radius: 12px; padding: 12px 14px;
+      border-left: 4px solid #f59e0b;
+    }
+    .plan-block-title { font-size: 14px; font-weight: 800; color: #fcd34d; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .plan-block-time { font-size: 11px; color: #94a3b8; margin-left: auto; }
+    .plan-item {
+      background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+      padding: 10px 12px; margin-top: 6px; cursor: pointer; transition: all 0.15s;
+    }
+    .plan-item:active { background: #1a1f2e; border-color: #f59e0b; }
+    .plan-item-row { display: flex; align-items: center; gap: 8px; }
+    .plan-item-time {
+      background: #f59e0b; color: #1c1917; font-size: 11px; font-weight: 800;
+      padding: 2px 8px; border-radius: 999px; flex-shrink: 0; min-width: 36px; text-align: center;
+    }
+    .plan-item-title { font-size: 13px; font-weight: 700; color: #f1f5f9; flex: 1; line-height: 1.4; }
+    .plan-item-arrow { color: #475569; flex-shrink: 0; }
+    .plan-item-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; margin-top: 6px; padding-left: 4px; }
+
+    .plan-wc {
+      background: #131f33; border: 1px dashed #475569; border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .plan-wc-label { font-size: 11px; color: #64748b; font-weight: 700; }
+    .plan-wc-time { font-size: 12px; color: #cbd5e1; font-weight: 800; margin-left: 6px; }
+    .plan-wc-desc { font-size: 12px; color: #94a3b8; margin-top: 4px; line-height: 1.6; }
+
+    .plan-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .plan-action-btn {
+      flex: 1; background: #0f172a; border: 1px solid #f59e0b44; border-radius: 10px;
+      padding: 12px; font-size: 13px; font-weight: 700; color: #fcd34d;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .plan-action-btn:active { background: #1f1610; border-color: #f59e0b; }
+    .plan-action-btn.primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white; border-color: transparent;
+    }
+    .plan-action-btn.primary:active { opacity: 0.85; }
+
+    .plan-aim {
+      background: #131f33; border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0;
+      padding: 8px 12px; font-size: 13px; color: #fcd34d; font-weight: 700; line-height: 1.5;
+    }
+    .plan-extra {
+      background: #131f33; border: 1px dashed #92400e; border-radius: 8px;
+      padding: 8px 12px; font-size: 12px; color: #fcd34d; line-height: 1.6;
+    }
+    .plan-toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1c1917; border: 1px solid #f59e0b; color: #fcd34d;
+      padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700;
+      z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: toastIn 0.2s ease-out;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translate(-50%, 8px); }
+      to   { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .plan-saved-section {
+      background: #131f33; border: 1px solid #1e293b; border-radius: 10px;
+      padding: 10px 12px; margin-top: 12px;
+    }
+    .plan-saved-label { font-size: 10px; font-weight: 800; color: #f59e0b; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .plan-saved-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; background: #0f172a; border: 1px solid #1e293b;
+      border-radius: 8px; cursor: pointer; margin-top: 4px;
+      transition: all 0.15s;
+    }
+    .plan-saved-item:active { background: #1f1610; border-color: #f59e0b; }
+    .plan-saved-meta { flex: 1; min-width: 0; font-size: 12px; color: #cbd5e1; line-height: 1.4; }
+    .plan-saved-aim { font-size: 13px; color: #fcd34d; font-weight: 700; }
+    .plan-saved-detail { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+    /* 印刷時のスタイル */
+    @media print {
+      body { background: white !important; color: black !important; }
+      .header, .dict-back, .plan-actions, .reset-btn { display: none !important; }
+      .plan-screen { padding: 0 !important; }
+      .plan-header, .plan-block, .plan-item, .plan-wc {
+        background: white !important; border-color: #888 !important; color: black !important; break-inside: avoid;
+      }
+      .plan-header-time, .plan-block-title, .plan-item-title, .plan-wc-time { color: black !important; }
+      .plan-header-meta, .plan-block-time, .plan-item-desc, .plan-wc-desc, .plan-wc-label { color: #444 !important; }
+      .plan-item-time { background: #444 !important; color: white !important; }
+    }
+
     /* Coming soon プレースホルダー */
     .soon-screen {
       flex: 1; display: flex; flex-direction: column; justify-content: center;
@@ -839,6 +986,267 @@ const SOLVE_DATA = {
     ],
   },
 };
+
+// ─────────────────────────────────────────────
+// Phase 2B：練習計画ビルダーのデータ
+// ─────────────────────────────────────────────
+// 各テーマ × レベル × その中の練習メニュー（minutes 込み）
+// 辞書19/20 の練習章を骨格に、初級〜上級で難度を変える
+const DRILL_THEMES = [
+  {
+    id: 'shoot', icon: '🎯', label: 'シュート', tags: ['シュート'],
+    drills: {
+      basic: [
+        { title: '最高点シュート反復', minutes: 12, fileId: '19', match: 'シュート', desc: '助走3歩→2ステップ→最高点。打点と威力を体に覚えさせる。1セット30本×3' },
+        { title: 'コース打ち分け', minutes: 10, fileId: '01', match: 'シュート', desc: '5コース（左上/右上/中央/左下/右下）各10本。コース精度を上げる。' },
+      ],
+      mid: [
+        { title: '早打ち（上昇中の打点）', minutes: 15, fileId: '19', match: 'シュート', desc: '1ステップ踏み切りで上昇中に打つ。先読み型GK対策。150本ノック。' },
+        { title: '打点の使い分け（最高点⇔早打ち）', minutes: 10, fileId: '01', match: 'シュート', desc: '相手GKタイプを想定して打点を切り替える練習。' },
+      ],
+      adv: [
+        { title: 'バックハンドフェイク', minutes: 15, fileId: '19', match: 'バックハンドフェイク', desc: '手首を逆方向に返す。先読み型GKを最も狂わせる技術。壁打ち→ゴールへ。' },
+        { title: 'GKタイプ判定→対応シュート', minutes: 15, fileId: '05', match: 'GK', desc: '先読み型／コース絞り型を想定→各対応シュートを使い分ける。' },
+      ],
+    },
+  },
+  {
+    id: 'feint', icon: '⚡', label: 'フェイント', tags: ['フェイント'],
+    drills: {
+      basic: [
+        { title: 'フェイント3種ローテ（廻旋・シュート・ステップ）', minutes: 15, fileId: '19', match: 'フェイント', desc: '①廻旋／③シュート／⑤ステップを各10回×3セット。基本3種を体に。' },
+        { title: '鏡前フェイント練習', minutes: 10, fileId: '19', match: '鏡前', desc: '鏡の前で動きの大きさを客観視。予備動作を消す。' },
+      ],
+      mid: [
+        { title: 'フェイント7種ローテ', minutes: 20, fileId: '19', match: 'フェイント', desc: '7種全てを各10回×3セット = 210回。レパートリーを広げる。' },
+        { title: 'フェイント1on1（フィードバック付き）', minutes: 15, fileId: '19', match: 'フェイント', desc: 'DF役が「何を見て反応したか」をフィードバック。狙い通り動かせたか確認。' },
+      ],
+      adv: [
+        { title: 'ダブルフェイントの原則（2種連続）', minutes: 15, fileId: '02', match: 'ダブルフェイント', desc: '7種から任意の2種を連続でかける。1回耐えるDFを超える。' },
+        { title: 'DFが何を見ているか別の対応', minutes: 20, fileId: '02', match: '実戦でのフェイント選択', desc: 'DF役の視線（腕／肩／足／骨盤）を意識して見せ、対応フェイントを選ぶ。' },
+      ],
+    },
+  },
+  {
+    id: 'dribble', icon: '🤾', label: 'ドリブル', tags: ['ドリブル'],
+    drills: {
+      basic: [
+        { title: 'ドリブル6種ローテ', minutes: 12, fileId: '19', match: 'ドリブル', desc: 'スピード／コントロール／低位置／クロスオーバー／バックビハインド／ロールターン。コーン5本ジグザグ。' },
+      ],
+      mid: [
+        { title: 'ドリブル中のフェイント', minutes: 12, fileId: '01', match: 'ドリブル', desc: 'ジャブステップ／ヘジテーション／イン&アウト／スピンムーブ。' },
+      ],
+      adv: [
+        { title: '密集地帯ドリブル（DF圧力下）', minutes: 15, fileId: '01', match: 'ドリブル', desc: 'DF役を入れて低位置／バックビハインド／ロールターンを実戦。' },
+      ],
+    },
+  },
+  {
+    id: 'step', icon: '🦵', label: '踏み切り・打点', tags: ['踏み切り'],
+    drills: {
+      basic: [
+        { title: '4種踏み切り基本', minutes: 12, fileId: '19', match: '踏み切り', desc: '2ステップ／ユーロステップ／1ステップ／ノーステップを各10本×3セット。' },
+      ],
+      mid: [
+        { title: 'ユーロステップ突破', minutes: 12, fileId: '01', match: 'ユーロステップ', desc: '1歩目を一方向、2歩目を逆方向に大きく踏む。DFをかわす実戦練習。' },
+      ],
+      adv: [
+        { title: '打点を上げる（バックハンドフェイクと組合せ）', minutes: 15, fileId: '01', match: '踏み切り', desc: '1ステップ早打ち＋手首返し。GKの予測を完全に外す。' },
+      ],
+    },
+  },
+  {
+    id: 'pass', icon: '↗️', label: 'パス', tags: ['パス'],
+    drills: {
+      basic: [
+        { title: 'ノルウェー式4種スロー（壁打ち）', minutes: 12, fileId: '19', match: 'スロー', desc: 'Piskekast（むち打ち）／Sirkelkast／Støtkast／Skjult kast を各10球×5セット。' },
+      ],
+      mid: [
+        { title: '動きながらキャッチ→即パス', minutes: 12, fileId: '19', match: 'キャッチ', desc: '止まらず受けて即動作。顔横ポジションをキープ。' },
+      ],
+      adv: [
+        { title: 'ノールック・バウンス・ロブの使い分け', minutes: 15, fileId: '01', match: 'パス', desc: 'DFの状況に応じて3種を使い分ける。視野を確保しながら。' },
+      ],
+    },
+  },
+  {
+    id: '1on1', icon: '⚔️', label: '1on1', tags: ['1on1'],
+    drills: {
+      basic: [
+        { title: '勝ち位置取り練習', minutes: 12, fileId: '19', match: '勝ち位置取り', desc: 'OFがDFより先に有利な位置を取る。受ける前の判断を磨く。' },
+      ],
+      mid: [
+        { title: 'クローズ／ワイド判別→対応', minutes: 15, fileId: '07', match: 'クローズ/ワイド', desc: 'DFの位置を見て即時にOFの選択を変える。' },
+      ],
+      adv: [
+        { title: '山側／谷側のじゃんけん展開', minutes: 15, fileId: '01', match: 'コンタクト技術', desc: 'DF斜め構え→山側フェイク→谷側突破。逆も。コンタクト下で。' },
+      ],
+    },
+  },
+  {
+    id: '2on2', icon: '🔗', label: '2on2・コンビ', tags: ['コンビネーション'],
+    drills: {
+      basic: [
+        { title: 'ギブ＆ゴー基礎', minutes: 12, fileId: '19', match: 'ギブ', desc: 'パス→ゴー→リターン。マーカーが目を切った瞬間に走る。' },
+      ],
+      mid: [
+        { title: 'ピック＆ロール', minutes: 15, fileId: '19', match: 'ピック', desc: 'スクリーンセット→抜ける→ロールアウト。DFはスイッチ／ファイトオーバー／ゴーアンダーを試す。' },
+      ],
+      adv: [
+        { title: '3人コンビ（クロス／ウェーブ）', minutes: 20, fileId: '16', match: 'コンビネーション', desc: '3人連続でDFのマーク整理を不可能にする。' },
+      ],
+    },
+  },
+  {
+    id: 'fast', icon: '🏃', label: '速攻', tags: ['速攻'],
+    drills: {
+      basic: [
+        { title: '1stウェーブ（GKスロー→2人スプリント）', minutes: 12, fileId: '19', match: '1stウェーブ', desc: 'GKボール→2秒以内に左右走者がスプリント。GKがフリー走者にパス。' },
+      ],
+      mid: [
+        { title: '2ndウェーブ合流', minutes: 15, fileId: '19', match: '2ndウェーブ', desc: '1stが止められた後の3〜4人合流。中央走者がDFを引き付け→左右へ。' },
+      ],
+      adv: [
+        { title: 'シュート直後の即帰陣ルール', minutes: 15, fileId: '03', match: 'バックチェック', desc: 'シュート結果を見ずに動き出す。最低2名即時帰陣を徹底。' },
+      ],
+    },
+  },
+  {
+    id: 'setof', icon: '📐', label: 'セットOF', tags: ['セットOF'],
+    drills: {
+      basic: [
+        { title: '3-3フォーメーション基本', minutes: 15, fileId: '19', match: '3-3', desc: 'バック3＋ウィング2＋ピボット1。クローズ／ワイドを確認→適切なアクション。' },
+      ],
+      mid: [
+        { title: '2-1-3（ピボット高め）', minutes: 15, fileId: '19', match: '2-1-3', desc: 'ピボットを9mライン付近に引き出す。引き出したスペースにバックが切り込む。' },
+      ],
+      adv: [
+        { title: 'Par/Impar連鎖（スペイン式）', minutes: 20, fileId: '13', match: 'Par/Impar', desc: '1人を固定→隣を浮かせる連鎖。バック×ピボットの2:2状況を作り続ける。' },
+      ],
+    },
+  },
+  {
+    id: 'def', icon: '🛡️', label: 'DF', tags: ['DF'],
+    drills: {
+      basic: [
+        { title: '0-6基本動作（Verschieben/Herausrücken/Übergeben）', minutes: 15, fileId: '19', match: '0-6基本動作', desc: 'コーチのコールで全員が動く。3原則を体に。' },
+      ],
+      mid: [
+        { title: '5-1：前衛と後衛の連動', minutes: 15, fileId: '05', match: '5-1', desc: '前衛が飛び出した背後をピボットに走らせ／受け渡しを完成させる。' },
+      ],
+      adv: [
+        { title: 'マンツーマン→スクリーン対応（スイッチ／ファイトオーバー／ゴーアンダー）', minutes: 20, fileId: '19', match: 'マンツーマン', desc: 'OF役がスクリーン→DFは3対応を試す。結果を比較。' },
+      ],
+    },
+  },
+  {
+    id: 'link', icon: '👁️', label: '連携', tags: ['連携', '声掛け'],
+    drills: {
+      basic: [
+        { title: 'Blickkontakt訓練（バック×ピボット）', minutes: 12, fileId: '19', match: 'Blickkontakt', desc: 'アイコンタクト→ピボット即フラッシュ→バック即パス→シュート。1.5秒以内が理想。' },
+      ],
+      mid: [
+        { title: '声掛けルーティン', minutes: 10, fileId: '04', match: '声掛け', desc: '「右！」「後ろ！」「俺マーク！」「スイッチ！」を明確化。全員必ず1声出す。' },
+      ],
+      adv: [
+        { title: 'コードワード戦術（デンマーク式）', minutes: 15, fileId: '19', match: 'コードワード', desc: '2文字以内のコールで5パターンを発動。事前共有→反復。' },
+      ],
+    },
+  },
+  {
+    id: 'post', icon: '⭕', label: 'ポストプレー', tags: ['ポスト'],
+    drills: {
+      basic: [
+        { title: 'V字位置取り', minutes: 12, fileId: '06', match: 'ポジション取り', desc: 'ポストとゴールを結ぶ線上にDFが立つ／OFはその前を取る。' },
+      ],
+      mid: [
+        { title: 'ポスト4プレー（回転／フェイク／フラッシュ／スクリーン）', minutes: 15, fileId: '06', match: 'ポストの4プレー', desc: 'DFの状態別に4プレーを使い分ける。' },
+      ],
+      adv: [
+        { title: 'スクリーン＆ロールからのシュート', minutes: 15, fileId: '12', match: 'スクリーン', desc: 'スクリーン後のロールアウトでパス→シュート。バックとの連携。' },
+      ],
+    },
+  },
+  {
+    id: 'mental', icon: '🧠', label: 'メンタル', tags: ['メンタル'],
+    drills: {
+      basic: [
+        { title: '3秒切り替え練習', minutes: 8, fileId: '19', match: '3秒切り替え', desc: 'ミスをしたら3秒以内に「次は○○」と声に出す。4秒以上引きずったらやり直し。' },
+      ],
+      mid: [
+        { title: 'Visualiseringルーティン', minutes: 5, fileId: '19', match: 'Visualisering', desc: '練習前5分。成功シーンを視覚＋聴覚＋触覚で具体的に描く。' },
+      ],
+      adv: [
+        { title: 'プレッシャー下のシュート（残り時間想定）', minutes: 12, fileId: '18', match: 'プレッシャー下', desc: '残り30秒・1点差を想定したシュート練習。深呼吸→第一選択即実行。' },
+      ],
+    },
+  },
+];
+
+// ウォームアップ／クールダウンのテンプレ
+const DRILL_WARMUP = { title: 'ウォームアップ（ダイナミックストレッチ＋パス）', minutes: 0, desc: '関節可動域→軽いランニング→ペアパスでテンポを上げる。' };
+const DRILL_COOLDOWN = { title: 'クールダウン（ストレッチ＋振り返り）', minutes: 0, desc: '主要筋群のストレッチ＋今日の3秒振り返り（良かった点・課題・次回試すこと）。' };
+
+const LEVELS = [
+  { id: 'basic', label: '初級', desc: '基本動作の習得が目的（中学〜高1）' },
+  { id: 'mid',   label: '中級', desc: '応用と判断が目的（高1〜高2）' },
+  { id: 'adv',   label: '上級', desc: '試合実戦が目的（高2〜高3、全国レベル）' },
+];
+
+const DURATIONS = [30, 60, 90, 120]; // 分
+
+// 練習計画ビルダー：選択された テーマ × レベル × 時間 から計画を作る
+function buildPlan(themeIds, levelId, totalMinutes) {
+  // ウォームアップとクールダウンの時間を確保
+  const warmupTime = Math.max(8, Math.round(totalMinutes * 0.12));
+  const cooldownTime = Math.max(5, Math.round(totalMinutes * 0.08));
+  const remaining = totalMinutes - warmupTime - cooldownTime;
+
+  // 選択されたテーマからレベルに合う drills を集める
+  const themeDrills = themeIds.map(tid => {
+    const theme = DRILL_THEMES.find(t => t.id === tid);
+    if (!theme) return null;
+    return { theme, drills: theme.drills[levelId] || [] };
+  }).filter(Boolean);
+
+  if (!themeDrills.length) {
+    return { warmup: null, blocks: [], cooldown: null, totalAllocated: 0, mismatch: 0 };
+  }
+
+  // 各テーマの合計時間を計算 → 比率で残時間を分配 → 各テーマ内で順に詰める
+  const perThemeBaseSum = themeDrills.reduce((sum, td) =>
+    sum + td.drills.reduce((s, d) => s + d.minutes, 0), 0);
+
+  let totalAllocated = warmupTime + cooldownTime;
+  const blocks = [];
+
+  themeDrills.forEach((td, idx) => {
+    const baseSum = td.drills.reduce((s, d) => s + d.minutes, 0);
+    const share = perThemeBaseSum > 0 ? Math.round(remaining * (baseSum / perThemeBaseSum)) : 0;
+    let used = 0;
+    const items = [];
+    for (const d of td.drills) {
+      if (used >= share) break;
+      const allotted = Math.min(d.minutes, share - used);
+      if (allotted >= 5) {
+        items.push({ ...d, minutes: allotted });
+        used += allotted;
+      }
+    }
+    if (items.length) {
+      blocks.push({ theme: td.theme, items, blockMinutes: used });
+      totalAllocated += used;
+    }
+  });
+
+  return {
+    warmup: { ...DRILL_WARMUP, minutes: warmupTime },
+    blocks,
+    cooldown: { ...DRILL_COOLDOWN, minutes: cooldownTime },
+    totalAllocated,
+    mismatch: totalMinutes - totalAllocated,
+  };
+}
 
 // ─────────────────────────────────────────────
 // 簡易Markdownレンダラ（必要最小限）
@@ -2266,10 +2674,10 @@ const HUB_MODULES = [
     enabled: true,
   },
   {
-    id: 'plan', cls: 'plan', icon: '📋', target: '指導者',
+    id: 'plan', cls: 'plan', icon: '📋', target: '指導者・選手',
     title: '練習を組む',
-    desc: 'テーマ・レベルから練習メニューを組み立ててPDF出力（Coming soon）',
-    enabled: false,
+    desc: 'テーマ×レベル×時間 → 時間配分付き練習プランを生成（印刷可）',
+    enabled: true,
   },
 ];
 
@@ -2300,6 +2708,93 @@ function App() {
   const [solveSymptom, setSolveSymptom] = useState(null);
   const [solveHistory, setSolveHistory] = useState([]);   // 最近の診断履歴
 
+  // 練習を組む（Phase 2B）の状態
+  const [planThemes, setPlanThemes] = useState([]);       // テーマID配列
+  const [planLevel, setPlanLevel] = useState('mid');
+  const [planDuration, setPlanDuration] = useState(60);
+  const [planResult, setPlanResult] = useState(null);     // 生成結果
+  const [planSaved, setPlanSaved] = useState([]);         // 保存済みプラン
+  const [planCopyMsg, setPlanCopyMsg] = useState('');     // コピー成功表示
+
+  // 起動時に保存済みプランを読み込む
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('plan-saved');
+      if (raw) setPlanSaved(JSON.parse(raw));
+    } catch (e) { /* ignore */ }
+  }, []);
+
+  // プランの狙いを自動生成
+  const generatePlanAim = (themes, levelId) => {
+    const labels = themes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.label).filter(Boolean);
+    if (labels.length === 0) return '';
+    const lv = LEVELS.find(l => l.id === levelId)?.label || '';
+    if (labels.length === 1) return `${labels[0]}の${lv}強化（単一テーマ集中）`;
+    if (labels.length === 2) return `${labels[0]}と${labels[1]}の連動強化（${lv}）`;
+    return `${labels.slice(0, -1).join('・')}＋${labels[labels.length - 1]}の総合強化（${lv}）`;
+  };
+
+  // プラン保存
+  const handlePlanSave = () => {
+    if (!planResult) return;
+    const entry = {
+      themes: planThemes,
+      level: planLevel,
+      duration: planDuration,
+      aim: generatePlanAim(planThemes, planLevel),
+      ts: Date.now(),
+    };
+    setPlanSaved(prev => {
+      const next = [entry, ...prev].slice(0, 5);
+      try { localStorage.setItem('plan-saved', JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
+    setPlanCopyMsg('プランを保存しました');
+    setTimeout(() => setPlanCopyMsg(''), 2000);
+  };
+
+  // 保存済みプランを復元
+  const handlePlanRestore = (saved) => {
+    setPlanThemes(saved.themes);
+    setPlanLevel(saved.level);
+    setPlanDuration(saved.duration);
+    setPlanResult(buildPlan(saved.themes, saved.level, saved.duration));
+    setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+
+  // プランをテキスト形式でクリップボードへコピー
+  const handlePlanCopy = () => {
+    if (!planResult) return;
+    const lv = LEVELS.find(l => l.id === planLevel)?.label || '';
+    let txt = `【練習プラン】 ${planResult.totalAllocated}分 / ${lv}\n`;
+    txt += `狙い: ${generatePlanAim(planThemes, planLevel)}\n`;
+    txt += `テーマ: ${planThemes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.label).filter(Boolean).join('・')}\n`;
+    txt += '\n';
+    if (planResult.warmup) txt += `■ ウォームアップ (${planResult.warmup.minutes}分)\n  ${planResult.warmup.desc}\n\n`;
+    planResult.blocks.forEach(b => {
+      txt += `■ ${b.theme.label} (${b.blockMinutes}分)\n`;
+      b.items.forEach(it => {
+        txt += `  ・[${it.minutes}分] ${it.title}\n    ${it.desc}\n`;
+      });
+      txt += '\n';
+    });
+    if (planResult.cooldown) txt += `■ クールダウン (${planResult.cooldown.minutes}分)\n  ${planResult.cooldown.desc}\n`;
+    if (planResult.mismatch > 0) txt += `\n※ 余裕時間 ${planResult.mismatch} 分（休憩・追加練習・質疑応答に活用）\n`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(txt).then(() => {
+        setPlanCopyMsg('クリップボードにコピーしました');
+        setTimeout(() => setPlanCopyMsg(''), 2500);
+      }).catch(() => {
+        setPlanCopyMsg('コピー失敗');
+        setTimeout(() => setPlanCopyMsg(''), 2500);
+      });
+    } else {
+      setPlanCopyMsg('クリップボード非対応');
+      setTimeout(() => setPlanCopyMsg(''), 2500);
+    }
+  };
+
   // 起動時に履歴をlocalStorageから読み込む
   useEffect(() => {
     try {
@@ -2323,8 +2818,8 @@ function App() {
   // 辞書ファイルを一度だけfetch
   useEffect(() => {
     if (dictLoaded || dictError) return;
-    // 辞書は dictionary 系のほか、solve の処方箋遷移でも使う
-    if (phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve') return;
+    // 辞書は dictionary 系のほか、solve・plan の関連リンク遷移でも使う
+    if (phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve' && phase !== 'plan') return;
 
     (async () => {
       try {
@@ -2448,6 +2943,36 @@ function App() {
     setResultId(null); setNextStep('');
     setDictDetail(null);
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
+    setPlanResult(null);
+  };
+
+  // Phase 2B：テーマON/OFF切替
+  const handleTogglePlanTheme = (themeId) => {
+    setPlanThemes(prev => prev.includes(themeId)
+      ? prev.filter(t => t !== themeId)
+      : [...prev, themeId]);
+  };
+
+  // Phase 2B：練習プラン生成
+  const handleGeneratePlan = () => {
+    if (!planThemes.length) return;
+    const plan = buildPlan(planThemes, planLevel, planDuration);
+    setPlanResult(plan);
+    setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+
+  const handlePlanReset = () => {
+    setPlanResult(null);
+  };
+
+  // Phase 2B：プラン項目から辞書セクションを開く
+  const handlePlanItemOpen = (item) => {
+    const target = findRelatedSection({ fileId: item.fileId, match: item.match });
+    if (target) {
+      setDictDetail(target);
+      setPhase('dictionary-detail');
+      setTimeout(() => window.scrollTo(0, 0), 0);
+    }
   };
 
   // 関連辞書のマッチ解決：完全一致 → 先頭一致 → 部分一致 の順で精度高く
@@ -2502,7 +3027,10 @@ function App() {
       handleSolveReset();
       setPhase('solve');
     }
-    else setPhase(modId); // 'plan' → Coming soon 画面
+    else if (modId === 'plan') {
+      setPlanResult(null);
+      setPhase('plan');
+    }
   };
 
   const handleDictSectionOpen = (section) => {
@@ -2540,7 +3068,7 @@ function App() {
             {phase === 'hub' && 'ハンドボール 戦術ハブ'}
             {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
             {phase === 'solve' && '課題を解決する'}
-            {phase === 'plan' && 'ハンドボール 戦術ハブ'}
+            {phase === 'plan' && '練習を組む'}
             {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る — 自己問答'}
           </div>
           {modeInfo && (
@@ -2559,8 +3087,8 @@ function App() {
             </div>
           )}
           {phase === 'plan' && (
-            <div className="header-mode" style={{ color: '#94a3b8', background: 'none', border: '1px solid #33415588', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
-              準備中
+            <div className="header-mode" style={{ color: '#f59e0b', background: 'none', border: '1px solid #f59e0b33', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+              計画
             </div>
           )}
         </div>
@@ -2885,16 +3413,154 @@ function App() {
         );
       })()}
 
-      {/* Coming Soon プレースホルダ（plan のみ） */}
-      {phase === 'plan' && (
-        <div className="soon-screen">
-          <div className="soon-icon">📋</div>
-          <div className="soon-title">練習を組む</div>
-          <div className="soon-desc">
-            このモジュールは Phase 2B で実装予定です。<br /><br />
-            テーマ・レベル・期間を選ぶと、辞書19（練習メニュー）と20（判断ツリー）から練習計画を組み立てるツール。
+      {/* 練習を組む（Phase 2B） */}
+      {phase === 'plan' && !planResult && (
+        <div className="plan-screen">
+          <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
+
+          {/* テーマ複数選択 */}
+          <div className="solve-bar"><span className="plan-step-pill">STEP 1</span><span className="plan-step-label">テーマ（複数可）</span></div>
+          <div className="plan-title">何を強化する？</div>
+          <div className="plan-sub">複数選んでOK。練習時間は自動配分されます。</div>
+          <div className="plan-themes">
+            {DRILL_THEMES.map(t => (
+              <button key={t.id} className={`plan-theme-chip ${planThemes.includes(t.id) ? 'active' : ''}`} onClick={() => handleTogglePlanTheme(t.id)}>
+                <span className="plan-theme-chip-icon">{t.icon}</span>{t.label}
+              </button>
+            ))}
           </div>
-          <button className="reset-btn" style={{maxWidth: 320}} onClick={handleBackToHub}>← ホームに戻る</button>
+
+          {/* レベル選択 */}
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 2</span><span className="plan-step-label">レベル</span></div>
+          <div className="plan-levels">
+            {LEVELS.map(l => (
+              <button key={l.id} className={`plan-level-btn ${planLevel === l.id ? 'active' : ''}`} onClick={() => setPlanLevel(l.id)}>
+                <span className="plan-level-label">{l.label}</span>
+                <span className="plan-level-desc">{l.desc}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* 時間選択 */}
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 3</span><span className="plan-step-label">時間</span></div>
+          <div className="plan-durations">
+            {DURATIONS.map(d => (
+              <button key={d} className={`plan-duration-btn ${planDuration === d ? 'active' : ''}`} onClick={() => setPlanDuration(d)}>
+                {d}<small>分</small>
+              </button>
+            ))}
+          </div>
+
+          {/* 生成ボタン */}
+          <button className="plan-gen-btn" disabled={planThemes.length === 0} onClick={handleGeneratePlan}>
+            ▶ 練習プランを生成（{planDuration}分・{LEVELS.find(l => l.id === planLevel)?.label}）
+          </button>
+          {planThemes.length === 0 && (
+            <div style={{fontSize: 11, color: '#64748b', textAlign: 'center'}}>テーマを1つ以上選んでください</div>
+          )}
+
+          {/* 保存済みプラン */}
+          {planSaved.length > 0 && (
+            <div className="plan-saved-section">
+              <div className="plan-saved-label">▶ 保存済みプラン</div>
+              {planSaved.slice(0, 3).map((sv, i) => (
+                <div key={i} className="plan-saved-item" onClick={() => handlePlanRestore(sv)}>
+                  <div className="plan-saved-meta">
+                    <div className="plan-saved-aim">{sv.aim}</div>
+                    <div className="plan-saved-detail">
+                      {sv.duration}分 / {LEVELS.find(l => l.id === sv.level)?.label} /
+                      {' '}{sv.themes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.icon).filter(Boolean).join(' ')}
+                    </div>
+                  </div>
+                  <span style={{color: '#475569'}}>›</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 練習プラン表示 */}
+      {phase === 'plan' && planResult && (
+        <div className="plan-screen">
+          <button className="dict-back" onClick={handlePlanReset}>← 条件を変更</button>
+          <div className="plan-output">
+            <div className="plan-header">
+              <div className="plan-header-time">⏱ {planResult.totalAllocated} 分プラン</div>
+              <div className="plan-header-meta">
+                {LEVELS.find(l => l.id === planLevel)?.label} ／
+                {' '}テーマ: {planThemes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.label).filter(Boolean).join('・')}
+              </div>
+            </div>
+
+            {/* 狙い */}
+            <div className="plan-aim">🎯 狙い：{generatePlanAim(planThemes, planLevel)}</div>
+
+            {/* ウォームアップ */}
+            {planResult.warmup && (
+              <div className="plan-wc">
+                <div><span className="plan-wc-label">▶ ウォームアップ</span><span className="plan-wc-time">{planResult.warmup.minutes}分</span></div>
+                <div className="plan-wc-desc">{planResult.warmup.desc}</div>
+              </div>
+            )}
+
+            {/* テーマ別ブロック */}
+            {planResult.blocks.map((b, i) => (
+              <div key={i} className="plan-block">
+                <div className="plan-block-title">
+                  <span>{b.theme.icon}</span>
+                  <span>{b.theme.label}</span>
+                  <span className="plan-block-time">{b.blockMinutes}分</span>
+                </div>
+                {b.items.map((it, j) => (
+                  <div key={j} className="plan-item" onClick={() => handlePlanItemOpen(it)}>
+                    <div className="plan-item-row">
+                      <span className="plan-item-time">{it.minutes}分</span>
+                      <span className="plan-item-title">{it.title}</span>
+                      <span className="plan-item-arrow">›</span>
+                    </div>
+                    <div className="plan-item-desc">{it.desc}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+
+            {/* クールダウン */}
+            {planResult.cooldown && (
+              <div className="plan-wc">
+                <div><span className="plan-wc-label">▶ クールダウン</span><span className="plan-wc-time">{planResult.cooldown.minutes}分</span></div>
+                <div className="plan-wc-desc">{planResult.cooldown.desc}</div>
+              </div>
+            )}
+
+            {planResult.blocks.length === 0 && (
+              <div className="dict-empty">選択したテーマ・レベルの組み合わせに練習メニューが定義されていません。<br />別のレベルを試してください。</div>
+            )}
+
+            {/* 余裕時間 */}
+            {planResult.mismatch > 0 && (
+              <div className="plan-extra">
+                ＋ 余裕 {planResult.mismatch} 分：休憩・追加練習・質疑応答・ストレッチ等で活用
+              </div>
+            )}
+            {planResult.mismatch < 0 && (
+              <div className="plan-extra" style={{borderColor: '#7f1d1d', color: '#fca5a5'}}>
+                ⚠ {Math.abs(planResult.mismatch)} 分オーバー：時間調整が必要です（メニュー削減 or 時間延長）
+              </div>
+            )}
+          </div>
+
+          {/* 操作ボタン：印刷を主役に */}
+          <div className="plan-actions">
+            <button className="plan-action-btn primary" onClick={() => window.print()}>🖨 印刷</button>
+            <button className="plan-action-btn" onClick={handlePlanCopy}>📋 コピー</button>
+            <button className="plan-action-btn" onClick={handlePlanSave}>★ 保存</button>
+          </div>
+          <button className="reset-btn" style={{marginTop: 6}} onClick={handlePlanReset}>条件を変更</button>
+          <button className="reset-btn" style={{marginTop: 4}} onClick={handleBackToHub}>← ホームに戻る</button>
+
+          {/* トースト */}
+          {planCopyMsg && <div className="plan-toast">{planCopyMsg}</div>}
         </div>
       )}
 
