@@ -1427,6 +1427,18 @@ function App() {
     setResultId(null); setNextStep('');
   };
 
+  // 国別深掘り：現在のmodeから「じゃんけん→国別逆引き」へジャンプ
+  const handleJumpToCountry = () => {
+    setMode('janken');
+    setEmotion(null);
+    setCurrentQ('qj_school');
+    setSelected(null);
+    setHistory([]);
+    setResultId(null);
+    setNextStep('');
+    setPhase('question');
+  };
+
   const result = resultId ? RESULTS[resultId] : null;
   const q = currentQ ? QUESTIONS[currentQ] : null;
 
@@ -1572,6 +1584,17 @@ function App() {
                 onChange={e => setNextStep(e.target.value)}
               />
             </div>
+          )}
+
+          {/* 国別深掘り誘導（OF/DF/スキルモードのみ） */}
+          {(mode === 'of' || mode === 'df' || mode === 'skill') && (
+            <button
+              className="reset-btn"
+              style={{ borderColor: '#06b6d4', color: '#06b6d4', marginBottom: 8 }}
+              onClick={handleJumpToCountry}
+            >
+              🌍 相手の戦術DNAで深掘りする →
+            </button>
           )}
 
           <button className="reset-btn" onClick={handleReset}>
