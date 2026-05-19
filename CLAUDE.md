@@ -91,7 +91,10 @@
 | `dictionary/13_global_tactics.md` | 欧州ハンドボール国別戦術分析（グローバル戦術辞書） | デンマーク/フランス/ドイツ/スペイン/クロアチア/スロベニア/ポルトガル/ノルウェー/アイスランド、IHF2025分析、Jacobsenコードワード、6-0の3動作（独語）、普遍原則13-15 |
 | `dictionary/14_position_roles_international.md` | 各国言語別ポジション役割・スキル・戦術辞書 | バックプレーヤー（丁/独/仏/西）、ピボット（独/西/葡）、ウィング（仏）、Par/Impar理論、Freilaufen/Sperren/Absetzen |
 | `dictionary/15_norway_gk_df_school.md` | ノルウェー式GK・DF育成メソッド（Målvaktskolen/Forsvarsskolen） | GK4フェーズ（Forflytning/Posisjonering/Redning/Initiering）、DF10技術（Beredsskapsstilling〜Hjelpe）、Utviklingstrappa4段階、ノルウェー語30用語対訳 |
-| `dictionary/16_of_combinations.md` | コンビネーション・OFタイプ・攻撃トリガー辞書 | 攻撃トリガー3分類（速攻/セットOF/インプレー）、OFタイプ5分類、OFタイプ×DFタイプ対応マトリクス、2人・3人コンビネーション8種、クロアチア/ユーゴ学派個人技術体系（Fintiranje/Prodiranje/Šutiranje等）、各国コンビネーション用語対照 |
+| `dictionary/16_of_combinations.md` | コンビネーション・OFタイプ・攻撃トリガー辞書 | 攻撃トリガー3分類（速攻/セットOF/インプレー）、OFタイプ5分類、OFタイプ×DFタイプ対応マトリクス、2人・3人コンビネーション8種、各国コンビネーション用語対照 |
+| `dictionary/17_scene_index.md` | 場面→技術 逆引きインデックス + 試合振り返りチェックリスト | DF状況別/GK状況別/数的状況別/スコア時間別/ポストプレー場面別/コンビネーション場面別 逆引き、5分振り返りチェックリスト（認知/判断速度/技術/3部構成リザルト）、即時対応リファレンス |
+| `dictionary/18_mental.md` | メンタルマネジメント・自己診断 | ノルウェー語5要素（Mestring/Selvtillit/Visualisering/Indre dialog/Triggere）、3秒ルール、プレッシャー下対処、技術/戦術/メンタル3軸レベル診断、レベル別学習ステップ |
+| `dictionary/19_drills.md` | 練習メニュー辞書 | 個人練習（シュート/フェイント/ドリブル/踏み切り/パス）、ペア練習（1on1/2on2）、チーム練習（速攻/セットOF/DF/連携）、メンタル練習、週間練習計画モデル |
 
 ---
 

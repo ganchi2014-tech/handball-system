@@ -1,0 +1,11 @@
+﻿{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "handball",
+      "runtimeExecutable": "C:\\Users\\togan1080\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "3000"],
+      "port": 3000
+    }
+  ]
+}
