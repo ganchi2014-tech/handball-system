@@ -8,49 +8,111 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
+    /* ─── デザインシステム ─── */
+    :root {
+      /* Typography scale (5段階) */
+      --fs-xs: 11px;
+      --fs-sm: 13px;
+      --fs-md: 15px;
+      --fs-lg: 18px;
+      --fs-xl: 22px;
+
+      /* Module accent colors */
+      --c-reflect: #3b82f6;
+      --c-dict:    #22d3ee;
+      --c-solve:   #c084fc;
+      --c-plan:    #f59e0b;
+
+      /* Text */
+      --tx-primary:   #f1f5f9;
+      --tx-secondary: #cbd5e1;
+      --tx-muted:     #94a3b8;
+      --tx-dim:       #64748b;
+
+      /* Surfaces */
+      --bg:        #0f172a;
+      --surface-1: #1e293b;
+      --surface-2: #131f33;
+      --border:    #334155;
+
+      /* Touch target (Apple HIG 44px) */
+      --tap: 44px;
+
+      /* Radius */
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+
+      /* Transition */
+      --t-fast: 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      background: var(--bg);
+      color: var(--tx-secondary);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
     #root { min-height: 100vh; }
     .app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Header */
+    /* 共通：戻るボタン */
+    .nav-back {
+      background: none; border: none; color: var(--tx-muted);
+      font-size: var(--fs-sm); cursor: pointer; padding: 8px 0;
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: var(--tap); font-family: inherit;
+    }
+    .nav-back:active { color: var(--tx-primary); }
+
+    /* Header — 二段ロゴ + 動的バッジ */
     .header {
-      background: #1e293b;
-      padding: 14px 20px 10px;
-      border-bottom: 1px solid #334155;
+      background: var(--surface-1);
+      padding: 12px 20px 10px;
+      border-bottom: 1px solid var(--border);
       position: sticky; top: 0; z-index: 10;
     }
-    .header-row { display: flex; align-items: center; justify-content: space-between; }
-    .header-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 0.1em; text-transform: uppercase; }
-    .header-mode { font-size: 11px; color: #3b82f6; font-weight: 700; background: #1e3a5f; padding: 2px 8px; border-radius: 6px; }
-    .progress-bar { margin-top: 8px; height: 2px; background: #334155; border-radius: 2px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); border-radius: 2px; transition: width 0.4s ease; }
+    .header-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .header-brand { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .header-brand-main {
+      font-size: var(--fs-md); font-weight: 800; color: var(--tx-primary);
+      letter-spacing: 0.01em; line-height: 1.2;
+    }
+    .header-brand-sub {
+      font-size: 10px; font-weight: 700; color: var(--tx-dim);
+      letter-spacing: 0.18em; text-transform: uppercase;
+    }
+    .header-mode {
+      font-size: var(--fs-xs); font-weight: 700; padding: 4px 10px;
+      border-radius: 999px; border: 1px solid;
+    }
+    .progress-bar { margin-top: 8px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--c-reflect), var(--c-dict)); border-radius: 2px; transition: width 0.4s ease; }
+    .progress-bar.hidden { display: none; }
 
-    /* Start screen */
+    /* Start screen — 振り返るモジュールのトップ */
     .start-screen {
-      flex: 1; display: flex; flex-direction: column; justify-content: center;
-      align-items: center; text-align: center; gap: 28px; padding: 40px 24px;
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; text-align: center; gap: 24px; padding: 20px 24px 36px;
     }
     .start-icon { font-size: 52px; }
-    .start-title { font-size: 22px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
-    .start-sub { font-size: 14px; color: #64748b; line-height: 1.8; }
-    .mode-select { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+    .start-title { font-size: var(--fs-xl); font-weight: 800; color: var(--tx-primary); line-height: 1.4; }
+    .start-sub { font-size: var(--fs-sm); color: var(--tx-muted); line-height: 1.8; }
+    .mode-select { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 360px; }
     .mode-btn {
-      background: #1e293b; border: 1.5px solid #334155; border-radius: 14px;
-      padding: 16px 20px; text-align: left; color: #e2e8f0;
-      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 14px;
+      background: var(--surface-1); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 16px 20px; text-align: left; color: var(--tx-secondary);
+      cursor: pointer; transition: all var(--t-fast); display: flex; align-items: center; gap: 14px;
+      min-height: var(--tap);
     }
-    .mode-btn:active { background: #1e3a5f; border-color: #3b82f6; transform: scale(0.98); }
+    .mode-btn:active { background: #1e3a5f; border-color: var(--c-reflect); transform: scale(0.98); }
     .mode-btn-icon { font-size: 24px; flex-shrink: 0; }
     .mode-btn-text { display: flex; flex-direction: column; gap: 2px; }
-    .mode-btn-label { font-size: 15px; font-weight: 700; }
-    .mode-btn-desc { font-size: 12px; color: #64748b; }
+    .mode-btn-label { font-size: var(--fs-md); font-weight: 700; }
+    .mode-btn-desc { font-size: var(--fs-xs); color: var(--tx-muted); }
 
     /* Content */
     .content { flex: 1; padding: 20px 20px 36px; display: flex; flex-direction: column; gap: 20px; }
@@ -161,90 +223,117 @@
       flex: 1; display: flex; flex-direction: column;
       gap: 20px; padding: 28px 20px 36px; align-items: center;
     }
-    .hub-title { font-size: 24px; font-weight: 800; color: #f1f5f9; text-align: center; line-height: 1.4; }
-    .hub-sub { font-size: 13px; color: #64748b; text-align: center; line-height: 1.7; margin-top: -8px; max-width: 320px; }
+    .hub-title { font-size: var(--fs-xl); font-weight: 800; color: var(--tx-primary); text-align: center; line-height: 1.4; }
+    .hub-sub { font-size: var(--fs-sm); color: var(--tx-muted); text-align: center; line-height: 1.7; margin-top: -8px; max-width: 320px; }
     .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 360px; margin-top: 8px; }
     .hub-card {
-      background: #1e293b; border: 1.5px solid #334155; border-radius: 16px;
-      padding: 18px 18px; text-align: left; color: #e2e8f0; cursor: pointer;
-      transition: all 0.15s; display: flex; align-items: flex-start; gap: 14px;
-      position: relative;
+      background: var(--surface-1); border: 1.5px solid var(--border); border-radius: var(--r-lg);
+      padding: 18px 18px; text-align: left; color: var(--tx-secondary); cursor: pointer;
+      transition: all var(--t-fast); display: flex; align-items: flex-start; gap: 14px;
+      position: relative; min-height: 76px;
     }
-    .hub-card:active { transform: scale(0.98); background: #1e3a5f; border-color: #3b82f6; }
-    .hub-card.disabled { opacity: 0.5; cursor: not-allowed; }
-    .hub-card.disabled:active { transform: none; background: #1e293b; border-color: #334155; }
-    .hub-card-icon { font-size: 30px; flex-shrink: 0; line-height: 1; }
-    .hub-card-body { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-    .hub-card-title { font-size: 16px; font-weight: 800; }
-    .hub-card-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
-    .hub-card-target { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .hub-card:active { transform: scale(0.98); }
+    .hub-card.disabled { opacity: 0.45; cursor: not-allowed; }
+    .hub-card.disabled:active { transform: none; }
+    .hub-card-icon { font-size: 32px; flex-shrink: 0; line-height: 1; }
+    .hub-card-body { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .hub-card-title { font-size: var(--fs-lg); font-weight: 800; }
+    .hub-card-desc { font-size: var(--fs-xs); color: var(--tx-muted); line-height: 1.6; }
+    .hub-card-target { font-size: 10px; font-weight: 700; color: var(--tx-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
     .hub-card-soon {
       position: absolute; top: 10px; right: 10px;
-      background: #475569; color: #cbd5e1; font-size: 9px; font-weight: 800;
-      padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase;
+      background: var(--border); color: var(--tx-secondary); font-size: 9px; font-weight: 800;
+      padding: 3px 8px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;
     }
-    .hub-card.reflect { border-color: #3b82f644; }
+    .hub-card.reflect { border-color: color-mix(in oklab, var(--c-reflect) 50%, transparent); }
     .hub-card.reflect .hub-card-title { color: #93c5fd; }
-    .hub-card.dict { border-color: #22d3ee44; }
+    .hub-card.reflect:active { background: #14233f; border-color: var(--c-reflect); }
+    .hub-card.dict { border-color: color-mix(in oklab, var(--c-dict) 50%, transparent); }
     .hub-card.dict .hub-card-title { color: #67e8f9; }
-    .hub-card.solve { border-color: #c084fc44; }
+    .hub-card.dict:active { background: #0f2837; border-color: var(--c-dict); }
+    .hub-card.solve { border-color: color-mix(in oklab, var(--c-solve) 50%, transparent); }
     .hub-card.solve .hub-card-title { color: #d8b4fe; }
-    .hub-card.plan { border-color: #f59e0b44; }
+    .hub-card.solve:active { background: #1f1530; border-color: var(--c-solve); }
+    .hub-card.plan { border-color: color-mix(in oklab, var(--c-plan) 50%, transparent); }
     .hub-card.plan .hub-card-title { color: #fcd34d; }
-    .hub-footer { font-size: 11px; color: #475569; text-align: center; margin-top: 12px; padding: 0 16px; line-height: 1.7; }
+    .hub-card.plan:active { background: #261906; border-color: var(--c-plan); }
+    .hub-footer { font-size: var(--fs-xs); color: var(--tx-dim); text-align: center; margin-top: 12px; padding: 0 16px; line-height: 1.7; }
 
     /* ──────────────── 辞書ブラウザ ──────────────── */
     .dict-screen { flex: 1; display: flex; flex-direction: column; min-height: 0; }
     .dict-bar {
-      padding: 12px 16px 8px; background: #0f172a; border-bottom: 1px solid #1e293b;
+      padding: 10px 16px 8px; background: var(--bg); border-bottom: 1px solid var(--surface-1);
       position: sticky; top: 0; z-index: 5;
     }
     .dict-back {
-      background: none; border: none; color: #94a3b8; font-size: 14px;
-      cursor: pointer; padding: 4px 0 10px; display: flex; align-items: center; gap: 6px;
+      background: none; border: none; color: var(--tx-muted); font-size: var(--fs-sm);
+      cursor: pointer; padding: 6px 0; display: flex; align-items: center; gap: 6px;
+      min-height: var(--tap); font-family: inherit;
+    }
+    /* 検索ボックス：左に🔍アイコン */
+    .dict-search-wrap { position: relative; }
+    .dict-search-wrap::before {
+      content: '🔍'; position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%); font-size: 14px; opacity: 0.6; pointer-events: none;
     }
     .dict-search-input {
-      width: 100%; background: #1e293b; border: 1.5px solid #334155; border-radius: 10px;
-      padding: 12px 14px; color: #e2e8f0; font-size: 15px; font-family: inherit; outline: none;
+      width: 100%; background: var(--surface-1); border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 12px 14px 12px 40px; color: var(--tx-primary); font-size: var(--fs-md);
+      font-family: inherit; outline: none; min-height: var(--tap);
+      transition: border-color var(--t-fast);
     }
-    .dict-search-input:focus { border-color: #22d3ee; }
-    .dict-search-input::placeholder { color: #475569; }
+    .dict-search-input:focus { border-color: var(--c-dict); }
+    .dict-search-input::placeholder { color: var(--tx-dim); }
+
+    .dict-tags-wrap { background: var(--bg); padding: 8px 16px 10px; position: relative; }
     .dict-tags {
-      display: flex; gap: 6px; padding: 10px 16px 12px; overflow-x: auto;
-      scrollbar-width: none; -webkit-overflow-scrolling: touch; background: #0f172a;
+      display: flex; gap: 6px; overflow-x: auto;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch;
     }
     .dict-tags::-webkit-scrollbar { display: none; }
+    .dict-tags.expanded { flex-wrap: wrap; overflow: visible; }
     .dict-tag {
-      flex-shrink: 0; background: #1e293b; border: 1px solid #334155; border-radius: 999px;
-      padding: 6px 12px; font-size: 12px; font-weight: 700; color: #94a3b8;
-      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+      flex-shrink: 0; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
+      padding: 8px 14px; font-size: var(--fs-xs); font-weight: 700; color: var(--tx-muted);
+      cursor: pointer; transition: all var(--t-fast); white-space: nowrap;
+      min-height: 36px; display: inline-flex; align-items: center;
     }
-    .dict-tag.active { background: #155e75; border-color: #22d3ee; color: #67e8f9; }
-    .dict-tag:active { transform: scale(0.95); }
+    .dict-tag.active {
+      background: color-mix(in oklab, var(--c-dict) 20%, var(--surface-1));
+      border-color: var(--c-dict); color: #67e8f9;
+    }
+    .dict-tag:active { transform: scale(0.96); }
+    .dict-tags-toggle {
+      flex-shrink: 0; background: transparent; border: 1px dashed var(--border);
+      border-radius: 999px; padding: 8px 14px; font-size: var(--fs-xs); color: var(--tx-muted);
+      cursor: pointer; font-weight: 700; min-height: 36px; font-family: inherit;
+    }
+    .dict-tags-toggle:active { color: var(--tx-secondary); }
+
     .dict-results { flex: 1; overflow-y: auto; padding: 4px 16px 36px; -webkit-overflow-scrolling: touch; }
-    .dict-meta-line { font-size: 11px; color: #475569; padding: 8px 0 4px; }
+    .dict-meta-line { font-size: var(--fs-xs); color: var(--tx-muted); padding: 8px 0 6px; }
     .dict-result-card {
-      background: #1e293b; border: 1px solid #334155; border-radius: 12px;
-      padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s;
+      background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: all var(--t-fast);
     }
-    .dict-result-card:active { background: #1e3a5f; border-color: #22d3ee; }
+    .dict-result-card:active { background: #0f2837; border-color: var(--c-dict); transform: scale(0.99); }
     .dict-result-filename {
-      font-size: 10px; color: #67e8f9; font-weight: 700; letter-spacing: 0.05em;
-      text-transform: uppercase; margin-bottom: 4px;
+      font-size: 10px; color: var(--c-dict); font-weight: 700; letter-spacing: 0.06em;
+      margin-bottom: 4px;
     }
     .dict-result-section {
-      font-size: 15px; font-weight: 700; color: #f1f5f9; line-height: 1.4; margin-bottom: 4px;
+      font-size: var(--fs-md); font-weight: 700; color: var(--tx-primary); line-height: 1.4; margin-bottom: 4px;
     }
     .dict-result-excerpt {
-      font-size: 12px; color: #94a3b8; line-height: 1.6;
+      font-size: var(--fs-xs); color: var(--tx-muted); line-height: 1.65;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
       overflow: hidden;
     }
     .dict-result-excerpt mark {
-      background: #fbbf2422; color: #fbbf24; padding: 0 2px; border-radius: 2px;
+      background: rgba(251, 191, 36, 0.18); color: #fbbf24; padding: 0 2px; border-radius: 2px;
     }
-    .dict-empty { text-align: center; color: #475569; font-size: 13px; padding: 40px 20px; line-height: 1.7; }
-    .dict-loading { text-align: center; color: #64748b; font-size: 13px; padding: 60px 20px; }
+    .dict-empty { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 40px 20px; line-height: 1.7; }
+    .dict-loading { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 60px 20px; }
 
     /* 辞書詳細ビュー */
     .dict-detail-header {
@@ -308,42 +397,67 @@
     .dict-related-item:active { background: #1e3a5f; border-color: #22d3ee; }
 
     /* ──────────────── 課題を解決する（Phase 2A） ──────────────── */
-    .solve-screen { flex: 1; display: flex; flex-direction: column; padding: 16px 16px 40px; gap: 12px; }
-    .solve-bar { display: flex; align-items: center; gap: 10px; padding-bottom: 4px; }
-    .solve-step-label { font-size: 11px; font-weight: 800; color: #c084fc; letter-spacing: 0.1em; text-transform: uppercase; }
-    .solve-step-pill { background: #1e1530; border: 1px solid #6b21a8; color: #d8b4fe; font-size: 11px; padding: 2px 10px; border-radius: 999px; font-weight: 700; }
-    .solve-title { font-size: 19px; font-weight: 800; color: #f1f5f9; line-height: 1.4; margin-bottom: 4px; }
-    .solve-sub { font-size: 13px; color: #94a3b8; line-height: 1.7; margin-bottom: 8px; }
-
-    .solve-role-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
-    .solve-role-btn {
-      background: #1e293b; border: 1.5px solid #6b21a8; border-radius: 14px;
-      padding: 18px 18px; text-align: left; color: #e2e8f0; cursor: pointer;
-      display: flex; align-items: center; gap: 14px; transition: all 0.15s;
+    .solve-screen { flex: 1; display: flex; flex-direction: column; padding: 14px 16px 40px; gap: 12px; }
+    .solve-bar { display: flex; align-items: center; gap: 10px; padding-bottom: 2px; }
+    .solve-step-label { font-size: var(--fs-xs); font-weight: 800; color: var(--c-solve); letter-spacing: 0.08em; }
+    .solve-step-pill {
+      background: #1e1530; border: 1px solid #6b21a8; color: #d8b4fe;
+      font-size: var(--fs-xs); padding: 4px 12px; border-radius: 999px; font-weight: 800;
     }
-    .solve-role-btn:active { transform: scale(0.98); background: #2a1f3d; border-color: #c084fc; }
-    .solve-role-icon { font-size: 30px; }
-    .solve-role-label { font-size: 15px; font-weight: 800; color: #d8b4fe; }
+
+    /* STEPインジケーター（ドット＋線） */
+    .step-dots { display: flex; align-items: center; gap: 4px; margin: 2px 0 10px; }
+    .step-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--border); transition: all var(--t-fast);
+    }
+    .step-dot.done { background: var(--c-solve); }
+    .step-dot.current { background: var(--c-solve); box-shadow: 0 0 0 4px color-mix(in oklab, var(--c-solve) 25%, transparent); }
+    .step-bar {
+      flex: 1; height: 2px; background: var(--border); border-radius: 2px;
+    }
+    .step-bar.done { background: var(--c-solve); }
+    /* planバリアント */
+    .step-dots.plan .step-dot.done,
+    .step-dots.plan .step-dot.current { background: var(--c-plan); }
+    .step-dots.plan .step-bar.done { background: var(--c-plan); }
+    .step-dots.plan .step-dot.current { box-shadow: 0 0 0 4px color-mix(in oklab, var(--c-plan) 25%, transparent); }
+
+    .solve-title { font-size: var(--fs-lg); font-weight: 800; color: var(--tx-primary); line-height: 1.4; }
+    .solve-sub { font-size: var(--fs-sm); color: var(--tx-muted); line-height: 1.7; }
+
+    .solve-role-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+    .solve-role-btn {
+      background: var(--surface-1); border: 1.5px solid #6b21a8; border-radius: var(--r-md);
+      padding: 18px 18px; text-align: left; color: var(--tx-secondary); cursor: pointer;
+      display: flex; align-items: center; gap: 14px; transition: all var(--t-fast);
+      min-height: var(--tap);
+    }
+    .solve-role-btn:active { transform: scale(0.98); background: #1f1530; border-color: var(--c-solve); }
+    .solve-role-icon { font-size: 30px; flex-shrink: 0; }
+    .solve-role-label { font-size: var(--fs-md); font-weight: 800; color: #d8b4fe; }
 
     .solve-cat-list { display: flex; flex-direction: column; gap: 10px; }
     .solve-cat-btn {
-      background: #1e293b; border: 1.5px solid #334155; border-radius: 12px;
-      padding: 14px 16px; text-align: left; color: #e2e8f0; cursor: pointer;
-      display: flex; align-items: center; gap: 12px; transition: all 0.15s;
+      background: var(--surface-1); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 16px; text-align: left; color: var(--tx-secondary); cursor: pointer;
+      display: flex; align-items: center; gap: 12px; transition: all var(--t-fast);
+      min-height: var(--tap);
     }
-    .solve-cat-btn:active { transform: scale(0.98); background: #2a1f3d; border-color: #c084fc; }
+    .solve-cat-btn:active { transform: scale(0.98); background: #1f1530; border-color: var(--c-solve); }
     .solve-cat-icon { font-size: 22px; flex-shrink: 0; }
-    .solve-cat-title { font-size: 14px; font-weight: 700; }
+    .solve-cat-title { font-size: var(--fs-md); font-weight: 700; }
 
     .solve-sym-list { display: flex; flex-direction: column; gap: 10px; }
     .solve-sym-btn {
-      background: #1e293b; border: 1.5px solid #334155; border-radius: 12px;
-      padding: 14px 16px; text-align: left; color: #e2e8f0; cursor: pointer;
-      transition: all 0.15s; display: flex; flex-direction: column; gap: 4px;
+      background: var(--surface-1); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 16px; text-align: left; color: var(--tx-secondary); cursor: pointer;
+      transition: all var(--t-fast); display: flex; flex-direction: column; gap: 4px;
+      min-height: var(--tap);
     }
-    .solve-sym-btn:active { transform: scale(0.98); background: #2a1f3d; border-color: #c084fc; }
-    .solve-sym-title { font-size: 15px; font-weight: 700; color: #f1f5f9; line-height: 1.4; }
-    .solve-sym-desc { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+    .solve-sym-btn:active { transform: scale(0.98); background: #1f1530; border-color: var(--c-solve); }
+    .solve-sym-title { font-size: var(--fs-md); font-weight: 700; color: var(--tx-primary); line-height: 1.4; }
+    .solve-sym-desc { font-size: var(--fs-xs); color: var(--tx-muted); line-height: 1.6; }
 
     /* 処方箋 */
     .solve-rx { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
@@ -414,52 +528,67 @@
     .solve-history-time { font-size: 10px; color: #475569; }
 
     /* ──────────────── 練習を組む（Phase 2B） ──────────────── */
-    .plan-screen { flex: 1; display: flex; flex-direction: column; padding: 14px 16px 36px; gap: 12px; }
-    .plan-step-pill { background: #1f1610; border: 1px solid #92400e; color: #fcd34d; font-size: 11px; padding: 2px 10px; border-radius: 999px; font-weight: 700; }
-    .plan-step-label { font-size: 11px; font-weight: 800; color: #f59e0b; letter-spacing: 0.1em; text-transform: uppercase; }
-    .plan-title { font-size: 19px; font-weight: 800; color: #f1f5f9; line-height: 1.4; }
-    .plan-sub { font-size: 13px; color: #94a3b8; line-height: 1.7; }
+    .plan-screen { flex: 1; display: flex; flex-direction: column; padding: 14px 16px 40px; gap: 12px; }
+    .plan-step-pill {
+      background: #1f1610; border: 1px solid #92400e; color: #fcd34d;
+      font-size: var(--fs-xs); padding: 4px 12px; border-radius: 999px; font-weight: 800;
+    }
+    .plan-step-label { font-size: var(--fs-xs); font-weight: 800; color: var(--c-plan); letter-spacing: 0.08em; }
+    .plan-title { font-size: var(--fs-lg); font-weight: 800; color: var(--tx-primary); line-height: 1.4; }
+    .plan-sub { font-size: var(--fs-sm); color: var(--tx-muted); line-height: 1.7; }
 
     /* テーマ複数選択チップ */
     .plan-themes { display: flex; flex-wrap: wrap; gap: 8px; }
     .plan-theme-chip {
-      background: #1e293b; border: 1.5px solid #334155; border-radius: 999px;
-      padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;
-      color: #cbd5e1; font-size: 13px; font-weight: 600; transition: all 0.15s;
+      background: var(--surface-1); border: 1.5px solid var(--border); border-radius: 999px;
+      padding: 10px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      color: var(--tx-secondary); font-size: var(--fs-sm); font-weight: 700;
+      transition: all var(--t-fast); min-height: 40px; font-family: inherit;
     }
     .plan-theme-chip:active { transform: scale(0.96); }
-    .plan-theme-chip.active { background: #2a1f0a; border-color: #f59e0b; color: #fcd34d; }
-    .plan-theme-chip-icon { font-size: 15px; }
+    .plan-theme-chip.active {
+      background: color-mix(in oklab, var(--c-plan) 18%, var(--surface-1));
+      border-color: var(--c-plan); color: #fcd34d;
+    }
+    .plan-theme-chip-icon { font-size: 16px; }
 
     /* レベル選択（セグメント） */
     .plan-levels { display: flex; gap: 8px; }
     .plan-level-btn {
-      flex: 1; background: #1e293b; border: 1.5px solid #334155; border-radius: 10px;
-      padding: 12px 8px; text-align: center; color: #cbd5e1; cursor: pointer;
-      transition: all 0.15s; display: flex; flex-direction: column; gap: 3px;
+      flex: 1; background: var(--surface-1); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 12px 6px; text-align: center; color: var(--tx-secondary); cursor: pointer;
+      transition: all var(--t-fast); display: flex; flex-direction: column; gap: 4px;
+      min-height: var(--tap);
     }
-    .plan-level-btn.active { background: #2a1f0a; border-color: #f59e0b; }
-    .plan-level-label { font-size: 14px; font-weight: 800; color: #fcd34d; }
-    .plan-level-desc { font-size: 10px; color: #94a3b8; line-height: 1.4; }
+    .plan-level-btn.active {
+      background: color-mix(in oklab, var(--c-plan) 15%, var(--surface-1));
+      border-color: var(--c-plan);
+    }
+    .plan-level-label { font-size: var(--fs-sm); font-weight: 800; color: #fcd34d; }
+    .plan-level-desc { font-size: 10px; color: var(--tx-muted); line-height: 1.4; }
 
     /* 時間選択 */
     .plan-durations { display: flex; gap: 8px; }
     .plan-duration-btn {
-      flex: 1; background: #1e293b; border: 1.5px solid #334155; border-radius: 10px;
-      padding: 14px 8px; text-align: center; color: #cbd5e1; cursor: pointer;
-      font-size: 14px; font-weight: 800; transition: all 0.15s;
+      flex: 1; background: var(--surface-1); border: 1.5px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 8px; text-align: center; color: var(--tx-secondary); cursor: pointer;
+      font-size: var(--fs-md); font-weight: 800; transition: all var(--t-fast);
+      min-height: var(--tap);
     }
-    .plan-duration-btn.active { background: #2a1f0a; border-color: #f59e0b; color: #fcd34d; }
-    .plan-duration-btn small { display: block; font-size: 10px; font-weight: 500; color: #94a3b8; margin-top: 2px; }
+    .plan-duration-btn.active {
+      background: color-mix(in oklab, var(--c-plan) 15%, var(--surface-1));
+      border-color: var(--c-plan); color: #fcd34d;
+    }
+    .plan-duration-btn small { display: block; font-size: 10px; font-weight: 500; color: var(--tx-muted); margin-top: 2px; }
 
     .plan-gen-btn {
-      background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
-      border: none; border-radius: 12px; padding: 16px; font-size: 15px;
+      background: linear-gradient(135deg, var(--c-plan), #d97706); color: white;
+      border: none; border-radius: var(--r-md); padding: 16px; font-size: var(--fs-md);
       font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px;
-      transition: all 0.15s;
+      transition: all var(--t-fast); min-height: var(--tap);
     }
-    .plan-gen-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
-    .plan-gen-btn:not(:disabled):active { transform: scale(0.98); opacity: 0.9; }
+    .plan-gen-btn:disabled { background: var(--border); color: var(--tx-dim); cursor: not-allowed; }
+    .plan-gen-btn:not(:disabled):active { transform: scale(0.98); opacity: 0.92; }
 
     /* 練習プラン表示 */
     .plan-output { display: flex; flex-direction: column; gap: 10px; }
@@ -2907,6 +3036,7 @@ function App() {
   const [dictQuery, setDictQuery] = useState('');
   const [dictActiveTag, setDictActiveTag] = useState(null);
   const [dictDetail, setDictDetail] = useState(null); // 選択中のセクション
+  const [dictTagsExpanded, setDictTagsExpanded] = useState(false); // タグ展開
 
   // 課題を解決する（Phase 2A）の状態
   const [solveRole, setSolveRole] = useState(null);       // 'player' | 'coach'
@@ -3276,35 +3406,44 @@ function App() {
     <div className="app">
       <div className="header">
         <div className="header-row">
-          <div className="header-title">
-            {phase === 'hub' && 'ハンドボール 戦術ハブ'}
-            {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
-            {phase === 'solve' && '課題を解決する'}
-            {phase === 'plan' && '練習を組む'}
-            {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る — 自己問答'}
+          <div className="header-brand">
+            <div className="header-brand-main">
+              {phase === 'hub' && 'ハンドボール 戦術ハブ'}
+              {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
+              {phase === 'solve' && '課題を解決する'}
+              {phase === 'plan' && '練習を組む'}
+              {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る'}
+            </div>
+            <div className="header-brand-sub">
+              {phase === 'hub' && 'Handball Tactical Hub'}
+              {(phase === 'dictionary' || phase === 'dictionary-detail') && 'Dictionary'}
+              {phase === 'solve' && 'Symptom Diagnosis'}
+              {phase === 'plan' && 'Practice Planner'}
+              {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && 'Self Q&A'}
+            </div>
           </div>
           {modeInfo && (
-            <div className="header-mode" style={{ color: modeInfo.color, background: 'none', border: `1px solid ${modeInfo.color}33`, padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+            <div className="header-mode" style={{ color: modeInfo.color, borderColor: modeInfo.color + '66' }}>
               {modeInfo.label}
             </div>
           )}
           {(phase === 'dictionary' || phase === 'dictionary-detail') && (
-            <div className="header-mode" style={{ color: '#22d3ee', background: 'none', border: '1px solid #22d3ee33', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+            <div className="header-mode" style={{ color: 'var(--c-dict)', borderColor: 'color-mix(in oklab, var(--c-dict) 40%, transparent)' }}>
               辞書
             </div>
           )}
           {phase === 'solve' && (
-            <div className="header-mode" style={{ color: '#c084fc', background: 'none', border: '1px solid #c084fc33', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+            <div className="header-mode" style={{ color: 'var(--c-solve)', borderColor: 'color-mix(in oklab, var(--c-solve) 40%, transparent)' }}>
               診断
             </div>
           )}
           {phase === 'plan' && (
-            <div className="header-mode" style={{ color: '#f59e0b', background: 'none', border: '1px solid #f59e0b33', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>
+            <div className="header-mode" style={{ color: 'var(--c-plan)', borderColor: 'color-mix(in oklab, var(--c-plan) 40%, transparent)' }}>
               計画
             </div>
           )}
         </div>
-        <div className="progress-bar">
+        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' ? 'hidden' : ''}`}>
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
@@ -3343,28 +3482,36 @@ function App() {
       {phase === 'dictionary' && (
         <div className="dict-screen">
           <div className="dict-bar">
-            <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
-            <input
-              type="text"
-              className="dict-search-input"
-              placeholder="キーワードで検索（例: クローズ、5-1、フェイント）"
-              value={dictQuery}
-              onChange={e => setDictQuery(e.target.value)}
-              autoFocus
-            />
+            <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
+            <div className="dict-search-wrap">
+              <input
+                type="text"
+                className="dict-search-input"
+                placeholder="キーワードで検索（例: クローズ、5-1、フェイント）"
+                value={dictQuery}
+                onChange={e => setDictQuery(e.target.value)}
+                autoFocus
+              />
+            </div>
           </div>
-          <div className="dict-tags">
-            <button
-              className={`dict-tag ${dictActiveTag === null ? 'active' : ''}`}
-              onClick={() => setDictActiveTag(null)}
-            >すべて</button>
-            {ALL_TAGS.map(tag => (
+          <div className="dict-tags-wrap">
+            <div className={`dict-tags ${dictTagsExpanded ? 'expanded' : ''}`}>
               <button
-                key={tag}
-                className={`dict-tag ${dictActiveTag === tag ? 'active' : ''}`}
-                onClick={() => setDictActiveTag(dictActiveTag === tag ? null : tag)}
-              >{tag}</button>
-            ))}
+                className={`dict-tag ${dictActiveTag === null ? 'active' : ''}`}
+                onClick={() => setDictActiveTag(null)}
+              >すべて</button>
+              {ALL_TAGS.map(tag => (
+                <button
+                  key={tag}
+                  className={`dict-tag ${dictActiveTag === tag ? 'active' : ''}`}
+                  onClick={() => setDictActiveTag(dictActiveTag === tag ? null : tag)}
+                >{tag}</button>
+              ))}
+              <button
+                className="dict-tags-toggle"
+                onClick={() => setDictTagsExpanded(v => !v)}
+              >{dictTagsExpanded ? '× 折りたたむ' : '＋ 全タグ表示'}</button>
+            </div>
           </div>
           <div className="dict-results">
             {!dictLoaded && !dictError && (
@@ -3388,7 +3535,7 @@ function App() {
                   const highlighted = highlightExcerpt(excerpt, dictQuery);
                   return (
                     <div key={s.id} className="dict-result-card" onClick={() => handleDictSectionOpen(s)}>
-                      <div className="dict-result-filename">{s.fileIcon} {s.fileName}</div>
+                      <div className="dict-result-filename">{s.fileIcon} {s.fileTitle}（{s.fileId}）</div>
                       <div className="dict-result-section">{s.title}</div>
                       <div className="dict-result-excerpt" dangerouslySetInnerHTML={{__html: highlighted}} />
                     </div>
@@ -3404,8 +3551,8 @@ function App() {
       {phase === 'dictionary-detail' && dictDetail && (
         <div className="dict-screen">
           <div className="dict-detail-header">
-            <button className="dict-back" onClick={handleDictBack}>← 一覧へ戻る</button>
-            <div className="dict-detail-file">{dictDetail.fileIcon} {dictDetail.fileName}</div>
+            <button className="dict-back" onClick={handleDictBack}>← 戻る（辞書一覧）</button>
+            <div className="dict-detail-file">{dictDetail.fileIcon} {dictDetail.fileTitle}（{dictDetail.fileId}）</div>
             <div className="dict-detail-title">{dictDetail.title}</div>
             <div className="dict-detail-tags">
               {dictDetail.fileTags.map(t => (
@@ -3453,10 +3600,17 @@ function App() {
           };
           return (
             <div className="solve-screen">
-              <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
+              <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
               <div className="solve-bar">
                 <span className="solve-step-pill">STEP 1 / 3</span>
                 <span className="solve-step-label">どの立場で相談</span>
+              </div>
+              <div className="step-dots">
+                <span className="step-dot current"></span>
+                <span className="step-bar"></span>
+                <span className="step-dot"></span>
+                <span className="step-bar"></span>
+                <span className="step-dot"></span>
               </div>
               <div className="solve-title">あなたは？</div>
               <div className="solve-sub">立場に合わせて症状リストが変わります。</div>
@@ -3499,10 +3653,17 @@ function App() {
         if (!solveCategory) {
           return (
             <div className="solve-screen">
-              <button className="dict-back" onClick={() => setSolveRole(null)}>← 立場の選び直し</button>
+              <button className="dict-back" onClick={() => setSolveRole(null)}>← 戻る（立場の選び直し）</button>
               <div className="solve-bar">
                 <span className="solve-step-pill">STEP 2 / 3</span>
                 <span className="solve-step-label">どんな種類の困りごと</span>
+              </div>
+              <div className="step-dots">
+                <span className="step-dot done"></span>
+                <span className="step-bar done"></span>
+                <span className="step-dot current"></span>
+                <span className="step-bar"></span>
+                <span className="step-dot"></span>
               </div>
               <div className="solve-title">どこで困っている？</div>
               <div className="solve-sub">{roleData.label}</div>
@@ -3530,10 +3691,17 @@ function App() {
         if (!solveSymptom) {
           return (
             <div className="solve-screen">
-              <button className="dict-back" onClick={() => setSolveCategory(null)}>← カテゴリの選び直し</button>
+              <button className="dict-back" onClick={() => setSolveCategory(null)}>← 戻る（カテゴリの選び直し）</button>
               <div className="solve-bar">
                 <span className="solve-step-pill">STEP 3 / 3</span>
                 <span className="solve-step-label">具体的な症状</span>
+              </div>
+              <div className="step-dots">
+                <span className="step-dot done"></span>
+                <span className="step-bar done"></span>
+                <span className="step-dot done"></span>
+                <span className="step-bar done"></span>
+                <span className="step-dot current"></span>
               </div>
               <div className="solve-title">どれが一番近い？</div>
               <div className="solve-sub">{catData.icon} {catData.title}</div>
@@ -3560,7 +3728,7 @@ function App() {
         // 処方箋表示
         return (
           <div className="solve-screen">
-            <button className="dict-back" onClick={() => setSolveSymptom(null)}>← 症状を選び直す</button>
+            <button className="dict-back" onClick={() => setSolveSymptom(null)}>← 戻る（症状を選び直す）</button>
             <div className="solve-bar">
               <span className="solve-step-pill">処方箋</span>
               <span className="solve-step-label">辞書からのアドバイス</span>
@@ -3628,10 +3796,19 @@ function App() {
       {/* 練習を組む（Phase 2B） */}
       {phase === 'plan' && !planResult && (
         <div className="plan-screen">
-          <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
+          <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
+
+          {/* STEPインジケーター（シンプルに「テーマ選択済みか」で2状態） */}
+          <div className="step-dots plan">
+            <span className={`step-dot ${planThemes.length > 0 ? 'done' : 'current'}`}></span>
+            <span className={`step-bar ${planThemes.length > 0 ? 'done' : ''}`}></span>
+            <span className={`step-dot ${planThemes.length > 0 ? 'current' : ''}`}></span>
+            <span className={`step-bar ${planThemes.length > 0 ? 'done' : ''}`}></span>
+            <span className={`step-dot ${planThemes.length > 0 ? 'current' : ''}`}></span>
+          </div>
 
           {/* テーマ複数選択 */}
-          <div className="solve-bar"><span className="plan-step-pill">STEP 1</span><span className="plan-step-label">テーマ（複数可）</span></div>
+          <div className="solve-bar"><span className="plan-step-pill">STEP 1 / 3</span><span className="plan-step-label">テーマ（複数可）</span></div>
           <div className="plan-title">何を強化する？</div>
           <div className="plan-sub">複数選んでOK。練習時間は自動配分されます。</div>
           <div className="plan-themes">
@@ -3643,7 +3820,7 @@ function App() {
           </div>
 
           {/* レベル選択 */}
-          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 2</span><span className="plan-step-label">レベル</span></div>
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 2 / 3</span><span className="plan-step-label">レベル</span></div>
           <div className="plan-levels">
             {LEVELS.map(l => (
               <button key={l.id} className={`plan-level-btn ${planLevel === l.id ? 'active' : ''}`} onClick={() => setPlanLevel(l.id)}>
@@ -3654,7 +3831,7 @@ function App() {
           </div>
 
           {/* 時間選択 */}
-          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 3</span><span className="plan-step-label">時間</span></div>
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 3 / 3</span><span className="plan-step-label">時間</span></div>
           <div className="plan-durations">
             {DURATIONS.map(d => (
               <button key={d} className={`plan-duration-btn ${planDuration === d ? 'active' : ''}`} onClick={() => setPlanDuration(d)}>
@@ -3695,7 +3872,7 @@ function App() {
       {/* 練習プラン表示 */}
       {phase === 'plan' && planResult && (
         <div className="plan-screen">
-          <button className="dict-back" onClick={handlePlanReset}>← 条件を変更</button>
+          <button className="dict-back" onClick={handlePlanReset}>← 戻る（条件を変更）</button>
           <div className="plan-output">
             <div className="plan-header">
               <div className="plan-header-time">⏱ {planResult.totalAllocated} 分プラン</div>
@@ -3813,7 +3990,7 @@ function App() {
       {/* スタート画面（振り返るモード入口） */}
       {phase === 'start' && (
         <div className="start-screen">
-          <button className="dict-back" style={{alignSelf: 'flex-start', padding: '4px 0'}} onClick={handleBackToHub}>← ホーム</button>
+          <button className="dict-back" style={{alignSelf: 'flex-start', padding: '4px 0'}} onClick={handleBackToHub}>← 戻る（ホーム）</button>
           <div className="start-icon">🤾</div>
           <div className="start-title">今日の自分と<br />向き合う</div>
           <div className="start-sub">どのモードで振り返る？</div>
