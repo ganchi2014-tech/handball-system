@@ -382,6 +382,37 @@
 
     .solve-rx-missing { font-size: 11px; color: #64748b; padding: 6px 0; }
 
+    /* 該当なしフォールバック */
+    .solve-fallback {
+      margin-top: 16px; padding: 12px 14px; border-radius: 10px;
+      background: #131f33; border: 1px dashed #475569;
+      color: #94a3b8; font-size: 12px; line-height: 1.7;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .solve-fallback-label { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; }
+    .solve-fallback-btn {
+      background: #0f172a; border: 1px solid #22d3ee44; border-radius: 8px;
+      padding: 10px 12px; color: #67e8f9; font-size: 13px; font-weight: 700;
+      cursor: pointer; text-align: left; transition: all 0.15s;
+    }
+    .solve-fallback-btn:active { background: #155e75; border-color: #22d3ee; }
+
+    /* 履歴セクション */
+    .solve-history {
+      background: #131f33; border: 1px solid #1e293b; border-radius: 10px;
+      padding: 10px 12px; margin-top: 18px;
+    }
+    .solve-history-label { font-size: 10px; font-weight: 800; color: #c084fc; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .solve-history-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; background: #0f172a; border: 1px solid #1e293b;
+      border-radius: 8px; cursor: pointer; margin-top: 4px;
+      transition: all 0.15s;
+    }
+    .solve-history-item:active { background: #1a1f2e; border-color: #c084fc; }
+    .solve-history-meta { flex: 1; min-width: 0; font-size: 12px; color: #cbd5e1; }
+    .solve-history-time { font-size: 10px; color: #475569; }
+
     /* Coming soon プレースホルダー */
     .soon-screen {
       flex: 1; display: flex; flex-direction: column; justify-content: center;
@@ -2267,6 +2298,27 @@ function App() {
   const [solveRole, setSolveRole] = useState(null);       // 'player' | 'coach'
   const [solveCategory, setSolveCategory] = useState(null);
   const [solveSymptom, setSolveSymptom] = useState(null);
+  const [solveHistory, setSolveHistory] = useState([]);   // 最近の診断履歴
+
+  // 起動時に履歴をlocalStorageから読み込む
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('solve-history');
+      if (raw) setSolveHistory(JSON.parse(raw));
+    } catch (e) { /* ignore */ }
+  }, []);
+
+  // 履歴に追加する
+  const addSolveHistory = (role, category, symptom) => {
+    const entry = { role, category, symptom, ts: Date.now() };
+    setSolveHistory(prev => {
+      // 同じ症状の重複は古い方を消す
+      const filtered = prev.filter(h => !(h.role === role && h.category === category && h.symptom === symptom));
+      const next = [entry, ...filtered].slice(0, 5);
+      try { localStorage.setItem('solve-history', JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
+  };
 
   // 辞書ファイルを一度だけfetch
   useEffect(() => {
@@ -2398,10 +2450,22 @@ function App() {
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
   };
 
+  // 関連辞書のマッチ解決：完全一致 → 先頭一致 → 部分一致 の順で精度高く
+  const findRelatedSection = (related) => {
+    const inFile = dictSections.filter(s => s.fileId === related.fileId);
+    // 1. 完全一致
+    let hit = inFile.find(s => s.title === related.match);
+    if (hit) return hit;
+    // 2. 先頭一致
+    hit = inFile.find(s => s.title.startsWith(related.match));
+    if (hit) return hit;
+    // 3. 部分一致（fallback）
+    return inFile.find(s => s.title.includes(related.match));
+  };
+
   // 課題を解決する：処方箋の「関連辞書」をタップしたとき
   const handleOpenRelated = (related) => {
-    // dictSections から fileId + match を含むセクションを探す
-    const target = dictSections.find(s => s.fileId === related.fileId && s.title.includes(related.match));
+    const target = findRelatedSection(related);
     if (target) {
       setDictDetail(target);
       setPhase('dictionary-detail');
@@ -2411,6 +2475,19 @@ function App() {
 
   const handleSolveReset = () => {
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
+  };
+
+  // 履歴から再診断
+  const handleSolveFromHistory = (h) => {
+    setSolveRole(h.role); setSolveCategory(h.category); setSolveSymptom(h.symptom);
+  };
+
+  // 「該当なし」→ 辞書ブラウザへ自由検索
+  const handleSolveToDict = (preset) => {
+    setDictDetail(null);
+    setDictQuery(preset || '');
+    setDictActiveTag(null);
+    setPhase('dictionary');
   };
 
   const handleHubSelect = (modId) => {
@@ -2625,6 +2702,15 @@ function App() {
 
         // ステップ1：役割選択
         if (!solveRole) {
+          // 履歴のフォーマット
+          const fmtTime = (ts) => {
+            const d = new Date(ts); const now = new Date();
+            const diff = (now - d) / 1000;
+            if (diff < 60) return 'いま';
+            if (diff < 3600) return Math.floor(diff/60) + '分前';
+            if (diff < 86400) return Math.floor(diff/3600) + '時間前';
+            return Math.floor(diff/86400) + '日前';
+          };
           return (
             <div className="solve-screen">
               <button className="dict-back" onClick={handleBackToHub}>← ホーム</button>
@@ -2642,6 +2728,29 @@ function App() {
                   </button>
                 ))}
               </div>
+
+              {/* 最近の診断履歴 */}
+              {solveHistory.length > 0 && (
+                <div className="solve-history">
+                  <div className="solve-history-label">▶ 最近の診断</div>
+                  {solveHistory.slice(0, 3).map((h, i) => {
+                    const roleData = SOLVE_DATA[h.role];
+                    const catData = roleData?.categories.find(c => c.id === h.category);
+                    const symData = catData?.symptoms.find(s => s.id === h.symptom);
+                    if (!symData) return null;
+                    return (
+                      <div key={i} className="solve-history-item" onClick={() => handleSolveFromHistory(h)}>
+                        <span style={{fontSize: 16}}>{catData.icon}</span>
+                        <div className="solve-history-meta">
+                          <div>{symData.title}</div>
+                          <div className="solve-history-time">{roleData.icon} {fmtTime(h.ts)}</div>
+                        </div>
+                        <span style={{color: '#475569'}}>›</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         }
@@ -2665,6 +2774,14 @@ function App() {
                   </button>
                 ))}
               </div>
+
+              {/* 該当なしフォールバック */}
+              <div className="solve-fallback">
+                <div className="solve-fallback-label">▶ ここにない／わからない場合</div>
+                <button className="solve-fallback-btn" onClick={() => handleSolveToDict('')}>
+                  📖 辞書を自由に検索する（キーワード／タグ）
+                </button>
+              </div>
             </div>
           );
         }
@@ -2682,11 +2799,19 @@ function App() {
               <div className="solve-sub">{catData.icon} {catData.title}</div>
               <div className="solve-sym-list">
                 {catData.symptoms.map(s => (
-                  <button key={s.id} className="solve-sym-btn" onClick={() => setSolveSymptom(s.id)}>
+                  <button key={s.id} className="solve-sym-btn" onClick={() => { setSolveSymptom(s.id); addSolveHistory(solveRole, solveCategory, s.id); }}>
                     <div className="solve-sym-title">{s.title}</div>
                     <div className="solve-sym-desc">{s.desc}</div>
                   </button>
                 ))}
+              </div>
+
+              {/* 該当なしフォールバック */}
+              <div className="solve-fallback">
+                <div className="solve-fallback-label">▶ どれもピンとこない場合</div>
+                <button className="solve-fallback-btn" onClick={() => handleSolveToDict(catData.title.replace(/で困っている$/, ''))}>
+                  📖 「{catData.title.replace(/で困っている$/, '')}」で辞書を検索する
+                </button>
               </div>
             </div>
           );
@@ -2726,7 +2851,7 @@ function App() {
                   <div className="solve-rx-related-list">
                     {symData.related.map((r, i) => {
                       const fileMeta = DICT_FILES.find(f => f.id === r.fileId);
-                      const section = dictSections.find(s => s.fileId === r.fileId && s.title.includes(r.match));
+                      const section = findRelatedSection(r);
                       return (
                         <div
                           key={i}
