@@ -76,25 +76,26 @@
 | ファイル | 内容 | キーコンセプト |
 |---|---|---|
 | `dictionary/00_janken_map.md` | じゃんけんマップ（全カテゴリ横断統合） | OF↔DFサイクル、GKサイクル、ゲームクローズサイクル |
-| `dictionary/01_basics.md` | 基礎技術（パス・シュート・コンタクト） | シュート7種類、GK対策（波型/スポット型）、山側/谷側 |
+| `dictionary/01_basics.md` | 基礎技術（パス・シュート・コンタクト） | シュート10種類、GK対策（先読み型/コース絞り型）、山側/谷側 |
 | `dictionary/02_individual.md` | 個人対決（1on1・2on2・スクリーン・勝ち位置） | ピック&ロール、クロス、勝ち位置の定義 |
 | `dictionary/03_numerical.md` | 数的状況・速攻・バックチェック | 2on1/3on2、5on6守備、1st/2ndウェーブ速攻 |
 | `dictionary/04_cognition.md` | 認知・判断・行動・声掛け | 認知→判断→行動の3段構造、エコロジカルアプローチ |
-| `dictionary/05_gk_df.md` | GK・DF陣形 | 3方向の法則、0-6/1-5/2-4/3-2-1/3-3、Verschieben/Herausrücken/Übergeben |
+| `dictionary/05_gk_df.md` | GK・DF陣形 | 3方向の法則、0-6/5-1/2-4/3-2-1/3-3、Verschieben/Herausrücken/Übergeben |
 | `dictionary/06_post.md` | ポストプレー（OF・DF） | 4プレー（回転/フェイク/フラッシュ/スクリーン）、V字位置取り |
 | `dictionary/07_formations.md` | クローズ/ワイド・セットOF・ウィングプレー | 3-3/2-1-3、オフボールの5動作 |
 | `dictionary/08_game_management.md` | ゲームマネジメント・ファウル戦略 | パッシブプレー、ゲームクローズ、ファウル5種類と重大度、タイムアウト、7on6 |
 | `dictionary/09_individual_differences.md` | 個人差・身体特性が戦術選択に与える影響 | 身長/スピード/パワー/利き手の戦術差、最難対応コンビ |
 | `dictionary/10_opponent_scouting.md` | 相手チームの視点・スカウティング・アジャストメント | スカウティング項目、ハーフタイム修正、リアルタイムアジャスト |
 | `dictionary/11_game_context.md` | 試合文脈による戦術変化 | スコア差別戦術、時間帯別戦術、退場者対応 |
-| `dictionary/12_set_plays.md` | セットプレー・サインプレー・スクリーン技術 | フリースロー攻撃パターン、サイン種類、スクリーン4種類と合法要件 |
+| `dictionary/12_set_plays.md` | セットプレー・サインプレー・スクリーン技術 | フリースロー攻撃パターン、サイン種類、スクリーン6種類と合法要件 |
 | `dictionary/13_global_tactics.md` | 欧州ハンドボール国別戦術分析（グローバル戦術辞書） | デンマーク/フランス/ドイツ/スペイン/クロアチア/スロベニア/ポルトガル/ノルウェー/アイスランド、IHF2025分析、Jacobsenコードワード、6-0の3動作（独語）、普遍原則13-15 |
 | `dictionary/14_position_roles_international.md` | 各国言語別ポジション役割・スキル・戦術辞書 | バックプレーヤー（丁/独/仏/西）、ピボット（独/西/葡）、ウィング（仏）、Par/Impar理論、Freilaufen/Sperren/Absetzen |
 | `dictionary/15_norway_gk_df_school.md` | ノルウェー式GK・DF育成メソッド（Målvaktskolen/Forsvarsskolen） | GK4フェーズ（Forflytning/Posisjonering/Redning/Initiering）、DF10技術（Beredsskapsstilling〜Hjelpe）、Utviklingstrappa4段階、ノルウェー語30用語対訳 |
-| `dictionary/16_of_combinations.md` | コンビネーション・OFタイプ・攻撃トリガー辞書 | 攻撃トリガー3分類（速攻/セットOF/インプレー）、OFタイプ5分類、OFタイプ×DFタイプ対応マトリクス、2人・3人コンビネーション8種、各国コンビネーション用語対照 |
+| `dictionary/16_of_combinations.md` | コンビネーション・OFタイプ・攻撃トリガー辞書 | 攻撃トリガー3分類（速攻/セットOF/インプレー）、OFタイプ5分類、OFタイプ×DFタイプ対応マトリクス、2人コンビ6種・3人コンビ4種（計10種）、各国コンビネーション用語対照 |
 | `dictionary/17_scene_index.md` | 場面→技術 逆引きインデックス + 試合振り返りチェックリスト | DF状況別/GK状況別/数的状況別/スコア時間別/ポストプレー場面別/コンビネーション場面別 逆引き、5分振り返りチェックリスト（認知/判断速度/技術/3部構成リザルト）、即時対応リファレンス |
 | `dictionary/18_mental.md` | メンタルマネジメント・自己診断 | ノルウェー語5要素（Mestring/Selvtillit/Visualisering/Indre dialog/Triggere）、3秒ルール、プレッシャー下対処、技術/戦術/メンタル3軸レベル診断、レベル別学習ステップ |
 | `dictionary/19_drills.md` | 練習メニュー辞書 | 個人練習（シュート/フェイント/ドリブル/踏み切り/パス）、ペア練習（1on1/2on2）、チーム練習（速攻/セットOF/DF/連携）、メンタル練習、週間練習計画モデル |
+| `dictionary/20_back_player_playbook.md` | バックプレーヤー判断プレイブック（連鎖判断ツリー） | 状況別（DF姿勢/DF陣形/GK状況/ポスト連携/数的状況/試合文脈/フェイント選択/接触対応/メンタル状態/ポジション特化）の「第1選択→DF対応→第2選択」連鎖 |
 
 ---
 
