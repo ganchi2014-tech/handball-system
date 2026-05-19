@@ -245,18 +245,37 @@
       background: var(--border); color: var(--tx-secondary); font-size: 9px; font-weight: 800;
       padding: 3px 8px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;
     }
-    .hub-card.reflect { border-color: color-mix(in oklab, var(--c-reflect) 50%, transparent); }
+    .hub-card.reflect {
+      border-color: color-mix(in oklab, var(--c-reflect) 50%, transparent);
+      background: linear-gradient(135deg, color-mix(in oklab, var(--c-reflect) 8%, var(--surface-1)), var(--surface-1) 60%);
+    }
     .hub-card.reflect .hub-card-title { color: #93c5fd; }
     .hub-card.reflect:active { background: #14233f; border-color: var(--c-reflect); }
-    .hub-card.dict { border-color: color-mix(in oklab, var(--c-dict) 50%, transparent); }
+    .hub-card.dict {
+      border-color: color-mix(in oklab, var(--c-dict) 50%, transparent);
+      background: linear-gradient(135deg, color-mix(in oklab, var(--c-dict) 8%, var(--surface-1)), var(--surface-1) 60%);
+    }
     .hub-card.dict .hub-card-title { color: #67e8f9; }
     .hub-card.dict:active { background: #0f2837; border-color: var(--c-dict); }
-    .hub-card.solve { border-color: color-mix(in oklab, var(--c-solve) 50%, transparent); }
+    .hub-card.solve {
+      border-color: color-mix(in oklab, var(--c-solve) 50%, transparent);
+      background: linear-gradient(135deg, color-mix(in oklab, var(--c-solve) 8%, var(--surface-1)), var(--surface-1) 60%);
+    }
     .hub-card.solve .hub-card-title { color: #d8b4fe; }
     .hub-card.solve:active { background: #1f1530; border-color: var(--c-solve); }
-    .hub-card.plan { border-color: color-mix(in oklab, var(--c-plan) 50%, transparent); }
+    .hub-card.plan {
+      border-color: color-mix(in oklab, var(--c-plan) 50%, transparent);
+      background: linear-gradient(135deg, color-mix(in oklab, var(--c-plan) 8%, var(--surface-1)), var(--surface-1) 60%);
+    }
     .hub-card.plan .hub-card-title { color: #fcd34d; }
     .hub-card.plan:active { background: #261906; border-color: var(--c-plan); }
+    /* 続きからショートカット用 */
+    .hub-card.resume {
+      border-color: color-mix(in oklab, #fbbf24 50%, transparent);
+      background: linear-gradient(135deg, color-mix(in oklab, #fbbf24 10%, var(--surface-1)), var(--surface-1) 60%);
+    }
+    .hub-card.resume .hub-card-title { color: #fcd34d; }
+    .hub-card.resume:active { background: #2a1f0a; border-color: #fbbf24; }
     .hub-footer { font-size: var(--fs-xs); color: var(--tx-dim); text-align: center; margin-top: 12px; padding: 0 16px; line-height: 1.7; }
 
     /* ──────────────── 辞書ブラウザ ──────────────── */
@@ -803,6 +822,46 @@
       display: inline-flex; align-items: center; gap: 6px;
     }
     .help-fab:active { transform: scale(0.96); background: #0f2837; }
+
+    /* オンボーディング */
+    .onboard-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      padding: 24px; animation: fadeIn 0.25s ease-out;
+    }
+    .onboard-card {
+      background: var(--surface-1); border-radius: 18px; padding: 24px 22px;
+      max-width: 420px; width: 100%; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+    }
+    .onboard-step-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 4px; }
+    .onboard-step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all var(--t-fast); }
+    .onboard-step-dot.active { background: var(--c-dict); width: 24px; border-radius: 4px; }
+    .onboard-icon { font-size: 52px; text-align: center; line-height: 1; }
+    .onboard-title { font-size: var(--fs-lg); font-weight: 800; color: var(--tx-primary); text-align: center; }
+    .onboard-desc { font-size: var(--fs-sm); color: var(--tx-muted); line-height: 1.8; text-align: center; }
+    .onboard-actions { display: flex; gap: 10px; margin-top: 8px; }
+    .onboard-btn {
+      flex: 1; border: 1.5px solid var(--border); background: var(--surface-2);
+      color: var(--tx-secondary); border-radius: 10px; padding: 12px;
+      font-size: var(--fs-sm); font-weight: 700; cursor: pointer; font-family: inherit;
+      min-height: var(--tap);
+    }
+    .onboard-btn.primary { background: linear-gradient(135deg, var(--c-dict), #06b6d4); color: white; border-color: transparent; }
+    .onboard-btn:active { transform: scale(0.98); }
+    .onboard-skip {
+      background: none; border: none; color: var(--tx-dim);
+      font-size: var(--fs-xs); cursor: pointer; font-family: inherit;
+      padding: 6px; text-align: center; margin-top: -4px;
+    }
+
+    /* 「続きから」用：ハブ内の小さいピル */
+    .hub-resume-pill {
+      font-size: 10px; color: #fcd34d; background: rgba(251,191,36,0.15);
+      border: 1px solid rgba(251,191,36,0.3); padding: 2px 8px; border-radius: 4px;
+      font-weight: 700; letter-spacing: 0.05em;
+    }
 
     /* お気に入りボタン */
     .fav-btn {
@@ -3242,6 +3301,74 @@ function App() {
   // 用語集モーダル
   const [glossaryOpen, setGlossaryOpen] = useState(false);
 
+  // オンボーディング
+  const [onboardOpen, setOnboardOpen] = useState(false);
+  const [onboardStep, setOnboardStep] = useState(0);
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem('onboarded');
+      if (!seen) setOnboardOpen(true);
+    } catch (e) {}
+  }, []);
+  const ONBOARD_STEPS = [
+    { icon: '🤾‍♂️', title: 'ハンドボール戦術ハブへようこそ', desc: '選手と指導者のための戦術ガイドアプリ。\n4つのモジュールで、辞書を実戦に変えます。' },
+    { icon: '🤾',    title: '1. 振り返る', desc: '試合・練習のプレーを6モードで自己問答。\n良かった点／課題／改善案をその場で言語化。\n（主に選手）' },
+    { icon: '📖',   title: '2. 辞書を読む', desc: '20本の戦術辞書を横断検索＋タグでフィルタ。\n用語集とお気に入り機能つき。\n（選手・指導者）' },
+    { icon: '🎯',   title: '3. 課題を解決する', desc: '「○○ができない」を3ステップで選ぶ。\n辞書からのアドバイス＋具体アクションが出ます。\n（選手・指導者）' },
+    { icon: '📋',   title: '4. 練習を組む', desc: 'テーマ×レベル×時間で練習プランを生成。\nエコロジカル制約つき、印刷・コピー可。\n（主に指導者）' },
+    { icon: '✨',   title: '準備完了！', desc: '困ったら右下の 📘 用語 をタップ。\nではどうぞ。' },
+  ];
+  const handleOnboardNext = () => {
+    if (onboardStep < ONBOARD_STEPS.length - 1) setOnboardStep(onboardStep + 1);
+    else handleOnboardFinish();
+  };
+  const handleOnboardFinish = () => {
+    try { localStorage.setItem('onboarded', '1'); } catch (e) {}
+    setOnboardOpen(false);
+    setOnboardStep(0);
+  };
+  const handleOnboardOpen = () => {
+    setOnboardStep(0);
+    setOnboardOpen(true);
+  };
+
+  // 「続きから」最終アクセス
+  const [resumeData, setResumeData] = useState(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('last-context');
+      if (raw) setResumeData(JSON.parse(raw));
+    } catch (e) {}
+  }, []);
+  const saveResume = (kind, payload) => {
+    const r = { kind, payload, ts: Date.now() };
+    try { localStorage.setItem('last-context', JSON.stringify(r)); } catch (e) {}
+    setResumeData(r);
+  };
+  const handleResume = () => {
+    if (!resumeData) return;
+    if (resumeData.kind === 'dict' && resumeData.payload?.sectionId) {
+      // 辞書セクション復元は dictionary loader 後に解決させる
+      setPhase('dictionary');
+      setTimeout(() => {
+        const target = dictSections.find(s => s.id === resumeData.payload.sectionId);
+        if (target) { setDictDetail(target); setPhase('dictionary-detail'); window.scrollTo(0,0); }
+      }, 400);
+    } else if (resumeData.kind === 'solve' && resumeData.payload) {
+      setSolveRole(resumeData.payload.role);
+      setSolveCategory(resumeData.payload.category);
+      setSolveSymptom(resumeData.payload.symptom);
+      setPhase('solve');
+    } else if (resumeData.kind === 'plan' && resumeData.payload) {
+      setPlanThemes(resumeData.payload.themes || []);
+      setPlanLevel(resumeData.payload.level || 'mid');
+      setPlanDuration(resumeData.payload.duration || 60);
+      const p = buildPlan(resumeData.payload.themes || [], resumeData.payload.level || 'mid', resumeData.payload.duration || 60);
+      setPlanResult(p);
+      setPhase('plan');
+    }
+  };
+
   // 辞書お気に入り
   const [dictFavs, setDictFavs] = useState([]); // [section.id, ...]
   useEffect(() => {
@@ -3276,22 +3403,23 @@ function App() {
     return `${labels.slice(0, -1).join('・')}＋${labels[labels.length - 1]}の総合強化（${lv}）`;
   };
 
-  // プラン保存
-  const handlePlanSave = () => {
+  // プラン保存（タグ付き）
+  const handlePlanSave = (tag) => {
     if (!planResult) return;
     const entry = {
       themes: planThemes,
       level: planLevel,
       duration: planDuration,
       aim: generatePlanAim(planThemes, planLevel),
+      tag: tag || null,
       ts: Date.now(),
     };
     setPlanSaved(prev => {
-      const next = [entry, ...prev].slice(0, 5);
+      const next = [entry, ...prev].slice(0, 8);
       try { localStorage.setItem('plan-saved', JSON.stringify(next)); } catch (e) {}
       return next;
     });
-    setPlanCopyMsg('プランを保存しました');
+    setPlanCopyMsg(tag ? `「${tag}」として保存しました` : 'プランを保存しました');
     setTimeout(() => setPlanCopyMsg(''), 2000);
   };
 
@@ -3521,6 +3649,7 @@ function App() {
     if (!planThemes.length) return;
     const plan = buildPlan(planThemes, planLevel, planDuration);
     setPlanResult(plan);
+    saveResume('plan', { themes: planThemes, level: planLevel, duration: planDuration, aim: generatePlanAim(planThemes, planLevel) });
     setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
@@ -3599,6 +3728,7 @@ function App() {
   const handleDictSectionOpen = (section) => {
     setDictDetail(section);
     setPhase('dictionary-detail');
+    saveResume('dict', { sectionId: section.id, title: section.title, fileTitle: section.fileTitle });
     // スクロール位置を一番上にリセット
     setTimeout(() => window.scrollTo(0, 0), 0);
   };
@@ -3674,8 +3804,25 @@ function App() {
         <div className="hub-screen">
           <div style={{ fontSize: 44 }}>🤾‍♂️</div>
           <div className="hub-title">高校ハンドボールの<br />「わからない」を解決する</div>
-          <div className="hub-sub">選手と指導者のための戦術辞書アプリ。<br />20ファイルの辞書資産を、4つのモジュールで使う。</div>
+          <div className="hub-sub">選手は<strong>振り返り</strong>を、指導者は<strong>練習設計</strong>を、<br />両者で<strong>戦術辞書と症状診断</strong>を共有する。</div>
           <div className="hub-cards">
+            {/* 続きからカード（resumeDataがあれば最上部に） */}
+            {resumeData && (() => {
+              let label = '';
+              if (resumeData.kind === 'dict') label = `📖 ${resumeData.payload?.title || '辞書'}`;
+              else if (resumeData.kind === 'solve') label = `🎯 ${resumeData.payload?.symptomTitle || '診断'}`;
+              else if (resumeData.kind === 'plan') label = `📋 ${resumeData.payload?.aim || '練習プラン'}`;
+              return (
+                <button className="hub-card resume" onClick={handleResume}>
+                  <div className="hub-card-icon">↻</div>
+                  <div className="hub-card-body">
+                    <div className="hub-card-target">前回の続きから</div>
+                    <div className="hub-card-title">続きから開く</div>
+                    <div className="hub-card-desc">{label}</div>
+                  </div>
+                </button>
+              );
+            })()}
             {HUB_MODULES.map(mod => (
               <button
                 key={mod.id}
@@ -3692,12 +3839,48 @@ function App() {
               </button>
             ))}
           </div>
+          <button
+            className="help-btn"
+            style={{marginTop: 12}}
+            onClick={handleOnboardOpen}
+          >🌱 初めての方はこちら</button>
           <div className="hub-footer">
-            辞書ファイル：20本（約260KB） ／ 普遍原則：10 ／<br />
-            国・クラブ別戦術分析を含む包括的ハンドボール戦術辞書
+            普遍原則10／じゃんけん構造のハンドボール戦術ガイド<br />
+            国別戦術・クラブ別戦術・選手研究（Gidsel他）を網羅
           </div>
         </div>
       )}
+
+      {/* オンボーディングモーダル */}
+      {onboardOpen && (() => {
+        const step = ONBOARD_STEPS[onboardStep];
+        const isLast = onboardStep === ONBOARD_STEPS.length - 1;
+        return (
+          <div className="onboard-overlay">
+            <div className="onboard-card">
+              <div className="onboard-step-dots">
+                {ONBOARD_STEPS.map((_, i) => (
+                  <span key={i} className={`onboard-step-dot ${i === onboardStep ? 'active' : ''}`}></span>
+                ))}
+              </div>
+              <div className="onboard-icon">{step.icon}</div>
+              <div className="onboard-title">{step.title}</div>
+              <div className="onboard-desc" style={{whiteSpace: 'pre-line'}}>{step.desc}</div>
+              <div className="onboard-actions">
+                {onboardStep > 0 && (
+                  <button className="onboard-btn" onClick={() => setOnboardStep(onboardStep - 1)}>← 戻る</button>
+                )}
+                <button className="onboard-btn primary" onClick={handleOnboardNext}>
+                  {isLast ? '✓ はじめる' : '次へ →'}
+                </button>
+              </div>
+              {!isLast && (
+                <button className="onboard-skip" onClick={handleOnboardFinish}>スキップ</button>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* 辞書ブラウザ（一覧・検索） */}
       {phase === 'dictionary' && (
@@ -3952,7 +4135,11 @@ function App() {
               <div className="solve-sub">{catData.icon} {catData.title}</div>
               <div className="solve-sym-list">
                 {catData.symptoms.map(s => (
-                  <button key={s.id} className="solve-sym-btn" onClick={() => { setSolveSymptom(s.id); addSolveHistory(solveRole, solveCategory, s.id); }}>
+                  <button key={s.id} className="solve-sym-btn" onClick={() => {
+                    setSolveSymptom(s.id);
+                    addSolveHistory(solveRole, solveCategory, s.id);
+                    saveResume('solve', { role: solveRole, category: solveCategory, symptom: s.id, symptomTitle: s.title });
+                  }}>
                     <div className="solve-sym-title">{s.title}</div>
                     <div className="solve-sym-desc">{s.desc}</div>
                   </button>
@@ -4119,10 +4306,13 @@ function App() {
           {planSaved.length > 0 && (
             <div className="plan-saved-section">
               <div className="plan-saved-label">▶ 保存済みプラン</div>
-              {planSaved.slice(0, 3).map((sv, i) => (
+              {planSaved.slice(0, 5).map((sv, i) => (
                 <div key={i} className="plan-saved-item" onClick={() => handlePlanRestore(sv)}>
                   <div className="plan-saved-meta">
-                    <div className="plan-saved-aim">{sv.aim}</div>
+                    <div className="plan-saved-aim">
+                      {sv.tag && <span style={{background: 'rgba(251,191,36,0.2)', color: '#fcd34d', fontSize: 10, padding: '1px 6px', borderRadius: 4, marginRight: 6, fontWeight: 800}}>{sv.tag}</span>}
+                      {sv.aim}
+                    </div>
                     <div className="plan-saved-detail">
                       {sv.duration}分 / {LEVELS.find(l => l.id === sv.level)?.label} /
                       {' '}{sv.themes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.icon).filter(Boolean).join(' ')}
@@ -4152,28 +4342,33 @@ function App() {
             {/* 狙い */}
             <div className="plan-aim">🎯 狙い：{generatePlanAim(planThemes, planLevel)}</div>
 
-            {/* エコロジカル制約の説明＋凡例＋辞書リンク */}
-            <div className="plan-eco-banner">
-              <strong>📌 制約主導アプローチ（エコロジカル）</strong>：各メニューに「制約」が設定してあります。制約を入れると<strong>試合に近い状況</strong>が再現され、選手が自分で考えて動く力が育ちます。
-              <div style={{marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
-                <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>タスク</span>
-                <span style={{fontSize: 11}}>=ルール（時間・回数・声出し等）</span>
+            {/* エコロジカル制約の説明（折りたたみ可） */}
+            <details className="plan-eco-banner" style={{padding: 0}}>
+              <summary style={{cursor: 'pointer', padding: '8px 12px', listStyle: 'none', color: 'var(--c-dict)', fontSize: 11, fontWeight: 800}}>
+                📌 制約主導アプローチ（エコロジカル）— 詳しく見る
+              </summary>
+              <div style={{padding: '0 12px 12px', borderTop: '1px solid rgba(34,211,238,0.2)', marginTop: 4, paddingTop: 8}}>
+                各メニューに「制約」を設定。試合に近い状況を再現し、選手が自分で考えて動く力を育てます。
+                <div style={{marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
+                  <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>タスク</span>
+                  <span style={{fontSize: 11}}>=ルール（時間・回数・声出し等）</span>
+                </div>
+                <div style={{marginTop: 2, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
+                  <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>環境</span>
+                  <span style={{fontSize: 11}}>=道具・配置（コーン・スペース・対戦相手の動き）</span>
+                </div>
+                <div style={{marginTop: 2, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
+                  <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>選手</span>
+                  <span style={{fontSize: 11}}>=役割（誰がどう振る舞うかの制限）</span>
+                </div>
+                <div
+                  style={{marginTop: 8, color: '#67e8f9', fontSize: 11, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline'}}
+                  onClick={() => handleOpenRelated({ fileId: '04', match: 'エコロジカル' })}
+                >
+                  ▶ エコロジカルアプローチをもっと学ぶ（辞書04）
+                </div>
               </div>
-              <div style={{marginTop: 2, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
-                <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>環境</span>
-                <span style={{fontSize: 11}}>=道具・配置（コーン・スペース・対戦相手の動き）</span>
-              </div>
-              <div style={{marginTop: 2, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
-                <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>選手</span>
-                <span style={{fontSize: 11}}>=役割（誰がどう振る舞うかの制限）</span>
-              </div>
-              <div
-                style={{marginTop: 8, color: '#67e8f9', fontSize: 11, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline'}}
-                onClick={() => handleOpenRelated({ fileId: '04', match: 'エコロジカル' })}
-              >
-                ▶ エコロジカルアプローチをもっと学ぶ（辞書04）
-              </div>
-            </div>
+            </details>
 
             {/* ウォームアップ */}
             {planResult.warmup && (
@@ -4244,7 +4439,13 @@ function App() {
           <div className="plan-actions">
             <button className="plan-action-btn primary" onClick={() => window.print()}>🖨 印刷</button>
             <button className="plan-action-btn" onClick={handlePlanCopy}>📋 コピー</button>
-            <button className="plan-action-btn" onClick={handlePlanSave}>★ 保存</button>
+            <button className="plan-action-btn" onClick={() => handlePlanSave(null)}>★ 保存</button>
+          </div>
+          {/* タグ付き保存（時系列ラベル） */}
+          <div className="plan-actions" style={{marginTop: 4}}>
+            <button className="plan-action-btn" style={{fontSize: 11}} onClick={() => handlePlanSave('今日')}>📅 今日として保存</button>
+            <button className="plan-action-btn" style={{fontSize: 11}} onClick={() => handlePlanSave('明日')}>📅 明日として保存</button>
+            <button className="plan-action-btn" style={{fontSize: 11}} onClick={() => handlePlanSave('来週')}>📅 来週として保存</button>
           </div>
           <button className="reset-btn" style={{marginTop: 6}} onClick={handlePlanReset}>条件を変更</button>
           <button className="reset-btn" style={{marginTop: 4}} onClick={handleBackToHub}>← ホームに戻る</button>
