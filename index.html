@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>ハンドボール 自己問答</title>
+  <title>HANDBALL LAB</title>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -4150,14 +4150,14 @@ function App() {
         <div className="header-row">
           <div className="header-brand">
             <div className="header-brand-main">
-              {phase === 'hub' && 'ハンドボール 戦術ハブ'}
+              {phase === 'hub' && 'HANDBALL LAB'}
               {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
               {phase === 'solve' && '課題を解決する'}
               {phase === 'plan' && '練習を組む'}
               {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
-              {phase === 'hub' && 'Handball Tactical Hub'}
+              {phase === 'hub' && 'Tactics · Analysis · Drills'}
               {(phase === 'dictionary' || phase === 'dictionary-detail') && 'Dictionary'}
               {phase === 'solve' && 'Symptom Diagnosis'}
               {phase === 'plan' && 'Practice Planner'}
@@ -4194,9 +4194,9 @@ function App() {
       {phase === 'hub' && (
         <div className="hub-screen animate-in">
           <div className="hub-hero">
-            <div className="hub-hero-eyebrow">Handball Tactical Hub</div>
-            <div className="hub-title">高校ハンドボールの<br />「わからない」を解決</div>
-            <div className="hub-sub">選手の振り返りから指導者の練習設計まで、戦術辞書と症状診断で一括サポート。</div>
+            <div className="hub-hero-eyebrow">近江兄弟社ハンドボール部</div>
+            <div className="hub-title">認知・思考・判断</div>
+            <div className="hub-sub">振り返り・辞書・診断・練習プランを一冊に。</div>
           </div>
           <div className="hub-cards">
             {/* 続きからカード（resumeDataがあれば最上部に） */}
