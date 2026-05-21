@@ -99,6 +99,7 @@
 | `dictionary/21_physical_training.md` | フィジカルトレーニング辞書（ハンドボール特化） | バックプレーヤーの試合負荷データ・主要筋群・筋力プログラム3フェーズ・プライオメトリクス・HIIT3種・DHB年齢別指針・ケガ予防（肩/膝/足首）・ドイツ語/ノルウェー語用語集 |
 | `dictionary/22_7m_throw.md` | 7mスロー完全攻略辞書 | IHF Rule 14完全解説・エリート成功率73〜78%・シューター4技術（Standwurf/Lobwurf/Aufsetzer/Drehwurf）・GK防御のジレンマ（飛翔時間0.35秒）・視線研究（男女GK差）・心理管理（チョーキング/Yips/ルーティン）・タクティカルファウル計算式・多言語用語対照 |
 | `dictionary/23_back_df_individual.md` | バックプレーヤーの個人DF技術辞書 | 基本姿勢（Grundstellung）・フットワーク3種（Nachstellschritt/Kreuzschritt/Ausfallschritt）・合法的身体接触（IHFルール8）・ドライブ対応4技術・アンティシペーション・スクリーン対応・攻守切り替え・守備コミュニケーション・多言語用語対照 |
+| `dictionary/24_japan_asia_handball.md` | 日本・アジアハンドボール戦術辞書 | 彗星JAPAN/織姫ジャパン・一次/二次/逆速攻3分類・ワンクロスツーストレート・JHA-NTS育成体系・JHL2024再編・代表成績（2023五輪予選優勝/2024アジア男女優勝）・主要選手データ・歴代監督思想・韓国/カタール帰化戦略/バーレーン/クウェート/イラン分析・AHF44連盟構造・フィジカル差補償戦略・日本語専門用語対照表 |
 | `dictionary/25_injury_prevention.md` | ケガ予防・ボディケア辞書 | 傷害疫学（足首22.2%/肩15.9%/膝15.1%）・バックプレーヤー肩リスク89%・DHB M.A.P.S.ウォームアップ4段階・VBG 4×4プログラム・OSTRCショルダーコントロール（660名RCT・28%削減）・Knee Controlプログラム・足関節捻挫予防3本柱・Osgood-Schlatter/Sever病・睡眠8時間基準（リスク1.7倍）・栄養・復帰プロトコル |
 
 ---
