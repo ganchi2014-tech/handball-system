@@ -96,6 +96,8 @@
 | `dictionary/18_mental.md` | メンタルマネジメント・自己診断 | ノルウェー語5要素（Mestring/Selvtillit/Visualisering/Indre dialog/Triggere）、3秒ルール、プレッシャー下対処、技術/戦術/メンタル3軸レベル診断、レベル別学習ステップ |
 | `dictionary/19_drills.md` | 練習メニュー辞書 | 個人練習（シュート/フェイント/ドリブル/踏み切り/パス）、ペア練習（1on1/2on2）、チーム練習（速攻/セットOF/DF/連携）、メンタル練習、週間練習計画モデル |
 | `dictionary/20_back_player_playbook.md` | バックプレーヤー判断プレイブック（連鎖判断ツリー） | 状況別（DF姿勢/DF陣形/GK状況/ポスト連携/数的状況/試合文脈/フェイント選択/接触対応/メンタル状態/ポジション特化）の「第1選択→DF対応→第2選択」連鎖 |
+| `dictionary/21_physical_training.md` | フィジカルトレーニング辞書（ハンドボール特化） | バックプレーヤーの試合負荷データ・主要筋群・筋力プログラム3フェーズ・プライオメトリクス・HIIT3種・DHB年齢別指針・ケガ予防（肩/膝/足首）・ドイツ語/ノルウェー語用語集 |
+| `dictionary/23_back_df_individual.md` | バックプレーヤーの個人DF技術辞書 | 基本姿勢（Grundstellung）・フットワーク3種（Nachstellschritt/Kreuzschritt/Ausfallschritt）・合法的身体接触（IHFルール8）・ドライブ対応4技術・アンティシペーション・スクリーン対応・攻守切り替え・守備コミュニケーション・多言語用語対照 |
 
 ---
 
