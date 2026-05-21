@@ -97,7 +97,9 @@
 | `dictionary/19_drills.md` | 練習メニュー辞書 | 個人練習（シュート/フェイント/ドリブル/踏み切り/パス）、ペア練習（1on1/2on2）、チーム練習（速攻/セットOF/DF/連携）、メンタル練習、週間練習計画モデル |
 | `dictionary/20_back_player_playbook.md` | バックプレーヤー判断プレイブック（連鎖判断ツリー） | 状況別（DF姿勢/DF陣形/GK状況/ポスト連携/数的状況/試合文脈/フェイント選択/接触対応/メンタル状態/ポジション特化）の「第1選択→DF対応→第2選択」連鎖 |
 | `dictionary/21_physical_training.md` | フィジカルトレーニング辞書（ハンドボール特化） | バックプレーヤーの試合負荷データ・主要筋群・筋力プログラム3フェーズ・プライオメトリクス・HIIT3種・DHB年齢別指針・ケガ予防（肩/膝/足首）・ドイツ語/ノルウェー語用語集 |
+| `dictionary/22_7m_throw.md` | 7mスロー完全攻略辞書 | IHF Rule 14完全解説・エリート成功率73〜78%・シューター4技術（Standwurf/Lobwurf/Aufsetzer/Drehwurf）・GK防御のジレンマ（飛翔時間0.35秒）・視線研究（男女GK差）・心理管理（チョーキング/Yips/ルーティン）・タクティカルファウル計算式・多言語用語対照 |
 | `dictionary/23_back_df_individual.md` | バックプレーヤーの個人DF技術辞書 | 基本姿勢（Grundstellung）・フットワーク3種（Nachstellschritt/Kreuzschritt/Ausfallschritt）・合法的身体接触（IHFルール8）・ドライブ対応4技術・アンティシペーション・スクリーン対応・攻守切り替え・守備コミュニケーション・多言語用語対照 |
+| `dictionary/25_injury_prevention.md` | ケガ予防・ボディケア辞書 | 傷害疫学（足首22.2%/肩15.9%/膝15.1%）・バックプレーヤー肩リスク89%・DHB M.A.P.S.ウォームアップ4段階・VBG 4×4プログラム・OSTRCショルダーコントロール（660名RCT・28%削減）・Knee Controlプログラム・足関節捻挫予防3本柱・Osgood-Schlatter/Sever病・睡眠8時間基準（リスク1.7倍）・栄養・復帰プロトコル |
 
 ---
 
