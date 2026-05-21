@@ -4163,7 +4163,7 @@ function App() {
               {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
-              {phase === 'hub' && '近江兄弟社高校'}
+              {phase === 'hub' && ''}
               {(phase === 'dictionary' || phase === 'dictionary-detail') && 'Dictionary'}
               {phase === 'solve' && 'Symptom Diagnosis'}
               {phase === 'plan' && 'Practice Planner'}
@@ -4200,27 +4200,10 @@ function App() {
       {phase === 'hub' && (
         <div className="hub-screen animate-in">
           <div className="hub-hero">
-            <div className="hub-hero-eyebrow">近江兄弟社ハンドボール部</div>
+            <div className="hub-hero-eyebrow">近江兄弟社高校ハンドボール部</div>
             <div className="hub-title">「わからない」を解決する</div>
           </div>
           <div className="hub-cards">
-            {/* 続きからカード（resumeDataがあれば最上部に） */}
-            {resumeData && (() => {
-              let label = '';
-              if (resumeData.kind === 'dict') label = `📖 ${resumeData.payload?.title || '辞書'}`;
-              else if (resumeData.kind === 'solve') label = `🎯 ${resumeData.payload?.symptomTitle || '診断'}`;
-              else if (resumeData.kind === 'plan') label = `📋 ${resumeData.payload?.aim || '練習プラン'}`;
-              return (
-                <button className="hub-card resume" onClick={handleResume}>
-                  <div className="hub-card-icon">↻</div>
-                  <div className="hub-card-body">
-                    <div className="hub-card-target">前回の続きから</div>
-                    <div className="hub-card-title">続きから開く</div>
-                    <div className="hub-card-desc">{label}</div>
-                  </div>
-                </button>
-              );
-            })()}
             {HUB_MODULES.map(mod => (
               <button
                 key={mod.id}
