@@ -22,7 +22,7 @@
 | OF↔DF基本サイクル | `07_formations.md`（クローズ/ワイド哲学原則） |
 | DF/OF陣形詳細 | `26_tactical_formations.md`（全陣形ASCII図解・じゃんけんマトリクス） |
 | 数的状況サイクル | `03_numerical.md`（速攻・バックチェック） |
-| GKサイクル | `05_gk_df.md`（先読み型/コース絞り型） |
+| GKサイクル | `05_gk_df.md`（先読み型/コース絞り型・声かけ・スローアウト・5on6/7on6・ポスト連携） |
 | 身体特性サイクル | `09_individual_differences.md` |
 | ゲームクローズサイクル | `08_game_management.md`（時間帯別・退場・モメンタムも統合済み） |
 | ファウル損得サイクル | `08_game_management.md`（5種類のファウル重大度） |
