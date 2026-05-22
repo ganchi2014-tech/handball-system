@@ -2773,11 +2773,52 @@ const QUESTIONS = {
     hint: '体力・身体・ケガ気味、自分の身体パフォーマンスについて',
     choices: [
       { label: '試合中・練習後半の体力切れ', next: 'qph_fatigue' },
-      { label: 'シュート力／投擲速度が落ちた', next: 'r_ph_throw' },
-      { label: 'スプリント・速攻についていけない', next: 'r_ph_sprint' },
-      { label: 'ジャンプ・跳躍力の低下', next: 'r_ph_jump' },
+      { label: 'シュート力／投擲速度が落ちた', next: 'qph_throw_when' },
+      { label: 'スプリント・速攻についていけない', next: 'qph_sprint_when' },
+      { label: 'ジャンプ・跳躍力の低下', next: 'qph_jump_when' },
       { label: 'ケガ気味／違和感がある', next: 'qph_pain' },
-      { label: 'コンディションが安定しない', next: 'r_ph_condition' },
+      { label: 'コンディションが安定しない', next: 'qph_cond_factor' },
+    ],
+  },
+  qph_throw_when: {
+    label: 'Q2', mode: 'physical',
+    text: 'シュート速度の低下、いつ起きた？',
+    choices: [
+      { label: '試合後半に落ちた（疲労）', next: 'r_ph_throw_fatigue' },
+      { label: '練習後半に毎回落ちる（持久力）', next: 'r_ph_throw_endurance' },
+      { label: '安定して遅い（筋力／フォーム）', next: 'r_ph_throw_form' },
+      { label: '肩・肘の違和感があってから', next: 'r_ph_throw_pain' },
+    ],
+  },
+  qph_sprint_when: {
+    label: 'Q2', mode: 'physical',
+    text: 'スプリントが追いつかない、どんな場面？',
+    choices: [
+      { label: '最初の3歩で置いていかれる（加速）', next: 'r_ph_sprint_accel' },
+      { label: '中盤以降の伸びが足りない（最高速）', next: 'r_ph_sprint_top' },
+      { label: '速攻3-4本目から遅くなる（回復力）', next: 'r_ph_sprint_repeat' },
+      { label: '方向転換で遅れる（アジリティ）', next: 'r_ph_sprint_agility' },
+    ],
+  },
+  qph_jump_when: {
+    label: 'Q2', mode: 'physical',
+    text: 'ジャンプの低下、どの局面？',
+    choices: [
+      { label: '試合終盤に落ちる（疲労）', next: 'r_ph_jump_fatigue' },
+      { label: '安定して低い（筋力／技術）', next: 'r_ph_jump_strength' },
+      { label: '着地が不安定（神経筋制御）', next: 'r_ph_jump_landing' },
+      { label: 'シーズン累積で低下', next: 'r_ph_jump_season' },
+    ],
+  },
+  qph_cond_factor: {
+    label: 'Q2', mode: 'physical',
+    text: 'コンディション不安定、思い当たる要因は？',
+    choices: [
+      { label: '睡眠が浅い・短い', next: 'r_ph_cond_sleep' },
+      { label: '食事のタイミング・量が不規則', next: 'r_ph_cond_food' },
+      { label: '練習負荷が高すぎる（疲労蓄積）', next: 'r_ph_cond_load' },
+      { label: 'メンタル要因（不安・プレッシャー）', next: 'r_ph_cond_mental' },
+      { label: '原因がよく分からない', next: 'r_ph_condition' },
     ],
   },
   qph_fatigue: {
@@ -2810,8 +2851,27 @@ const QUESTIONS = {
     choices: [
       { label: '決めた（成功）', next: 'qsm_method_good' },
       { label: '止められた（GKがセーブ）', next: 'qsm_method_miss' },
-      { label: '枠を外した', next: 'r_sm_offframe' },
-      { label: 'ポストに当たった', next: 'r_sm_post' },
+      { label: '枠を外した', next: 'qsm_offframe_why' },
+      { label: 'ポストに当たった', next: 'qsm_post_why' },
+    ],
+  },
+  qsm_offframe_why: {
+    label: 'Q2', mode: 'shot_7m',
+    text: '枠外の原因は？',
+    choices: [
+      { label: 'プレッシャーで力みすぎた', next: 'r_sm_off_pressure' },
+      { label: 'ためすぎてフォームが崩れた', next: 'r_sm_off_overthink' },
+      { label: '助走から放つまでの一貫性がなかった', next: 'r_sm_off_form' },
+      { label: 'GKを意識して避けようとして大きく外した', next: 'r_sm_off_avoid' },
+    ],
+  },
+  qsm_post_why: {
+    label: 'Q2', mode: 'shot_7m',
+    text: 'ポストに当たった瞬間どうだった？',
+    choices: [
+      { label: 'コースは合っていた、あと数センチで入った', next: 'r_sm_post_close' },
+      { label: '狙ったコースより少しズレた', next: 'r_sm_post_off' },
+      { label: 'GKに反応されてコースを変えた途中', next: 'r_sm_post_react' },
     ],
   },
   qsm_method_good: {
@@ -2856,10 +2916,40 @@ const QUESTIONS = {
     text: '結果は？',
     choices: [
       { label: 'シュートまでつながった（成功）', next: 'qsg_why_good' },
-      { label: '途中で崩れた（連携ミス）', next: 'r_sg_break' },
-      { label: 'DFに読まれていた', next: 'r_sg_read' },
+      { label: '途中で崩れた（連携ミス）', next: 'qsg_break_where' },
+      { label: 'DFに読まれていた', next: 'qsg_read_what' },
       { label: 'シュートまで行ったが入らなかった', next: 'r_sg_shoot_miss' },
-      { label: 'ボールロスト・ターンオーバー', next: 'r_sg_turnover' },
+      { label: 'ボールロスト・ターンオーバー', next: 'qsg_turnover_why' },
+    ],
+  },
+  qsg_break_where: {
+    label: 'Q3', mode: 'sign',
+    text: 'どこで崩れた？',
+    choices: [
+      { label: 'コールが伝わっていなかった（共有不足）', next: 'r_sg_break_call' },
+      { label: 'タイミングが合わなかった', next: 'r_sg_break_timing' },
+      { label: 'スクリーンが間に合わなかった', next: 'r_sg_break_screen' },
+      { label: 'パス回しが詰まった', next: 'r_sg_break_pass' },
+    ],
+  },
+  qsg_read_what: {
+    label: 'Q3', mode: 'sign',
+    text: 'DFは何を読んだ？',
+    choices: [
+      { label: 'コールが大きすぎて聞こえた', next: 'r_sg_read_call' },
+      { label: '同じサインを繰り返していた（パターン読み）', next: 'r_sg_read_pattern' },
+      { label: '動き出しの定型化（フォーメーション読み）', next: 'r_sg_read_motion' },
+      { label: '事前のスカウティング情報を相手が持っていた', next: 'r_sg_read_scout' },
+    ],
+  },
+  qsg_turnover_why: {
+    label: 'Q3', mode: 'sign',
+    text: 'ロストの原因は？',
+    choices: [
+      { label: 'パスミス（精度不足）', next: 'r_sg_to_pass' },
+      { label: 'キャッチミス（受け手の準備不足）', next: 'r_sg_to_catch' },
+      { label: '無理なパスを選んだ（判断ミス）', next: 'r_sg_to_judge' },
+      { label: 'DFのインターセプト（読まれた）', next: 'r_sg_to_intercept' },
     ],
   },
   qsg_why_good: {
@@ -4174,6 +4264,408 @@ const PHYSICAL_RESULTS = {
 // 既存RESULTSにマージ
 Object.assign(RESULTS, PHYSICAL_RESULTS);
 
+// ─────────────────────────────────────────────
+// 深掘り結果（批判担当の指摘①②③対応）
+// ─────────────────────────────────────────────
+const PHYSICAL_RESULTS_EXTRA = {
+  // フィジカル：投擲速度
+  r_ph_throw_fatigue: {
+    good: '試合後半に速度が落ちる原因に気付いた。', issue: '試合後半の筋出力維持（疲労耐性）',
+    body: 'シュート速度低下は試合終盤の疲労が主因。乳酸閾値の改善と肩周辺の持久力強化が必要。',
+    improve: '【練習】乳酸閾値走20分×週1、肩のチューブトレを毎日3分。試合シミュで終盤シュート練習。',
+    approaches: [
+      { tag: '持久力', text: '乳酸閾値走（会話できる最大強度）を維持' },
+      { tag: '肩のスタミナ', text: 'ローテーターカフ＋投擲反復で持久力UP' },
+      { tag: '試合シミュ', text: '練習で意図的に終盤シュート練を入れる' },
+    ],
+  },
+  r_ph_throw_endurance: {
+    good: '練習後半に毎回落ちる＝持久力の問題と特定できた。',
+    issue: '肩周辺の筋持久力不足',
+    body: '練習でも継続的に落ちるなら筋持久力の問題。高回数低負荷で持久力を作る。',
+    improve: '【練習】チューブの外旋・内旋を15-20回×3セット。週3回。',
+    approaches: [
+      { tag: '持久力', text: '高回数（15-20RM）で筋持久力構築' },
+      { tag: 'フォーム', text: '疲労時こそフォーム崩れない練習' },
+      { tag: '回復', text: '練習後の肩アイシングで蓄積を防ぐ' },
+    ],
+  },
+  r_ph_throw_form: {
+    good: '一貫して遅い＝筋力orフォームの根本原因を特定。',
+    issue: '基礎筋力／投擲フォーム',
+    body: 'メディシンボール投擲（4kg）で爆発力、ローテーターカフで安定性。フォームはコーチに見てもらう。',
+    improve: '【練習】MB両手投げ＋片手投げ各10回×週2。フォーム動画を撮ってコーチと確認。',
+    approaches: [
+      { tag: '爆発力', text: 'MB投擲で上半身パワー強化' },
+      { tag: 'フォーム', text: '動画＋コーチで客観確認' },
+      { tag: '体幹', text: 'ロシアンツイストで回旋出力強化' },
+    ],
+  },
+  r_ph_throw_pain: {
+    good: '違和感を放置せずシュートに繋げて考えた。',
+    issue: '肩・肘の障害（即対応必要）',
+    body: '痛みからの速度低下は障害サイン。投げる量を半減し、必要なら整形外科受診。',
+    improve: '【即対応】シュート本数50%カット。3日以上続く痛みは受診。ローテーターカフを毎日3分。',
+    approaches: [
+      { tag: '今すぐ', text: 'シュート量を半減' },
+      { tag: '受診目安', text: '夜間痛・3日継続・可動域制限で整形外科' },
+      { tag: '予防', text: '辞書25参照' },
+    ],
+  },
+  // フィジカル：スプリント
+  r_ph_sprint_accel: {
+    good: '最初の3歩の遅れに気付いた。', issue: '加速力（PCr系）の不足',
+    body: '加速段階の遅れはリン酸クレアチン系の弱さ。10m全力ダッシュ＋完全レストで質を作る。',
+    improve: '【練習】10mダッシュ×6本＋90秒完全レスト。週2回。',
+    approaches: [
+      { tag: 'PCr系', text: '10秒以内全力＋完全レスト' },
+      { tag: 'スタート', text: 'スタンディングスタート練習' },
+      { tag: '神経筋', text: 'プライオメトリクスで反応速度' },
+    ],
+  },
+  r_ph_sprint_top: {
+    good: '伸びが足りない＝最高速度向上の余地を発見。',
+    issue: '最高速度の限界突破',
+    body: '30-40mを全力で走り、最高速度を体感する練習が必要。フォーム（腕振り・接地）も大事。',
+    improve: '【練習】40m全力ダッシュ×6本、間にフォーム指導。週1-2回。',
+    approaches: [
+      { tag: '最高速', text: '40m全力ダッシュ' },
+      { tag: 'フォーム', text: '腕振り・接地時間を短く' },
+      { tag: '柔軟', text: 'ハムストリングス・股関節' },
+    ],
+  },
+  r_ph_sprint_repeat: {
+    good: '反復スプリントの弱さを認識。',
+    issue: '反復スプリント能力（RSA）',
+    body: '速攻3-4本目で遅くなる＝RSAが課題。短距離全力＋短レストで繰り返す。',
+    improve: '【練習】20m全力×6-8本、30秒レスト。シーズン入り前に集中強化。',
+    approaches: [
+      { tag: 'RSA', text: '短距離×複数本＋短レスト' },
+      { tag: '回復', text: '本数後の心拍回復を測定' },
+      { tag: '判断', text: '疲労時こそ判断ミスが増える→練習で意識' },
+    ],
+  },
+  r_ph_sprint_agility: {
+    good: '方向転換の遅れに気付いた。アジリティ強化の余地。',
+    issue: 'アジリティ・方向転換',
+    body: 'スプリント直線速度より方向転換の精度が試合で効く。コーン使ったジグザグ・カット練習。',
+    improve: '【練習】Tドリル、5-10-5シャトル、ジグザグカットを週2回。',
+    approaches: [
+      { tag: 'COD', text: '方向転換ドリル' },
+      { tag: '神経筋', text: '片脚スクワットで方向転換時の安定' },
+      { tag: '判断', text: '方向転換のタイミング＝相手DFの動きを見る' },
+    ],
+  },
+  // フィジカル：ジャンプ
+  r_ph_jump_fatigue: {
+    good: '疲労による低下を認識。', issue: '試合終盤のジャンプ維持',
+    body: '終盤の跳躍低下は下半身の筋持久力。スクワット系の高回数低負荷を試す。',
+    improve: '【練習】片脚スクワット15回×3セット、ステップアップ15回×3。週2回。',
+    approaches: [
+      { tag: '持久力', text: '高回数低負荷で筋持久力' },
+      { tag: '神経筋', text: '疲労時のフォーム維持訓練' },
+      { tag: '回復', text: '試合間の足のケア強化' },
+    ],
+  },
+  r_ph_jump_strength: {
+    good: '安定して低い＝基礎筋力・技術の問題を特定。',
+    issue: '下半身パワーまたはジャンプ技術',
+    body: '片脚スクワットで最大筋力、ボックスジャンプで爆発力、両方が必要。',
+    improve: '【練習】片脚スクワット5RM×5セット、40-50cmボックスジャンプ×5×3。週2回。',
+    approaches: [
+      { tag: '最大筋力', text: '片脚スクワット' },
+      { tag: '爆発力', text: 'ボックスジャンプ' },
+      { tag: '技術', text: '助走→踏切→最高点の連動' },
+    ],
+  },
+  r_ph_jump_landing: {
+    good: '着地不安定に気付いた＝ケガ予防の重要サイン。',
+    issue: '神経筋制御（着地アライメント）',
+    body: '着地時のknee-in（膝が内に入る）はACL損傷リスク。中殿筋強化と着地練習が必要。',
+    improve: '【練習】横向き脚上げ20回×3、ボックスジャンプ後の静止着地を意識。週2回。',
+    approaches: [
+      { tag: '中殿筋', text: '骨盤・膝の安定' },
+      { tag: '着地練習', text: '膝とつま先を同方向に' },
+      { tag: 'ケガ予防', text: '辞書25参照' },
+    ],
+  },
+  r_ph_jump_season: {
+    good: 'シーズン累積を疑った＝長期視点での観察。',
+    issue: 'シーズン疲労の蓄積',
+    body: '蓄積疲労は中盤に「ディロード週」（負荷50%）を入れることで回復させる。',
+    improve: '【シーズン設計】6-8週間ごとに1週間のディロード期間。コーチと相談。',
+    approaches: [
+      { tag: 'ディロード', text: 'シーズン中盤の意図的休養' },
+      { tag: 'モニタリング', text: '起床時心拍数で疲労把握' },
+      { tag: '栄養', text: '回復食の質と量' },
+    ],
+  },
+  // フィジカル：コンディション
+  r_ph_cond_sleep: {
+    good: '睡眠を疑えた。回復の基本に意識を向けられた。',
+    issue: '睡眠の量・質',
+    body: '7-9時間確保が最優先。質を上げるには就寝・起床の時刻固定、寝る前のスクリーン回避。',
+    improve: '【日課】就寝時刻を固定。寝る1時間前にスマホ・PCを切る。寝室を暗く・涼しく。',
+    approaches: [
+      { tag: '量', text: '7-9時間' },
+      { tag: '質', text: '時刻固定＋環境' },
+      { tag: '昼寝', text: '20分以内の昼寝はOK、30分超は夜の睡眠を妨げる' },
+    ],
+  },
+  r_ph_cond_food: {
+    good: '食事を疑えた。エネルギー源の重要性を認識。',
+    issue: '食事のタイミングと内容',
+    body: '練習・試合前後の補給がコンディションを左右する。タイミング＞量。',
+    improve: '【ルール】練習3時間前に主食（炭水化物）。練習後30分以内に炭水化物＋タンパク質（おにぎり＋プロテイン等）。',
+    approaches: [
+      { tag: '前', text: '練習3時間前に主食' },
+      { tag: '後', text: '30分以内の補給（ゴールデンタイム）' },
+      { tag: '水分', text: '試合中こまめに、喉が乾く前に' },
+    ],
+  },
+  r_ph_cond_load: {
+    good: '練習負荷を疑えた。客観視ができている。',
+    issue: '練習負荷の累積',
+    body: 'RPE（自覚的運動強度）を毎日記録。3日連続でRPE>8なら強度を下げる。コーチと共有。',
+    improve: '【記録】毎日練習後にRPE 0-10をメモ。週単位でグラフ化。コーチに見せる。',
+    approaches: [
+      { tag: '記録', text: 'RPE毎日記録' },
+      { tag: 'コーチ相談', text: 'データを根拠に強度交渉' },
+      { tag: 'ディロード', text: '蓄積したら必ず軽くする' },
+    ],
+  },
+  r_ph_cond_mental: {
+    good: 'メンタル要因を疑えた。身体と心の関連を理解している。',
+    issue: 'メンタル要因がコンディションに影響',
+    body: '不安・プレッシャー・人間関係のストレスは身体パフォーマンスを直接落とす。',
+    improve: '【対策】18_mental.mdの自己診断を実施。Visualisering・Triggereを日課に。必要なら大人に相談。',
+    approaches: [
+      { tag: 'メンタル', text: '辞書18の5要素を参照' },
+      { tag: 'ルーティン', text: 'Visualisering・Triggere' },
+      { tag: '相談', text: 'コーチ・保護者・カウンセラー' },
+    ],
+  },
+
+  // 7m：枠外
+  r_sm_off_pressure: {
+    good: 'プレッシャーが影響したと客観視できた。',
+    issue: 'プレッシャー下のメンタル・呼吸',
+    body: '力みは深呼吸で解ける。3秒以内決断と固定ルーティンで対処。',
+    improve: '【ルーティン】助走前に深呼吸1回→ボール3回バウンド→打つ。毎回同じ。',
+    approaches: [
+      { tag: '呼吸', text: '深呼吸で副交感神経ON' },
+      { tag: 'ルーティン', text: '固定動作で迷い断つ' },
+      { tag: 'Triggere', text: '辞書18参照' },
+    ],
+  },
+  r_sm_off_overthink: {
+    good: 'ためすぎを自覚＝意識的修正可能。',
+    issue: 'シュートまでの時間が長すぎ',
+    body: '7mは3秒以内決断が理想。長くためるとフォームが崩れ、GKに準備時間を与える。',
+    improve: '【練習】GK役を入れて、構えてから3秒以内に放つルール反復。',
+    approaches: [
+      { tag: '時間制限', text: '3秒以内決断' },
+      { tag: '即決', text: '迷ったらStandwurf' },
+      { tag: 'ルーティン', text: '同じ動作で時間を一定に' },
+    ],
+  },
+  r_sm_off_form: {
+    good: 'フォームの問題に行き着いた＝技術改善の余地。',
+    issue: '助走から放つまでの一貫性',
+    body: '助走の歩数・構えの形・腕の引きまでを毎回同じに。1動作の崩れがコース全体に影響する。',
+    improve: '【練習】ターゲット5cm四方を貼って100本ノック。同じフォームを反復。',
+    approaches: [
+      { tag: '一貫性', text: '毎回同じ動作' },
+      { tag: '精度', text: '小ターゲットで質を測定' },
+      { tag: '動画', text: 'スマホで撮ってフォーム確認' },
+    ],
+  },
+  r_sm_off_avoid: {
+    good: 'GKを意識した＝相手を観察した結果。',
+    issue: 'GK意識が逆効果',
+    body: '「GKを避ける」発想は外しやすい。「コーナーに当てる」発想に切り替える。',
+    improve: '【意識転換】GKは見るが、視線はターゲット（コーナーの一点）に固定。',
+    approaches: [
+      { tag: '視線', text: 'ターゲット固定' },
+      { tag: 'マインド', text: '「決める」発想' },
+      { tag: '練習', text: 'GK役入りで反復' },
+    ],
+  },
+
+  // 7m：ポスト
+  r_sm_post_close: {
+    good: 'コースは正しい＝判断力は合格。',
+    issue: 'あと数センチの精度',
+    body: 'ポスト命中は紙一重。10cm四方のターゲットで詰める精度を上げる。',
+    improve: '【練習】各コーナーに10cm四方ターゲット、各20本。70%以上当たれば実戦OK。',
+    approaches: [
+      { tag: '精度', text: '小ターゲット練習' },
+      { tag: 'リリース', text: '離す瞬間の感覚を記憶' },
+      { tag: '自信', text: 'ニアミスは成長の証' },
+    ],
+  },
+  r_sm_post_off: {
+    good: '狙いとのズレを正直に認識できた。',
+    issue: 'コース読みorフォームの微調整',
+    body: '狙いと結果がズレる＝助走・構え・腕の振りのどこかに癖がある。動画で確認。',
+    improve: '【動画分析】スマホで撮影→コーチと「狙いと結果のズレ」を確認。',
+    approaches: [
+      { tag: '動画', text: '客観的に癖を見つける' },
+      { tag: 'コーチ', text: '第三者の目' },
+      { tag: 'フォーム矯正', text: '辞書29参照' },
+    ],
+  },
+  r_sm_post_react: {
+    good: 'GK反応に対応しようとした＝アダプティブ思考。',
+    issue: 'コース変更中の精度低下',
+    body: 'GKの動きを見て途中でコース変更するのは高度な技。失敗しても次の挑戦を躊躇しない。',
+    improve: '【練習】GK役が動くタイミングをランダム化。0.5秒以内に逆コースへ。',
+    approaches: [
+      { tag: '反応', text: '0.5秒以内の逆コース' },
+      { tag: 'フェイク', text: '視線・体の向きでGKを動かす' },
+      { tag: 'メンタル', text: '失敗を恐れず挑戦継続' },
+    ],
+  },
+
+  // サインプレー：崩れた原因
+  r_sg_break_call: {
+    good: 'コール伝達の問題を特定できた。',
+    issue: 'チーム内コミュニケーション',
+    body: 'コールが伝わらない＝声量・タイミング・コードワード不統一のいずれか。',
+    improve: '【練習】コール後3秒以内に全員ポジション。練習中に複数回反復し定着。',
+    approaches: [
+      { tag: '声量', text: '体育館の反響考慮で大声' },
+      { tag: 'コードワード', text: 'チーム内で固有名詞を統一' },
+      { tag: '反復', text: '練習でコール→反応を100回' },
+    ],
+  },
+  r_sg_break_timing: {
+    good: 'タイミングのズレを認識できた。',
+    issue: 'チーム連携のタイミング',
+    body: 'タイミングは数字で管理する。コール後N秒で動く、というルールを固定。',
+    improve: '【練習】コール→3秒以内にポジション→5秒以内にシュート。秒数を固定して反復。',
+    approaches: [
+      { tag: '秒数固定', text: '時間を数値化' },
+      { tag: 'シンプル化', text: 'パターンを減らして精度UP' },
+      { tag: '応用', text: '慣れたらタイミングをずらしてDF混乱' },
+    ],
+  },
+  r_sg_break_screen: {
+    good: 'スクリーンの問題を特定。',
+    issue: 'スクリーンのタイミング・質',
+    body: 'スクリーナーは静止していること、ボール保持者と動きを合わせること。両方が必須。',
+    improve: '【練習】スクリーン+ロールの基本反復。スクリーン中の足の位置・腕の使い方を辞書12で確認。',
+    approaches: [
+      { tag: '静止', text: '動きながらのスクリーンは反則' },
+      { tag: '連動', text: 'ボール保持者との目合わせ' },
+      { tag: '辞書', text: '12_set_plays.md参照' },
+    ],
+  },
+  r_sg_break_pass: {
+    good: 'パス回しの詰まりを自覚できた。',
+    issue: 'パススピード・選択肢の整理',
+    body: 'パス回しが詰まる＝①パスが遅い、②選択肢が見えていない、③DFのプレッシャーで判断遅延。',
+    improve: '【練習】ワンタッチパス練習。受けた瞬間に次のパス先が決まっている状態を作る。',
+    approaches: [
+      { tag: 'スピード', text: 'ワンタッチパス' },
+      { tag: '選択肢', text: '受ける前の視野確保' },
+      { tag: '判断', text: '04_cognition.md参照' },
+    ],
+  },
+
+  // サインプレー：DFが読んだもの
+  r_sg_read_call: {
+    good: 'コールが聞こえたと特定。改善可能な原因。',
+    issue: 'コードワード化（外国語化）',
+    body: '日本語コールはDFに丸聞こえ。デンマーク式のコードワード（Barca、Billund等）で隠す。',
+    improve: '【チーム決定】5つのコードワード（短い固有名詞）を設定。練習で反復。',
+    approaches: [
+      { tag: 'コードワード', text: '辞書13デンマーク式参照' },
+      { tag: 'バリエ', text: '同じプレーに複数コード' },
+      { tag: '無声化', text: 'ハンドサインや視線も活用' },
+    ],
+  },
+  r_sg_read_pattern: {
+    good: 'パターン化を自覚できた。学習サイン。',
+    issue: 'サインのバリエーション不足',
+    body: '同じサインを2回続けると読まれる。5-10種類のサインをローテーション。',
+    improve: '【チーム】サインを5種類以上用意し、同試合内で同じものを2回連続使わない。',
+    approaches: [
+      { tag: 'バリエ', text: '5-10種類用意' },
+      { tag: 'ローテ', text: '同サイン2連続NG' },
+      { tag: '辞書', text: '27_sign_plays.md大全集参照' },
+    ],
+  },
+  r_sg_read_motion: {
+    good: '動き出しの定型化を認識。',
+    issue: 'フォーメーション・初期配置の予測可能性',
+    body: '初期配置が同じだとDFが予測する。配置を微妙に変える、または初期配置から動き出すまでの時間を変える。',
+    improve: '【練習】同じサインを異なる初期配置から発動。フェイクの初期動作も練習。',
+    approaches: [
+      { tag: '配置変化', text: '初期配置を毎回変える' },
+      { tag: 'タイミング変化', text: '動き出しを早く・遅くを混ぜる' },
+      { tag: 'フェイク動作', text: '違うサインを始めて切替' },
+    ],
+  },
+  r_sg_read_scout: {
+    good: '相手のスカウティングを認識した。',
+    issue: '相手の事前準備への対抗',
+    body: '相手がこちらの試合動画を分析している。サインの内容を時々入れ替える、新サインを追加する。',
+    improve: '【シーズン】月単位で新サイン追加・古いものを引退。重要試合用の「秘密兵器」サインを2-3個用意。',
+    approaches: [
+      { tag: '更新', text: '月次でサインを入れ替え' },
+      { tag: '秘密兵器', text: '重要試合限定のサイン' },
+      { tag: 'スカウト対策', text: '辞書10参照' },
+    ],
+  },
+
+  // サインプレー：ロスト原因
+  r_sg_to_pass: {
+    good: 'パス精度を疑えた。', issue: 'パスの精度・選択',
+    body: '速度・コース・タイミングのどこに崩れがあるか特定。動画でチェック。',
+    improve: '【練習】ノルウェー式4種スロー反復（19_drills.md）。',
+    approaches: [
+      { tag: 'スロー', text: 'Piskekast/Sirkelkast/Støtkast/Skjult' },
+      { tag: 'ターゲット', text: '5×5cmターゲットに当てる' },
+      { tag: 'プレッシャー', text: 'DF役入りで精度維持' },
+    ],
+  },
+  r_sg_to_catch: {
+    good: 'キャッチミスを認識。', issue: '受け手の準備不足',
+    body: '受ける前の準備（顔横ポジション・視野確保）が不足。',
+    improve: '【練習】動きながらキャッチ→即パス。1回も止まらないルール。',
+    approaches: [
+      { tag: '顔横', text: 'キャッチ瞬間にボールを顔横へ' },
+      { tag: '視野', text: '受ける前に次のパス先確認' },
+      { tag: '辞書', text: '01_basics.md参照' },
+    ],
+  },
+  r_sg_to_judge: {
+    good: '判断の問題と特定できた。',
+    issue: '無理パスを選んだ判断',
+    body: 'パスコースが見えない時はキープへ切替。コートで「無理パスゾーン」を学ぶ。',
+    improve: '【判断ルール】DFの視線がパスコース上にあったらキープに切替。',
+    approaches: [
+      { tag: '判断', text: 'DFの視線を見る' },
+      { tag: 'キープ', text: '無理パスよりキープが価値高い' },
+      { tag: '辞書', text: '04_cognition.md判断フロー' },
+    ],
+  },
+  r_sg_to_intercept: {
+    good: 'インターセプトを認識。DFの戦術を理解した。',
+    issue: 'パスコースを読まれた',
+    body: 'DFがインターセプト狙いに来ている＝パスフェイントで一度動かしてから本パス。',
+    improve: '【練習】パスフェイント→本パスの組み合わせ。DF役の重心を動かす。',
+    approaches: [
+      { tag: 'フェイント', text: 'パスフェイントで誘導' },
+      { tag: '角度変化', text: 'バウンス・ロブを混ぜる' },
+      { tag: '辞書', text: '02_individual.mdフェイント参照' },
+    ],
+  },
+};
+
+Object.assign(RESULTS, PHYSICAL_RESULTS_EXTRA);
+
 const AXIS_MAP = {
   // OF（旧：skill modeから参照される残存ノード）
   q1: '④ 自分の対応', q1b: '④ 自分の対応',
@@ -4207,10 +4699,14 @@ const AXIS_MAP = {
   qgs_throw: '④ 自分の対応', qgs_link: '④ 自分の対応', qgs_setplay: '② 相手の状況',
   // フィジカル
   qph_start: '① 自分の立場', qph_fatigue: '③ リアクション理解', qph_pain: '② 相手の状況',
+  qph_throw_when: '③ リアクション理解', qph_sprint_when: '③ リアクション理解',
+  qph_jump_when: '③ リアクション理解', qph_cond_factor: '② 相手の状況',
   // 7m シューター
   qsm_start: '① 自分の立場', qsm_method_good: '④ 自分の対応', qsm_method_miss: '③ リアクション理解',
+  qsm_offframe_why: '③ リアクション理解', qsm_post_why: '③ リアクション理解',
   // サインプレー
   qsg_start: '① 自分の立場', qsg_result: '③ リアクション理解', qsg_why_good: '④ 自分の対応',
+  qsg_break_where: '④ 自分の対応', qsg_read_what: '③ リアクション理解', qsg_turnover_why: '④ 自分の対応',
 };
 
 function axisStyle(axis) {
@@ -5486,26 +5982,44 @@ function App() {
         </div>
       )}
 
-      {/* スタート画面（振り返るモード入口） */}
-      {phase === 'start' && (
-        <div className="start-screen">
-          <button className="dict-back" style={{alignSelf: 'flex-start', padding: '4px 0'}} onClick={handleBackToHub}>← 戻る（ホーム）</button>
-          <div className="start-icon">🤾</div>
-          <div className="start-title">今日の自分と<br />向き合う</div>
-          <div className="start-sub">どのモードで振り返る？</div>
-          <div className="mode-select">
-            {Object.entries(MODES).map(([key, m]) => (
-              <button key={key} className="mode-btn" onClick={() => handleModeSelect(key)}>
-                <div className="mode-btn-icon">{m.icon}</div>
-                <div className="mode-btn-text">
-                  <div className="mode-btn-label" style={{ color: m.color }}>{m.label}</div>
-                  <div className="mode-btn-desc">{m.desc}</div>
+      {/* スタート画面（振り返るモード入口・グループ表示） */}
+      {phase === 'start' && (() => {
+        const MODE_GROUPS = [
+          { label: '🟦 自分のプレー', ids: ['of', 'df', 'gk_self', 'skill'] },
+          { label: '🟢 特殊場面',     ids: ['physical', 'shot_7m', 'sign'] },
+          { label: '🟠 対戦・分析',   ids: ['context', 'janken', 'gk'] },
+        ];
+        return (
+          <div className="start-screen">
+            <button className="dict-back" style={{alignSelf: 'flex-start', padding: '4px 0'}} onClick={handleBackToHub}>← 戻る（ホーム）</button>
+            <div className="start-icon">🤾</div>
+            <div className="start-title">今日の自分と<br />向き合う</div>
+            <div className="start-sub">どのモードで振り返る？</div>
+            <div className="mode-select">
+              {MODE_GROUPS.map(g => (
+                <div key={g.label} style={{display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 4}}>
+                  <div style={{fontSize: 11, fontWeight: 800, color: 'var(--tx-muted)', letterSpacing: '0.06em', padding: '4px 4px 2px'}}>
+                    {g.label}
+                  </div>
+                  {g.ids.map(key => {
+                    const m = MODES[key];
+                    if (!m) return null;
+                    return (
+                      <button key={key} className="mode-btn" onClick={() => handleModeSelect(key)}>
+                        <div className="mode-btn-icon">{m.icon}</div>
+                        <div className="mode-btn-text">
+                          <div className="mode-btn-label" style={{ color: m.color }}>{m.label}</div>
+                          <div className="mode-btn-desc">{m.desc}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              </button>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 感情トリガー */}
       {phase === 'emotion' && (
@@ -5626,6 +6140,14 @@ function App() {
             </button>
           )}
 
+          {/* 課題解決モジュールへの連携 */}
+          <button
+            className="reset-btn"
+            style={{borderColor: 'var(--c-solve)', color: '#d8b4fe', marginBottom: 8}}
+            onClick={() => { handleSolveReset(); setPhase('solve'); }}
+          >
+            🎯 同じ悩みで「課題を解決する」を開く →
+          </button>
           <button className="reset-btn" onClick={handleReset}>
             もう一度振り返る
           </button>
