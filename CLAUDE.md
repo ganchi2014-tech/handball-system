@@ -80,7 +80,7 @@
 | `dictionary/02_individual.md` | 個人対決（1on1・2on2・スクリーン・勝ち位置） | ピック&ロール、クロス、勝ち位置の定義 |
 | `dictionary/03_numerical.md` | 数的状況・速攻・バックチェック | 2on1/3on2、5on6守備、1st/2ndウェーブ速攻 |
 | `dictionary/04_cognition.md` | 認知・判断・行動・声掛け | 認知→判断→行動の3段構造、エコロジカルアプローチ |
-| `dictionary/05_gk_df.md` | GK（ゴールキーパー）辞書 | 3方向の法則・GK2タイプ（先読み/コース絞り）・基本スタンス実測データ（足幅2.5倍/1.10m前）・フットワーク4種・ポジショニング角度理論・セービング技術（ウイング/バック/ループHeber）・各国GK理論（独DHBTorwarttechnik/仏Omeyer式bras-jambe/丁Landin-GameReading/西Corrales大型型/瑞Olsson式4段階育成+Reading+Trust三角形+メンタル7要素/諾→15）・科学的根拠（反応時間193ms前/QE/Gaze男女差研究/左利き非対称性）・エリート基準（セーブ率35%）・Abwehr-GK連動・多言語術語対照 |
+| `dictionary/05_gk_df.md` | GK（ゴールキーパー）辞書 | 3方向の法則・GK2タイプ（先読み/コース絞り）・試合序盤の読み取りプロセス・基本スタンス実測データ（足幅2.5倍/1.10m前）・フットワーク4種・ポジショニング角度理論（射角∠LSRの二等分線）・セービング技術（ウイング/バック/ループHeber）・ケガリスクテーブル・各国GK理論（独DHBTorwarttechnik/仏Omeyer式bras-jambe/丁Landin-GameReading/西Corrales大型型/Olsson式4段階育成+Reading+Trust三角形+メンタル7要素/諾→15）・科学的根拠（反応時間193ms前/QE/Gaze男女差研究/左利き非対称性）・エリート基準（セーブ率35%）・Abwehr-GK連動・コーチング機能（声出し10種/3層情報共有/各国文化）・状況別戦略（5on6/7on6-70%空ゴール/スコア差別）・スローアウト意思決定（Schnelle Mitte/Tempogegenstoß/Norwegian Initiering）・多言語術語対照 |
 | `dictionary/06_post.md` | ポストプレー（OF・DF） | 4プレー（回転/フェイク/フラッシュ/スクリーン）、V字位置取り |
 | `dictionary/07_formations.md` | クローズ/ワイド・セットOF・ウィングプレー | 3-3/2-1-3、オフボールの5動作 |
 | `dictionary/08_game_management.md` | ゲームマネジメント・ファウル戦略 | パッシブプレー、ゲームクローズ、ファウル5種類と重大度、タイムアウト、7on6 |
