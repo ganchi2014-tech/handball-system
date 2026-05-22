@@ -53,9 +53,9 @@
 
 | 目的 | 参照ファイル |
 |---|---|
-| DF陣形詳細（6-0/5-1/3-2-1等、ASCII図解付き） | `26_tactical_formations.md` Part1 |
-| OF陣形詳細（3-3/ダブルポスト/ワイド等） | `26_tactical_formations.md` Part2 |
-| 7on6/速攻フォーメーション | `26_tactical_formations.md` Part3 |
-| OF×DFじゃんけんマトリクス | `26_tactical_formations.md` Part4 |
+| DF陣形詳細（6-0/5-1/3-2-1等、ASCII図解付き） | `26_tactical_formations.md` パート1 |
+| OF陣形詳細（3-3/ダブルポスト/ワイド等） | `26_tactical_formations.md` パート2 |
+| 7on6/速攻フォーメーション | `26_tactical_formations.md` パート3 |
+| OF×DFじゃんけんマトリクス | `26_tactical_formations.md` パート4 |
 | サインプレー27種・各国システム | `27_sign_plays.md` |
 | コンビネーション・OFタイプ×DFタイプ | `16_of_combinations.md` |

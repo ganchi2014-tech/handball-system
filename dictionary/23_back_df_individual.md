@@ -1,7 +1,7 @@
 # バックプレーヤーの個人DF技術辞書
 
 > フォーメーション守備（05_gk_df.md）とは異なり、「バックプレーヤーが1on1で守るとき」の個人技術。
-> 出典：IHF Rules 2025・EHF教材・DHB Athletikkonzept・Handball Evolution・KNSU・VIBSS・PubMed査読論文
+> 出典：IHF ルール 2025・EHF教材・DHB アスレティクコンツェプト（運動能力育成構想）・ハンドボール エボリューション（進化）・KNSU・VIBSS・PubMed査読論文
 
 ---
 
@@ -10,8 +10,8 @@
 ```
 バックプレーヤー（RL/RM/RR = Rückraumspieler / arrière）は
 攻撃では最も目立つポジション。
-守備では「中央ブロック（Mittelblock）」の一部を担い、
-フォーメーション守備の枠組みの中で相手バックとの1on1（Zweikampf）が発生する。
+守備では「中央ブロック（ミッテ（中央）lblock）」の一部を担い、
+フォーメーション守備の枠組みの中で相手バックとの1on1（ツヴァイ（独：2）kampf）が発生する。
 
 6:0・5:1のどちらの陣形でも、
 相手バックが突破を試みたときは最終的に個人技術で止めるしかない。
@@ -20,17 +20,17 @@
 
 ---
 
-## 【A】基本姿勢（Grundstellung / Defensive Stance / Postura defensiva básica）
+## 【A】基本姿勢（グルントシュテルング（基本姿勢） / ディフェンシブ Stance / Postura defensiva básica）
 
 ### A-1. 足・重心・腕
 
 **ドイツ語圏の標準記述（DHB / KNSU / VIBSS）：**
 
 ```
-足の位置（Beinstellung）：
+足の位置（バインシュテルング（脚位置））：
   軽く開いた状態（leichte Grätschstellung）
   両足に均等に体重をかける
-  斜め足配置（diagonale Beinstellung）も使用
+  斜め足配置（diagonale バインシュテルング（脚位置））も使用
 
 膝（Knie）：
   軽く曲げる（leicht gebeugt）
@@ -38,7 +38,7 @@
 
 重心（Körperschwerpunkt）：
   低く保つ
-  足の拇指球（Ballen）に乗る — 踵は浮かせ気味に
+  足の拇指球（ボールen）に乗る — 踵は浮かせ気味に
   重心が高いと方向転換が遅れる
 
 上体（Oberkörper）：
@@ -55,7 +55,7 @@
   足先・目線・上体の動きに釣られない
 ```
 
-**英語圏の記述（IHF Teaching Handball / Handball Evolution）：**
+**英語圏の記述（IHF Teaching ハンドボール / ハンドボール エボリューション（進化））：**
 ```
 balls of the feet（拇指球に乗る）
 knees slightly bent（膝を軽く曲げる）
@@ -83,7 +83,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 
 ### B-2. ステップ技術3種（ドイツ語圏用語）
 
-**Nachstellschritt（ナッハシュテルシュリット / 追従ステップ）**
+**ナハシュテルシュリット（サイドステップ）（ナッハシュテルシュリット / 追従ステップ）**
 ```
 横方向移動の基本
 前の足を出してから後の足を引き寄せる
@@ -91,21 +91,21 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 → 小さい移動・密着マーキングに使う
 ```
 
-**Kreuzschritt（クロイツシュリット / クロスオーバーステップ）**
+**クロイツシュリット（クロスステップ）（クロイツシュリット / クロスオーバーステップ）**
 ```
 大きな横移動が必要な場面に使用
 足を交差させて大きく素早くカバー
-Handball Evolution：「クロスステップは三角形DF移動の生体力学的キーエレメント」
+ハンドボール エボリューション（進化）：「クロスステップは三角形DF移動の生体力学的キーエレメント」
 → ただし姿勢と方向を保つこと（体が流れないよう注意）
 ```
 
-**Ausfallschritt（アウスファルシュリット / ランジステップ）**
+**アウスファルシュリット（踏み込みステップ）（アウスファルシュリット / ランジステップ）**
 ```
 前方・斜め方向への急接近時に使用
 相手がドライブを仕掛けてきたとき、一歩踏み込んで道を塞ぐ
 ```
 
-### B-3. トレーニング方法（Handball Evolution推奨）
+### B-3. トレーニング方法（ハンドボール エボリューション（進化）推奨）
 
 ```
 「手を後ろで組んで1on1練習」：
@@ -116,7 +116,7 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
 
 ---
 
-## 【C】合法的な身体接触（Erlaubter Körperkontakt / Legal Body Contact）
+## 【C】合法的な身体接触（Erlaubter Körperkontakt / Legal ボディ Contact）
 
 ### C-1. IHFルール8（Rule 8 / Regel 8）に基づく規定
 
@@ -159,7 +159,7 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
 
 ## 【D】ドライブ（突破）への対応（Durchbruchverteidigung）
 
-### D-1. 基本原則：Ball-Mann-Tor
+### D-1. 基本原則：ボール-Mann-Tor
 
 ```
 「ボール → 相手 → ゴール」の直線上に常に位置する原則
@@ -189,7 +189,7 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
 → 重心が動いた方向が「本当に行きたい方向」
 ```
 
-**④ Ansaugen（アンザウゲン / 引き込み）**
+**④ アンザウゲン（引き寄せ）（アンザウゲン / 引き込み）**
 ```
 あえて相手にスペースを与えるようなポジションを取り、
 相手がドライブを仕掛けてきたところで体で詰める技術
@@ -207,7 +207,7 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
 
 ---
 
-## 【E】先読み・アンティシペーション（Antizipation / Anticipation）
+## 【E】先読み・アンティシペーション（アンティツィパツィオン（先読み） / アンティシペーション（先読み））
 
 ### E-1. 科学的根拠
 
@@ -218,7 +218,7 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
   エキスパートと初心者では「読む動作シーケンスの種類」が異なる
 ```
 
-### E-2. 読み取るべき手がかり（Anticipation Cues）
+### E-2. 読み取るべき手がかり（アンティシペーション（先読み） Cues）
 
 ```
 ① 腰・重心の移動（最重要）
@@ -237,10 +237,10 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
    → 相手がどこを見ているか（ただし経験者は意図的に視線を外す）
 
 ⑥ チームのセットプレーパターン
-   → 相手のクロスラン（Kreuzlauf）・コンビネーションを事前に把握しておく
+   → 相手のクロスラン（クロイツ（クロス）lauf）・コンビネーションを事前に把握しておく
 ```
 
-**Vanja Radic（フィンランドハンドボールGKコーチ）：**
+**ヴァニャ・ラディッチ（フィンランドハンドボールGKコーチ）：**
 ```
 「良いポジションがあってこそ、相手の動きを予測し反応できる」
 → アンティシペーションはポジション取りと密接に連動する
@@ -248,9 +248,9 @@ Handball Evolution：「クロスステップは三角形DF移動の生体力学
 
 ---
 
-## 【F】スクリーン（Sperre）への対応
+## 【F】スクリーン（シュペレ（妨害））への対応
 
-### F-1. スクリーンの種類（Sperrenarten）
+### F-1. スクリーンの種類（シュペレン（妨害）arten）
 
 ```
 Vordersperre（フォルダーシュペレ）：前方から塞ぐ
@@ -273,7 +273,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 → シュートラインが遠い場合に有効
 ```
 
-**③ スイッチ（Abgabe / Switch）**
+**③ スイッチ（アプガーベ（パス放出） / Switch）**
 ```
 担当を隣の味方と入れ替える
 バックDF同士、またはバックDFとセンターDFのスイッチ
@@ -328,7 +328,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 3. ウィングの速攻はGKと残ったDFが対応することが多い
 ```
 
-**④ 事前の守備準備（Antizipation des Ballverlustes）**
+**④ 事前の守備準備（アンティツィパツィオン（先読み） des ボールverlustes）**
 ```
 攻撃中から相手のカウンターを予想し、
 常に「今ボールを失ったら」を意識した立ち位置を取る
@@ -368,7 +368,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 | `Kreis links/rechts!` | ピボット左/右！ | ピボットの位置を伝える |
 | `Ball(e)!` | ボール持ってるぞ！ | ボール保持者への注意を促す |
 
-### H-3. ボールオリエンテーション（Ballorientierung）
+### H-3. ボールオリエンテーション（バルオリエンティールング（ボール指向））
 
 ```
 ボールに近い側（ballnah / ball-side）のDF：
@@ -378,7 +378,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
   → センターへ絞り込み、スペースカバー担当
 
 バックプレーヤー同士の動き：
-  → 「三角形の協力（Dreiecksbewegung）」で互いをカバー
+  → 「三角形の協力（ドライ（独：3）ecksbewegung）」で互いをカバー
 ```
 
 ---
@@ -387,29 +387,29 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 
 | 日本語 | ドイツ語 | 英語 | スペイン語 |
 |---|---|---|---|
-| 基本姿勢 | Grundstellung | defensive stance | postura defensiva básica |
-| 足のスタンス | Beinstellung | stance | posición de piernas |
-| 追従ステップ | Nachstellschritt | shuffle step | paso lateral |
-| クロスオーバーステップ | Kreuzschritt | cross step | paso cruzado |
-| 1on1 | Zweikampf | 1v1 / one-on-one | uno contra uno |
+| 基本姿勢 | グルントシュテルング（基本姿勢） | defensive stance | postura defensiva básica |
+| 足のスタンス | バインシュテルング（脚位置） | stance | posición de piernas |
+| 追従ステップ | ナハシュテルシュリット（サイドステップ） | shuffle step | paso lateral |
+| クロスオーバーステップ | クロイツシュリット（クロスステップ） | cross step | paso cruzado |
+| 1on1 | ツヴァイ（独：2）kampf | 1v1 / one-on-one | uno contra uno |
 | ドライブ（突破） | Durchbruch | drive / penetration | penetración |
 | 合法的な身体接触 | erlaubter Körperkontakt | legal body contact | contacto corporal legal |
-| スクリーン | Sperre | screen / pick | bloqueo |
-| マーク切り替え | Übergabe / Abgabe | switch | cambio de marca |
+| スクリーン | シュペレ（妨害） | screen / pick | bloqueo |
+| マーク切り替え | Übergabe / アプガーベ（パス放出） | switch | cambio de marca |
 | ヘッジ（援護） | Helfen | hedge / help defense | ayuda defensiva |
 | 攻守切り替え | Umschalten | transition | transición |
 | 帰還行動 | Rücklaufverhalten | defensive recovery | repliegue defensivo |
-| ボールオリエンテーション | Ballorientierung | ball orientation | orientación al balón |
-| 先読み・予測 | Antizipation | anticipation | anticipación |
+| ボールオリエンテーション | バルオリエンティールング（ボール指向） | ball orientation | orientación al balón |
+| 先読み・予測 | アンティツィパツィオン（先読み） | anticipation | anticipación |
 | ゲームを読む | Lesen des Spiels | reading the game | lectura del juego |
-| 中央ブロック | Mittelblock | middle block | bloque central |
+| 中央ブロック | ミッテ（中央）lblock | middle block | bloque central |
 
 ---
 
 ## じゃんけん構造（個人DF）
 
 ```
-DF前に出る（Herausrücken）
+DF前に出る（ヘラウスリュッケン（前飛び出し））
   → OF：フェイントで抜く → DF：読んでいれば対応できる
   → OF：パスを出す    → DF：次のOFがオープンになる
 
@@ -428,12 +428,12 @@ DF側面から接近（斜め）
 
 ## 参考文献・情報源
 
-- IHF Rules of the Game Indoor Handball 2025: https://www.ihf.info/sites/default/files/2025-02/
-- IHF Teaching Handball: https://www.ihf.info/sites/default/files/2020-03/H@S_booklet_0.pdf
-- EHF Handball Glossary 2025: https://www.eurohandball.com/media/xwspa50s/
+- IHF ルール of the Game Indoor ハンドボール 2025: https://www.ihf.info/sites/default/files/2025-02/
+- IHF Teaching ハンドボール: https://www.ihf.info/sites/default/files/2020-03/H@S_booklet_0.pdf
+- EHF ハンドボール 用語集 2025: https://www.eurohandball.com/media/xwspa50s/
 - KNSU: https://www.knsu.de/spielsportarten/handball/taktik/individuelles-abwehrverhalten-im-handball
-- VIBSS Abwehrtechniken: https://www.vibss.de/fileadmin/Medienablage/Sportpraxis/PH_Handball/
-- Handball Evolution Individual Defence: https://handballevolution.com/individual-defence/
+- VIBSS アプヴェーア（守備）techniken: https://www.vibss.de/fileadmin/Medienablage/Sportpraxis/PH_Handball/
+- ハンドボール エボリューション（進化） Individual Defence: https://handballevolution.com/individual-defence/
 - DHB Trainer Center: https://www.dhb-trainercenter.de/dhb-rahmentrainingskonzeption/
-- MulcSports: https://mulcsports.com/blog/handball-back-guide/
-- PubMed Anticipation Study (Seidel 2020): https://pubmed.ncbi.nlm.nih.gov/32746741/
+- Mulcスポーツ: https://mulcsports.com/blog/handball-back-guide/
+- PubMed アンティシペーション（先読み） Study (Seidel 2020): https://pubmed.ncbi.nlm.nih.gov/32746741/

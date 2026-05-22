@@ -1,7 +1,7 @@
 # ケガ予防・ボディケア辞書（ハンドボール特化）
 
 > バックプレーヤーに特化した傷害予防・回復・身体管理の全体像。
-> 出典：IHF/EHF/DHB/NHF/OSTRC・PMC査読論文多数・Aspetar Sports Medicine Journal
+> 出典：IHF/EHF/DHB/NHF/OSTRC（オスロスポーツ外傷研究センター）・PMC査読論文多数・アスペター・スポーツ医学誌
 
 ---
 
@@ -85,7 +85,7 @@
 例：股関節・胸椎・肩甲骨のモビリティドリル
 ```
 
-**A = Aktivieren（アクティベーション）**
+**A = アクティヴィーレン（活性化）（アクティベーション）**
 ```
 筋の柔軟性・血流・神経支配・代謝の活性化
 伸張耐性の向上
@@ -106,16 +106,16 @@
 例：シュート動作・ステップ・ポジション別プレー
 ```
 
-### B-2. VBG「ハンドボールの4×4（Das 4×4 des Handballs）」
+### B-2. VBG「ハンドボールの4×4（Das 4×4 des ハンドボールs）」
 
 **VBG（ドイツ職業保険組合）開発のハンドボール特化型予防トレーニング。**
 
 ```
 4つの柱：
 1. Stabilisation und Kräftigung（安定化と強化）
-2. Mobilisation und Beweglichkeit（モビライゼーションと柔軟性）
+2. Mobilisation und ベヴェークリヒカイト（柔軟性）（モビライゼーションと柔軟性）
 3. Schulterkontrolle（肩コントロール）
-4. Beinachsenkontrolle und Landetechnik（下肢アライメントと着地技術）
+4. 脚軸制御と着地技術（下肢アライメントと着地技術）
 
 実施方法：各領域から3〜4種目を選んでウォームアップに組み込む
 収録：100種目以上。器材少なく実施可能。
@@ -135,9 +135,9 @@ URL：https://www.skadefri.no/idretter/handball/
 
 ## 【C】肩傷害予防（バックプレーヤー最重要）
 
-### C-1. OSTRCショルダーコントロールプログラム
+### C-1. OSTRC（オスロスポーツ外傷研究センター）ショルダーコントロールプログラム
 
-**Oslo Sports Trauma Research Center（ノルウェー）開発。最大のエビデンスを持つ肩予防プログラム。**
+**Oslo スポーツ Trauma Research Center（ノルウェー）開発。最大のエビデンスを持つ肩予防プログラム。**
 
 ```
 エビデンス（RCT・45チーム660名のエリートハンドボール選手）：
@@ -150,7 +150,7 @@ URL：https://www.skadefri.no/idretter/handball/
 
 **5つの目的と具体的エクササイズ（チューブ/エラスティックバンド使用）：**
 
-**① 外旋筋力強化（Glenohumeral external rotation strength）**
+**① 外旋筋力強化（肩関節（グレノヒューメラル） external rotation strength）**
 
 ```
 エクササイズA（90°外転位）：
@@ -169,10 +169,10 @@ URL：https://www.skadefri.no/idretter/handball/
 **② 肩甲骨筋コントロール（Scapular muscle control）**
 ```
 Yレイズ（Y Raise）：下部僧帽筋・回旋筋腱板・肩甲骨安定筋群
-バンド外旋（Band External Rotation）：低負荷・高反復。毎日実施可
+バンド外旋（バンド エクスターナル ローテーション）：低負荷・高反復。毎日実施可
 ```
 
-**③ 肩関節内旋可動域改善（Glenohumeral internal rotation ROM）**
+**③ 肩関節内旋可動域改善（肩関節（グレノヒューメラル） internal rotation ROM）**
 ```
 後部関節包ストレッチ（cross-body stretch）：30秒×3回
 スリーパーストレッチ（横向き内旋ストレッチ）
@@ -180,7 +180,7 @@ Yレイズ（Y Raise）：下部僧帽筋・回旋筋腱板・肩甲骨安定筋
 
 **④ 運動連鎖活性化（Kinetic chain activation）**
 ```
-体幹安定化（Rumpfstabilisation / Core stabilization）
+体幹安定化（Rumpfstabilisation / コア stabilization）
 腰椎・骨盤のコントロールが肩への過負荷を軽減
 ```
 
@@ -209,7 +209,7 @@ Yレイズ（Y Raise）：下部僧帽筋・回旋筋腱板・肩甲骨安定筋
 ### D-1. ACL（前十字靭帯）傷害予防
 
 ```
-ACL = Anterior Cruciate Ligament / Vorderes Kreuzband (VKB) / Fremre korsbånd
+ACL = 前十字靭帯 / Vorderes クロイツ（クロス）band (VKB) / Fremre korsbånd
 
 リスクプロファイル：
   女性ハンドボール選手（15〜19歳）が特に高リスク
@@ -220,7 +220,7 @@ ACL = Anterior Cruciate Ligament / Vorderes Kreuzband (VKB) / Fremre korsbånd
   神経筋トレーニング（NMT）の導入でACL傷害50%削減を達成
 ```
 
-**Knee Controlプログラム（スウェーデン開発・RCT有効性証明）：**
+**ニー（膝） コントロールプログラム（スウェーデン開発・RCT有効性証明）：**
 
 ```
 6種の主要エクササイズ（各A〜D難易度レベル）：
@@ -237,7 +237,7 @@ ACL = Anterior Cruciate Ligament / Vorderes Kreuzband (VKB) / Fremre korsbånd
 
 **追加エクササイズ：**
 ```
-Nordic/Russian Hamstring Curl（ハムストリングス遠心性強化）
+ノルディック/Russian ハムストリング Curl（ハムストリングス遠心性強化）
 Single-leg squat（シングルレッグスクワット）
 Plank variations（プランク）
 バランスボード練習
@@ -246,14 +246,14 @@ Plank variations（プランク）
 ### D-2. 膝蓋腱炎（ジャンパー膝）予防
 
 ```
-Jumper's Knee / Patellarsehnentendinopathie / Hopperkneet
+Jumper's ニー（膝） / Patellarsehnentendinopathie / Hopperkneet
 
 予防・管理エクササイズ：
   Heavy Slow Resistance（HSR）トレーニング：ゆっくりとした高負荷トレーニング
-  Eccentric Decline Squat（遠心性ディクラインスクワット）：ゴールドスタンダード
+  Eccentric Decline スクワット（遠心性ディクラインスクワット）：ゴールドスタンダード
 
 プログレッション：
-  Leg press → Squat → Hack squat → Split squat → Seated knee extension
+  Leg press → スクワット → Hack squat → Split squat → Seated knee extension
 
 研究（思春期ハンドボール選手でのRCT）：
   機能的高負荷エクサイズで競技シーズン中の腱痛有病率を有意に削減
@@ -278,13 +278,13 @@ Jumper's Knee / Patellarsehnentendinopathie / Hopperkneet
 → 捻挫歴ありの選手に最も有効
 ```
 
-**② テーピング・ブレーシング（Taping / Bandage）**
+**② テーピング・ブレーシング（Taping / バンデージ（包帯））**
 ```
 捻挫歴あり選手：テーピング・ブレーシングで再発リスク50〜70%削減
 捻挫歴なし選手への予防効果は限定的
 テープ vs. ブレース：同等の効果
 
-バディテープ（Buddy Taping / Partner-Taping）：
+バディテープ（Buddy Taping / パートner-Taping）：
   非弾性スポーツテープで隣接指同士を固定
   締め付けすぎず、緩くない張力で
   指の捻挫・脱臼予防にも活用
@@ -292,7 +292,7 @@ Jumper's Knee / Patellarsehnentendinopathie / Hopperkneet
 
 **③ 着地技術（Landetechnik / Landing technique）**
 ```
-VBG 4×4の「Beinachsenkontrolle und Landetechnik」が直接対応
+VBG 4×4の「脚軸制御と着地技術」が直接対応
 着地時の膝内側への崩れ（knee valgus）を防ぐ意識
 → 足関節・膝の両方を守る
 ```
@@ -440,7 +440,7 @@ Foam Rolling（フォームローリング）：
 
 ---
 
-## 【I】復帰プロトコル（Return-to-Play / Spielwiederaufnahme）
+## 【I】復帰プロトコル（リターン-to-プレー / Spielwiederaufnahme）
 
 ### 一般原則：段階的5ステップ
 
@@ -477,9 +477,9 @@ Foam Rolling（フォームローリング）：
 | プログラム名 | 開発元 | 対象部位 | 対象 |
 |---|---|---|---|
 | **M.A.P.S.** | DHB（ドイツ） | 全身 | ユース〜成人 |
-| **Das 4×4 des Handballs** | VBG（ドイツ） | 肩・膝・全身 | 全レベル |
-| **OSTRCショルダーコントロール** | OSTRC（ノルウェー） | 肩 | エリート・ユース |
-| **Knee Control** | スウェーデン | 膝・ACL | ユース15〜19歳 |
+| **Das 4×4 des ハンドボールs** | VBG（ドイツ） | 肩・膝・全身 | 全レベル |
+| **OSTRC（オスロスポーツ外傷研究センター）ショルダーコントロール** | OSTRC（オスロスポーツ外傷研究センター）（ノルウェー） | 肩 | エリート・ユース |
+| **ニー（膝） コントロール** | スウェーデン | 膝・ACL | ユース15〜19歳 |
 | **Skadefri Håndball** | NHF（ノルウェー） | 肩・膝・足関節 | 全レベル |
 
 ---
@@ -489,19 +489,19 @@ Foam Rolling（フォームローリング）：
 | 日本語 | ドイツ語 | ノルウェー語 | 英語 |
 |---|---|---|---|
 | 傷害予防 | Verletzungsprävention | Skadeforebygging | Injury prevention |
-| ウォームアップ | Aufwärmprogramm | Oppvarming | Warm-up |
-| クールダウン | Abkühlphase | Nedkjøling | Cool-down |
+| ウォームアップ | アウフヴェルムプログラム（ウォームアップ） | Oppvarming | Warm-up |
+| クールダウン | アプキューフェーゼ（クールダウン） | Nedkjøling | Cool-down |
 | 過負荷傷害 | Überlastungsverletzung | Overbelastningsskade | Overuse injury |
 | 肩甲骨 | Schulterblatt / Skapula | Skulderblad | Scapula |
 | 回旋筋腱板 | Rotatorenmanschette | Rotatormansjett | Rotator cuff |
-| 前十字靭帯 | Vorderes Kreuzband (VKB) | Fremre korsbånd | ACL |
+| 前十字靭帯 | Vorderes クロイツ（クロス）band (VKB) | Fremre korsbånd | ACL |
 | 膝蓋腱炎 | Patellarsehnentendinopathie | Hopperkneet | Jumper's knee |
-| 神経筋トレーニング | Neuromuskuläres Training | Nevromuskulær trening | NMT |
+| 神経筋トレーニング | Neuromuskuläres トレーニング | Nevromuskulær trening | NMT |
 | 着地技術 | Landetechnik | Landingsteknikk | Landing technique |
-| 下肢アライメント | Beinachsenkontrolle | Beinstilling | Leg axis control |
-| 体幹安定化 | Rumpfstabilisation | Kjernetrening | Core stabilization |
+| 下肢アライメント | バインアクセンコントロール（脚軸制御） | バインスティリング（脚姿勢） | Leg axis control |
+| 体幹安定化 | Rumpfstabilisation | Kjernetrening | コア stabilization |
 | 筋不均衡 | Muskelimbalanz | Muskelimbalanse | Muscle imbalance |
-| 復帰プロトコル | Return-to-Competition | Tilbake til konkurranse | Return to play |
+| 復帰プロトコル | リターン-to-Competition | Tilbake til konkurranse | リターン to play |
 | 主観的運動強度 | Subjektives Belastungsempfinden | Opplevd anstrengelse | RPE |
 
 ---
@@ -517,7 +517,7 @@ Foam Rolling（フォームローリング）：
 
 肩を酷使する（投球反復）
   → 外旋筋力低下・肩甲骨機能異常
-  → OSTRCプログラムで28%削減できる
+  → OSTRC（オスロスポーツ外傷研究センター）プログラムで28%削減できる
   → 睡眠・栄養が不足
   → 組織回復が遅れて傷害悪化
 
@@ -536,16 +536,16 @@ Foam Rolling（フォームローリング）：
 
 - PMC Epidemiology elite handball 2025: https://pmc.ncbi.nlm.nih.gov/articles/PMC12261712/
 - PMC Systematic Review handball injuries 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC9518369/
-- OSTRC Shoulder RCT 660 players: https://ostrc.no/en/projects/preventing-overuse-shoulder-injuries/
-- PMC Shoulder risk factors 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC9717475/
-- PMC Knee Control adolescent handball RCT 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC9283550/
+- OSTRC（オスロスポーツ外傷研究センター） ショルダー RCT 660 players: https://ostrc.no/en/projects/preventing-overuse-shoulder-injuries/
+- PMC ショルダー risk factors 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC9717475/
+- PMC ニー（膝） コントロール adolescent handball RCT 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC9283550/
 - PubMed ACL neuromuscular training 2017: https://pubmed.ncbi.nlm.nih.gov/29058022/
 - PMC Warm-up meta-analysis 2022: https://pmc.ncbi.nlm.nih.gov/articles/PMC9140806/
-- PMC Ankle sprain bracing 2018: https://pmc.ncbi.nlm.nih.gov/articles/PMC6044595/
+- PMC アンクル（足首） sprain bracing 2018: https://pmc.ncbi.nlm.nih.gov/articles/PMC6044595/
 - PMC Sleep injury risk adolescents 2023: https://pmc.ncbi.nlm.nih.gov/articles/PMC10745648/
 - DHB MAPS: https://www.dhb.de/sites/default/files/2024-12/MAPS%20Poster%20Schulter.pdf
 - VBG 4×4: https://www.vbg.de/cms/sport/handball/schulterkontrolle
 - skadefri.no: https://www.skadefri.no/idretter/handball/
-- Aspetar Upper Limb: https://journal.aspetar.com/en/archive/volume-13-targeted-topic-sports-medicine-in-handball/upper-limb-injury-and-prevention-in-handball
+- アスペター上肢ガイド: https://journal.aspetar.com/en/archive/volume-13-targeted-topic-sports-medicine-in-handball/upper-limb-injury-and-prevention-in-handball
 - PMC Patellar tendon youth handball 2021: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7987778/
 - PMC Recovery strategies 2023: https://pmc.ncbi.nlm.nih.gov/articles/PMC10674277/

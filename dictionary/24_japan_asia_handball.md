@@ -44,7 +44,7 @@
 | **二次速攻**（にじそくげき） | 一次速攻が得点にならなかった後、追い上がる選手へ継続 | 一次が外れても流れを切らない |
 | **逆速攻**（ぎゃくそくげき） | 相手の速攻に対するカウンター — 守備的速攻対応 | DFがボールを取りきった後に発動 |
 
-#### カットインプレー（Cut-in Play）
+#### カットインプレー（Cut-in プレー）
 - DFラインを突破する縦突破
 - スピード変化＋ステップワークでDFを置き去りにする
 
@@ -58,7 +58,7 @@
 |---|---|
 | **観察力と判断力** | Observation & Decision-making — ハンドボールの基本能力として最重視 |
 | **瞬間の判断力** | Instantaneous decision-making — 「成功の鍵」とJHAが定義 |
-| **スピード変化** | Speed variation — マークを外すための速度変化、単純なスピードではない |
+| **スピード変化** | スピード variation — マークを外すための速度変化、単純なスピードではない |
 | **自分の前を攻める** | "Attack the space directly in front of you" — パターン実行より決断的動作を優先 |
 
 ### 欧州用語の日本語化（指導現場で使用）
@@ -200,7 +200,7 @@ J-STARプログラム
 | 監督 | 国籍 | 期間 | 主なメッセージ/遺産 |
 |---|---|---|---|
 | **Dagur Sigurdsson** | アイスランド | 2017-2024.2 | 「才能+練習×姿勢」。チーム文化改革、欧州戦術の輸入、緻密なディテール志向 |
-| **Antonio Carlos Ortega** | スペイン | パリ2024前後 | FCバルセロナ監督としてEHF CLを制した後、日本を指揮 |
+| **アントニオ・カルロス・オルテガ** | スペイン | パリ2024前後 | FCバルセロナ監督としてEHF CLを制した後、日本を指揮 |
 | **Toni Gerona** | スペイン | 2024秋〜現在 | チュニジア（2018アフリカ優勝）・セルビア（2023 W杯11位）歴任。**日本の速さ**を最大の武器と定義。ユース・ジュニア統括も兼務 |
 
 **Gerena監督のロードマップ：**
@@ -258,7 +258,7 @@ IHFルール：国籍変更前3年間の代表活動停止が必要
 | Borja Vidal | スペイン |
 | Goran Stojanović | モンテネグロ |
 | Jovo Damjanović | モンテネグロ |
-| Bertrand Roiné | フランス |
+| ベルトラン・ロワネ | フランス |
 | Danijel Šarić | 4カ国代表歴（史上最多） |
 
 #### 主要実績
@@ -314,7 +314,7 @@ IHFルール：国籍変更前3年間の代表活動停止が必要
 |---|---|
 | 設立 | 1974年8月26日（テヘラン、第7回アジア大会） |
 | 本部 | クウェートシティ（South Surrah） |
-| 現会長 | Bader Mohammed Al-Theyab（クウェート、2025年12月就任） |
+| 現会長 | バーデル・モハメド・アル＝テヤブ（クウェート、2025年12月就任） |
 | 加盟国 | **44連盟**（香港・マカオも独立加盟） |
 | 公用語 | 英語・アラビア語 |
 | 専門委員会 | 競技組織/審判/コーチング/医療/倫理など9委員会 |
@@ -365,14 +365,14 @@ IHFルール：国籍変更前3年間の代表活動停止が必要
 ### 歴史的支配
 | クラブ | 国 | 金メダル数 |
 |---|---|---|
-| Al-Sadd SC | カタール | 5回（2000-2003, 2005）— 最多 |
-| Al-Rayyan SC | カタール | — |
+| アル・サッドSC | カタール | 5回（2000-2003, 2005）— 最多 |
+| アル・ライヤンSC | カタール | — |
 | カタール全体 | — | 通算12金 9銀 8銅 |
 
 ### 近年の大会結果
 | 年 | 大会 | 優勝 | 決勝 |
 |---|---|---|---|
-| 2023 | イラン開催 | Al-Najma（バーレーン） | 決勝でAl-Rayyan（カタール）31:29 |
+| 2023 | イラン開催 | アル・ナジュマ（バーレーン） | 決勝でAl-Rayyan（カタール）31:29 |
 | **2024** | ドーハ開催（第27回） | **Sharjah SC（UAE）🏆** | 対Khaleej（サウジ）27:26 ※UAE初優勝 |
 
 > UAEの初優勝は湾岸地域のカタール独占時代の終焉を示唆
@@ -383,21 +383,21 @@ IHFルール：国籍変更前3年間の代表活動停止が必要
 
 | 日本語 | 英語 | ドイツ語 | ノルウェー語 |
 |---|---|---|---|
-| 速攻（そくげき） | Fast break / Counter-attack | Gegenstoß | Kontring |
-| 一次速攻 | First-wave fast break | Erster Gegenstoß | Første kontring |
-| 二次速攻 | Second-wave fast break | Zweiter Gegenstoß | Andre kontring |
-| 遅攻（ちこう） | Set offense (slow build-up) | Angriff aufbauen | Posisjonsspill |
+| 速攻（そくげき） | ファスト（速い） break / Counter-attack | ゲーゲンシュトス（速攻） | Kontring |
+| 一次速攻 | First-wave fast break | Erster ゲーゲンシュトス（速攻） | Første kontring |
+| 二次速攻 | Second-wave fast break | ツヴァイ（独：2）ter ゲーゲンシュトス（速攻） | アンドレ・コントリング（第二速攻） |
+| 遅攻（ちこう） | Set offense (slow build-up) | アングリフ・アウフバウエン（攻撃構築） | Posisjonsspill |
 | 数的優位 | Numerical advantage | Überzahl | Tallmessig overlegenhet |
-| マークチェンジ | Defensive switch | Übergeben | Bytting |
+| マークチェンジ | ディフェンシブ switch | ユーバーゲーベン（引き渡し） | Bytting |
 | 観察力と判断力 | Perception & decision-making | Wahrnehmung & Entscheidung | Persepsjon & beslutningstaking |
 | フリー（の選手） | Unmarked player | Freispieler | Fri spiller |
-| スピード変化 | Speed variation | Tempowechsel | Temposkifte |
+| スピード変化 | スピード variation | Tempowechsel | Temposkifte |
 | 7mスロー | 7-meter throw | 7m-Wurf | 7m-kast |
-| タイムアウト | Time-out | Auszeit | Timeout |
-| ディフェンス | Defense | Abwehr | Forsvar |
+| タイムアウト | Time-out | アウスツァイト（タイムアウト） | Timeout |
+| ディフェンス | Defense | アプヴェーア（守備） | Forsvar |
 | ウィング | Wing player | Flügelspieler | Kantspiller |
-| ポスト（ピボット） | Pivot | Kreisspieler | Strekspiller |
-| センターバック | Centre back | Mitte / Spielmacher | Midtback |
+| ポスト（ピボット） | Pivot | Kreisspieler | ストレーク（ポスト/ピボット）spiller |
+| センターバック | Centre back | ミッテ（中央） / シュピールマッハー（ゲームメーカー） | Midtback |
 
 ---
 
