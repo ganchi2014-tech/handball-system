@@ -2375,15 +2375,226 @@ const QUESTIONS = {
     ],
   },
 
-  // ── OF（②→③→④ 再設計版） ──
-  qof_start: {
+  // ── OF振り返り：場面選択トップ ──
+  qof_top: {
     label: 'Q1', mode: 'of',
+    text: 'OF振り返り：何について？',
+    hint: 'OFには「判断」だけでなくシュート・突破・フェイント・パス・ポスト連携・コンタクトなど多くの要素がある。今回振り返りたい場面を選ぶ。',
+    choices: [
+      { label: 'もらい出し・判断（クローズ/ワイドの読み）', next: 'qof_start' },
+      { label: 'シュート結果（入った／止められた／外した）', next: 'qof_shoot_result' },
+      { label: '1on1・個人突破（ドリブル・カットイン）', next: 'qof_1on1_result' },
+      { label: 'フェイント（DF/GKを動かせたか）', next: 'qof_feint_target' },
+      { label: 'パス・コンビネーション', next: 'qof_pass_result' },
+      { label: 'ポストとの連携', next: 'qof_post_role' },
+      { label: 'コンタクト・勝ち位置（接触・体の使い方）', next: 'qof_contact_result' },
+    ],
+  },
+
+  // ── OF（②→③→④ もらい出し・判断 既存版） ──
+  qof_start: {
+    label: 'Q2', mode: 'of',
     text: 'もらいに動いたとき、DFとの関係は？',
     hint: 'プレーが起きた瞬間のDFとの位置関係を思い出す。ボールを受けた瞬間（または受けようとした瞬間）のDFとの距離・体の向き。',
     choices: [
       { label: 'クローズ　― DFが詰めていて体の向きが制限されていた', next: 'qof_close_react' },
       { label: 'ワイド　― DFとの間に空間があり選択肢があった', next: 'qof_wide_react' },
       { label: 'ボールをもらえなかった', next: 'qof_noball' },
+    ],
+  },
+
+  // ── ② シュート結果 ──
+  qof_shoot_result: {
+    label: 'Q2', mode: 'of',
+    text: 'シュート結果は？',
+    choices: [
+      { label: '決まった（得点）', next: 'qof_shoot_good_how' },
+      { label: 'GKに止められた', next: 'qof_shoot_gk_how' },
+      { label: 'DFにブロックされた', next: 'qof_shoot_block' },
+      { label: '枠を外した／ポストに当たった', next: 'r_of_shoot_off' },
+    ],
+  },
+  qof_shoot_good_how: {
+    label: 'Q3', mode: 'of',
+    text: '決めた要因は？',
+    choices: [
+      { label: 'コースが完璧だった（GKが反応できない場所）', next: 'r_of_shoot_good_course' },
+      { label: '早打ち（GKが動く前に放った）', next: 'r_of_shoot_good_early' },
+      { label: 'バックハンドフェイク／角度変化', next: 'r_of_shoot_good_fake' },
+      { label: 'ジャンプの高さでGKを越えた', next: 'r_of_shoot_good_jump' },
+      { label: 'ルーズボール／リバウンドを詰めた', next: 'r_of_shoot_good_rebound' },
+    ],
+  },
+  qof_shoot_gk_how: {
+    label: 'Q3', mode: 'of',
+    text: 'GKに止められた状況は？',
+    choices: [
+      { label: '先読み型GKに動かれて塞がれた', next: 'r_of_shoot_gk_anticip' },
+      { label: 'コース絞り型GKが中央で止めた', next: 'r_of_shoot_gk_position' },
+      { label: 'GKに前進されてアングル縮小', next: 'r_of_shoot_gk_stepout' },
+      { label: '自分のフォームが崩れた', next: 'r_of_shoot_gk_form' },
+    ],
+  },
+  qof_shoot_block: {
+    label: 'Q3', mode: 'of',
+    text: 'ブロックされた状況は？',
+    choices: [
+      { label: 'DFが正面でブロック（Herausrücken）', next: 'r_of_shoot_block_front' },
+      { label: 'DFの腕が伸びてきた', next: 'r_of_shoot_block_arm' },
+      { label: 'シュートコースを完全に塞がれた', next: 'r_of_shoot_block_full' },
+    ],
+  },
+
+  // ── ③ 1on1・個人突破 ──
+  qof_1on1_result: {
+    label: 'Q2', mode: 'of',
+    text: '1on1の結果は？',
+    choices: [
+      { label: '抜けてシュートまでいった', next: 'qof_1on1_good_how' },
+      { label: '抜けたが次の選択肢で詰まった', next: 'r_of_1on1_partial' },
+      { label: 'DFに止められた', next: 'qof_1on1_miss_why' },
+      { label: 'ファウルもらえた（フリースロー獲得）', next: 'r_of_1on1_foul' },
+    ],
+  },
+  qof_1on1_good_how: {
+    label: 'Q3', mode: 'of',
+    text: '抜けた決め手は？',
+    choices: [
+      { label: 'スピード勝負で抜いた', next: 'r_of_1on1_good_speed' },
+      { label: 'フェイントで重心を崩した', next: 'r_of_1on1_good_feint' },
+      { label: 'コンタクト（山側/谷側）で押し勝った', next: 'r_of_1on1_good_contact' },
+      { label: 'スクリーンを使った', next: 'r_of_1on1_good_screen' },
+    ],
+  },
+  qof_1on1_miss_why: {
+    label: 'Q3', mode: 'of',
+    text: '止められた原因は？',
+    choices: [
+      { label: 'DFの方が速かった', next: 'r_of_1on1_miss_speed' },
+      { label: 'フェイントが効かなかった', next: 'r_of_1on1_miss_feint' },
+      { label: '体勢を崩されて踏み込めなかった', next: 'r_of_1on1_miss_contact' },
+      { label: '事前の準備（勝ち位置）が取れていなかった', next: 'r_of_1on1_miss_position' },
+    ],
+  },
+
+  // ── ④ フェイント ──
+  qof_feint_target: {
+    label: 'Q2', mode: 'of',
+    text: 'フェイントの対象は？',
+    choices: [
+      { label: 'DF（突破前の重心崩し）', next: 'qof_feint_df' },
+      { label: 'GK（シュートフェイク・視線誘導）', next: 'qof_feint_gk' },
+      { label: '隣のDF（パスフェイント）', next: 'qof_feint_neighbor' },
+    ],
+  },
+  qof_feint_df: {
+    label: 'Q3', mode: 'of',
+    text: 'DFを動かせた？',
+    choices: [
+      { label: '動かせて突破できた', next: 'r_of_feint_df_good' },
+      { label: '動いたが次が続かなかった', next: 'r_of_feint_df_partial' },
+      { label: '動かなかった（読まれた）', next: 'r_of_feint_df_read' },
+      { label: '自分の体が崩れた（フェイント失敗）', next: 'r_of_feint_df_self' },
+    ],
+  },
+  qof_feint_gk: {
+    label: 'Q3', mode: 'of',
+    text: 'GKに対するフェイントの結果は？',
+    choices: [
+      { label: 'GKが動いて逆コースが空いた', next: 'r_of_feint_gk_good' },
+      { label: 'GKが動かなかった（コース絞り型）', next: 'r_of_feint_gk_position' },
+      { label: 'GKに完全に見破られた', next: 'r_of_feint_gk_seen' },
+    ],
+  },
+  qof_feint_neighbor: {
+    label: 'Q3', mode: 'of',
+    text: 'パスフェイントの効果は？',
+    choices: [
+      { label: '隣のDFが動いてパスコースが空いた', next: 'r_of_feint_n_good' },
+      { label: '動かなかった（インターセプト警戒）', next: 'r_of_feint_n_static' },
+      { label: 'フェイントが大きすぎてDFに読まれた', next: 'r_of_feint_n_big' },
+    ],
+  },
+
+  // ── ⑤ パス・コンビネーション ──
+  qof_pass_result: {
+    label: 'Q2', mode: 'of',
+    text: 'パス／コンビの結果は？',
+    choices: [
+      { label: '通った→シュートまでつながった', next: 'r_of_pass_good' },
+      { label: '通ったが受け手がシュートできなかった', next: 'r_of_pass_partial' },
+      { label: 'インターセプトされた', next: 'qof_pass_intercept_why' },
+      { label: 'パスミス（味方に届かず）', next: 'qof_pass_miss_why' },
+    ],
+  },
+  qof_pass_intercept_why: {
+    label: 'Q3', mode: 'of',
+    text: 'インターセプトの原因は？',
+    choices: [
+      { label: 'パスコースを読まれていた', next: 'r_of_pass_int_read' },
+      { label: 'パスが遅かった', next: 'r_of_pass_int_slow' },
+      { label: 'DFが先に動いて先取りした', next: 'r_of_pass_int_anticip' },
+    ],
+  },
+  qof_pass_miss_why: {
+    label: 'Q3', mode: 'of',
+    text: 'パスミスの原因は？',
+    choices: [
+      { label: '精度不足（受け手の手前／頭上）', next: 'r_of_pass_miss_acc' },
+      { label: '受け手のタイミングと合わなかった', next: 'r_of_pass_miss_timing' },
+      { label: 'プレッシャーで力みすぎた', next: 'r_of_pass_miss_pressure' },
+    ],
+  },
+
+  // ── ⑥ ポスト連携 ──
+  qof_post_role: {
+    label: 'Q2', mode: 'of',
+    text: 'あなたの役割は？',
+    choices: [
+      { label: 'バック（ピボットにパス出し側）', next: 'qof_post_back' },
+      { label: 'ピボット本人（ポストプレー）', next: 'qof_post_pivot' },
+    ],
+  },
+  qof_post_back: {
+    label: 'Q3', mode: 'of',
+    text: 'ピボットへのパスは？',
+    choices: [
+      { label: '通った→ピボット得点', next: 'r_of_post_back_good' },
+      { label: '通ったがピボットが詰まった', next: 'r_of_post_back_pivot_stuck' },
+      { label: 'パスコースが見つからなかった', next: 'r_of_post_back_no_lane' },
+      { label: 'インターセプトされた', next: 'r_of_post_back_int' },
+    ],
+  },
+  qof_post_pivot: {
+    label: 'Q3', mode: 'of',
+    text: 'ピボットとして何が起きた？',
+    choices: [
+      { label: 'V字位置取りでパスを受けてシュート', next: 'r_of_post_pivot_good' },
+      { label: 'DFに先回りされてパスを受けられなかった', next: 'r_of_post_pivot_blocked' },
+      { label: '4プレー（回転/フェイク/フラッシュ/スクリーン）の選択ミス', next: 'r_of_post_pivot_choice' },
+      { label: 'スクリーンが利かなかった', next: 'r_of_post_pivot_screen' },
+    ],
+  },
+
+  // ── ⑦ コンタクト・勝ち位置 ──
+  qof_contact_result: {
+    label: 'Q2', mode: 'of',
+    text: 'コンタクト場面の結果は？',
+    choices: [
+      { label: '勝ち位置を先に取れた', next: 'r_of_contact_good' },
+      { label: '接触で押し勝てた（山側/谷側を使えた）', next: 'r_of_contact_win' },
+      { label: '押し負けた／体勢崩された', next: 'qof_contact_lose_why' },
+      { label: 'ファウル取られた', next: 'r_of_contact_foul' },
+    ],
+  },
+  qof_contact_lose_why: {
+    label: 'Q3', mode: 'of',
+    text: '押し負けた原因は？',
+    choices: [
+      { label: '重心が高かった（前傾不足）', next: 'r_of_contact_lose_center' },
+      { label: 'DFの先取り（勝ち位置を取られていた）', next: 'r_of_contact_lose_first' },
+      { label: '体重・パワー差', next: 'r_of_contact_lose_power' },
+      { label: '山側/谷側の判断ミス', next: 'r_of_contact_lose_side' },
     ],
   },
   qof_noball: {
@@ -4666,17 +4877,108 @@ const PHYSICAL_RESULTS_EXTRA = {
 
 Object.assign(RESULTS, PHYSICAL_RESULTS_EXTRA);
 
+// ─────────────────────────────────────────────
+// OF全要素拡張リザルト（ユーザー指摘：判断のみではない）
+// ─────────────────────────────────────────────
+const OF_EXTRA_RESULTS = {
+  // シュート結果
+  r_of_shoot_off: { good: 'シュートを打つ判断はできた。', issue: 'シュート精度', body: '枠外・ポスト命中は5cm単位の精度勝負。プレッシャー下のフォーム一貫性が課題。', improve: '【練習】壁の10cm四方ターゲットを各コーナーに置いて精度ノック。70%以上目標。', approaches: [{ tag: '精度', text: '小ターゲット練習' }, { tag: 'フォーム', text: '助走→構え→放つの一貫性' }, { tag: 'メンタル', text: '深呼吸→3秒以内決断' }] },
+  r_of_shoot_good_course: { good: '完璧なコースで決めた = 観察力と精度の両立。', issue: '次の課題：同じコースを2試合連続で使うとGKに読まれる', body: 'GKは試合中に学習する。次回は別コースを混ぜて読まれにくく。', improve: '【意識】同試合内で同コース2回連続NG。最低5コース使い分け。', approaches: [{ tag: 'バリエ', text: '5コース使い分け' }, { tag: '観察', text: 'GKの反応を見て次選択' }, { tag: '再現性', text: '入ったコースを言語化' }] },
+  r_of_shoot_good_early: { good: '早打ちで先読み型GKの裏をかいた = 戦術的勝利。', issue: '早打ちは最高点と組み合わせて使い分け', body: '早打ちばかりだとGKが早打ち対応に変わる。最高点ジャンプも混ぜて読みを撹乱。', improve: '【練習】1ステップ早打ち＋2ステップ最高点を交互に各10本。', approaches: [{ tag: '使い分け', text: '早打ち⇔最高点の切替' }, { tag: 'パワー', text: '早打ちのパワー強化＝MB投擲' }, { tag: '辞書', text: '01_basics.md / 19_drills.md' }] },
+  r_of_shoot_good_fake: { good: 'フェイクでGKを撹乱した = 高度な技術。', issue: 'バックハンドフェイクの精度向上', body: '手首を逆方向に返す技術は難度高い。怪我なく繰り返す練習量が必要。', improve: '【練習】壁打ちで手首感覚→ゴール反復。手首・前腕のストレッチ必須。', approaches: [{ tag: '技術', text: '手首の柔軟性と強さ' }, { tag: '怪我予防', text: '前腕ストレッチ' }, { tag: '辞書', text: '02_individual.md ③-B' }] },
+  r_of_shoot_good_jump: { good: '跳躍で物理的にGKを越えた = 基礎能力の勝利。', issue: '跳躍力の維持', body: '試合後半まで同じ跳躍を維持できるか。下半身パワーと筋持久力。', improve: '【練習】片脚スクワット5RM、ボックスジャンプ40-50cm、週2回。', approaches: [{ tag: '最大パワー', text: '片脚スクワット' }, { tag: '爆発力', text: 'ボックスジャンプ' }, { tag: '辞書', text: '21_physical_training.md' }] },
+  r_of_shoot_good_rebound: { good: 'リバウンドへの執着 = 諦めない姿勢。', issue: 'ルーズボール反応の再現性', body: 'リバウンドは確率ゲーム。常にゴール前にいる位置取りが価値。', improve: '【意識】シュート後も止まらず6m付近に詰める習慣。', approaches: [{ tag: '位置取り', text: 'シュート後の即詰め' }, { tag: '予測', text: 'GKの弾き方向を読む' }, { tag: '判断', text: 'コンタクトを恐れない' }] },
+  r_of_shoot_gk_anticip: { good: '先読み型GKを認識できた = 観察できている。', issue: '先読みGK対策', body: 'バックハンドフェイク／早打ち／視線誘導で予測を外す。', improve: '【次回】GKの動き出しを観察→逆を狙う。3本観察してから本格仕掛け。', approaches: [{ tag: '対先読み', text: '早打ち or バックハンドフェイク' }, { tag: '辞書', text: '05_gk_df.md 先読み型対策' }, { tag: '観察', text: '助走から動き出すか確認' }] },
+  r_of_shoot_gk_position: { good: 'コース絞り型GKを認識できた。', issue: 'コース精度勝負', body: '動かないGKには5cm単位の精度か、引きつけて角度変化。', improve: '【練習】空き2エリアを正確に狙う精度ノック。各コーナー20本。', approaches: [{ tag: '精度', text: '小ターゲット練習' }, { tag: '引きつけ', text: 'GKを動かす技術' }, { tag: '低コース', text: '腰〜膝が両型に有効' }] },
+  r_of_shoot_gk_stepout: { good: 'GK前進を観察できた。', issue: 'ループシュート技術', body: 'GKが前に出てきたらアングル縮小される。Lobwurfで頭上越え。', improve: '【練習】GK役が前進する想定でループシュート10本×3。', approaches: [{ tag: 'Lobwurf', text: '辞書22参照' }, { tag: '判断', text: 'GK前進の瞬間を狙う' }, { tag: '角度', text: '左右に振って前進方向と逆' }] },
+  r_of_shoot_gk_form: { good: 'フォーム崩れの自覚 = 改善の第一歩。', issue: 'プレッシャー下のフォーム維持', body: 'プレッシャーで力みすぎてフォームが崩れる。深呼吸＋ルーティン。', improve: '【ルーティン】シュート前の固定動作（深呼吸→構え→放つ）を毎回同じに。', approaches: [{ tag: 'メンタル', text: '深呼吸＋3秒決断' }, { tag: 'フォーム', text: '練習でフォーム一貫性' }, { tag: '辞書', text: '18_mental.md' }] },
+  r_of_shoot_block_front: { good: 'DF前進をブロック認識できた。', issue: 'Herausrückenへの対応', body: 'DFが飛び出してきたら背後にスペース。ピボットへのパスかループで対処。', improve: '【練習】Herausrücken想定で「シュートフェイク→ピボットパス」反復。', approaches: [{ tag: 'パス', text: 'ピボットへ逃がす' }, { tag: 'ループ', text: 'DFの頭上を越す' }, { tag: '辞書', text: '05_gk_df.md / 26_tactical_formations.md' }] },
+  r_of_shoot_block_arm: { good: 'DFの腕に気付けた。', issue: '腕に対する角度・タイミング', body: 'DFが腕を伸ばすタイミングを読んで、その前に放つか角度を変える。', improve: '【練習】DF役を入れて「腕が伸びる前に放つ」早打ち反復。', approaches: [{ tag: '早打ち', text: 'DF腕の前に放つ' }, { tag: '角度', text: '腕の脇を抜く軌道' }, { tag: 'ジャンプ', text: '高さで腕を越える' }] },
+  r_of_shoot_block_full: { good: 'コースが完全に塞がれたと客観視できた。', issue: 'コース確保の事前準備', body: '完全に塞がれた = 立ち位置が悪かった or タイミングが遅すぎた。事前にDF位置を読む。', improve: '【練習】DF位置を確認してからシュート判断する練習。受ける前の視野確保。', approaches: [{ tag: '事前準備', text: '受ける前にDF位置確認' }, { tag: 'パス選択', text: 'コースなければパスへ' }, { tag: '辞書', text: '04_cognition.md 5ポイント確認' }] },
+
+  // 1on1
+  r_of_1on1_partial: { good: '抜けるところまで成功 = 個人技は通った。', issue: '抜けた後の選択肢', body: '抜けた瞬間にDFがカバーに来る。次の選択（シュート／パス）を抜く前に決めておく。', improve: '【意識】抜く前に「抜けたらこうする」を決めておく。即決即実行。', approaches: [{ tag: '事前判断', text: '抜く前に次の選択決定' }, { tag: 'カバー読み', text: 'カバーDFを事前に把握' }, { tag: '辞書', text: '04_cognition.md 判断フロー' }] },
+  r_of_1on1_foul: { good: 'ファウルを引き出した = 戦術的勝利。', issue: 'フリースロー後の活用', body: 'ファウル獲得後のセットプレーで決め切る。事前共有したサインで実行。', improve: '【チーム】フリースロー時のサインプレーを最低3種類用意。', approaches: [{ tag: 'サイン', text: '27_sign_plays.md' }, { tag: 'クイック', text: 'DFが整う前に発動' }, { tag: '位置', text: 'ゴールから遠いポジションは積極獲得' }] },
+  r_of_1on1_good_speed: { good: 'スピードで勝った = 自分の武器を発揮。', issue: 'スピード依存の限界', body: 'スピードはスタミナと連動。試合後半に落ちる。スプリント練習＋RSA。', improve: '【練習】20m全力ダッシュ×8本（30秒レスト）週2。試合後半の維持を狙う。', approaches: [{ tag: '加速力', text: '10mダッシュ×6本' }, { tag: 'RSA', text: '反復スプリント能力' }, { tag: '辞書', text: '21_physical_training.md' }] },
+  r_of_1on1_good_feint: { good: 'フェイントで重心を崩した = 技術が通った。', issue: '同じフェイントを連発するとDFが学習', body: '同じDFに2試合連続で同じフェイントは使わない。レパートリーを増やす。', improve: '【練習】フェイント7種を全部使えるように。02_individual.mdの7種マスター。', approaches: [{ tag: '7種', text: '①〜⑦すべて使えるように' }, { tag: 'ダブル', text: '2種連続で耐えるDFを超える' }, { tag: '辞書', text: '02_individual.md / 19_drills.md' }] },
+  r_of_1on1_good_contact: { good: 'コンタクトで押し勝った = フィジカル勝利。', issue: '山側／谷側の判断', body: '押し勝つだけでなく、DFの体勢（山側／谷側）を見て突破方向を選ぶ。', improve: '【練習】DF斜め構え想定で山側フェイク→谷側突破を反復。', approaches: [{ tag: '山側谷側', text: '01_basics.mdコンタクト技術' }, { tag: '体幹', text: '押し勝つ筋力＝体幹' }, { tag: '低重心', text: '前傾＋膝曲げ' }] },
+  r_of_1on1_good_screen: { good: 'スクリーンを使った = チーム連携の活用。', issue: 'スクリーン後の選択', body: 'ピック&ロールかピック&ポップか、DFの対応で選ぶ。事前共有が鍵。', improve: '【練習】スクリーン後にDFがスイッチ／ファイトオーバー／ゴーアンダー時の対応を反復。', approaches: [{ tag: 'ピック&ロール', text: 'スクリーン後ゴール方向へ' }, { tag: 'ピック&ポップ', text: 'スクリーン後外へ' }, { tag: '辞書', text: '12_set_plays.md / 27_sign_plays.md' }] },
+  r_of_1on1_miss_speed: { good: '相手の速さを認識できた。', issue: '対スピード対策', body: 'スピード負けは技術でカバー。フェイントで重心を崩してから突破。', improve: '【意識】DFが速い相手には直接突破でなく、フェイント先行でリズム崩す。', approaches: [{ tag: 'フェイント先行', text: '速い相手には技術で勝負' }, { tag: 'タイミング', text: '不意打ち＝予測されない瞬間' }, { tag: 'スクリーン活用', text: 'スピード差を組織で消す' }] },
+  r_of_1on1_miss_feint: { good: 'フェイントが効かないと認識できた。', issue: 'フェイントの予備動作・癖', body: '読まれる原因は①予備動作が大きい、②同パターン繰返し、③本気と区別大きすぎ。', improve: '【練習】鏡前でフェイント動作を客観視。コーチに「何が見えた？」と聞く。', approaches: [{ tag: '癖の特定', text: '鏡＋第三者で見る' }, { tag: 'パターン化防止', text: '同じ場面で違うフェイント' }, { tag: '辞書', text: '02_individual.md' }] },
+  r_of_1on1_miss_contact: { good: '体勢を崩されたと認識できた。', issue: '低重心とコンタクト技術', body: '体勢崩れは①重心が高い、②先取り負け、③腕の使い方不適切。', improve: '【練習】低重心キープ＋山側／谷側を意識した突破。コンタクト下ドリブル反復。', approaches: [{ tag: '低重心', text: '前傾＋膝曲げ' }, { tag: '勝ち位置', text: '受ける前に位置確保' }, { tag: '体幹', text: 'プランクで安定' }] },
+  r_of_1on1_miss_position: { good: '勝ち位置の重要性に気付いた。', issue: '受ける前の準備不足', body: 'ボール受ける前のオフボール準備が不足。隣がボールを持った瞬間から動く。', improve: '【意識】ボール受ける2秒前から「DFの位置・自分の動き先」を確認。', approaches: [{ tag: 'オフボール', text: '受ける前の動き' }, { tag: '5ポイント確認', text: '04_cognition.md' }, { tag: '辞書', text: '02_individual.md 勝ち位置' }] },
+
+  // フェイント
+  r_of_feint_df_good: { good: 'DFを動かして突破 = フェイント本来の目的達成。', issue: 'フェイントを「使った」と言語化', body: '「動かした方向の逆」が使える。何を見て動かしたか言語化して再現性向上。', improve: '【記録】成功したフェイント＋動かした方向を試合後にメモ。', approaches: [{ tag: '言語化', text: '何を見て何を動かしたか' }, { tag: '再現', text: '次の試合でも同じ場面なら同じフェイント' }, { tag: '辞書', text: '02_individual.md' }] },
+  r_of_feint_df_partial: { good: 'DFは動いたが活かせなかった = 半分は成功。', issue: 'フェイント後の動作', body: 'フェイントは「動かす」だけでは終わらない。動いた方向の逆へ「入る」までで完結。', improve: '【練習】フェイント→突破/シュートまでをセットで反復。フェイント単体練習NG。', approaches: [{ tag: 'セット練習', text: 'フェイント＋次の動作' }, { tag: '判断', text: 'DFが動いた瞬間を逃さない' }, { tag: '0.5秒', text: 'フェイント→次動作0.5秒以内' }] },
+  r_of_feint_df_read: { good: '読まれたと認識できた = 改善の出発点。', issue: 'フェイントの予備動作削減', body: '同じフェイントの連発・予備動作が大きい・本気との区別大きすぎ、のどれか。', improve: '【鏡前練習】自分のフェイント動作を客観視。予備動作が見えたら修正。', approaches: [{ tag: '客観視', text: '鏡＋動画' }, { tag: 'バリエ', text: '7種使い分け' }, { tag: 'パターン化防止', text: '同じ場面で違う技' }] },
+  r_of_feint_df_self: { good: '自分の体が崩れたと自覚 = 体幹の課題を発見。', issue: '体幹の安定性', body: 'フェイントは体重移動。体幹が弱いと自分が転倒。プランク・サイドプランクで補強。', improve: '【練習】プランク90秒×3、サイドプランク60秒×3。毎日5分。', approaches: [{ tag: '体幹', text: 'プランク系' }, { tag: '神経筋', text: '片脚バランス練習' }, { tag: 'フォーム', text: 'フェイント時の足の位置確認' }] },
+  r_of_feint_gk_good: { good: 'GKを動かして逆コース = 高度な心理戦の勝利。', issue: '使い時の判断', body: 'シュートフェイク有効なのは先読み型GK。コース絞り型には効かない。', improve: '【判断】試合序盤でGKタイプ特定→先読み型のときだけシュートフェイク使用。', approaches: [{ tag: 'GK観察', text: '3-5本でタイプ判定' }, { tag: '使い分け', text: '先読み型限定' }, { tag: '辞書', text: '05_gk_df.md GKタイプ' }] },
+  r_of_feint_gk_position: { good: 'コース絞り型GKに気付いた。', issue: 'コース絞り型への対応', body: 'GKが動かないなら精度勝負。引きつけて角度変化、空きエリアに正確に打つ。', improve: '【意識】GKを動かそうとしない。コースを正確に狙う精度ノック。', approaches: [{ tag: '精度', text: '小ターゲット練習' }, { tag: '低コース', text: '腰〜膝が両型に有効' }, { tag: 'ループ', text: 'GK動かないなら頭上越え' }] },
+  r_of_feint_gk_seen: { good: 'フェイクが見破られたと認識。', issue: 'フェイクの動作大きすぎor短すぎ', body: 'GKに見破られる = 本気シュートとの差が大きすぎる or 短すぎる。中間が正解。', improve: '【練習】本気シュートとフェイクの動作を限りなく近づける。鏡前で確認。', approaches: [{ tag: '本気との一体化', text: '差をなくす' }, { tag: 'ためる時間', text: '長すぎず短すぎず（0.5-1秒）' }, { tag: '視線', text: 'コースを見ない' }] },
+  r_of_feint_n_good: { good: '隣のDFを動かしてパスコース確保 = 戦術的連携。', issue: 'パスフェイント後の即時パス', body: '隣DFが動いた瞬間がパス窓。0.3秒以内に本パスを出す。', improve: '【練習】パスフェイント→本パスを0.3秒以内で。3人ペアで反復。', approaches: [{ tag: '即時', text: '0.3秒以内' }, { tag: '視野', text: '本来のパス先を見ない' }, { tag: '辞書', text: '02_individual.md ④パスフェイント' }] },
+  r_of_feint_n_static: { good: 'DFが動かない判断ができた = 観察力。', issue: '動かないDFには別アプローチ', body: 'インターセプト警戒で動かないDF = 賢いDF。フェイクではなくドリブルや個人突破。', improve: '【意識】フェイクが効かないDFには、別の手段に即切替。', approaches: [{ tag: '切替', text: '個人突破' }, { tag: 'スクリーン', text: '組織で動かす' }, { tag: '時間管理', text: '無駄なフェイクで時間ロスしない' }] },
+  r_of_feint_n_big: { good: 'フェイントが大きすぎたと自覚 = 技術修正点を発見。', issue: 'フェイントの「動作大きさ」', body: '大きすぎる動作は本気と区別がついて読まれる。最小限の動作で効果最大化。', improve: '【練習】鏡前でフェイント動作を最小化。「動きの大きさ」と「効果」のバランス。', approaches: [{ tag: '最小動作', text: '鏡前で確認' }, { tag: 'ボディ系', text: '⑥ボディフェイントは小動作で効く' }, { tag: '辞書', text: '02_individual.md' }] },
+
+  // パス
+  r_of_pass_good: { good: 'パスがシュートにつながった = 完璧な連携。', issue: 'この再現性を高める', body: 'パス→シュートの成功は①視野②タイミング③精度の3つ揃った時。何が良かったか言語化。', improve: '【記録】成功時の3要素のどれが効いたか試合後にメモ。次回も同じ要素を意識。', approaches: [{ tag: '再現', text: '言語化＝再現性' }, { tag: 'チーム共有', text: '受け手と「これが良かった」を共有' }, { tag: '辞書', text: '04_cognition.md 5ポイント確認' }] },
+  r_of_pass_partial: { good: 'パスは通った = 自分の役割は完遂。', issue: 'チーム全体での詰まり', body: 'パス受けた選手がシュートできなかった = 受け手の準備不足 or 別DFのカバー。チーム全体の課題。', improve: '【チーム】「もらった瞬間にシュート」の意識共有。練習で2人セットで反復。', approaches: [{ tag: 'チーム', text: '受け手の意識' }, { tag: '事前共有', text: 'パス出す前に受け手の状況確認' }, { tag: 'コンビ', text: '16_of_combinations.md' }] },
+  r_of_pass_int_read: { good: 'インターセプトを認識 = 改善の出発点。', issue: 'パスコースの予測可能性', body: '読まれる原因は①パターン化、②視線でコース予告、③DFが事前スカウト済み。', improve: '【練習】視線を別方向に向けてパス（ノールック）反復。視線とパス先を一致させない。', approaches: [{ tag: 'ノールック', text: '視線とパス先を分離' }, { tag: 'バリエ', text: '直線・バウンス・ロブを混ぜる' }, { tag: '辞書', text: '01_basics.md パスキャッチ' }] },
+  r_of_pass_int_slow: { good: 'パス速度の問題を認識 = 改善可能。', issue: 'パスの初速', body: '遅いパスはDFに反応時間を与える。ピスクカスト（むち打ち）で初速最大化。', improve: '【練習】壁打ちで4種スロー（Piskekast/Sirkelkast/Støtkast/Skjult）反復。', approaches: [{ tag: '4種スロー', text: '19_drills.md / 15_norway_gk_df_school.md' }, { tag: '腕の振り', text: 'むち打ち＝鞭のしなり' }, { tag: '体重移動', text: '足からのパワー伝達' }] },
+  r_of_pass_int_anticip: { good: 'DFの先取りに気付いた = 観察力高い。', issue: '先取りDFへの対応', body: 'DFが先に動くなら、その動きを利用して逆方向にパス。フェイント先行。', improve: '【練習】DF役が先取りする想定で、パスフェイント→本パスを反復。', approaches: [{ tag: 'フェイント先行', text: '先取りDFを逆利用' }, { tag: 'タイミング', text: 'DFの動き始めを見て決定' }, { tag: '辞書', text: '02_individual.md ④パスフェイント' }] },
+  r_of_pass_miss_acc: { good: 'パス精度の課題を認識。', issue: 'パスの正確性', body: '精度向上は数しかない。壁打ちで毎日100球。', improve: '【日課】5cm四方ターゲットに毎日100球、80%命中目標。', approaches: [{ tag: '量', text: '毎日100球' }, { tag: '質', text: '小ターゲット' }, { tag: 'フォーム', text: '腕の振りを毎回同じに' }] },
+  r_of_pass_miss_timing: { good: 'タイミングのズレを自覚。', issue: '受け手との同期', body: '受け手が走り出すタイミング＋自分のリリース時間を計算。事前にタイミング共有。', improve: '【練習】受け手と「ここで動き出す＝ここで出す」を反復。秒数で固定。', approaches: [{ tag: '同期', text: '受け手と秒数固定' }, { tag: 'アイコンタクト', text: 'Blickkontakt（独）' }, { tag: '辞書', text: '14_position_roles_international.md' }] },
+  r_of_pass_miss_pressure: { good: 'プレッシャー要因を認識 = メンタル意識高い。', issue: 'プレッシャー下の精度維持', body: '力みは深呼吸で解ける。練習でプレッシャー想定の精度トレが必要。', improve: '【練習】時間制限・声出し役などプレッシャー要素入りでパス練習。', approaches: [{ tag: 'プレッシャー練習', text: '時間制限＋声出し役' }, { tag: 'メンタル', text: '18_mental.md 深呼吸' }, { tag: 'ルーティン', text: '固定動作で迷い断つ' }] },
+
+  // ポスト
+  r_of_post_back_good: { good: 'ピボットを得点に導いた = バックプレーヤーの理想形。', issue: 'この成功を再現する', body: 'Blickkontakt（目合わせ）→ パス→ ピボットシュートの流れ。3要素を言語化。', improve: '【意識】成功時の「タイミング」「パスの種類」「ピボットの位置」を試合後にメモ。', approaches: [{ tag: 'Blickkontakt', text: '目合わせの瞬間' }, { tag: '再現', text: '言語化で次も再現' }, { tag: '辞書', text: '06_post.md / 14_position_roles_international.md' }] },
+  r_of_post_back_pivot_stuck: { good: 'パスは通った = 自分の役割は果たした。', issue: 'ピボットの状況把握', body: 'ピボットDFがマークきつい時はピボットも動けない。パス出す前にピボットの状況確認。', improve: '【意識】パス出す前に「ピボットがフリーか？」確認。フリーでなければ別選択。', approaches: [{ tag: 'ピボット観察', text: 'DFマーク状況確認' }, { tag: '別選択', text: '自分でシュート or 別ピボットパス' }, { tag: '辞書', text: '06_post.md' }] },
+  r_of_post_back_no_lane: { good: 'パスコースが見つからない判断 = 無理パス回避。', issue: 'パスコースを作る動き', body: 'コースがない時は①自分が動いて角度作る、②ピボットに動いてもらう、③別選手経由。', improve: '【意識】コースなければドリブルで角度変える or 別選手にいったん預ける。', approaches: [{ tag: '角度作り', text: '自分が動く' }, { tag: '経由パス', text: '別選手を介して' }, { tag: '辞書', text: '04_cognition.md 判断フロー' }] },
+  r_of_post_back_int: { good: 'インターセプトを認識 = 改善可能。', issue: 'ピボットへのパスはDFが警戒する場面', body: 'ピボット狙いは相手DFも警戒。フェイントで一度動かしてから本パス。', improve: '【練習】パスフェイント→ピボットパスのコンビ反復。', approaches: [{ tag: 'フェイント先行', text: '別方向を匂わせる' }, { tag: 'バウンス', text: 'DF腕の下を通すバウンスパス' }, { tag: '辞書', text: '02_individual.md ④' }] },
+  r_of_post_pivot_good: { good: 'ピボットとして得点 = ハードな役割を完遂。', issue: 'V字位置取りの再現', body: '成功時の位置取り・タイミング・受け方を言語化。', improve: '【記録】成功時の「ポストでの位置」「DF位置」「パスの種類」をメモ。', approaches: [{ tag: 'V字', text: 'ポストとゴールを結ぶ線' }, { tag: '4プレー', text: '回転/フェイク/フラッシュ/スクリーン' }, { tag: '辞書', text: '06_post.md' }] },
+  r_of_post_pivot_blocked: { good: 'DFに先回りされたと認識。', issue: 'V字位置取りでの先取り', body: 'DFが先回りする = 自分の動きが予測されている。動きをランダム化。', improve: '【練習】DF役想定で動きを5パターン用意。同じ動きを2回続けない。', approaches: [{ tag: 'ランダム化', text: '動きを予測させない' }, { tag: 'V字位置', text: '先取りで負けない位置確保' }, { tag: '辞書', text: '06_post.md ポジション取り' }] },
+  r_of_post_pivot_choice: { good: '4プレーの選択ミスを自覚 = 学習機会。', issue: '4プレーの状況別使い分け', body: '回転/フェイク/フラッシュ/スクリーンはDFの状態で選ぶ。DF背後カバー強→回転、正面→フェイク、注視外→フラッシュ、マンツー→スクリーン。', improve: '【練習】DF役が状態を切替→各状態に最適4プレーを反復。', approaches: [{ tag: 'DF観察', text: 'DF状態を3秒で判断' }, { tag: '4プレー反復', text: '各状態の対応を体に' }, { tag: '辞書', text: '06_post.md 4プレー' }] },
+  r_of_post_pivot_screen: { good: 'スクリーンの問題を特定。', issue: 'スクリーンの合法要件と質', body: 'スクリーンは①静止、②視野内から入る、③腕広げない、④押し返しすぎNG。', improve: '【練習】合法スクリーンの4要件を確認しながら反復。コーチに見てもらう。', approaches: [{ tag: '合法要件', text: '4条件確認' }, { tag: 'タイミング', text: 'DFが見えない瞬間に入る' }, { tag: '辞書', text: '12_set_plays.md スクリーン' }] },
+
+  // コンタクト
+  r_of_contact_good: { good: '勝ち位置を先取 = OFの基本ができている。', issue: '勝ち位置の再現性', body: '何を見て先取できたか言語化。次回も同じ判断ができるように。', improve: '【記録】成功時の「DFの位置」「自分の動き出しタイミング」をメモ。', approaches: [{ tag: '言語化', text: '何を見て動いたか' }, { tag: 'オフボール', text: 'ボール持つ前から準備' }, { tag: '辞書', text: '02_individual.md 勝ち位置' }] },
+  r_of_contact_win: { good: '山側／谷側を使って押し勝った = コンタクト技術の勝利。', issue: '体幹強化で安定性向上', body: '押し勝つには体幹が必要。プランク系で土台を作る。', improve: '【練習】プランク90秒×3、サイドプランク60秒×3。毎日。', approaches: [{ tag: '体幹', text: 'プランク系' }, { tag: '低重心', text: '前傾＋膝曲げ' }, { tag: '辞書', text: '01_basics.md 山側谷側 / 21_physical_training.md' }] },
+  r_of_contact_foul: { good: 'ファウル取られたが、戦った姿勢は正しい。', issue: 'ファウルにならない接触範囲', body: 'IHFルールの合法接触範囲を理解。腕で抑える・押し倒しはNG、体で当たるはOK。', improve: '【ルール確認】IHFルール第8条の合法／非合法を確認。', approaches: [{ tag: 'ルール', text: '体当たりOK、腕での制止NG' }, { tag: '審判の傾向', text: '試合中に基準を見極める' }, { tag: '辞書', text: '08_game_management.md ファウル戦略' }] },
+  r_of_contact_lose_center: { good: '重心の問題を自覚。', issue: '低重心姿勢', body: 'コンタクト時の高重心は転倒の元。前傾＋膝曲げで安定。', improve: '【意識】コンタクト前に必ず膝を曲げて低重心。鏡前確認。', approaches: [{ tag: '低重心', text: '前傾＋膝曲げ' }, { tag: '体幹', text: 'プランクで安定土台' }, { tag: '神経筋', text: '不安定面でのバランス練習' }] },
+  r_of_contact_lose_first: { good: 'DF先取りを認識できた = 観察力。', issue: '勝ち位置の先取り意識', body: 'ボールが来てから動くのでは遅い。ボール持つ2秒前から動く。', improve: '【意識】隣がボール持った瞬間から動き出す。受ける前に位置確保。', approaches: [{ tag: 'オフボール', text: 'ボール受ける前の動き' }, { tag: '5ポイント確認', text: '04_cognition.md' }, { tag: '辞書', text: '02_individual.md 勝ち位置' }] },
+  r_of_contact_lose_power: { good: '体重・パワー差を客観視できた。', issue: 'フィジカル強化＋技術カバー', body: 'パワー差は短期で埋まらない。長期でフィジカル、短期で技術（フェイント・タイミング）でカバー。', improve: '【長期】筋力強化（スクワット・ベンチ）。【短期】フェイント・スピード勝負に切替。', approaches: [{ tag: '長期', text: '筋力強化（21_physical_training.md）' }, { tag: '短期', text: 'フェイント・スピード勝負' }, { tag: 'メンタル', text: 'パワー差で諦めない' }] },
+  r_of_contact_lose_side: { good: '山側／谷側の判断ミスを自覚 = 改善点を発見。', issue: '山側／谷側の見極め', body: 'DF斜め構えの「高い側」が山、「低い側」が谷。間違えると突破方向が逆。', improve: '【練習】DF斜め構えで山／谷の識別反復。山側フェイク→谷側突破の反復。', approaches: [{ tag: '識別', text: 'DFの肩の高さで判断' }, { tag: '練習', text: '01_basics.md コンタクト技術' }, { tag: '辞書', text: '01_basics.md 山側／谷側応用' }] },
+};
+
+Object.assign(RESULTS, OF_EXTRA_RESULTS);
+
 const AXIS_MAP = {
   // OF（旧：skill modeから参照される残存ノード）
   q1: '④ 自分の対応', q1b: '④ 自分の対応',
   q2: '② 相手の状況', q2_close: '③ リアクション理解', q2_wide: '③ リアクション理解',
   q3_cross: '③ リアクション理解', q3_reaction: '③ リアクション理解', q3_reaction_b: '③ リアクション理解',
-  // OF（②→③→④ 再設計版）
+  // OF全要素トップ
+  qof_top: '① 自分の立場',
+  // OF（②→③→④ 再設計版・もらい出し）
   qof_start: '② 相手の状況',
   qof_noball: '④ 自分の対応',
   qof_close_react: '③ リアクション理解', qof_wide_react: '③ リアクション理解',
   qof_close_press_self: '④ 自分の対応', qof_close_pull_self: '④ 自分の対応',
   qof_wide_cross_self: '④ 自分の対応', qof_wide_normal_self: '④ 自分の対応',
+  // OF：シュート結果
+  qof_shoot_result: '② 相手の状況', qof_shoot_good_how: '④ 自分の対応',
+  qof_shoot_gk_how: '③ リアクション理解', qof_shoot_block: '③ リアクション理解',
+  // OF：1on1
+  qof_1on1_result: '② 相手の状況', qof_1on1_good_how: '④ 自分の対応', qof_1on1_miss_why: '③ リアクション理解',
+  // OF：フェイント
+  qof_feint_target: '② 相手の状況', qof_feint_df: '③ リアクション理解',
+  qof_feint_gk: '③ リアクション理解', qof_feint_neighbor: '③ リアクション理解',
+  // OF：パス
+  qof_pass_result: '② 相手の状況', qof_pass_intercept_why: '③ リアクション理解', qof_pass_miss_why: '④ 自分の対応',
+  // OF：ポスト
+  qof_post_role: '① 自分の立場', qof_post_back: '③ リアクション理解', qof_post_pivot: '③ リアクション理解',
+  // OF：コンタクト
+  qof_contact_result: '② 相手の状況', qof_contact_lose_why: '③ リアクション理解',
   // DF
   qd1: '④ 自分の対応', qd_good: '③ リアクション理解',
   qd_good_read: '③ リアクション理解', qd_good_pos: '③ リアクション理解', qd_good_team: '③ リアクション理解',
@@ -4721,7 +5023,7 @@ function axisStyle(axis) {
 // モード設定
 // ─────────────────────────────────────────────
 const MODES = {
-  of:       { label: 'OF',           color: '#3b82f6', firstQ: 'qof_start',   icon: '⚡',  desc: 'もらい出し・判断・アクション（②→③→④）' },
+  of:       { label: 'OF',           color: '#3b82f6', firstQ: 'qof_top',     icon: '⚡',  desc: 'OF全要素：判断/シュート/突破/フェイント/パス/ポスト/コンタクト' },
   df:       { label: 'DF',           color: '#ef4444', firstQ: 'qd1',         icon: '🛡️', desc: '守備・連動・読み・成功の言語化' },
   gk_self:  { label: 'GK（自分）',   color: '#10b981', firstQ: 'qgs_start',   icon: '🧤', desc: 'GK視点で自分のセーブ・先読みを振り返る' },
   physical: { label: 'フィジカル',   color: '#84cc16', firstQ: 'qph_start',   icon: '💪', desc: '体力・スプリント・投擲・ケガ気味を振り返る' },
