@@ -1460,6 +1460,65 @@ const SOLVE_DATA = {
           },
         ],
       },
+      {
+        id: 'gk', icon: '🧤', title: 'GKとして困っている',
+        symptoms: [
+          {
+            id: 'gk1', title: 'シュートが止められない（セーブ率が低い）',
+            desc: 'バックやウィングのシュートに対応できない。反応が遅れたり、コースが読めない。',
+            related: [
+              { fileId: '05', match: '幹：GKが直面する物理的制約' },
+              { fileId: '05', match: '3方向の法則' },
+              { fileId: '05', match: 'ポジショニング角度理論' },
+            ],
+            actions: [
+              '「先読み型」か「コース絞り型」か自分のスタイルを決める：どちらを軸にするか決めないと中途半端になる',
+              '3方向の法則チェック：左コーナー・右コーナー・上（ループ）のどれが一番通っているか記録する',
+              'バックシュートへの対応は前進（30〜40cm）：距離を詰めるだけでシュートコースが物理的に狭まる',
+            ],
+          },
+          {
+            id: 'gk2', title: '相手シューターのパターンが序盤で読めない',
+            desc: '最初の数本で相手の打ち方の癖を掴めず、後手に回る。',
+            related: [
+              { fileId: '05', match: '試合序盤の読み取りプロセス' },
+              { fileId: '05', match: 'GKキュー階層' },
+              { fileId: '29', match: 'GK逆工学' },
+            ],
+            actions: [
+              '最初の3〜5本は「止めに行かず観察」：どのコースに打ってくるか、体幹が動く方向を見る',
+              'GKが読むキュー順位（上体→手首→助走経路）を使う：上体が先に傾いたら先読み確定',
+              '観察結果を声に出す：「この選手は低コーナー狙い」とDF陣に共有して守備を整える',
+            ],
+          },
+          {
+            id: 'gk3', title: 'スローアウトで速攻につなげられない',
+            desc: 'セーブしても素早く展開できない。前への判断が遅い。',
+            related: [
+              { fileId: '05', match: 'スローアウト意思決定' },
+              { fileId: '03', match: '速攻' },
+            ],
+            actions: [
+              'セーブした瞬間に「走り出している選手は誰か」を見る：ボールより先に目線を上げる習慣',
+              'シュネレ・ミッテ（即時スロー）の発動条件を決めておく：ウィングが走り出していたら即パス',
+              '判断は「前→横→後ろ」の優先順位：安全第一でも前への意識を常に持つ',
+            ],
+          },
+          {
+            id: 'gk4', title: 'DFへの声かけが伝わらない',
+            desc: '自分には見えているのにDFが動かない。声の内容やタイミングが合っていない。',
+            related: [
+              { fileId: '05', match: 'コーチング機能' },
+              { fileId: '15', match: 'Kommunikasjon' },
+            ],
+            actions: [
+              '声は「短く・方向・命令」形式：「左！出ろ！」「ポスト！マーク！」など2〜3語以内',
+              'タイミングはDF行動の1〜2秒前：遅いと間に合わない。シューターがボールを持った瞬間から',
+              '試合前に声かけ用語をチームで統一する：「スイッチ」「カバー」の定義を全員で合わせる',
+            ],
+          },
+        ],
+      },
     ],
   },
   coach: {
@@ -5818,7 +5877,7 @@ function App() {
     }
   };
 
-  // 関連辞書のマッチ解決：完全一致 → 先頭一致 → 部分一致 の順で精度高く
+  // 関連辞書のマッチ解決：完全一致 → 先頭一致 → 部分一致 → 括弧除去 → body検索
   const findRelatedSection = (related) => {
     const inFile = dictSections.filter(s => s.fileId === related.fileId);
     // 1. 完全一致
@@ -5827,8 +5886,17 @@ function App() {
     // 2. 先頭一致
     hit = inFile.find(s => s.title.startsWith(related.match));
     if (hit) return hit;
-    // 3. 部分一致（fallback）
-    return inFile.find(s => s.title.includes(related.match));
+    // 3. 部分一致
+    hit = inFile.find(s => s.title.includes(related.match));
+    if (hit) return hit;
+    // 4. 「A】DF個人...」形式のmatch → 【A】が「A. 」に変換されているため前置詞を除去して再探索
+    const stripped = related.match.replace(/^[A-Za-z0-9\-]+】\s*/, '');
+    if (stripped !== related.match && stripped.length > 0) {
+      hit = inFile.find(s => s.title.includes(stripped));
+      if (hit) return hit;
+    }
+    // 5. body内テキスト部分一致（最終fallback）
+    return inFile.find(s => s.body && s.body.includes(related.match)) || null;
   };
 
   // 課題を解決する：処方箋の「関連辞書」をタップしたとき
@@ -5843,6 +5911,21 @@ function App() {
 
   const handleSolveReset = () => {
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
+  };
+
+  // 振り返りモード → 課題解決カテゴリへの直通マッピング
+  const MODE_TO_SOLVE = {
+    'of':       { role: 'player', category: 'skill' },
+    'skill':    { role: 'player', category: 'skill' },
+    'shot_7m':  { role: 'player', category: 'skill' },
+    'df':       { role: 'player', category: 'defense' },
+    'gk_self':  { role: 'player', category: 'gk' },
+    'context':  { role: 'player', category: 'tactics' },
+    'sign':     { role: 'player', category: 'tactics' },
+    'janken':   { role: 'player', category: 'tactics' },
+    'game':     { role: 'player', category: 'game' },
+    'physical': { role: 'player', category: 'condition' },
+    'gk':       { role: 'player', category: 'skill' },
   };
 
   // 履歴から再診断
@@ -6775,11 +6858,21 @@ function App() {
             </button>
           )}
 
-          {/* 課題解決モジュールへの連携 */}
+          {/* 課題解決モジュールへの連携（振り返りモードからカテゴリ直通） */}
           <button
             className="reset-btn"
             style={{borderColor: 'var(--c-solve)', color: '#d8b4fe', marginBottom: 8}}
-            onClick={() => { handleSolveReset(); setPhase('solve'); }}
+            onClick={() => {
+              const mapping = MODE_TO_SOLVE[mode];
+              if (mapping) {
+                setSolveRole(mapping.role);
+                setSolveCategory(mapping.category);
+                setSolveSymptom(null);
+              } else {
+                handleSolveReset();
+              }
+              setPhase('solve');
+            }}
           >
             🎯 同じ悩みで「課題を解決する」を開く →
           </button>
