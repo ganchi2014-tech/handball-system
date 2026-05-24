@@ -7052,6 +7052,9 @@ function App() {
     });
   };
 
+  // 辞書ロード進捗 (0..N)
+  const [dictLoadedCount, setDictLoadedCount] = useState(0);
+
   // 辞書ファイルを一度だけfetch
   useEffect(() => {
     if (dictLoaded || dictError) return;
@@ -7061,15 +7064,19 @@ function App() {
     (async () => {
       try {
         const allSections = [];
+        let done = 0;
         await Promise.all(DICT_FILES.map(async (f) => {
           try {
-            const res = await fetch(`./dictionary/${f.name}`);
+            const res = await fetch(`./dictionary/${f.name}`, { cache: 'force-cache' });
             if (!res.ok) throw new Error('HTTP ' + res.status);
             const md = await res.text();
             const sections = splitSections(md, f);
             allSections.push(...sections);
           } catch (e) {
             console.warn('Failed to load', f.name, e);
+          } finally {
+            done++;
+            setDictLoadedCount(done);
           }
         }));
         // ファイルID順 + セクション順を維持
@@ -7098,10 +7105,22 @@ function App() {
   }, [pendingResumeDictId, dictLoaded, dictSections]);
 
   // 検索＋フィルタ結果（ランキング付き：完全一致 > 前方一致 > 部分一致 > body一致 / 同位は新ファイル優先）
+  // セクションが「実質的に空（ファイルタイトル+区切り線だけ）」かを判定
+  const isStubSection = (s) => {
+    const txt = s.body
+      .replace(/^#.*$/gm, '')      // 見出し行
+      .replace(/^[-=*]+$/gm, '')   // 区切り線
+      .replace(/\s+/g, '');        // 空白
+    return txt.length < 30;
+  };
+
   const filteredSections = useMemo(() => {
     if (!dictLoaded) return [];
     const q = dictQuery.trim().toLowerCase();
     const filtered = dictSections.filter(s => {
+      // 「冒頭」やファイルタイトルのみのスタブセクションは検索結果から除外
+      // （お気に入りや関連リンクで明示的に開く時は別経路）
+      if (isStubSection(s)) return false;
       if (dictActiveFileId && s.fileId !== dictActiveFileId) return false;
       if (dictActiveTag && !s.fileTags.includes(dictActiveTag)) return false;
       if (!q) return true;
@@ -7589,7 +7608,7 @@ function App() {
           </div>
           <div className="dict-results">
             {!dictLoaded && !dictError && (
-              <div className="dict-loading">辞書を読み込み中… 📖</div>
+              <div className="dict-loading">📖 辞書を読み込み中… ({dictLoadedCount} / {DICT_FILES.length})</div>
             )}
             {dictError && (
               <div className="dict-empty">読み込みエラー：{dictError}<br /><br />ローカルで開いている場合、CORS制限でfetchが失敗することがあります。GitHub Pages 上で動作確認してください。</div>
