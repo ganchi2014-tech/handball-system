@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HANDBALL LAB</title>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -6763,6 +6763,41 @@ const HUB_MODULES = [
 ];
 
 // ─────────────────────────────────────────────
+// localStorage helpers — version 管理＋安全な JSON 入出力
+// 将来データ構造を変えた時は STORAGE_VERSION を上げると旧データを自動破棄
+// ─────────────────────────────────────────────
+const STORAGE_VERSION = 1;
+const STORAGE_PREFIX = `hb_v${STORAGE_VERSION}_`;
+const lsGet = (key) => {
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + key);
+    if (raw !== null) return JSON.parse(raw);
+    // 一度限りの旧キー移行（v1 PREFIX 未導入の旧データ）
+    const legacy = localStorage.getItem(key);
+    if (legacy !== null) {
+      try {
+        localStorage.setItem(STORAGE_PREFIX + key, legacy);
+        localStorage.removeItem(key);
+        return JSON.parse(legacy);
+      } catch (e) { return null; }
+    }
+    return null;
+  } catch (e) { return null; }
+};
+const lsSet = (key, value) => {
+  try {
+    localStorage.setItem(STORAGE_PREFIX + key,
+      typeof value === 'string' ? value : JSON.stringify(value));
+  } catch (e) {}
+};
+const lsRemove = (key) => {
+  try {
+    localStorage.removeItem(STORAGE_PREFIX + key);
+    localStorage.removeItem(key); // 旧キーも削除
+  } catch (e) {}
+};
+
+// ─────────────────────────────────────────────
 // App
 // ─────────────────────────────────────────────
 function App() {
@@ -6806,10 +6841,8 @@ function App() {
   const [onboardOpen, setOnboardOpen] = useState(false);
   const [onboardStep, setOnboardStep] = useState(0);
   useEffect(() => {
-    try {
-      const seen = localStorage.getItem('onboarded');
-      if (!seen) setOnboardOpen(true);
-    } catch (e) {}
+    const seen = lsGet('onboarded');
+    if (!seen) setOnboardOpen(true);
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'ハンドボール戦術ハブへようこそ', desc: '選手と指導者のための戦術ガイドアプリ。\\n4つのモジュールで、辞書を実戦に変えます。' },
@@ -6824,7 +6857,7 @@ function App() {
     else handleOnboardFinish();
   };
   const handleOnboardFinish = () => {
-    try { localStorage.setItem('onboarded', '1'); } catch (e) {}
+    lsSet('onboarded', 1);
     setOnboardOpen(false);
     setOnboardStep(0);
   };
@@ -6836,14 +6869,12 @@ function App() {
   // 「続きから」最終アクセス
   const [resumeData, setResumeData] = useState(null);
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('last-context');
-      if (raw) setResumeData(JSON.parse(raw));
-    } catch (e) {}
+    const stored = lsGet('last-context');
+    if (stored) setResumeData(stored);
   }, []);
   const saveResume = (kind, payload) => {
     const r = { kind, payload, ts: Date.now() };
-    try { localStorage.setItem('last-context', JSON.stringify(r)); } catch (e) {}
+    lsSet('last-context', r);
     setResumeData(r);
   };
   const [pendingResumeDictId, setPendingResumeDictId] = useState(null);
@@ -6871,25 +6902,21 @@ function App() {
   // 辞書お気に入り
   const [dictFavs, setDictFavs] = useState([]); // [section.id, ...]
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('dict-favs');
-      if (raw) setDictFavs(JSON.parse(raw));
-    } catch (e) {}
+    const stored = lsGet('dict-favs');
+    if (Array.isArray(stored)) setDictFavs(stored);
   }, []);
   const toggleFav = (sectionId) => {
     setDictFavs(prev => {
       const next = prev.includes(sectionId) ? prev.filter(x => x !== sectionId) : [sectionId, ...prev];
-      try { localStorage.setItem('dict-favs', JSON.stringify(next)); } catch (e) {}
+      lsSet('dict-favs', next);
       return next;
     });
   };
 
   // 起動時に保存済みプランを読み込む
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('plan-saved');
-      if (raw) setPlanSaved(JSON.parse(raw));
-    } catch (e) { /* ignore */ }
+    const stored = lsGet('plan-saved');
+    if (Array.isArray(stored)) setPlanSaved(stored);
   }, []);
 
   // プランの狙いを自動生成
@@ -6915,7 +6942,7 @@ function App() {
     };
     setPlanSaved(prev => {
       const next = [entry, ...prev].slice(0, 8);
-      try { localStorage.setItem('plan-saved', JSON.stringify(next)); } catch (e) {}
+      lsSet('plan-saved', next);
       return next;
     });
     setPlanCopyMsg(tag ? `「${tag}」として保存しました` : 'プランを保存しました');
@@ -6972,10 +6999,8 @@ function App() {
 
   // 起動時に履歴をlocalStorageから読み込む
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('solve-history');
-      if (raw) setSolveHistory(JSON.parse(raw));
-    } catch (e) { /* ignore */ }
+    const stored = lsGet('solve-history');
+    if (Array.isArray(stored)) setSolveHistory(stored);
   }, []);
 
   // 辞書詳細内のファイル名リンク→対象ファイルの先頭セクションへ遷移
@@ -7000,7 +7025,7 @@ function App() {
       // 同じ症状の重複は古い方を消す
       const filtered = prev.filter(h => !(h.role === role && h.category === category && h.symptom === symptom));
       const next = [entry, ...filtered].slice(0, 5);
-      try { localStorage.setItem('solve-history', JSON.stringify(next)); } catch (e) {}
+      lsSet('solve-history', next);
       return next;
     });
   };
@@ -8087,7 +8112,7 @@ function App() {
       )}
 
       {/* 用語集FAB（全画面で表示：オンボーディング案内と整合） */}
-      <button className="help-fab" onClick={() => setGlossaryOpen(true)} title="用語集">📘 用語</button>
+      <button className="help-fab" onClick={() => setGlossaryOpen(true)} title="用語集" aria-label="用語集を開く">📘 用語</button>
 
       {/* 用語集モーダル */}
       {glossaryOpen && (
