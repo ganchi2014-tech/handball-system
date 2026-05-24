@@ -147,6 +147,13 @@
       outline: 2px solid #67e8f9;
       outline-offset: 2px;
     }
+    /* 用語自動装飾（タップで用語集の該当項目へジャンプ） */
+    .gl-term {
+      border-bottom: 1px dotted rgba(103,232,249,0.5);
+      cursor: pointer;
+      color: inherit;
+    }
+    .gl-term:active { background: rgba(34,211,238,0.12); }
     .bn-icon { font-size: 21px; line-height: 1; }
     .bn-label { font-size: 10px; font-weight: 700; color: var(--tx-muted); transition: color var(--t-fast); }
     .bn-item.active-reflect .bn-label { color: var(--c-reflect); }
@@ -3454,6 +3461,49 @@ function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// GLOSSARY の用語自動装飾（lazy init: GLOSSARY const 定義の後で動的構築）
+let __glossaryRegex = null;
+let __glossaryMap = null;
+function getGlossaryDecorator() {
+  if (__glossaryRegex !== null) return { regex: __glossaryRegex, map: __glossaryMap };
+  if (typeof GLOSSARY === 'undefined') return null;
+  const terms = [];
+  __glossaryMap = {};
+  for (const grp of GLOSSARY) {
+    for (const item of grp.items) {
+      // term は時々「ABC（原語）」のような形式 → メインの ABC 部分だけ key にする
+      // ただし全文も含めてマッチ候補に
+      const main = item.term.replace(/[（(].*$/, '').trim();
+      if (main && main.length >= 2 && !__glossaryMap[main]) {
+        terms.push(main);
+        __glossaryMap[main] = item.desc;
+      }
+    }
+  }
+  // 長い順にソート（"フェイント7種" を "フェイント" より先にマッチ）
+  terms.sort((a, b) => b.length - a.length);
+  // 正規表現エスケープ
+  const esc = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  __glossaryRegex = new RegExp('(' + esc.join('|') + ')', 'g');
+  return { regex: __glossaryRegex, map: __glossaryMap };
+}
+// 既存HTML文字列の中で、タグ外のテキストだけに用語装飾を適用
+function decorateGlossary(html) {
+  const dec = getGlossaryDecorator();
+  if (!dec) return html;
+  // <tag>...</tag> を保持しつつテキスト部分のみ置換
+  // 一度しか装飾しないように Set で追跡（同セクション内で同じ用語が繰り返される場合は初回のみ）
+  const used = new Set();
+  return html.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, text) => {
+    if (tag) return tag;
+    return text.replace(dec.regex, (_, term) => {
+      if (used.has(term)) return term;
+      used.add(term);
+      return `<span class="gl-term" data-term="${term.replace(/"/g, '&quot;')}">${term}</span>`;
+    });
+  });
+}
+
 function renderMarkdown(md) {
   if (!md) return '';
   // CRLF / CR を正規化（Windows改行対応）
@@ -3589,7 +3639,7 @@ function renderMarkdown(md) {
   }
   if (inTable) html += '</table>';
   html += flushPara(paraBuf);
-  return html;
+  return decorateGlossary(html);
 }
 
 // ─────────────────────────────────────────────
@@ -6878,6 +6928,31 @@ function App() {
 
   // 用語集モーダル
   const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const [glossaryHighlight, setGlossaryHighlight] = useState(null); // 強調対象 term
+
+  // 本文中の用語装飾クリックを捕捉 → 用語集モーダルを開いて該当項目までスクロール
+  useEffect(() => {
+    const handler = (e) => {
+      const el = e.target.closest && e.target.closest('.gl-term');
+      if (!el) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const term = el.dataset.term;
+      setGlossaryHighlight(term);
+      setGlossaryOpen(true);
+    };
+    document.addEventListener('click', handler);
+    return () => document.removeEventListener('click', handler);
+  }, []);
+
+  // モーダルが開いたら強調行へスクロール
+  useEffect(() => {
+    if (!glossaryOpen || !glossaryHighlight) return;
+    setTimeout(() => {
+      const target = document.querySelector(`[data-glossary-key="${CSS.escape(glossaryHighlight)}"]`);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }, [glossaryOpen, glossaryHighlight]);
 
   // オンボーディング
   const [onboardOpen, setOnboardOpen] = useState(false);
@@ -8196,22 +8271,27 @@ function App() {
 
       {/* 用語集モーダル */}
       {glossaryOpen && (
-        <div className="glossary-overlay" onClick={() => setGlossaryOpen(false)}>
+        <div className="glossary-overlay" onClick={() => { setGlossaryOpen(false); setGlossaryHighlight(null); }}>
           <div className="glossary-modal" onClick={e => e.stopPropagation()}>
             <div className="glossary-head">
               <span className="glossary-title">📘 用語集</span>
-              <button className="glossary-close" onClick={() => setGlossaryOpen(false)} aria-label="閉じる">×</button>
+              <button className="glossary-close" onClick={() => { setGlossaryOpen(false); setGlossaryHighlight(null); }} aria-label="閉じる">×</button>
             </div>
             <div className="glossary-body">
               {GLOSSARY.map((g, gi) => (
                 <div key={gi}>
                   <div className="glossary-group">{g.group}</div>
-                  {g.items.map((it, ii) => (
-                    <div key={ii} className="glossary-item">
-                      <div className="glossary-term">{it.term}</div>
-                      <div className="glossary-desc">{it.desc}</div>
-                    </div>
-                  ))}
+                  {g.items.map((it, ii) => {
+                    const key = it.term.replace(/[（(].*$/, '').trim();
+                    const isHi = glossaryHighlight === key;
+                    return (
+                      <div key={ii} className="glossary-item" data-glossary-key={key}
+                        style={isHi ? {background: 'rgba(34,211,238,0.15)', borderRadius: 6, padding: 4, margin: '-4px 0', transition: 'background .3s'} : {}}>
+                        <div className="glossary-term">{it.term}</div>
+                        <div className="glossary-desc">{it.desc}</div>
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
