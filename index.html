@@ -1157,8 +1157,8 @@ const GLOSSARY = [
     { term: 'ピック＆ロール', desc: 'ピボットがスクリーンしてからゴール方向に転身' },
   ]},
   { group: '技術用語', items: [
-    { term: 'フェイント7種', desc: '①廻旋／②ターン／③シュート／④パス／⑤ステップ／⑥ボディ／⑦スピードの7種類' },
-    { term: 'ダブルフェイント原則', desc: '上記7種から2種を連続でかける使い方。1回耐えるDFを超える' },
+    { term: 'フェイント', desc: '7種類（①廻旋／②ターン／③シュート／④パス／⑤ステップ／⑥ボディ／⑦スピード）の総称。DFを動かして抜く技術' },
+    { term: 'ダブルフェイント', desc: '上記7種から2種を連続でかける使い方。1回耐えるDFを超える' },
     { term: '早打ち', desc: 'ジャンプの最高点に達する前に放つシュート。先読み型GK対策' },
     { term: 'バックハンドフェイク', desc: 'シュートフォームを作って手首を逆方向に返す技。GK予測撹乱' },
     { term: '山側／谷側', desc: 'DFが斜め構えしたときの体の高い側（山）／低い側（谷）' },
@@ -6920,6 +6920,19 @@ const lsRemove = (key) => {
 };
 
 // ─────────────────────────────────────────────
+// GText: プレーンテキストを HTML エスケープしたうえで GLOSSARY 用語自動装飾＋
+// （オプション）検索ハイライトを適用。solve-rx / 振り返り結果 / プラン項目で使用。
+// ─────────────────────────────────────────────
+function GText({ text, query, className, as }) {
+  if (text == null || text === '') return null;
+  let html = escapeHtml(String(text));
+  html = decorateGlossary(html);
+  if (query) html = highlightInHtml(html, query);
+  const Tag = as || 'span';
+  return React.createElement(Tag, { className, dangerouslySetInnerHTML: { __html: html } });
+}
+
+// ─────────────────────────────────────────────
 // App
 // ─────────────────────────────────────────────
 function App() {
@@ -8039,8 +8052,8 @@ function App() {
               {/* 症状サマリー */}
               <div className="solve-rx-card">
                 <div className="solve-rx-label">⚠ 困っていること</div>
-                <div className="solve-rx-title">{symData.title}</div>
-                <div className="solve-rx-desc">{symData.desc}</div>
+                <GText as="div" className="solve-rx-title" text={symData.title} />
+                <GText as="div" className="solve-rx-desc" text={symData.desc} />
               </div>
               {/* 具体的アクション */}
               <div className="solve-rx-card">
@@ -8049,7 +8062,7 @@ function App() {
                   {symData.actions.map((a, i) => (
                     <div key={i} className="solve-rx-action">
                       <span className="solve-rx-action-num">{i + 1}</span>
-                      <span>{a}</span>
+                      <GText text={a} />
                     </div>
                   ))}
                 </div>
@@ -8456,26 +8469,26 @@ function App() {
             {/* 良かった */}
             <div className="rs good">
               <div className="rs-label">✓ 良かった点</div>
-              <div className="rs-body">{result.good}</div>
+              <GText as="div" className="rs-body" text={result.good} />
             </div>
 
             {/* 課題 */}
             <div className="rs issue">
               <div className="rs-label">△ 課題</div>
-              <div className="rs-title">{result.issue}</div>
-              <div className="rs-body">{result.body}</div>
+              <GText as="div" className="rs-title" text={result.issue} />
+              <GText as="div" className="rs-body" text={result.body} />
             </div>
 
             {/* 改善案 */}
             <div className="rs improve">
               <div className="rs-label">▶ 改善案</div>
-              <div className="rs-body">{result.improve}</div>
+              <GText as="div" className="rs-body" text={result.improve} />
               {result.approaches && result.approaches.length > 0 && (
                 <div className="approach-section">
                   {result.approaches.map((a, i) => (
                     <div key={i} className="approach-item">
                       <div className="approach-tag">{a.tag}</div>
-                      <div className="approach-text">{a.text}</div>
+                      <GText as="div" className="approach-text" text={a.text} />
                     </div>
                   ))}
                 </div>
