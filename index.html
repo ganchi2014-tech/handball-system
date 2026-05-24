@@ -6647,9 +6647,6 @@ const AXIS_MAP = {
   qof_feint_step_r: '③ リアクション理解', qof_feint_body_r: '③ リアクション理解',
   qof_feint_speed_r: '③ リアクション理解',
   qof_feint_double_r: '③ リアクション理解',
-  // 旧フェイント分岐（孤立ノード、後方互換のため残置）
-  qof_feint_target: '② 相手の状況', qof_feint_df: '③ リアクション理解',
-  qof_feint_gk: '③ リアクション理解', qof_feint_neighbor: '③ リアクション理解',
   // OF：パス
   qof_pass_result: '② 相手の状況', qof_pass_intercept_why: '③ リアクション理解', qof_pass_miss_why: '④ 自分の対応',
   // OF：ポスト
@@ -6742,7 +6739,7 @@ const HUB_MODULES = [
   {
     id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
     title: '振り返る',
-    desc: '試合・練習のプレーを13モードで自己問答 → 良かった点／課題／改善案',
+    desc: '試合・練習のプレーを10モードで自己問答 → 良かった点／課題／改善案',
     enabled: true,
   },
   {
@@ -6816,7 +6813,7 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'ハンドボール戦術ハブへようこそ', desc: '選手と指導者のための戦術ガイドアプリ。\\n4つのモジュールで、辞書を実戦に変えます。' },
-    { icon: '🤾',    title: '1. 振り返る', desc: '試合・練習のプレーを13モードで自己問答。\\n良かった点／課題／改善案をその場で言語化。\\n（主に選手）' },
+    { icon: '🤾',    title: '1. 振り返る', desc: '試合・練習のプレーを10モードで自己問答。\\n良かった点／課題／改善案をその場で言語化。\\n（主に選手）' },
     { icon: '📖',   title: '2. 辞書を読む', desc: '33本の戦術辞書（386セクション）を横断検索＋タグでフィルタ。\\nお気に入り機能つき。\\n（選手・指導者）' },
     { icon: '🎯',   title: '3. 課題を解決する', desc: '「○○ができない」を3ステップで選ぶ。\\n辞書からのアドバイス＋具体アクションが出ます。\\n（選手・指導者）' },
     { icon: '📋',   title: '4. 練習を組む', desc: 'テーマ×レベル×時間で練習プランを生成。\\nエコロジカル制約つき、印刷・コピー可。\\n（主に指導者）' },
@@ -7609,8 +7606,18 @@ function App() {
         const roleData = solveRole ? SOLVE_DATA[solveRole] : null;
         const catData = roleData && solveCategory
           ? roleData.categories.find(c => c.id === solveCategory) : null;
-        const symData = catData && solveSymptom
-          ? catData.symptoms.find(s => s.id === solveSymptom) : null;
+        // solveSymptom は通常 string id だが、稀に object/古い ID が来ることへの防御
+        let symData = null;
+        if (catData && solveSymptom) {
+          const symId = typeof solveSymptom === 'string' ? solveSymptom : (solveSymptom?.id || null);
+          symData = symId ? catData.symptoms.find(s => s.id === symId) : null;
+        }
+        // 整合性破れ：solveSymptom があるのに symData が無い→state リセット
+        if (solveSymptom && catData && !symData) {
+          // 次の再描画で症状リストに戻す
+          setTimeout(() => setSolveSymptom(null), 0);
+          return <div className="solve-screen"><div className="solve-loading">読み込み中…</div></div>;
+        }
 
         // ステップ1：役割選択
         if (!solveRole) {
