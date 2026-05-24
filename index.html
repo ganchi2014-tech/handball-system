@@ -874,7 +874,7 @@
 
     @media print {
       body { background: white !important; color: black !important; }
-      .header, .dict-back, .plan-actions, .reset-btn, .bottom-nav { display: none !important; }
+      .header, .dict-back, .plan-actions, .reset-btn, .bottom-nav, .help-fab, .glossary-overlay, .onboarding-overlay { display: none !important; }
       .plan-screen { padding: 0 !important; }
       .plan-header, .plan-block, .plan-item, .plan-wc, .plan-constraints, .plan-eco-banner, .plan-aim, .plan-extra {
         background: white !important; border-color: #888 !important; color: black !important; break-inside: avoid;
@@ -6846,15 +6846,13 @@ function App() {
     try { localStorage.setItem('last-context', JSON.stringify(r)); } catch (e) {}
     setResumeData(r);
   };
+  const [pendingResumeDictId, setPendingResumeDictId] = useState(null);
   const handleResume = () => {
     if (!resumeData) return;
     if (resumeData.kind === 'dict' && resumeData.payload?.sectionId) {
-      // 辞書セクション復元は dictionary loader 後に解決させる
+      // 辞書セクション復元: 辞書ロード完了後に useEffect で解決
       setPhase('dictionary');
-      setTimeout(() => {
-        const target = dictSections.find(s => s.id === resumeData.payload.sectionId);
-        if (target) { setDictDetail(target); setPhase('dictionary-detail'); window.scrollTo(0,0); }
-      }, 400);
+      setPendingResumeDictId(resumeData.payload.sectionId);
     } else if (resumeData.kind === 'solve' && resumeData.payload) {
       setSolveRole(resumeData.payload.role);
       setSolveCategory(resumeData.payload.category);
@@ -7039,6 +7037,18 @@ function App() {
       }
     })();
   }, [phase, dictLoaded, dictError]);
+
+  // pendingResumeDictId が立っており、辞書が読み込まれたら詳細遷移
+  useEffect(() => {
+    if (!pendingResumeDictId || !dictLoaded) return;
+    const target = dictSections.find(s => s.id === pendingResumeDictId);
+    if (target) {
+      setDictDetail(target);
+      setPhase('dictionary-detail');
+      setTimeout(() => window.scrollTo(0, 0), 0);
+    }
+    setPendingResumeDictId(null);
+  }, [pendingResumeDictId, dictLoaded, dictSections]);
 
   // 検索＋フィルタ結果（ランキング付き：完全一致 > 前方一致 > 部分一致 > body一致 / 同位は新ファイル優先）
   const filteredSections = useMemo(() => {
@@ -7400,8 +7410,8 @@ function App() {
                   <div className="hub-card-title">続きから</div>
                   <div className="hub-card-desc">
                     {resumeData.kind === 'solve' && `課題解決：${resumeData.payload?.symptomTitle || resumeData.payload?.symptom || ''}`}
-                    {resumeData.kind === 'dict' && `辞書：${resumeData.payload?.sectionTitle || resumeData.payload?.sectionId || ''}`}
-                    {resumeData.kind === 'plan' && `練習プラン：${(resumeData.payload?.themes || []).join('・')}`}
+                    {resumeData.kind === 'dict' && `辞書：${resumeData.payload?.title || resumeData.payload?.sectionId || ''}`}
+                    {resumeData.kind === 'plan' && `練習プラン：${(resumeData.payload?.themes || []).map(id => DRILL_THEMES.find(t => t.id === id)?.label || id).join('・')}`}
                   </div>
                 </div>
                 <div className="hub-card-arrow">›</div>
@@ -7528,8 +7538,8 @@ function App() {
             )}
             {dictLoaded && (
               <>
-                {/* お気に入りセクション */}
-                {dictFavs.length > 0 && !dictQuery && dictActiveTag === null && (() => {
+                {/* お気に入りセクション（フィルタに関わらず常時表示。検索中のみ非表示） */}
+                {dictFavs.length > 0 && !dictQuery && (() => {
                   const favSections = dictFavs.map(fid => dictSections.find(s => s.id === fid)).filter(Boolean);
                   if (favSections.length === 0) return null;
                   return (
