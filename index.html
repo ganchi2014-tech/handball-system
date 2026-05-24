@@ -122,6 +122,12 @@
       transition: opacity var(--t-fast);
     }
     .bn-item:active { opacity: 0.7; }
+
+    /* キーボード操作時のフォーカス可視化（マウスクリック時は表示しない） */
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid #67e8f9;
+      outline-offset: 2px;
+    }
     .bn-icon { font-size: 21px; line-height: 1; }
     .bn-label { font-size: 10px; font-weight: 700; color: var(--tx-muted); transition: color var(--t-fast); }
     .bn-item.active-reflect .bn-label { color: var(--c-reflect); }
@@ -7469,14 +7475,16 @@ function App() {
                 key={mod.id}
                 className={`hub-card ${mod.cls} ${mod.enabled ? '' : 'disabled'}`}
                 onClick={() => handleHubSelect(mod.id)}
+                disabled={!mod.enabled}
+                aria-label={`${mod.title}（${mod.target}）：${mod.desc}`}
               >
-                <div className="hub-card-icon">{mod.icon}</div>
+                <div className="hub-card-icon" aria-hidden="true">{mod.icon}</div>
                 <div className="hub-card-body">
                   <div className="hub-card-target">{mod.target}</div>
                   <div className="hub-card-title">{mod.title}</div>
                   <div className="hub-card-desc">{mod.desc}</div>
                 </div>
-                {mod.enabled && <div className="hub-card-arrow">›</div>}
+                {mod.enabled && <div className="hub-card-arrow" aria-hidden="true">›</div>}
                 {!mod.enabled && <div className="hub-card-soon">Soon</div>}
               </button>
             ))}
@@ -8389,31 +8397,31 @@ function App() {
           else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
         };
         return (
-          <nav className="bottom-nav">
-            <button className={`bn-item ${isHub ? 'active-hub' : ''}`} onClick={() => go('hub')}>
-              <span className="bn-icon">🏠</span>
+          <nav className="bottom-nav" aria-label="メインナビゲーション">
+            <button className={`bn-item ${isHub ? 'active-hub' : ''}`} onClick={() => go('hub')} aria-label="ホームへ" aria-current={isHub ? 'page' : undefined}>
+              <span className="bn-icon" aria-hidden="true">🏠</span>
               <span className="bn-label">ホーム</span>
-              <span className="bn-dot"/>
+              <span className="bn-dot" aria-hidden="true"/>
             </button>
-            <button className={`bn-item ${isReflect ? 'active-reflect' : ''}`} onClick={() => go('reflect')}>
-              <span className="bn-icon">🤾</span>
+            <button className={`bn-item ${isReflect ? 'active-reflect' : ''}`} onClick={() => go('reflect')} aria-label="振り返る画面へ" aria-current={isReflect ? 'page' : undefined}>
+              <span className="bn-icon" aria-hidden="true">🤾</span>
               <span className="bn-label">振り返る</span>
-              <span className="bn-dot"/>
+              <span className="bn-dot" aria-hidden="true"/>
             </button>
-            <button className={`bn-item ${isDict ? 'active-dict' : ''}`} onClick={() => go('dict')}>
-              <span className="bn-icon">📖</span>
+            <button className={`bn-item ${isDict ? 'active-dict' : ''}`} onClick={() => go('dict')} aria-label="辞書を読む画面へ" aria-current={isDict ? 'page' : undefined}>
+              <span className="bn-icon" aria-hidden="true">📖</span>
               <span className="bn-label">辞書</span>
-              <span className="bn-dot"/>
+              <span className="bn-dot" aria-hidden="true"/>
             </button>
-            <button className={`bn-item ${isSolve ? 'active-solve' : ''}`} onClick={() => go('solve')}>
-              <span className="bn-icon">🎯</span>
+            <button className={`bn-item ${isSolve ? 'active-solve' : ''}`} onClick={() => go('solve')} aria-label="課題解決画面へ" aria-current={isSolve ? 'page' : undefined}>
+              <span className="bn-icon" aria-hidden="true">🎯</span>
               <span className="bn-label">課題解決</span>
-              <span className="bn-dot"/>
+              <span className="bn-dot" aria-hidden="true"/>
             </button>
-            <button className={`bn-item ${isPlan ? 'active-plan' : ''}`} onClick={() => go('plan')}>
-              <span className="bn-icon">📋</span>
+            <button className={`bn-item ${isPlan ? 'active-plan' : ''}`} onClick={() => go('plan')} aria-label="練習プラン作成画面へ" aria-current={isPlan ? 'page' : undefined}>
+              <span className="bn-icon" aria-hidden="true">📋</span>
               <span className="bn-label">練習</span>
-              <span className="bn-dot"/>
+              <span className="bn-dot" aria-hidden="true"/>
             </button>
           </nav>
         );
