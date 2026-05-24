@@ -88,8 +88,9 @@
 
 ### Phase 3-B 計画
 
-SOLVE_DATA.player.categories に以下3カテゴリ追加：
-1. **rules**：ルール・反則で困っている（5症状）→ 30_rules へ誘導
-2. **equipment**：装備・道具で迷っている（5症状）→ 31_equipment へ誘導
-3. **matchday**：試合当日の動きで不安（5症状）→ 32_match_day へ誘導
+SOLVE_DATA.player.categories に以下2カテゴリ追加：
+1. **rules**：ルール・反則で困っている（6症状：アクセサリーチェック含む）→ 30_rules へ誘導
+2. **matchday**：試合当日の動きで不安（5症状）→ 32_match_day へ誘導
+
+> 注：当初 equipment カテゴリ(5症状)も追加したが、批判担当のレビューで「日本高校生は装備選択をほぼしない（部から支給／親が買う）」と判明し31_equipment.mdごと削除。アクセサリー禁止規定は30_rulesへ統合、グリップ対策は01_basicsへ統合。
 

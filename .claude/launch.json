@@ -1,6 +1,12 @@
-﻿{
+{
   "version": "0.0.1",
   "configurations": [
+    {
+      "name": "handball-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\dev\\handball-system\\.claude\\server.js"],
+      "port": 8765
+    },
     {
       "name": "handball",
       "runtimeExecutable": "C:\\Users\\togan1080\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
