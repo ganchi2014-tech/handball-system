@@ -1636,6 +1636,8 @@ const SOLVE_DATA = {
             desc: 'チームメイトが派手な色のマウスピースを着けている。自分も着けていいのか？',
             related: [
               { fileId: '31', match: 'マウスピース' },
+              { fileId: '31', match: '頭部や顔への装具' },
+              { fileId: '30', match: 'アクセサリー' },
             ],
             actions: [
               '可：透明 or 単色のマウスピース',
@@ -1678,6 +1680,8 @@ const SOLVE_DATA = {
             desc: '滑り対策を試したいが、JHA規定での扱いを正確に知りたい。',
             related: [
               { fileId: '31', match: 'アクセサリー' },
+              { fileId: '01', match: 'パスキャッチ' },
+              { fileId: '30', match: 'アクセサリー' },
             ],
             actions: [
               '**靴への松ヤニは可**（JHA規定）— そこから指へ補充する方式',
@@ -2042,7 +2046,9 @@ const SOLVE_DATA = {
             id: 'cwb9', title: "[WB] 試合に出る時間が短い、レギュラーになりたい",
             desc: "同ポジションに先輩がいて出場機会が少ない。アピールする方法は？",
             related: [
-              { fileId: '18', match: "メンタル" },
+              { fileId: '18', match: "メンタル状態の自己診断" },
+              { fileId: '18', match: "レベル別 次の学習ステップ" },
+              { fileId: '04', match: "判断" },
             ],
             actions: [
               "出た数分間で全力：シュート率・走力・声出しで結果残す",
@@ -2055,7 +2061,8 @@ const SOLVE_DATA = {
             id: 'cwb10', title: "[WB] 同じウィングのチームメイトとレギュラー争い、関係性は？",
             desc: "同期のウィングと競争状態。仲は良いが内心ライバル視。どう向き合えばいい？",
             related: [
-              { fileId: '18', match: "メンタル" },
+              { fileId: '18', match: "メンタルの5要素" },
+              { fileId: '18', match: "試合中のメンタル管理" },
             ],
             actions: [
               "競争を健全に：お互いの長所短所を共有して伸ばし合う",
@@ -2421,7 +2428,9 @@ const SOLVE_DATA = {
             id: 'cgk6', title: "[GK] シュートを見送る判断（手を出さない方が良い場面）",
             desc: "全部止めに行くと弾いてゴール内に入る。手を出さない判断はあるか？",
             related: [
-              { fileId: '05', match: "GKタイプ別" },
+              { fileId: '05', match: "セービング技術" },
+              { fileId: '05', match: "ポジショニング角度理論" },
+              { fileId: '05', match: "状況別GK戦略" },
             ],
             actions: [
               "枠外確実の球：手を出すと触れて枠内に入るリスク → 見送り",
@@ -2448,7 +2457,9 @@ const SOLVE_DATA = {
             id: 'cgk8', title: "[GK] アップシュートでどこまで本気で止めるべき？",
             desc: "試合前のアップシュート、軽くでいいのか本気で止めるべきか。",
             related: [
-              { fileId: '32', match: "アップシュート" },
+              { fileId: '32', match: "会場到着後の流れ" },
+              { fileId: '32', match: "試合直前ルーティン" },
+              { fileId: '25', match: "ウォームアッププログラム" },
             ],
             actions: [
               "基本は本気：シューターの感覚調整＆自分の本番モードへの移行",
@@ -2461,7 +2472,9 @@ const SOLVE_DATA = {
             id: 'cgk9', title: "[GK] GKは1人/2人体制、レギュラー争いとの付き合い方",
             desc: "同チームに2人GKがいる場合、出場時間争いになる。チームメイトとして接するべき？",
             related: [
-              { fileId: '18', match: "メンタル" },
+              { fileId: '18', match: "メンタル状態の自己診断" },
+              { fileId: '18', match: "メンタルの5要素" },
+              { fileId: '05', match: "GKのコーチング機能" },
             ],
             actions: [
               "GKは「ピンチ時の交代」もあるので、いつでも準備：練習集中UP",
@@ -2474,7 +2487,9 @@ const SOLVE_DATA = {
             id: 'cgk10', title: "[GK] 試合に出られない時のモチベーション維持",
             desc: "控えGKで試合に出る機会が少ない。練習だけで集中力を保つコツ。",
             related: [
-              { fileId: '18', match: "メンタル" },
+              { fileId: '18', match: "試合前のメンタル準備" },
+              { fileId: '18', match: "レベル別 次の学習ステップ" },
+              { fileId: '28', match: "セルフスカウティング" },
             ],
             actions: [
               "毎日の目標を細かく設定：「今日は左コースの反応を10回」など",
