@@ -116,3 +116,17 @@ console.log('Total themes:', themes.length);
 const emptyThemes = themes.filter(t => t.basic === 0 || t.mid === 0 || t.adv === 0);
 console.log('空レベルがあるテーマ:', emptyThemes.length);
 emptyThemes.forEach(t => console.log(`  ${t.id}(${t.label}): basic=${t.basic} mid=${t.mid} adv=${t.adv}`));
+
+// === 終了コード：致命的欠落があれば失敗扱い ===
+// desc 短いは情報目的のみ、致命的ではない
+const fatal = issues.noDesc.length + issues.noRelated.length + issues.noActions.length + issues.dupRelated.length + emptyThemes.length;
+const warn = issues.fewRelated.length + issues.fewActions.length;
+if (fatal > 0) {
+  console.error(`\n❌ FAIL: fatal=${fatal}（desc/related/actions欠落・重複・空レベル）`);
+  process.exit(1);
+}
+if (warn > 0) {
+  console.warn(`\n⚠️  WARN: warn=${warn}（related/actions 推奨数未満）`);
+}
+console.log('\n✅ OK: 全 symptom / theme が必須項目を充足');
+process.exit(0);

@@ -169,3 +169,12 @@ for (const [k, v] of Object.entries(drillSummary)) {
     console.log(`  ${k} (${v.count}x) → ${[...v.hits].join(' / ') || 'NONE'}`);
   }
 }
+
+// === 終了コード：broken または body-only があれば失敗扱い ===
+const totalIssues = solveBroken.length + planBroken.length + bodyMatches.length;
+if (totalIssues > 0) {
+  console.error(`\n❌ FAIL: broken=${solveBroken.length + planBroken.length} / body-only=${bodyMatches.length}`);
+  process.exit(1);
+}
+console.log('\n✅ OK: all references resolved (no broken, no body-only)');
+process.exit(0);

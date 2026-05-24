@@ -1,0 +1,28 @@
+name: Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 参照整合性監査（SOLVE_DATA / DRILL_THEMES 関連辞書リンク）
+        run: node .scripts/audit_all.js
+
+      - name: 完備性監査（desc / related / actions 必須項目）
+        run: node .scripts/audit_completeness.js
+
+      - name: 旧スクリプト走行（参考）
+        run: node _audit.js
+        continue-on-error: true
