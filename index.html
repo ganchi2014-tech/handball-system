@@ -533,9 +533,26 @@
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    .dict-result-excerpt mark {
+    .dict-result-excerpt mark, .dict-detail-body mark.search-hit {
       background: rgba(251, 191, 36, 0.18); color: #fbbf24; padding: 0 2px; border-radius: 2px;
     }
+    .dict-detail-body mark.search-hit.current {
+      background: rgba(251, 191, 36, 0.45); outline: 1px solid #fbbf24;
+    }
+    .search-jump-bar {
+      position: sticky; top: 0; z-index: 5;
+      background: rgba(10,16,30,0.92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(251,191,36,0.4); border-radius: 999px;
+      padding: 6px 12px; margin: 0 0 8px;
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+      font-size: 12px; color: #fbbf24;
+    }
+    .search-jump-btn {
+      background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.4);
+      color: #fbbf24; border-radius: 6px; padding: 4px 10px; min-height: 28px;
+      font-size: 12px; font-family: inherit; cursor: pointer;
+    }
+    .search-jump-btn:active { background: rgba(251,191,36,0.3); }
     .dict-empty { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 40px 20px; line-height: 1.7; }
     .dict-loading { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 60px 20px; }
 
@@ -3461,6 +3478,17 @@ function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// HTMLタグ外のテキスト部分のみ検索ワードを <mark> でハイライト
+function highlightInHtml(html, q) {
+  if (!q || !q.trim()) return html;
+  const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(escaped, 'gi');
+  return html.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, text) => {
+    if (tag) return tag;
+    return text.replace(re, mt => `<mark class="search-hit">${mt}</mark>`);
+  });
+}
+
 // GLOSSARY の用語自動装飾（lazy init: GLOSSARY const 定義の後で動的構築）
 let __glossaryRegex = null;
 let __glossaryMap = null;
@@ -3504,7 +3532,7 @@ function decorateGlossary(html) {
   });
 }
 
-function renderMarkdown(md) {
+function renderMarkdown(md, query) {
   if (!md) return '';
   // CRLF / CR を正規化（Windows改行対応）
   md = md.replace(/\r\n?/g, '\n');
@@ -3639,7 +3667,9 @@ function renderMarkdown(md) {
   }
   if (inTable) html += '</table>';
   html += flushPara(paraBuf);
-  return decorateGlossary(html);
+  let out = decorateGlossary(html);
+  if (query) out = highlightInHtml(out, query);
+  return out;
 }
 
 // ─────────────────────────────────────────────
@@ -7780,7 +7810,28 @@ function App() {
               </button>
             </div>
           </div>
-          <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body)}} />
+          {dictQuery && (() => {
+            // 詳細本文中のマッチ数 / 次のマッチへジャンプ
+            const re = new RegExp(dictQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+            const matchCount = (dictDetail.body.match(re) || []).length;
+            if (matchCount === 0) return null;
+            const jumpNext = () => {
+              const marks = [...document.querySelectorAll('.dict-detail-body mark.search-hit')];
+              if (!marks.length) return;
+              const curIdx = marks.findIndex(m => m.classList.contains('current'));
+              const nextIdx = (curIdx + 1) % marks.length;
+              marks.forEach(m => m.classList.remove('current'));
+              marks[nextIdx].classList.add('current');
+              marks[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+            return (
+              <div className="search-jump-bar" role="status">
+                <span>🔍 「{dictQuery}」が {matchCount} 件</span>
+                <button className="search-jump-btn" onClick={jumpNext}>↓ 次へ</button>
+              </div>
+            );
+          })()}
+          <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body, dictQuery)}} />
           {/* 同じファイルの他セクション */}
           {(() => {
             const related = dictSections.filter(s => s.fileId === dictDetail.fileId && s.id !== dictDetail.id).slice(0, 8);
