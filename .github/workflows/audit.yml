@@ -23,6 +23,9 @@ jobs:
       - name: 完備性監査（desc / related / actions 必須項目）
         run: node .scripts/audit_completeness.js
 
+      - name: RESULTS 完備性監査（good / issue / body / improve / approaches）
+        run: node .scripts/audit_results.js
+
       - name: 旧スクリプト走行（参考）
         run: node _audit.js
         continue-on-error: true
