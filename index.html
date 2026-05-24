@@ -8199,9 +8199,8 @@ function App() {
                   if (symptomMap) {
                     setSolveRole(symptomMap.role);
                     setSolveCategory(symptomMap.category);
-                    const cat = SOLVE_DATA[symptomMap.role]?.categories?.find(c => c.id === symptomMap.category);
-                    const sym = cat?.symptoms?.find(s => s.id === symptomMap.symptom);
-                    if (sym) setSolveSymptom(sym);
+                    // 既存コードは string ID 形式を期待するので id 文字列を渡す
+                    setSolveSymptom(symptomMap.symptom);
                   } else if (modeMap) {
                     setSolveRole(modeMap.role);
                     setSolveCategory(modeMap.category);
