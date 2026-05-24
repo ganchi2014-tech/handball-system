@@ -1226,9 +1226,9 @@ const SOLVE_DATA = {
             id: 'd1', title: '相手のフェイントに釣られる',
             desc: '体が先に動いてしまって、本物の動きについていけない。',
             related: [
-              { fileId: '02', match: 'カウンターDFの原則' },
+              { fileId: '02', match: 'フェイント7種類' },
               { fileId: '04', match: '認知' },
-              { fileId: '20', match: 'G】DFが見ているもの' },
+              { fileId: '23', match: '先読み・アンティシペーション' },
             ],
             actions: [
               '腕／肩／足ではなく「骨盤」を見る訓練をする：骨盤が動いていない動作はフェイク',
@@ -1255,8 +1255,8 @@ const SOLVE_DATA = {
             desc: 'ポストにパスが通ってシュートを許してしまう。',
             related: [
               { fileId: '06', match: 'ポストDFの原則' },
-              { fileId: '06', match: 'ポストDFのじゃんけん' },
-              { fileId: '20', match: 'D】ポスト連携' },
+              { fileId: '06', match: 'ポストの4プレー' },
+              { fileId: '06', match: 'ポストプレー' },
             ],
             actions: [
               'V字位置取り：ポストとゴールを結ぶ線上に常に体を置く',
@@ -1287,8 +1287,8 @@ const SOLVE_DATA = {
             id: 'g1', title: '接戦終盤で焦って判断ミス',
             desc: '残り時間や点差が気になって、視野が狭くなる。',
             related: [
-              { fileId: '18', match: 'プレッシャー下の集中' },
-              { fileId: '18', match: '接戦終盤の心理' },
+              { fileId: '18', match: '試合中のメンタル管理' },
+              { fileId: '18', match: 'メンタルの5要素' },
               { fileId: '08', match: '時間帯別戦術' },
             ],
             actions: [
@@ -1301,9 +1301,9 @@ const SOLVE_DATA = {
             id: 'g2', title: 'ミスを引きずる',
             desc: '1つのミスから3〜5プレー連続でミスが出る。',
             related: [
-              { fileId: '18', match: 'ミス直後の立て直し' },
+              { fileId: '18', match: '試合中のメンタル管理' },
               { fileId: '18', match: 'メンタルの5要素' },
-              { fileId: '20', match: 'I】メンタル状態' },
+              { fileId: '18', match: 'メンタル状態の自己診断' },
             ],
             actions: [
               '3秒ルール：0〜1秒ミス認識／1〜2秒インドレ・ディアログ（内的対話）／2〜3秒トリッゲレ（誘発する）／3秒以降は完全切替',
@@ -1316,7 +1316,7 @@ const SOLVE_DATA = {
             desc: 'ボールを回しすぎて警告が出る／その後ミスして失点する。',
             related: [
               { fileId: '08', match: 'パッシブプレー' },
-              { fileId: '11', match: '大量リード' },
+              { fileId: '08', match: 'ゲームクローズ' },
               { fileId: '08', match: '7on6' },
             ],
             actions: [
@@ -1330,8 +1330,8 @@ const SOLVE_DATA = {
             desc: '相手に連続得点されると、流れを取り戻せない。',
             related: [
               { fileId: '08', match: 'モメンタム管理' },
-              { fileId: '11', match: 'モメンタム' },
-              { fileId: '20', match: 'F-6' },
+              { fileId: '08', match: 'タイムアウト判断' },
+              { fileId: '20', match: '試合文脈' },
             ],
             actions: [
               '連続失点3点で即タイムアウト：モメンタムを切る最優先手段',
@@ -1349,8 +1349,8 @@ const SOLVE_DATA = {
             desc: '0-6か5-1か、相手の陣形が読めない。',
             related: [
               { fileId: '05', match: 'DF陣形' },
-              { fileId: '05', match: 'DF陣形' },
-              { fileId: '17', match: 'DF陣形' },
+              { fileId: '26', match: 'DF（ディフェンス）陣形' },
+              { fileId: '17', match: 'DF状況別 逆引き' },
             ],
             actions: [
               'まず「前衛が何人いるか」だけ数える：0なら0-6、1なら5-1、2なら2-4',
@@ -1377,8 +1377,8 @@ const SOLVE_DATA = {
             desc: 'フェイントの種類が多くて、試合で使えない。',
             related: [
               { fileId: '02', match: 'フェイント7種類' },
-              { fileId: '02', match: '実戦でのフェイント選択フレーム' },
-              { fileId: '20', match: 'G】DFが見ているもの' },
+              { fileId: '02', match: '1:1' },
+              { fileId: '23', match: '先読み・アンティシペーション' },
             ],
             actions: [
               'まず①廻旋（接触対応）と③シュートフェイント（GKもDFも騙せる万能型）の2つだけ覚える',
@@ -1409,9 +1409,9 @@ const SOLVE_DATA = {
             id: 'co1', title: '試合後半に体力が切れる',
             desc: '前半は動けるが後半になるとスプリント・判断が落ちる。',
             related: [
-              { fileId: '21', match: '試合負荷' },
-              { fileId: '21', match: 'インターバル' },
-              { fileId: '25', match: 'リカバリー' },
+              { fileId: '21', match: '持久力トレーニング' },
+              { fileId: '21', match: 'ピリオダイゼーション' },
+              { fileId: '25', match: 'クールダウンとリカバリー' },
             ],
             actions: [
               'HIIT（30秒全力＋30秒レスト×8セット）を週2回導入する',
@@ -1531,7 +1531,7 @@ const SOLVE_DATA = {
             related: [
               { fileId: '30', match: '反則早見表' },
               { fileId: '30', match: '主審・副審の役割' },
-              { fileId: '30', match: '主審サイン' },
+              { fileId: '30', match: '自己組織化のための判定スキル' },
             ],
             actions: [
               '主審の手のサインを見る：両手で押す＝プッシング、片手で叩く＝ハッキング、両手で抱える＝ホールディング',
@@ -1545,7 +1545,7 @@ const SOLVE_DATA = {
             desc: '副審が黄色い旗を上げた瞬間に焦るが、何回までパスできるのか、いつシュートに行けばいいのか分からない。',
             related: [
               { fileId: '30', match: 'パッシブプレー' },
-              { fileId: '00', match: 'パッシブ' },
+              { fileId: '08', match: 'パッシブプレー' },
             ],
             actions: [
               '予告サイン後、IHF最新規定では6回までのパスが許される（旧規定は8回）',
@@ -1559,7 +1559,7 @@ const SOLVE_DATA = {
             desc: 'カードと退場のシステムが曖昧。自分が退場になった時、チームメイトが退場した時、何が起きているかを正確に理解したい。',
             related: [
               { fileId: '30', match: '退場のエスカレーション' },
-              { fileId: '30', match: 'イエロー' },
+              { fileId: '30', match: '場面別 自己判定チェックリスト' },
             ],
             actions: [
               '①警告（イエロー）→ そのまま継続。1試合で同一選手3枚目→2分退場',
@@ -1572,8 +1572,8 @@ const SOLVE_DATA = {
             id: 'r4', title: '自分が2分退場、チームはどう守る？',
             desc: '2分間自チーム5+GK＝1人少ない状態。OFも守備もどうすべきか分からない。',
             related: [
-              { fileId: '30', match: '退場' },
-              { fileId: '03', match: '数的不利' },
+              { fileId: '30', match: '退場のエスカレーション' },
+              { fileId: '03', match: '数的有利（DF：多い側）' },
               { fileId: '26', match: '特殊状況のフォーメーション' },
             ],
             actions: [
@@ -1588,7 +1588,7 @@ const SOLVE_DATA = {
             desc: '抗議は警告対象だが、確認のために質問する方法はあるはず。試合中・タイムアウト中・試合後それぞれの作法を知りたい。',
             related: [
               { fileId: '30', match: '主審・副審の役割' },
-              { fileId: '30', match: '質問・確認のタイミング' },
+              { fileId: '30', match: 'よくある誤解の修正' },
             ],
             actions: [
               '試合中の即時異議：基本NG。「異議」とみなされ警告対象',
@@ -1676,7 +1676,7 @@ const SOLVE_DATA = {
             id: 'eq5', title: 'ボールが滑る、JHA規定で使えるものは？',
             desc: '滑り対策を試したいが、JHA規定での扱いを正確に知りたい。',
             related: [
-              { fileId: '31', match: '靴への松ヤニ' },
+              { fileId: '31', match: 'アクセサリー' },
             ],
             actions: [
               '**靴への松ヤニは可**（JHA規定）— そこから指へ補充する方式',
@@ -1690,7 +1690,7 @@ const SOLVE_DATA = {
             desc: '寒い体育館で長ズボンを着けたいが、自分のポジションで使えるか分からない。',
             related: [
               { fileId: '31', match: '服装' },
-              { fileId: '31', match: '長ズボン' },
+              { fileId: '31', match: 'アクセサリー' },
             ],
             actions: [
               'GK：長ズボン／長タイツ／短パン／短パン+サイクリングパンツ など可',
@@ -1708,8 +1708,8 @@ const SOLVE_DATA = {
             id: 'm1', title: '明日大会、何時に起きて何時に着けばいい？',
             desc: '試合開始時刻から逆算して、起床・朝食・移動・到着・アップの時刻が分からない。',
             related: [
-              { fileId: '32', match: '起床時間' },
-              { fileId: '32', match: '到着後のタイムライン' },
+              { fileId: '32', match: '当日朝の活性化' },
+              { fileId: '32', match: '会場到着後の流れ' },
             ],
             actions: [
               '起床は試合開始の4〜5時間前（9時試合→5:30〜6:00起床）',
@@ -1722,8 +1722,8 @@ const SOLVE_DATA = {
             id: 'm2', title: 'アップに20分もらった、何をすればいい？',
             desc: 'コーチに「アップしておいて」と言われたが、メニューが分からない。',
             related: [
-              { fileId: '32', match: 'ウォームアップ構成' },
-              { fileId: '32', match: 'アップシュート' },
+              { fileId: '32', match: '試合直前ルーティン' },
+              { fileId: '32', match: '会場到着後の流れ' },
               { fileId: '25', match: 'ウォームアッププログラム' },
             ],
             actions: [
@@ -1738,7 +1738,7 @@ const SOLVE_DATA = {
             desc: '前半終わって控室に戻った後、何をすべきか整理されていない。',
             related: [
               { fileId: '32', match: 'ハーフタイムの使い方' },
-              { fileId: '32', match: '補食' },
+              { fileId: '32', match: '当日朝の活性化' },
             ],
             actions: [
               '0-2分：整列退場、ベンチへ',
@@ -1767,8 +1767,8 @@ const SOLVE_DATA = {
             desc: '連戦で前試合の敗戦を引きずってしまう。短時間で気持ちを切り替える方法を知りたい。',
             related: [
               { fileId: '32', match: '連戦時の調整' },
-              { fileId: '32', match: '次試合への切替メンタル' },
-              { fileId: '18', match: 'メンタル' },
+              { fileId: '32', match: '大会期間中（連日試合）の生活' },
+              { fileId: '18', match: '試合中のメンタル管理' },
             ],
             actions: [
               'クールダウン→シャワー→補食→横になって休息→動的ストレッチで再活性化（60分目安）',
@@ -2822,7 +2822,7 @@ const SOLVE_DATA = {
             related: [
               { fileId: '18', match: 'メンタルの5要素' },
               { fileId: '18', match: 'レベル別 次の学習ステップ' },
-              { fileId: '15', match: 'メンタル' },
+              { fileId: '18', match: 'メンタル状態の自己診断' },
             ],
             actions: [
               'ノルウェー式5要素を共通言語に：メストリング（達成感） / セルヴティリット（自信） / ヴィスアリセーリング（視覚化） / インドレ・ディアログ（内的対話） / トリッゲレ（誘発する）',
@@ -2840,8 +2840,8 @@ const SOLVE_DATA = {
             desc: 'スカウティングの観点が漏れる。何を見ればいいか体系化したい。',
             related: [
               { fileId: '10', match: 'スカウティング項目' },
-              { fileId: '13', match: 'グローバル' },
-              { fileId: '10', match: 'コンディション' },
+              { fileId: '13', match: 'グローバルトレンド' },
+              { fileId: '10', match: 'スカウティング' },
             ],
             actions: [
               'スカウティング項目を「攻撃面／守備面／コンディション面」の3軸で記録する',
@@ -2867,9 +2867,9 @@ const SOLVE_DATA = {
             id: 'p3', title: 'タイムアウトの使い時',
             desc: 'タイムアウトをいつ取るべきか判断に迷う。',
             related: [
-              { fileId: '08', match: 'タイムアウト' },
+              { fileId: '08', match: 'タイムアウト判断' },
               { fileId: '08', match: 'モメンタム管理' },
-              { fileId: '11', match: 'モメンタム' },
+              { fileId: '08', match: 'ゲームクローズ' },
             ],
             actions: [
               '取るべき場面：相手3連続得点（モメンタム切断）／相手モメンタム明確／重要セットプレー前',
@@ -2882,8 +2882,8 @@ const SOLVE_DATA = {
             desc: 'GK外し（7on6）をいつ発動すべきか／本当に有効か疑問。',
             related: [
               { fileId: '08', match: '7on6（GK外し）' },
-              { fileId: '13', match: '7on6（GK外し）戦術の実態データ' },
-              { fileId: '20', match: 'E-6' },
+              { fileId: '13', match: 'グローバルトレンド' },
+              { fileId: '20', match: '数的状況' },
             ],
             actions: [
               '定番タイミング：2点差ビハインドで残り2分（フリースロー時か GK スロー時に発動）',
@@ -2900,8 +2900,8 @@ const SOLVE_DATA = {
             id: 'pc1', title: '練習にフィジカル要素を組み込みたい',
             desc: '技術練習だけでなく、体力強化をどう設計するか分からない。',
             related: [
-              { fileId: '21', match: '試合負荷' },
-              { fileId: '21', match: 'インターバル' },
+              { fileId: '21', match: '持久力トレーニング' },
+              { fileId: '21', match: 'なぜフィジカルが必要か' },
               { fileId: '19', match: 'チーム練習' },
             ],
             actions: [
@@ -2942,9 +2942,9 @@ const SOLVE_DATA = {
             id: 'pc4', title: 'バックプレーヤー専用のフィジカル設計',
             desc: 'バックは走行距離も投擲負荷も大きい。専用メニューが欲しい。',
             related: [
-              { fileId: '21', match: 'バックプレーヤー' },
-              { fileId: '21', match: '投擲' },
-              { fileId: '21', match: '跳躍' },
+              { fileId: '21', match: 'なぜフィジカルが必要か' },
+              { fileId: '21', match: '筋力トレーニング' },
+              { fileId: '21', match: 'ジャンプトレーニング' },
             ],
             actions: [
               '走行距離4.96km / HRmax 85-90%の試合負荷を再現するインターバル走',
@@ -2968,7 +2968,7 @@ const DRILL_THEMES = [
     id: 'shoot', icon: '🎯', label: 'シュート', tags: ['シュート'],
     drills: {
       basic: [
-        { title: '最高点シュート反復', minutes: 12, fileId: '19', match: 'シュート', desc: '助走3歩→2ステップ→最高点。打点と威力を体に覚えさせる。1セット30本×3',
+        { title: '最高点シュート反復', minutes: 12, fileId: '01', match: '踏み切り・シュート打点', desc: '助走3歩→2ステップ→最高点。打点と威力を体に覚えさせる。1セット30本×3',
           constraints: [
             { type: '環境', text: 'GK役を必ず1人立てる（無人ゴール禁止）' },
             { type: 'タスク', text: '同じコースを2回連続で打ったら無効カウント' },
@@ -3033,12 +3033,12 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'ダブルフェイントの原則（2種連続）', minutes: 15, fileId: '02', match: 'ダブルフェイント', desc: '7種から任意の2種を連続でかける。1回耐えるDFを超える。',
+        { title: 'ダブルフェイントの原則（2種連続）', minutes: 15, fileId: '02', match: 'フェイント7種類', desc: '7種から任意の2種を連続でかける。1回耐えるDFを超える。',
           constraints: [
             { type: '選手', text: 'DF役は「1回目は動かない」ルール（2回目で動く）' },
             { type: 'タスク', text: '2連続フェイントが0.5秒以内に繋がらないと無効' },
           ] },
-        { title: 'DFが何を見ているか別の対応', minutes: 20, fileId: '02', match: '実戦でのフェイント選択', desc: 'DF役の視線（腕／肩／足／骨盤）を意識して見せ、対応フェイントを選ぶ。',
+        { title: 'DFが何を見ているか別の対応', minutes: 20, fileId: '02', match: 'フェイント7種類', desc: 'DF役の視線（腕／肩／足／骨盤）を意識して見せ、対応フェイントを選ぶ。',
           constraints: [
             { type: '環境', text: 'DF役が見る場所を3本ごとに変える（腕→肩→足→骨盤）' },
             { type: 'タスク', text: 'シューターは「DFは○○を見ている」と声出してからフェイント' },
@@ -3083,7 +3083,7 @@ const DRILL_THEMES = [
           ] },
       ],
       mid: [
-        { title: 'ユーロステップ突破', minutes: 12, fileId: '01', match: 'ユーロステップ', desc: '1歩目を一方向、2歩目を逆方向に大きく踏む。DFをかわす実戦練習。',
+        { title: 'ユーロステップ突破', minutes: 12, fileId: '01', match: '踏み切り・シュート打点', desc: '1歩目を一方向、2歩目を逆方向に大きく踏む。DFをかわす実戦練習。',
           constraints: [
             { type: '環境', text: 'DF役は1歩目に必ず反応して同方向に動く（先読み守備を強制）' },
             { type: 'タスク', text: '2歩目をDFと逆方向に大きく踏まなければ無効' },
@@ -3220,7 +3220,7 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'パル/インパル（偶数/奇数システム）連鎖（スペイン式）', minutes: 20, fileId: '13', match: 'パル/インパル（偶数/奇数システム）', desc: '1人を固定→隣を浮かせる連鎖。バック×ピボットの2:2状況を作り続ける。',
+        { title: 'パル/インパル（偶数/奇数システム）連鎖（スペイン式）', minutes: 20, fileId: '13', match: 'スペイン', desc: '1人を固定→隣を浮かせる連鎖。バック×ピボットの2:2状況を作り続ける。',
           constraints: [
             { type: 'タスク', text: 'ピボット経由しない攻撃は無効' },
             { type: '選手', text: '各OFは「俺がParを固定」「俺がImpar」を声出ししてから動く' },
@@ -3324,7 +3324,7 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'プレッシャー下のシュート（残り時間想定）', minutes: 12, fileId: '18', match: 'プレッシャー下', desc: '残り30秒・1点差を想定したシュート練習。深呼吸→第一選択即実行。',
+        { title: 'プレッシャー下のシュート（残り時間想定）', minutes: 12, fileId: '18', match: '試合中のメンタル管理', desc: '残り30秒・1点差を想定したシュート練習。深呼吸→第一選択即実行。',
           constraints: [
             { type: '環境', text: '観客代わりに声出し役（応援＋ヤジ）を3人配置' },
             { type: 'タスク', text: '残り時間カウントダウン中はパス禁止（自分でシュート）' },
