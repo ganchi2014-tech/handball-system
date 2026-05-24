@@ -1289,7 +1289,7 @@ const SOLVE_DATA = {
             related: [
               { fileId: '18', match: 'プレッシャー下の集中' },
               { fileId: '18', match: '接戦終盤の心理' },
-              { fileId: '11', match: '残り' },
+              { fileId: '08', match: '時間帯別戦術' },
             ],
             actions: [
               '深呼吸4回で副交感神経をオンにする（心拍を下げる）',
@@ -1349,7 +1349,7 @@ const SOLVE_DATA = {
             desc: '0-6か5-1か、相手の陣形が読めない。',
             related: [
               { fileId: '05', match: 'DF陣形' },
-              { fileId: '05', match: '0-6（シックスゼロ）' },
+              { fileId: '05', match: 'DF陣形' },
               { fileId: '17', match: 'DF陣形' },
             ],
             actions: [
@@ -1453,7 +1453,7 @@ const SOLVE_DATA = {
             related: [
               { fileId: '25', match: 'リカバリー' },
               { fileId: '18', match: 'メンタル' },
-              { fileId: '21', match: '栄養' },
+              { fileId: '25', match: '睡眠・栄養・水分補給' },
             ],
             actions: [
               '毎朝、起床時心拍数・睡眠時間・主観コンディション（1-5）を3週間記録する',
@@ -1574,7 +1574,7 @@ const SOLVE_DATA = {
             related: [
               { fileId: '30', match: '退場' },
               { fileId: '03', match: '数的不利' },
-              { fileId: '26', match: '5+1' },
+              { fileId: '26', match: '特殊状況のフォーメーション' },
             ],
             actions: [
               'DF：陣形を一時的に5-0 or 5+1（マンマーク）に変更、相手キーマンを優先マーク',
@@ -1724,7 +1724,7 @@ const SOLVE_DATA = {
             related: [
               { fileId: '32', match: 'ウォームアップ構成' },
               { fileId: '32', match: 'アップシュート' },
-              { fileId: '19', match: 'ウォームアップ' },
+              { fileId: '25', match: 'ウォームアッププログラム' },
             ],
             actions: [
               '①動的ストレッチ5分（関節可動域UP）',
@@ -1766,7 +1766,7 @@ const SOLVE_DATA = {
             id: 'm5', title: '1試合目負けた、2試合目までどう切り替える？',
             desc: '連戦で前試合の敗戦を引きずってしまう。短時間で気持ちを切り替える方法を知りたい。',
             related: [
-              { fileId: '32', match: '試合間の使い方' },
+              { fileId: '32', match: '連戦時の調整' },
               { fileId: '32', match: '次試合への切替メンタル' },
               { fileId: '18', match: 'メンタル' },
             ],
@@ -2792,7 +2792,7 @@ const SOLVE_DATA = {
             id: 'c2', title: 'DF練習のメニュー設計',
             desc: '6-0の3原則やノルウェー式10技術をどう練習に落とすか。',
             related: [
-              { fileId: '05', match: '0-6（シックスゼロ）' },
+              { fileId: '05', match: 'DF陣形' },
               { fileId: '15', match: 'DFの10コア技術' },
               { fileId: '19', match: 'DF練習' },
             ],
@@ -2854,7 +2854,7 @@ const SOLVE_DATA = {
             desc: '前半終了後の15分で何を伝えるか。順序がほしい。',
             related: [
               { fileId: '10', match: 'ハーフタイム修正' },
-              { fileId: '11', match: '時間帯による戦術変化' },
+              { fileId: '08', match: '時間帯別戦術' },
               { fileId: '08', match: 'モメンタム' },
             ],
             actions: [
@@ -2929,7 +2929,7 @@ const SOLVE_DATA = {
             desc: '試合・練習・休養のバランス設計が難しい。',
             related: [
               { fileId: '25', match: 'リカバリー' },
-              { fileId: '21', match: 'ピーキング' },
+              { fileId: '21', match: 'ピリオダイゼーション' },
               { fileId: '21', match: 'シーズン' },
             ],
             actions: [
@@ -7216,7 +7216,15 @@ function App() {
       setDictDetail(target);
       setPhase('dictionary-detail');
       setTimeout(() => window.scrollTo(0, 0), 0);
+      return;
     }
+    // フォールバック：セクション特定に失敗 → 辞書ブラウザ画面でファイル絞り込み＋match文字列検索
+    setDictDetail(null);
+    setDictQuery(related.match || '');
+    setDictActiveTag(null);
+    setDictActiveFileId(related.fileId || null);
+    setPhase('dictionary');
+    setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
   const handleSolveReset = () => {
@@ -7832,13 +7840,12 @@ function App() {
                         <div
                           key={i}
                           className="solve-rx-related-item"
-                          onClick={() => section && handleOpenRelated(r)}
-                          style={!section ? {opacity: 0.5, cursor: 'default'} : {}}
+                          onClick={() => handleOpenRelated(r)}
                         >
                           <span className="solve-rx-related-icon">{fileMeta?.icon}</span>
                           <div className="solve-rx-related-meta">
                             <div className="solve-rx-related-file">{r.fileId} / {fileMeta?.title}</div>
-                            <div className="solve-rx-related-title">{section ? section.title : `「${r.match}」を含むセクション`}</div>
+                            <div className="solve-rx-related-title">{section ? section.title : `「${r.match}」で検索 →`}</div>
                           </div>
                           <span className="solve-rx-arrow">›</span>
                         </div>
