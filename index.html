@@ -1034,7 +1034,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useMemo } = React;
+const { useState, useEffect, useMemo, useRef } = React;
 
 // ─────────────────────────────────────────────
 // 辞書ファイル メタデータ（33ファイル）
@@ -7360,7 +7360,10 @@ function App() {
     }
   };
 
+  // 辞書一覧→詳細遷移時に一覧側のスクロール位置を覚えておく
+  const dictListScrollRef = useRef(0);
   const handleDictSectionOpen = (section) => {
+    dictListScrollRef.current = window.scrollY;
     setDictDetail(section);
     setPhase('dictionary-detail');
     saveResume('dict', { sectionId: section.id, title: section.title, fileTitle: section.fileTitle });
@@ -7371,6 +7374,9 @@ function App() {
   const handleDictBack = () => {
     setDictDetail(null);
     setPhase('dictionary');
+    // 一覧側に戻ったら覚えていたスクロール位置を復元
+    const y = dictListScrollRef.current;
+    setTimeout(() => window.scrollTo(0, y), 0);
   };
 
   // 国別深掘り：現在のmodeから「じゃんけん→国別逆引き」へジャンプ
@@ -7521,11 +7527,14 @@ function App() {
             <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
             <div className="dict-search-wrap">
               <input
-                type="text"
+                type="search"
+                inputMode="search"
+                enterKeyHint="search"
                 className="dict-search-input"
                 placeholder="キーワードで検索（例: クローズ、5-1、フェイント）"
                 value={dictQuery}
                 onChange={e => setDictQuery(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
                 autoFocus
               />
             </div>
@@ -7601,7 +7610,18 @@ function App() {
                   {dictActiveTag && ` ／ タグ: ${dictActiveTag}`}
                 </div>
                 {filteredSections.length === 0 && (
-                  <div className="dict-empty">該当するセクションがありません。<br />キーワードやタグを変えてみてください。</div>
+                  <div className="dict-empty">
+                    該当するセクションがありません。<br />キーワードやタグを変えてみてください。
+                    {(dictQuery || dictActiveTag || dictActiveFileId) && (
+                      <div style={{marginTop: 12}}>
+                        <button
+                          className="dict-back"
+                          style={{background: 'rgba(34,211,238,0.12)', border: '1px solid rgba(34,211,238,0.4)', color: '#67e8f9', padding: '8px 16px', borderRadius: 8}}
+                          onClick={() => { setDictQuery(''); setDictActiveTag(null); setDictActiveFileId(null); }}
+                        >× 検索・絞り込みを全部クリア</button>
+                      </div>
+                    )}
+                  </div>
                 )}
                 {filteredSections.map(s => {
                   const excerpt = getExcerpt(s, dictQuery);
