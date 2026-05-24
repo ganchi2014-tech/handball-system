@@ -1423,9 +1423,9 @@ const SOLVE_DATA = {
             id: 'co2', title: 'シュート力・投擲速度が落ちる',
             desc: '試合中・練習中にシュートが弱くなる。',
             related: [
-              { fileId: '21', match: '投擲' },
-              { fileId: '25', match: '肩' },
-              { fileId: '19', match: 'シュート' },
+              { fileId: '21', match: '筋力トレーニング' },
+              { fileId: '25', match: '肩傷害予防' },
+              { fileId: '22', match: 'シューター技術' },
             ],
             actions: [
               'メディシンボール投擲（4kg、両手・片手）を週2回で爆発力強化',
@@ -2779,8 +2779,8 @@ const SOLVE_DATA = {
             desc: '選手にフェイントを段階的に教えたい。順序が分からない。',
             related: [
               { fileId: '02', match: 'フェイント7種類' },
-              { fileId: '19', match: 'フェイント練習' },
-              { fileId: '02', match: 'クロアチア/ユーゴ学派' },
+              { fileId: '19', match: '個人練習' },
+              { fileId: '02', match: '1:1' },
             ],
             actions: [
               '最初に教えるのは①廻旋（接触対応の基礎）と③シュートフェイント（万能型）の2つ',
@@ -2792,9 +2792,9 @@ const SOLVE_DATA = {
             id: 'c2', title: 'DF練習のメニュー設計',
             desc: '6-0の3原則やノルウェー式10技術をどう練習に落とすか。',
             related: [
-              { fileId: '05', match: 'DF陣形' },
-              { fileId: '15', match: 'DFの10コア技術' },
-              { fileId: '19', match: 'DF練習' },
+              { fileId: '26', match: 'DF（ディフェンス）陣形' },
+              { fileId: '15', match: 'Forsvarsskolen' },
+              { fileId: '19', match: 'チーム練習' },
             ],
             actions: [
               '基礎：フェアシーベン（シフト）（シフト）のみを20分繰り返す（ボール側へラインで動く）',
@@ -2928,9 +2928,9 @@ const SOLVE_DATA = {
             id: 'pc3', title: 'シーズン中のコンディション維持',
             desc: '試合・練習・休養のバランス設計が難しい。',
             related: [
-              { fileId: '25', match: 'リカバリー' },
+              { fileId: '25', match: 'クールダウンとリカバリー' },
               { fileId: '21', match: 'ピリオダイゼーション' },
-              { fileId: '21', match: 'シーズン' },
+              { fileId: '21', match: '年齢別指針' },
             ],
             actions: [
               '週単位でハード/ミディアム/イージーの3段階を明示。試合前日は必ずイージー',
@@ -2980,7 +2980,7 @@ const DRILL_THEMES = [
           ] },
       ],
       mid: [
-        { title: '早打ち（上昇中の打点）', minutes: 15, fileId: '19', match: 'シュート', desc: '1ステップ踏み切りで上昇中に打つ。先読み型GK対策。150本ノック。',
+        { title: '早打ち（上昇中の打点）', minutes: 15, fileId: '01', match: '踏み切り・シュート打点', desc: '1ステップ踏み切りで上昇中に打つ。先読み型GK対策。150本ノック。',
           constraints: [
             { type: 'タスク', text: 'GK役が最高点を予測して動き出してから打ったら無効' },
             { type: '環境', text: 'GK役は「いまから動く」と1秒前に手で合図 → シューターはその合図に間に合わせる' },
@@ -2992,7 +2992,7 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'バックハンドフェイク', minutes: 15, fileId: '19', match: 'バックハンドフェイク', desc: '手首を逆方向に返す。先読み型GKを最も狂わせる技術。壁打ち→ゴールへ。',
+        { title: 'バックハンドフェイク', minutes: 15, fileId: '02', match: 'フェイント7種類', desc: '手首を逆方向に返す。先読み型GKを最も狂わせる技術。壁打ち→ゴールへ。',
           constraints: [
             { type: 'タスク', text: 'GK役は必ずシューターの腕の振り方向に動く（先読み型を強制）' },
             { type: '選手', text: 'シューターは通常シュートを30%混ぜる（フェイク濫用防止）' },
@@ -3009,24 +3009,24 @@ const DRILL_THEMES = [
     id: 'feint', icon: '⚡', label: 'フェイント', tags: ['フェイント'],
     drills: {
       basic: [
-        { title: 'フェイント3種ローテ（廻旋・シュート・ステップ）', minutes: 15, fileId: '19', match: 'フェイント', desc: '①廻旋／③シュート／⑤ステップを各10回×3セット。基本3種を体に。',
+        { title: 'フェイント3種ローテ（廻旋・シュート・ステップ）', minutes: 15, fileId: '02', match: 'フェイント7種類', desc: '①廻旋／③シュート／⑤ステップを各10回×3セット。基本3種を体に。',
           constraints: [
             { type: '環境', text: 'DF役を必ず立てる（コーン単独NG）。DF役は必ず1歩動く' },
             { type: 'タスク', text: 'フェイントが「DFを動かせなかった」回は無効カウント' },
           ] },
-        { title: '鏡前フェイント練習', minutes: 10, fileId: '19', match: '鏡前', desc: '鏡の前で動きの大きさを客観視。予備動作を消す。',
+        { title: '鏡前フェイント練習', minutes: 10, fileId: '02', match: 'フェイント7種類', desc: '鏡の前で動きの大きさを客観視。予備動作を消す。',
           constraints: [
             { type: 'タスク', text: '自分のフェイント直前0.5秒の「予備動作」を言葉で説明する' },
             { type: '選手', text: '体格の違うペアと交互に確認する（見え方が変わる）' },
           ] },
       ],
       mid: [
-        { title: 'フェイント7種ローテ', minutes: 20, fileId: '19', match: 'フェイント', desc: '7種全てを各10回×3セット = 210回。レパートリーを広げる。',
+        { title: 'フェイント7種ローテ', minutes: 20, fileId: '02', match: 'フェイント7種類', desc: '7種全てを各10回×3セット = 210回。レパートリーを広げる。',
           constraints: [
             { type: 'タスク', text: '同じフェイントを2回連続で使ったら無効' },
             { type: '環境', text: 'DF役が「何を見たか」を10本ごとにフィードバック' },
           ] },
-        { title: 'フェイント1on1（フィードバック付き）', minutes: 15, fileId: '19', match: 'フェイント', desc: 'DF役が「何を見て反応したか」をフィードバック。狙い通り動かせたか確認。',
+        { title: 'フェイント1on1（フィードバック付き）', minutes: 15, fileId: '02', match: 'フェイント7種類', desc: 'DF役が「何を見て反応したか」をフィードバック。狙い通り動かせたか確認。',
           constraints: [
             { type: 'タスク', text: 'DFを動かせた／動かせなかったを2択で記録（数値化）' },
             { type: '環境', text: 'DF役は3本ごとに「腕を見る／骨盤を見る」を切替' },
@@ -3050,7 +3050,7 @@ const DRILL_THEMES = [
     id: 'dribble', icon: '🤾', label: 'ドリブル', tags: ['ドリブル'],
     drills: {
       basic: [
-        { title: 'ドリブル6種ローテ', minutes: 12, fileId: '19', match: 'ドリブル', desc: 'スピード／コントロール／低位置／クロスオーバー／バックビハインド／ロールターン。コーン5本ジグザグ。',
+        { title: 'ドリブル6種ローテ', minutes: 12, fileId: '01', match: 'ドリブル技術', desc: 'スピード／コントロール／低位置／クロスオーバー／バックビハインド／ロールターン。コーン5本ジグザグ。',
           constraints: [
             { type: '環境', text: 'コーン間隔を1m/1.5m/2mで3パターン用意し、毎セット変える' },
             { type: 'タスク', text: '各往復で違うドリブル種を使う（同じ技2回連続NG）' },
@@ -3076,7 +3076,7 @@ const DRILL_THEMES = [
     id: 'step', icon: '🦵', label: '踏み切り・打点', tags: ['踏み切り'],
     drills: {
       basic: [
-        { title: '4種踏み切り基本', minutes: 12, fileId: '19', match: '踏み切り', desc: '2ステップ／ユーロステップ／1ステップ／ノーステップを各10本×3セット。',
+        { title: '4種踏み切り基本', minutes: 12, fileId: '01', match: '踏み切り・シュート打点', desc: '2ステップ／ユーロステップ／1ステップ／ノーステップを各10本×3セット。',
           constraints: [
             { type: '環境', text: 'GK役のコールでどの踏み切り種を使うか決まる（選手が選べない）' },
             { type: 'タスク', text: '同じ踏み切り種を連続2本したら無効' },
@@ -3102,14 +3102,14 @@ const DRILL_THEMES = [
     id: 'pass', icon: '↗️', label: 'パス', tags: ['パス'],
     drills: {
       basic: [
-        { title: 'ノルウェー式4種スロー（壁打ち）', minutes: 12, fileId: '19', match: 'スロー', desc: 'ピスケカスト（むち打ちパス）（むち打ち）／シルケルカスト（円運動パス）／ステーカスト（押しパス）／シュフルト・カスト（隠しパス） を各10球×5セット。',
+        { title: 'ノルウェー式4種スロー（壁打ち）', minutes: 12, fileId: '01', match: 'パスキャッチ', desc: 'ピスケカスト（むち打ちパス）（むち打ち）／シルケルカスト（円運動パス）／ステーカスト（押しパス）／シュフルト・カスト（隠しパス） を各10球×5セット。',
           constraints: [
             { type: '環境', text: '壁の5×5cmターゲットに当てる（外れたらカウントしない）' },
             { type: 'タスク', text: 'スロー前にDF役のコール（「左！」「上！」）に応じて軌道を変える' },
           ] },
       ],
       mid: [
-        { title: '動きながらキャッチ→即パス', minutes: 12, fileId: '19', match: 'キャッチ', desc: '止まらず受けて即動作。顔横ポジションをキープ。',
+        { title: '動きながらキャッチ→即パス', minutes: 12, fileId: '01', match: 'パスキャッチ', desc: '止まらず受けて即動作。顔横ポジションをキープ。',
           constraints: [
             { type: 'タスク', text: '止まったら最初からやり直し（連続性を強制）' },
             { type: 'タスク', text: '受けた瞬間に「次パス先」を声に出してから出す' },
@@ -3128,7 +3128,7 @@ const DRILL_THEMES = [
     id: '1on1', icon: '⚔️', label: '1on1', tags: ['1on1'],
     drills: {
       basic: [
-        { title: '勝ち位置取り練習', minutes: 12, fileId: '19', match: '勝ち位置取り', desc: 'OFがDFより先に有利な位置を取る。受ける前の判断を磨く。',
+        { title: '勝ち位置取り練習', minutes: 12, fileId: '02', match: '勝ち位置', desc: 'OFがDFより先に有利な位置を取る。受ける前の判断を磨く。',
           constraints: [
             { type: 'タスク', text: 'OFが勝ち位置を取った時点でしかパスが来ない（取れないと無効）' },
             { type: '環境', text: 'DF役は3秒ごとに位置を切替（クローズ⇔ワイド）' },
@@ -3154,14 +3154,14 @@ const DRILL_THEMES = [
     id: '2on2', icon: '🔗', label: '2on2・コンビ', tags: ['コンビネーション'],
     drills: {
       basic: [
-        { title: 'ギブ＆ゴー基礎', minutes: 12, fileId: '19', match: 'ギブ', desc: 'パス→ゴー→リターン。マーカーが目を切った瞬間に走る。',
+        { title: 'ギブ＆ゴー基礎', minutes: 12, fileId: '02', match: '2:2', desc: 'パス→ゴー→リターン。マーカーが目を切った瞬間に走る。',
           constraints: [
             { type: 'タスク', text: 'リターンパスは2秒以内（遅れたら無効）' },
             { type: '選手', text: 'パサーは「ゴー！」と声を出してからしかリターンしない' },
           ] },
       ],
       mid: [
-        { title: 'ピック＆ロール', minutes: 15, fileId: '19', match: 'ピック', desc: 'スクリーンセット→抜ける→ロールアウト。DFはスイッチ／ファイトオーバー／ゴーアンダーを試す。',
+        { title: 'ピック＆ロール', minutes: 15, fileId: '02', match: '2:2', desc: 'スクリーンセット→抜ける→ロールアウト。DFはスイッチ／ファイトオーバー／ゴーアンダーを試す。',
           constraints: [
             { type: '環境', text: 'DF役は5本ごとに対応を変える（スイッチ→ファイト→ゴーアンダー）' },
             { type: 'タスク', text: 'OFは対応に応じて選択を変える（毎回同じプレー禁止）' },
@@ -3180,14 +3180,14 @@ const DRILL_THEMES = [
     id: 'fast', icon: '🏃', label: '速攻', tags: ['速攻'],
     drills: {
       basic: [
-        { title: '1stウェーブ（GKスロー→2人スプリント）', minutes: 12, fileId: '19', match: '1stウェーブ', desc: 'GKボール→2秒以内に左右走者がスプリント。GKがフリー走者にパス。',
+        { title: '1stウェーブ（GKスロー→2人スプリント）', minutes: 12, fileId: '03', match: '速攻', desc: 'GKボール→2秒以内に左右走者がスプリント。GKがフリー走者にパス。',
           constraints: [
             { type: 'タスク', text: 'GKボール獲得から2秒以内に走り出さないと無効（タイマー測定）' },
             { type: '環境', text: 'DF役を1人ハーフライン上に置く（1stウェーブを妨害）' },
           ] },
       ],
       mid: [
-        { title: '2ndウェーブ合流', minutes: 15, fileId: '19', match: '2ndウェーブ', desc: '1stが止められた後の3〜4人合流。中央走者がDFを引き付け→左右へ。',
+        { title: '2ndウェーブ合流', minutes: 15, fileId: '03', match: '速攻', desc: '1stが止められた後の3〜4人合流。中央走者がDFを引き付け→左右へ。',
           constraints: [
             { type: 'タスク', text: '中央走者は必ず1ドライブを入れてから左右へ展開（即パスNG）' },
             { type: '環境', text: '1stウェーブをDF役が必ず止める（2ndウェーブのみを練習対象に）' },
@@ -3206,14 +3206,14 @@ const DRILL_THEMES = [
     id: 'setof', icon: '📐', label: 'セットOF', tags: ['セットOF'],
     drills: {
       basic: [
-        { title: '3-3フォーメーション基本', minutes: 15, fileId: '19', match: '3-3', desc: 'バック3＋ウィング2＋ピボット1。クローズ／ワイドを確認→適切なアクション。',
+        { title: '3-3フォーメーション基本', minutes: 15, fileId: '26', match: 'OF（オフェンス）陣形', desc: 'バック3＋ウィング2＋ピボット1。クローズ／ワイドを確認→適切なアクション。',
           constraints: [
             { type: 'タスク', text: '20秒以内にシュートを打たないと攻撃終了' },
             { type: '環境', text: 'DF役は前半5分6-0、後半5分5-1で切替（OF側の対応力を測る）' },
           ] },
       ],
       mid: [
-        { title: '2-1-3（ピボット高め）', minutes: 15, fileId: '19', match: '2-1-3', desc: 'ピボットを9mライン付近に引き出す。引き出したスペースにバックが切り込む。',
+        { title: '2-1-3（ピボット高め）', minutes: 15, fileId: '26', match: 'OF（オフェンス）陣形', desc: 'ピボットを9mライン付近に引き出す。引き出したスペースにバックが切り込む。',
           constraints: [
             { type: 'タスク', text: 'ピボットへのパス1回必須（パスなしのシュートは無効）' },
             { type: '選手', text: 'バックは「ピボットが○○ポジションだから△△する」を声出し' },
@@ -3232,21 +3232,21 @@ const DRILL_THEMES = [
     id: 'def', icon: '🛡️', label: 'DF', tags: ['DF'],
     drills: {
       basic: [
-        { title: '0-6基本動作（フェアシーベン（シフト）/ヘラウスリュッケン（前飛び出し）/ユーバーゲーベン（引き渡し））', minutes: 15, fileId: '19', match: '0-6基本動作', desc: 'コーチのコールで全員が動く。3原則を体に。',
+        { title: '0-6基本動作（フェアシーベン（シフト）/ヘラウスリュッケン（前飛び出し）/ユーバーゲーベン（引き渡し））', minutes: 15, fileId: '26', match: 'DF（ディフェンス）陣形', desc: 'コーチのコールで全員が動く。3原則を体に。',
           constraints: [
             { type: 'タスク', text: 'コールから2秒以内に全員が動かないと罰ゲーム1セット' },
             { type: '環境', text: 'コーチコールはランダム順序（パターン暗記を防ぐ）' },
           ] },
       ],
       mid: [
-        { title: '5-1：前衛と後衛の連動', minutes: 15, fileId: '05', match: '5-1', desc: '前衛が飛び出した背後をピボットに走らせ／受け渡しを完成させる。',
+        { title: '5-1：前衛と後衛の連動', minutes: 15, fileId: '26', match: 'DF（ディフェンス）陣形', desc: '前衛が飛び出した背後をピボットに走らせ／受け渡しを完成させる。',
           constraints: [
             { type: 'タスク', text: '前衛は必ず1回飛び出す（飛び出さないと無効）' },
             { type: '環境', text: 'OF役がピボットを背後に走らせる → 受け渡しが間に合うか測定' },
           ] },
       ],
       adv: [
-        { title: 'マンツーマン→スクリーン対応（スイッチ／ファイトオーバー／ゴーアンダー）', minutes: 20, fileId: '19', match: 'マンツーマン', desc: 'OF役がスクリーン→DFは3対応を試す。結果を比較。',
+        { title: 'マンツーマン→スクリーン対応（スイッチ／ファイトオーバー／ゴーアンダー）', minutes: 20, fileId: '26', match: '特殊状況のフォーメーション', desc: 'OF役がスクリーン→DFは3対応を試す。結果を比較。',
           constraints: [
             { type: '環境', text: 'OFは必ずスクリーンを2回使う（スクリーンなしのシュート禁止）' },
             { type: 'タスク', text: 'DF役は3対応を順番に試す → 結果を数値化（得点率比較）' },
@@ -3258,7 +3258,7 @@ const DRILL_THEMES = [
     id: 'link', icon: '👁️', label: '連携', tags: ['連携', '声掛け'],
     drills: {
       basic: [
-        { title: 'ブリックコンタクト（目合わせ）訓練（バック×ピボット）', minutes: 12, fileId: '19', match: 'ブリックコンタクト（目合わせ）', desc: 'アイコンタクト→ピボット即フラッシュ→バック即パス→シュート。1.5秒以内が理想。',
+        { title: 'ブリックコンタクト（目合わせ）訓練（バック×ピボット）', minutes: 12, fileId: '06', match: 'ポストプレー', desc: 'アイコンタクト→ピボット即フラッシュ→バック即パス→シュート。1.5秒以内が理想。',
           constraints: [
             { type: 'タスク', text: '目合わせなしのパスは無効' },
             { type: '環境', text: 'バック・ピボットの距離を5m/7m/9mで3パターン試す' },
@@ -3272,7 +3272,7 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'コードワード戦術（デンマーク式）', minutes: 15, fileId: '19', match: 'コードワード', desc: '2文字以内のコールで5パターンを発動。事前共有→反復。',
+        { title: 'コードワード戦術（デンマーク式）', minutes: 15, fileId: '12', match: 'サインプレー', desc: '2文字以内のコールで5パターンを発動。事前共有→反復。',
           constraints: [
             { type: 'タスク', text: 'コール後3秒以内にシュートまで持ち込まないと無効' },
             { type: '環境', text: 'DF役がコールを聞いて事前に対応する（読まれにくいコード設計を促す）' },
@@ -3310,14 +3310,14 @@ const DRILL_THEMES = [
     id: 'mental', icon: '🧠', label: 'メンタル', tags: ['メンタル'],
     drills: {
       basic: [
-        { title: '3秒切り替え練習', minutes: 8, fileId: '19', match: '3秒切り替え', desc: 'ミスをしたら3秒以内に「次は○○」と声に出す。4秒以上引きずったらやり直し。',
+        { title: '3秒切り替え練習', minutes: 8, fileId: '18', match: '試合中のメンタル管理', desc: 'ミスをしたら3秒以内に「次は○○」と声に出す。4秒以上引きずったらやり直し。',
           constraints: [
             { type: 'タスク', text: '4秒以上引きずったら罰ゲーム（腕立て5回など）' },
             { type: '環境', text: 'コーチが意図的に失敗を誘発する場面を作る' },
           ] },
       ],
       mid: [
-        { title: 'ヴィスアリセーリング（視覚化）ルーティン', minutes: 5, fileId: '19', match: 'ヴィスアリセーリング（視覚化）', desc: '練習前5分。成功シーンを視覚＋聴覚＋触覚で具体的に描く。',
+        { title: 'ヴィスアリセーリング（視覚化）ルーティン', minutes: 5, fileId: '18', match: '試合前のメンタル準備', desc: '練習前5分。成功シーンを視覚＋聴覚＋触覚で具体的に描く。',
           constraints: [
             { type: 'タスク', text: 'シナリオを声に出して描写（無言NG）' },
             { type: '選手', text: 'ペアで「相手のシナリオを聞いて再現」する' },
