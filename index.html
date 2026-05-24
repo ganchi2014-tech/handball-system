@@ -1071,7 +1071,7 @@ const DICT_FILES = [
   { id: '28', name: '28_video_analysis.md',                 title: 'ビデオ分析・セルフスカウティング',             icon: '🎥', tags: ['ビデオ分析', 'スカウティング', '振り返り', 'バックプレーヤー'] },
   { id: '29', name: '29_back_player_development.md',        title: 'バックプレーヤー育成メソッド（各国）',         icon: '🎓', tags: ['育成', 'バックプレーヤー', 'ドイツ', 'フランス', 'デンマーク', 'アイスランド', 'クロアチア', 'スペイン'] },
   { id: '30', name: '30_rules_and_referee.md',              title: 'ルール・反則・審判辞典',                       icon: '📏', tags: ['ルール', '反則', '審判', 'パッシブ', '退場', 'カード', '高校生'] },
-  { id: '31', name: '31_equipment.md',                      title: '装備・服装規定辞典（JHA 2018準拠）',          icon: '🧢', tags: ['装備', '服装', 'JHA', 'マウスピース', 'サポーター', 'マスク', 'メガネ', 'アクセサリー', '松ヤニ', '高校生'] },
+  { id: '31', name: '31_equipment.md',                      title: '装備・服装規定辞典（JHA 2018準拠）',          icon: '🧢', tags: ['装備', '服装', 'JHA', 'マウスピース', 'サポーター', 'マスク', 'メガネ', 'アクセサリー', '高校生'] },
   { id: '32', name: '32_match_day.md',                      title: '試合当日マニュアル',                            icon: '🏟️', tags: ['試合当日', '大会', 'ウォームアップ', 'ハーフタイム', '前日準備', '高校生'] },
 ];
 
@@ -1503,7 +1503,7 @@ const SOLVE_DATA = {
             ],
             actions: [
               'セーブした瞬間に「走り出している選手は誰か」を見る：ボールより先に目線を上げる習慣',
-              'シュネレ・ミッテ（即時スロー）の発動条件を決めておく：ウィングが走り出していたら即パス',
+              'クイックスローオフ（即時スロー）の発動条件を決めておく：ウィングが走り出していたら即パス',
               '判断は「前→横→後ろ」の優先順位：安全第一でも前への意識を常に持つ',
             ],
           },
@@ -1673,17 +1673,16 @@ const SOLVE_DATA = {
             ],
           },
           {
-            id: 'eq5', title: 'ボールが滑る、グリップ対策の標準は？',
-            desc: '日本高校の現場で何が普及しているか、JHAの規定上の可否と合わせて整理したい。',
+            id: 'eq5', title: 'ボールが滑る、JHA規定で使えるものは？',
+            desc: '滑り対策を試したいが、JHA規定での扱いを正確に知りたい。',
             related: [
-              { fileId: '01', match: 'グリップ' },
               { fileId: '31', match: '靴への松ヤニ' },
             ],
             actions: [
-              '**日本高校の標準解：テーピング＋両面テープ** — 指にテーピングを巻き、その上から両面テープ（粘着面外向き）を巻く。汗にも乾燥にも対応',
-              '巻き方：指関節を曲げた状態で巻く／第一関節は避ける／ハーフタイムで巻き直し',
-              '**靴への松ヤニは可**（JHA規定）— そこから指へ補充。他部位への松ヤニは不可',
-              '購入：両面テープは100円ショップ・スポーツ店・薬局で入手',
+              '**靴への松ヤニは可**（JHA規定）— そこから指へ補充する方式',
+              '**他部位（手のひら／ボール直接）→ 不可**',
+              '会場使用上の条件により、靴の松ヤニも認めない場合あり → 要項確認',
+              '手汗対策：吸汗リストバンド／タオルでこまめに拭く',
             ],
           },
           {
@@ -3730,7 +3729,6 @@ const QUESTIONS = {
       { label: 'バックハンドフェイク／角度変化', next: 'r_of_shoot_good_fake' },
       { label: 'ジャンプの高さでGKを越えた', next: 'r_of_shoot_good_jump' },
       { label: 'ルーズボール／リバウンドを詰めた', next: 'r_of_shoot_good_rebound' },
-      { label: 'グリップが効いた（テーピング＋両面テープ）', next: 'r_of_shoot_good_grip' },
       { label: '🎯 シュートの種類で振り返る（10種から選択）', next: 'qof_shoot_type' },
     ],
   },
@@ -4478,7 +4476,7 @@ const QUESTIONS = {
     text: 'スローインから速攻はつながった？',
     choices: [
       { label: 'つながった（フリー走者にロングorミドル）', next: 'r_gk_self_throw_good' },
-      { label: 'シュネレ・ミッテ（即時センター投擲）で速攻決まった', next: 'r_gk_self_throw_schnelle' },
+      { label: 'クイックスローオフ（即時センター投擲）で速攻決まった', next: 'r_gk_self_throw_schnelle' },
       { label: '止められた／パスミス', next: 'r_gk_self_throw_miss' },
       { label: 'スプリント走者がいなくて出せなかった', next: 'r_gk_self_throw_noone' },
       { label: '判断遅れで速攻チャンスを逃した', next: 'r_gk_self_throw_slow' },
@@ -4647,7 +4645,7 @@ const QUESTIONS = {
       { label: 'クロス系（アインファッヘス・クロイツェン（シンプルクロス） / ドライヤー・クロイツ（3人クロス））', next: 'qsg_result' },
       { label: 'スクリーン系（Pick&Roll / ダブルスクリーン）', next: 'qsg_result' },
       { label: 'ケンパ・トリック（空中受けシュート）', next: 'qsg_result' },
-      { label: 'クイックフリースロー／シュネレ・ミッテ（クイックスロー）', next: 'qsg_result' },
+      { label: 'クイックフリースロー／クイックスローオフ（即時センター投擲）', next: 'qsg_result' },
       { label: '中央展開系（ユーゴ / ポーレン（ポーランド式））', next: 'qsg_result' },
       { label: 'タイムアウト明けのセットプレー', next: 'qsg_result' },
     ],
@@ -5560,12 +5558,12 @@ const GK_SELF_RESULTS = {
   },
   // スローアウト関連（32_match_day.md / 30_rules_and_referee.md 準拠）
   r_gk_self_throw_schnelle: {
-    good: 'シュネレ・ミッテ（即時センター投擲）で速攻＝最高効率の得点機会を作れた。',
-    issue: 'シュネレ・ミッテの発動条件を体系化',
-    body: 'シュネレ・ミッテは「センターから即座にスローオフ」する戦術。GKがボールを取った瞬間、ウィングが既にハーフを越えていれば即発動。タイミング窓は1-2秒',
-    improve: '【習慣】セーブと同時にコートをスキャン→走者がいれば0.5秒以内に投擲。試合前にウィングと「シュネレ合図」を確認',
+    good: 'クイックスローオフ（即時センター投擲）で速攻＝最高効率の得点機会を作れた。',
+    issue: 'クイックスローオフの発動条件を体系化',
+    body: 'クイックスローオフは「センターから即座にスローオフ」する戦術。GKがボールを取った瞬間、ウィングが既にハーフを越えていれば即発動。タイミング窓は1-2秒',
+    improve: '【習慣】セーブと同時にコートをスキャン→走者がいれば0.5秒以内に投擲。試合前にウィングと「クイック合図」を確認',
     approaches: [
-      { tag: '事前合図', text: 'ウィングと試合前に「シュネレ・ミッテで行く合図」を共有' },
+      { tag: '事前合図', text: 'ウィングと試合前に「クイックスローオフで行く合図」を共有' },
       { tag: '視野管理', text: 'セーブの瞬間からコート全体をスキャン' },
       { tag: '辞書', text: '30_rules_and_referee.md スローオフ / 05_gk_df.md GKスローアウト' },
     ],
@@ -5573,7 +5571,7 @@ const GK_SELF_RESULTS = {
   r_gk_self_throw_slow: {
     good: '判断遅れを自覚 = 改善の出発点。',
     issue: 'GK判断速度＝チーム速攻力に直結',
-    body: '速攻チャンスを逃した = 「セーブ後の1秒の判断遅れ」が原因。GKがコートをスキャンする習慣化と、シュネレ・ミッテ発動条件の明確化が必要',
+    body: '速攻チャンスを逃した = 「セーブ後の1秒の判断遅れ」が原因。GKがコートをスキャンする習慣化と、クイックスローオフ発動条件の明確化が必要',
     improve: '【練習】GKは試合中常にスキャン：シュート前から「次の速攻」を想定。セーブ直後の0.3秒スキャンを習慣化',
     approaches: [
       { tag: '事前準備', text: 'シュートが来る前から走者の位置を把握' },
@@ -6440,7 +6438,6 @@ const OF_EXTRA_RESULTS = {
   r_of_shoot_good_early: { good: '早打ちで先読み型GKの裏をかいた = 戦術的勝利。', issue: '早打ちは最高点と組み合わせて使い分け', body: '早打ちばかりだとGKが早打ち対応に変わる。最高点ジャンプも混ぜて読みを撹乱。', improve: '【練習】1ステップ早打ち＋2ステップ最高点を交互に各10本。', approaches: [{ tag: '使い分け', text: '早打ち⇔最高点の切替' }, { tag: 'パワー', text: '早打ちのパワー強化＝MB投擲' }, { tag: '辞書', text: '01_basics.md / 19_drills.md' }] },
   r_of_shoot_good_fake: { good: 'フェイクでGKを撹乱した = 高度な技術。', issue: 'バックハンドフェイクの精度向上', body: '手首を逆方向に返す技術は難度高い。怪我なく繰り返す練習量が必要。', improve: '【練習】壁打ちで手首感覚→ゴール反復。手首・前腕のストレッチ必須。', approaches: [{ tag: '技術', text: '手首の柔軟性と強さ' }, { tag: '怪我予防', text: '前腕ストレッチ' }, { tag: '辞書', text: '02_individual.md ③-B' }] },
   r_of_shoot_good_jump: { good: '跳躍で物理的にGKを越えた = 基礎能力の勝利。', issue: '跳躍力の維持', body: '試合後半まで同じ跳躍を維持できるか。下半身パワーと筋持久力。', improve: '【練習】片脚スクワット5RM、ボックスジャンプ40-50cm、週2回。', approaches: [{ tag: '最大パワー', text: '片脚スクワット' }, { tag: '爆発力', text: 'ボックスジャンプ' }, { tag: '辞書', text: '21_physical_training.md' }] },
-  r_of_shoot_good_grip: { good: 'グリップが効いてリリース安定 = 日本高校の標準解が機能した。', issue: 'グリップ維持の習慣化', body: 'テーピング＋両面テープのグリップ法は、巻き直しタイミングと汗対策がカギ。ハーフタイムで必ず巻き直す。', improve: '【習慣】試合前に巻く／ハーフタイムで巻き直す／粘着落ちたら即追加。両面テープを常備', approaches: [{ tag: '巻き方', text: '指関節曲げて巻く・第一関節は避ける' }, { tag: '辞書', text: '01_basics.md グリップ節 / 31_equipment.md L⑩' }, { tag: '購入', text: '100円ショップ・スポーツ店で入手可能' }] },
   r_of_shoot_good_rebound: { good: 'リバウンドへの執着 = 諦めない姿勢。', issue: 'ルーズボール反応の再現性', body: 'リバウンドは確率ゲーム。常にゴール前にいる位置取りが価値。', improve: '【意識】シュート後も止まらず6m付近に詰める習慣。', approaches: [{ tag: '位置取り', text: 'シュート後の即詰め' }, { tag: '予測', text: 'GKの弾き方向を読む' }, { tag: '判断', text: 'コンタクトを恐れない' }] },
   // シュート10種の追加要因（01_basics.md準拠）
   r_of_shoot_good_loop: { good: 'ループシュートでGKを越えた = 高度な技術判断。', issue: 'GK前進を見極める判断', body: 'ループはGKが前に出てきた瞬間が打ち時。GK静止状態でループは効率悪い。前進判定→0.5秒以内に打つ。', improve: '【練習】GK役が前進する想定で、前進タイミングを見てループを放つ反復。10本×3。', approaches: [{ tag: '判断', text: 'GK前進の瞬間' }, { tag: '軌道', text: '頭上ギリギリ' }, { tag: '辞書', text: '01_basics.md / 05_gk_df.md GKタイプ' }] },
@@ -7222,6 +7219,38 @@ function App() {
     'game':     { role: 'player', category: 'game' },
     'physical': { role: 'player', category: 'condition' },
     'gk':       { role: 'player', category: 'skill' },
+  };
+
+  // 振り返り結果(result id) → 課題解決の特定症状への直接ジャンプ
+  // 新辞書(30/31/32)と連動する精密マッピング
+  const RESULT_TO_SYMPTOM = {
+    // DF反則細分 → ルールカテゴリの「ファウル分からない」症状
+    'r_df_foul_holding':  { role: 'player', category: 'rules', symptom: 'r1' },
+    'r_df_foul_pushing':  { role: 'player', category: 'rules', symptom: 'r1' },
+    'r_df_foul_hacking':  { role: 'player', category: 'rules', symptom: 'r1' },
+    'r_df_foul_tripping': { role: 'player', category: 'rules', symptom: 'r1' },
+    'r_df_foul_backhit':  { role: 'player', category: 'rules', symptom: 'r1' },
+    'r_df_foul_face':     { role: 'player', category: 'rules', symptom: 'r3' }, // カードシステム
+    // GK スローアウト → 試合当日マニュアル + アクセサリー
+    'r_gk_self_throw_slow':      { role: 'player', category: 'critical', symptom: 'cgk7' },
+    'r_gk_self_throw_schnelle':  { role: 'player', category: 'critical', symptom: 'cgk7' },
+    'r_gk_self_throw_miss':      { role: 'player', category: 'critical', symptom: 'cgk7' },
+    'r_gk_self_throw_noone':     { role: 'player', category: 'critical', symptom: 'cgk7' },
+    // OFシュート不調 → 批判的思考のシュート診断
+    'r_of_shoot_off':            { role: 'player', category: 'critical', symptom: 'cof2' },
+    'r_of_shoot_gk_anticip':     { role: 'player', category: 'critical', symptom: 'cgk1' },
+    'r_of_shoot_gk_position':    { role: 'player', category: 'critical', symptom: 'cgk1' },
+    // OFフェイント関連 → 批判的思考の「フェイント7種使えない」
+    'r_of_feint_df_read':        { role: 'player', category: 'critical', symptom: 'csb2' },
+    'r_of_feint_df_self':        { role: 'player', category: 'critical', symptom: 'csb2' },
+    'r_of_feint_gk_seen':        { role: 'player', category: 'critical', symptom: 'csb2' },
+    // OFピボット失敗 → 批判的思考の「ピボットコンビ失敗」
+    'r_of_post_pivot_blocked':   { role: 'player', category: 'critical', symptom: 'csb3' },
+    'r_of_post_pivot_choice':    { role: 'player', category: 'critical', symptom: 'cpv1' },
+    // DF コンタクト失敗 → 批判的思考のフェイント反応
+    'r_df_contact_lose':         { role: 'player', category: 'critical', symptom: 'cdf2' },
+    'r_df_contact_high':         { role: 'player', category: 'critical', symptom: 'cdf2' },
+    'r_df_contact_arm':          { role: 'player', category: 'rules', symptom: 'r1' },
   };
 
   // 履歴から再診断
@@ -8155,23 +8184,38 @@ function App() {
           )}
 
           {/* 課題解決モジュールへの連携（振り返りモードからカテゴリ直通） */}
-          <button
-            className="reset-btn"
-            style={{borderColor: 'var(--c-solve)', color: '#d8b4fe', marginBottom: 8}}
-            onClick={() => {
-              const mapping = MODE_TO_SOLVE[mode];
-              if (mapping) {
-                setSolveRole(mapping.role);
-                setSolveCategory(mapping.category);
-                setSolveSymptom(null);
-              } else {
-                handleSolveReset();
-              }
-              setPhase('solve');
-            }}
-          >
-            🎯 同じ悩みで「課題を解決する」を開く →
-          </button>
+          {/* 連動ボタン：結果ID に対応する症状があれば直接ジャンプ、なければカテゴリ */}
+          {(() => {
+            const symptomMap = RESULT_TO_SYMPTOM[resultId];
+            const modeMap = MODE_TO_SOLVE[mode];
+            const targetLabel = symptomMap
+              ? '🎯 この悩みに対応する症状を直接見る →'
+              : '🎯 同じ悩みで「課題を解決する」を開く →';
+            return (
+              <button
+                className="reset-btn"
+                style={{borderColor: 'var(--c-solve)', color: '#d8b4fe', marginBottom: 8}}
+                onClick={() => {
+                  if (symptomMap) {
+                    setSolveRole(symptomMap.role);
+                    setSolveCategory(symptomMap.category);
+                    const cat = SOLVE_DATA[symptomMap.role]?.categories?.find(c => c.id === symptomMap.category);
+                    const sym = cat?.symptoms?.find(s => s.id === symptomMap.symptom);
+                    if (sym) setSolveSymptom(sym);
+                  } else if (modeMap) {
+                    setSolveRole(modeMap.role);
+                    setSolveCategory(modeMap.category);
+                    setSolveSymptom(null);
+                  } else {
+                    handleSolveReset();
+                  }
+                  setPhase('solve');
+                }}
+              >
+                {targetLabel}
+              </button>
+            );
+          })()}
           <button className="reset-btn" onClick={handleReset}>
             もう一度振り返る
           </button>
