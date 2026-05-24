@@ -1037,7 +1037,7 @@
 const { useState, useEffect, useMemo } = React;
 
 // ─────────────────────────────────────────────
-// 辞書ファイル メタデータ（20ファイル）
+// 辞書ファイル メタデータ（33ファイル）
 // ─────────────────────────────────────────────
 const DICT_FILES = [
   { id: '00', name: '00_janken_map.md',                    title: 'じゃんけんマップ（全カテゴリ横断統合）',     icon: '🗺️', tags: ['横断', '索引', 'じゃんけん', '原則'] },
@@ -6742,13 +6742,13 @@ const HUB_MODULES = [
   {
     id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
     title: '振り返る',
-    desc: '試合・練習のプレーを6モードで自己問答 → 良かった点／課題／改善案',
+    desc: '試合・練習のプレーを13モードで自己問答 → 良かった点／課題／改善案',
     enabled: true,
   },
   {
     id: 'dictionary', cls: 'dict', icon: '📖', target: '選手・指導者',
     title: '辞書を読む',
-    desc: '20ファイルの戦術辞書を横断検索・タグでフィルタ',
+    desc: '33ファイル386セクションの戦術辞書を横断検索・タグでフィルタ',
     enabled: true,
   },
   {
@@ -6784,6 +6784,7 @@ function App() {
   const [dictError, setDictError] = useState(null);
   const [dictQuery, setDictQuery] = useState('');
   const [dictActiveTag, setDictActiveTag] = useState(null);
+  const [dictActiveFileId, setDictActiveFileId] = useState(null);
   const [dictDetail, setDictDetail] = useState(null); // 選択中のセクション
   const [dictTagsExpanded, setDictTagsExpanded] = useState(false); // タグ展開
 
@@ -6815,8 +6816,8 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'ハンドボール戦術ハブへようこそ', desc: '選手と指導者のための戦術ガイドアプリ。\\n4つのモジュールで、辞書を実戦に変えます。' },
-    { icon: '🤾',    title: '1. 振り返る', desc: '試合・練習のプレーを6モードで自己問答。\\n良かった点／課題／改善案をその場で言語化。\\n（主に選手）' },
-    { icon: '📖',   title: '2. 辞書を読む', desc: '20本の戦術辞書を横断検索＋タグでフィルタ。\\n用語集とお気に入り機能つき。\\n（選手・指導者）' },
+    { icon: '🤾',    title: '1. 振り返る', desc: '試合・練習のプレーを13モードで自己問答。\\n良かった点／課題／改善案をその場で言語化。\\n（主に選手）' },
+    { icon: '📖',   title: '2. 辞書を読む', desc: '33本の戦術辞書（386セクション）を横断検索＋タグでフィルタ。\\nお気に入り機能つき。\\n（選手・指導者）' },
     { icon: '🎯',   title: '3. 課題を解決する', desc: '「○○ができない」を3ステップで選ぶ。\\n辞書からのアドバイス＋具体アクションが出ます。\\n（選手・指導者）' },
     { icon: '📋',   title: '4. 練習を組む', desc: 'テーマ×レベル×時間で練習プランを生成。\\nエコロジカル制約つき、印刷・コピー可。\\n（主に指導者）' },
     { icon: '✨',   title: '準備完了！', desc: '困ったら右下の 📘 用語 をタップ。\\nではどうぞ。' },
@@ -7042,18 +7043,37 @@ function App() {
     })();
   }, [phase, dictLoaded, dictError]);
 
-  // 検索＋フィルタ結果
+  // 検索＋フィルタ結果（ランキング付き：完全一致 > 前方一致 > 部分一致 > body一致 / 同位は新ファイル優先）
   const filteredSections = useMemo(() => {
     if (!dictLoaded) return [];
     const q = dictQuery.trim().toLowerCase();
-    return dictSections.filter(s => {
+    const filtered = dictSections.filter(s => {
+      if (dictActiveFileId && s.fileId !== dictActiveFileId) return false;
       if (dictActiveTag && !s.fileTags.includes(dictActiveTag)) return false;
       if (!q) return true;
       return s.title.toLowerCase().includes(q) ||
              s.body.toLowerCase().includes(q) ||
              s.fileTitle.toLowerCase().includes(q);
     });
-  }, [dictSections, dictQuery, dictActiveTag, dictLoaded]);
+    if (!q) return filtered;
+    // スコア付け：title完全一致=4 / title前方一致=3 / title部分一致=2 / body一致=1
+    const score = (s) => {
+      const t = s.title.toLowerCase();
+      if (t === q) return 4;
+      if (t.startsWith(q)) return 3;
+      if (t.includes(q)) return 2;
+      if (s.body.toLowerCase().includes(q)) return 1;
+      return 0;
+    };
+    return [...filtered].sort((a, b) => {
+      const sa = score(a), sb = score(b);
+      if (sa !== sb) return sb - sa;
+      // 同スコアなら新ファイル(数字大)優先 — 30/31/32 を上位へ
+      const fa = parseInt(a.fileId, 10) || 0;
+      const fb = parseInt(b.fileId, 10) || 0;
+      return fb - fa;
+    });
+  }, [dictSections, dictQuery, dictActiveTag, dictActiveFileId, dictLoaded]);
 
   // マークダウン記法を抜粋用にクリーンアップ（ハイフン・パイプは保持）
   const cleanExcerpt = (raw) => {
@@ -7344,7 +7364,7 @@ function App() {
           )}
           {phase === 'solve' && (
             <div className="header-mode" style={{ color: 'var(--c-solve)', borderColor: 'color-mix(in oklab, var(--c-solve) 40%, transparent)' }}>
-              診断
+              課題解決
             </div>
           )}
           {phase === 'plan' && (
@@ -7366,6 +7386,22 @@ function App() {
             <div className="hub-title">「わからない」を解決する</div>
           </div>
           <div className="hub-cards">
+            {/* 続きから（前回の作業を再開） */}
+            {resumeData && (
+              <button className="hub-card resume" onClick={handleResume}>
+                <div className="hub-card-icon">↩️</div>
+                <div className="hub-card-body">
+                  <div className="hub-card-target">前回の続き</div>
+                  <div className="hub-card-title">続きから</div>
+                  <div className="hub-card-desc">
+                    {resumeData.kind === 'solve' && `課題解決：${resumeData.payload?.symptomTitle || resumeData.payload?.symptom || ''}`}
+                    {resumeData.kind === 'dict' && `辞書：${resumeData.payload?.sectionTitle || resumeData.payload?.sectionId || ''}`}
+                    {resumeData.kind === 'plan' && `練習プラン：${(resumeData.payload?.themes || []).join('・')}`}
+                  </div>
+                </div>
+                <div className="hub-card-arrow">›</div>
+              </button>
+            )}
             {HUB_MODULES.map(mod => (
               <button
                 key={mod.id}
@@ -7439,6 +7475,27 @@ function App() {
             </div>
           </div>
           <div className="dict-tags-wrap">
+            {/* ファイル絞り込み（L1 対応：辞書ファイル単位フィルタ） */}
+            <select
+              className="dict-file-filter"
+              value={dictActiveFileId || ''}
+              onChange={e => setDictActiveFileId(e.target.value || null)}
+              style={{
+                background: 'rgba(34,211,238,0.08)',
+                border: '1px solid rgba(34,211,238,0.3)',
+                color: 'var(--fg)',
+                padding: '6px 10px',
+                borderRadius: '6px',
+                fontSize: 'var(--fs-sm)',
+                marginBottom: '8px',
+                width: '100%',
+              }}
+            >
+              <option value="">📁 ファイル絞り込み：すべて表示</option>
+              {DICT_FILES.map(f => (
+                <option key={f.id} value={f.id}>{f.icon} {f.id} / {f.title}</option>
+              ))}
+            </select>
             <div className={`dict-tags ${dictTagsExpanded ? 'expanded' : ''}`}>
               <button
                 className={`dict-tag ${dictActiveTag === null ? 'active' : ''}`}
@@ -7702,7 +7759,7 @@ function App() {
           <div className="solve-screen">
             <button className="dict-back" onClick={() => setSolveSymptom(null)}>← 戻る（症状を選び直す）</button>
             <div className="solve-bar">
-              <span className="solve-step-pill">アドバイス</span>
+              <span className="solve-step-pill">✓ 完了（アドバイス）</span>
               <span className="solve-step-label">辞書からのヒント</span>
             </div>
             <div className="step-dots">
@@ -7995,10 +8052,8 @@ function App() {
         </div>
       )}
 
-      {/* 用語集FAB（hub以外で表示） */}
-      {phase !== 'hub' && (
-        <button className="help-fab" onClick={() => setGlossaryOpen(true)} title="用語集">📘 用語</button>
-      )}
+      {/* 用語集FAB（全画面で表示：オンボーディング案内と整合） */}
+      <button className="help-fab" onClick={() => setGlossaryOpen(true)} title="用語集">📘 用語</button>
 
       {/* 用語集モーダル */}
       {glossaryOpen && (
@@ -8257,7 +8312,7 @@ function App() {
             </button>
             <button className={`bn-item ${isSolve ? 'active-solve' : ''}`} onClick={() => go('solve')}>
               <span className="bn-icon">🎯</span>
-              <span className="bn-label">診断</span>
+              <span className="bn-label">課題解決</span>
               <span className="bn-dot"/>
             </button>
             <button className={`bn-item ${isPlan ? 'active-plan' : ''}`} onClick={() => go('plan')}>
