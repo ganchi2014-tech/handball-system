@@ -7618,6 +7618,16 @@ function App() {
           setTimeout(() => setSolveSymptom(null), 0);
           return <div className="solve-screen"><div className="solve-loading">読み込み中…</div></div>;
         }
+        // 整合性破れ：solveCategory があるのに catData が無い（旧データ等）→state リセット
+        if (solveCategory && roleData && !catData) {
+          setTimeout(() => { setSolveCategory(null); setSolveSymptom(null); }, 0);
+          return <div className="solve-screen"><div className="solve-loading">読み込み中…</div></div>;
+        }
+        // 整合性破れ：solveRole があるのに roleData が無い→state リセット
+        if (solveRole && !roleData) {
+          setTimeout(() => { setSolveRole(null); setSolveCategory(null); setSolveSymptom(null); }, 0);
+          return <div className="solve-screen"><div className="solve-loading">読み込み中…</div></div>;
+        }
 
         // ステップ1：役割選択
         if (!solveRole) {
