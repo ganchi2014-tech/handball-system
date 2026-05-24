@@ -3730,6 +3730,7 @@ const QUESTIONS = {
       { label: 'バックハンドフェイク／角度変化', next: 'r_of_shoot_good_fake' },
       { label: 'ジャンプの高さでGKを越えた', next: 'r_of_shoot_good_jump' },
       { label: 'ルーズボール／リバウンドを詰めた', next: 'r_of_shoot_good_rebound' },
+      { label: 'グリップが効いた（テーピング＋両面テープ）', next: 'r_of_shoot_good_grip' },
       { label: '🎯 シュートの種類で振り返る（10種から選択）', next: 'qof_shoot_type' },
     ],
   },
@@ -4165,9 +4166,22 @@ const QUESTIONS = {
     choices: [
       { label: '体当たりで止められた（成功）', next: 'r_df_contact_win' },
       { label: '押し負けた（体重・パワー差）', next: 'r_df_contact_lose' },
-      { label: 'ファウルを取られた', next: 'r_df_contact_foul' },
+      { label: 'ファウルを取られた（どの反則か）', next: 'qd_contact_foul_type' },
       { label: '体勢が高くて崩された', next: 'r_df_contact_high' },
       { label: '腕の使い方で警告／処分された', next: 'r_df_contact_arm' },
+    ],
+  },
+  // 反則の種類で細分（30_rules_and_referee.md準拠）
+  qd_contact_foul_type: {
+    label: 'Q3', mode: 'df',
+    text: 'どの反則を取られた？',
+    choices: [
+      { label: 'ホールディング（OFを抱える／腕で抑える）', next: 'r_df_foul_holding' },
+      { label: 'プッシング（体で押し倒す）→ 2分退場対象', next: 'r_df_foul_pushing' },
+      { label: 'ハッキング（OFの腕・手を叩く）→ 2分退場対象', next: 'r_df_foul_hacking' },
+      { label: 'トリッピング（足払い）→ 2分／危険なら赤', next: 'r_df_foul_tripping' },
+      { label: '背後からの接触 → 2分退場', next: 'r_df_foul_backhit' },
+      { label: '顔面・首への接触 → 即時2分 or 赤', next: 'r_df_foul_face' },
     ],
   },
   // ⑦ 速攻戻り・トランジション
@@ -4464,8 +4478,10 @@ const QUESTIONS = {
     text: 'スローインから速攻はつながった？',
     choices: [
       { label: 'つながった（フリー走者にロングorミドル）', next: 'r_gk_self_throw_good' },
+      { label: 'シュネレ・ミッテ（即時センター投擲）で速攻決まった', next: 'r_gk_self_throw_schnelle' },
       { label: '止められた／パスミス', next: 'r_gk_self_throw_miss' },
       { label: 'スプリント走者がいなくて出せなかった', next: 'r_gk_self_throw_noone' },
+      { label: '判断遅れで速攻チャンスを逃した', next: 'r_gk_self_throw_slow' },
     ],
   },
 
@@ -5542,6 +5558,29 @@ const GK_SELF_RESULTS = {
       { tag: 'ポゼッション切替', text: '速攻断念したら確実にセットOFへ移行（無理しない）' },
     ],
   },
+  // スローアウト関連（32_match_day.md / 30_rules_and_referee.md 準拠）
+  r_gk_self_throw_schnelle: {
+    good: 'シュネレ・ミッテ（即時センター投擲）で速攻＝最高効率の得点機会を作れた。',
+    issue: 'シュネレ・ミッテの発動条件を体系化',
+    body: 'シュネレ・ミッテは「センターから即座にスローオフ」する戦術。GKがボールを取った瞬間、ウィングが既にハーフを越えていれば即発動。タイミング窓は1-2秒',
+    improve: '【習慣】セーブと同時にコートをスキャン→走者がいれば0.5秒以内に投擲。試合前にウィングと「シュネレ合図」を確認',
+    approaches: [
+      { tag: '事前合図', text: 'ウィングと試合前に「シュネレ・ミッテで行く合図」を共有' },
+      { tag: '視野管理', text: 'セーブの瞬間からコート全体をスキャン' },
+      { tag: '辞書', text: '30_rules_and_referee.md スローオフ / 05_gk_df.md GKスローアウト' },
+    ],
+  },
+  r_gk_self_throw_slow: {
+    good: '判断遅れを自覚 = 改善の出発点。',
+    issue: 'GK判断速度＝チーム速攻力に直結',
+    body: '速攻チャンスを逃した = 「セーブ後の1秒の判断遅れ」が原因。GKがコートをスキャンする習慣化と、シュネレ・ミッテ発動条件の明確化が必要',
+    improve: '【練習】GKは試合中常にスキャン：シュート前から「次の速攻」を想定。セーブ直後の0.3秒スキャンを習慣化',
+    approaches: [
+      { tag: '事前準備', text: 'シュートが来る前から走者の位置を把握' },
+      { tag: '0.3秒スキャン', text: 'セーブ直後にコートをスキャン→走者がいれば即投擲' },
+      { tag: '辞書', text: '32_match_day.md GK視点 / 05_gk_df.md スローアウト' },
+    ],
+  },
   r_gk_self_voice_good: {
     good: '声でDFを動かせた。GKの司令塔機能が活きた。',
     issue: '次の課題：声の質と量のバランス',
@@ -6401,6 +6440,7 @@ const OF_EXTRA_RESULTS = {
   r_of_shoot_good_early: { good: '早打ちで先読み型GKの裏をかいた = 戦術的勝利。', issue: '早打ちは最高点と組み合わせて使い分け', body: '早打ちばかりだとGKが早打ち対応に変わる。最高点ジャンプも混ぜて読みを撹乱。', improve: '【練習】1ステップ早打ち＋2ステップ最高点を交互に各10本。', approaches: [{ tag: '使い分け', text: '早打ち⇔最高点の切替' }, { tag: 'パワー', text: '早打ちのパワー強化＝MB投擲' }, { tag: '辞書', text: '01_basics.md / 19_drills.md' }] },
   r_of_shoot_good_fake: { good: 'フェイクでGKを撹乱した = 高度な技術。', issue: 'バックハンドフェイクの精度向上', body: '手首を逆方向に返す技術は難度高い。怪我なく繰り返す練習量が必要。', improve: '【練習】壁打ちで手首感覚→ゴール反復。手首・前腕のストレッチ必須。', approaches: [{ tag: '技術', text: '手首の柔軟性と強さ' }, { tag: '怪我予防', text: '前腕ストレッチ' }, { tag: '辞書', text: '02_individual.md ③-B' }] },
   r_of_shoot_good_jump: { good: '跳躍で物理的にGKを越えた = 基礎能力の勝利。', issue: '跳躍力の維持', body: '試合後半まで同じ跳躍を維持できるか。下半身パワーと筋持久力。', improve: '【練習】片脚スクワット5RM、ボックスジャンプ40-50cm、週2回。', approaches: [{ tag: '最大パワー', text: '片脚スクワット' }, { tag: '爆発力', text: 'ボックスジャンプ' }, { tag: '辞書', text: '21_physical_training.md' }] },
+  r_of_shoot_good_grip: { good: 'グリップが効いてリリース安定 = 日本高校の標準解が機能した。', issue: 'グリップ維持の習慣化', body: 'テーピング＋両面テープのグリップ法は、巻き直しタイミングと汗対策がカギ。ハーフタイムで必ず巻き直す。', improve: '【習慣】試合前に巻く／ハーフタイムで巻き直す／粘着落ちたら即追加。両面テープを常備', approaches: [{ tag: '巻き方', text: '指関節曲げて巻く・第一関節は避ける' }, { tag: '辞書', text: '01_basics.md グリップ節 / 31_equipment.md L⑩' }, { tag: '購入', text: '100円ショップ・スポーツ店で入手可能' }] },
   r_of_shoot_good_rebound: { good: 'リバウンドへの執着 = 諦めない姿勢。', issue: 'ルーズボール反応の再現性', body: 'リバウンドは確率ゲーム。常にゴール前にいる位置取りが価値。', improve: '【意識】シュート後も止まらず6m付近に詰める習慣。', approaches: [{ tag: '位置取り', text: 'シュート後の即詰め' }, { tag: '予測', text: 'GKの弾き方向を読む' }, { tag: '判断', text: 'コンタクトを恐れない' }] },
   // シュート10種の追加要因（01_basics.md準拠）
   r_of_shoot_good_loop: { good: 'ループシュートでGKを越えた = 高度な技術判断。', issue: 'GK前進を見極める判断', body: 'ループはGKが前に出てきた瞬間が打ち時。GK静止状態でループは効率悪い。前進判定→0.5秒以内に打つ。', improve: '【練習】GK役が前進する想定で、前進タイミングを見てループを放つ反復。10本×3。', approaches: [{ tag: '判断', text: 'GK前進の瞬間' }, { tag: '軌道', text: '頭上ギリギリ' }, { tag: '辞書', text: '01_basics.md / 05_gk_df.md GKタイプ' }] },
@@ -6567,6 +6607,13 @@ const DF_EXTRA_RESULTS = {
   r_df_contact_foul: { good: '戦った姿勢は正しい。', issue: 'ファウルにならない接触範囲', body: 'IHFルール第8条。①体当たりOK、②腕で抑え込みNG、③背後からの接触NG。範囲を理解。', improve: '【ルール確認】IHFルール第8条を読む。審判の傾向も試合中に把握。', approaches: [{ tag: 'ルール', text: 'IHF第8条' }, { tag: '審判観察', text: '試合中の基準把握' }, { tag: '辞書', text: '08_game_management.md ファウル戦略' }] },
   r_df_contact_high: { good: '体勢の高さを自覚。', issue: '低重心の維持時間', body: '高い体勢は楽だが崩されやすい。低姿勢を60分維持する下半身持久力が必要。', improve: '【練習】DF姿勢で60秒キープ×5セット。試合時間まで延ばす。', approaches: [{ tag: '持久', text: '低姿勢キープ' }, { tag: '下半身', text: 'スクワット系' }, { tag: '辞書', text: '21_physical_training.md' }] },
   r_df_contact_arm: { good: '腕の使い方を意識できた。', issue: '腕の合法範囲', body: '腕で押す・抱える・引き戻すはNG。腕は「壁」として使う。OFが進入する経路を物理的に塞ぐが、押しはしない。', improve: '【練習】腕を「壁」として固定する反復。押す動作と区別。', approaches: [{ tag: '壁として使う', text: '押さない・引かない' }, { tag: '辞書', text: '08_game_management.md ファウル戦略' }, { tag: 'ルール', text: 'IHF第8条' }] },
+  // DF反則細分（30_rules_and_referee.md準拠）
+  r_df_foul_holding: { good: 'ホールディング取られた = フェーズ的には軽度のファウル（フリースロー）。', issue: '抱え込み動作の癖', body: 'OFを腕で抱える／抑え込む動作。連続するとイエロー累積→2分退場。腕は「壁」として使うのが原則。', improve: '【練習】腕を体側に固定するDF姿勢の反復。OFが体当たりしてきても腕は出さない', approaches: [{ tag: '腕の位置', text: '体側に固定／壁として使う' }, { tag: 'カード累積', text: 'チーム合計3枚で警告／同一選手3枚で2分' }, { tag: '辞書', text: '30_rules_and_referee.md 反則早見表' }] },
+  r_df_foul_pushing: { good: 'プッシング取られた = 2分退場対象の重い反則と認識。', issue: '押し動作の制御', body: '体で押し倒すのは2分退場対象。低重心で「壁」になるDF姿勢に変える必要あり。試合中に同一動作の繰り返しは累積で失格リスク', improve: '【練習】押すのではなく「先取り位置」を取る練習。位置取り勝負へ', approaches: [{ tag: '位置取り', text: '押すより先に位置を取る' }, { tag: '低重心', text: '前傾＋膝曲げ' }, { tag: '辞書', text: '30_rules_and_referee.md DF側反則' }] },
+  r_df_foul_hacking: { good: 'ハッキング取られた = 2分退場対象。腕を叩いた動作は明確な反則。', issue: '手の出し方の修正', body: 'OFの腕や手を叩くのは2分退場対象。腕は「壁」として動かさず、OFのドライブを止める', improve: '【練習】腕の振り上げ動作を完全に止める。手を出すなら肘から下を固定', approaches: [{ tag: '手は固定', text: '叩かない／払わない' }, { tag: 'タイミング', text: 'OFの肘が見えた瞬間に手を出す（叩くのではなく止める）' }, { tag: '辞書', text: '30_rules_and_referee.md DF側反則' }] },
+  r_df_foul_tripping: { good: 'トリッピング自覚 = 危険性を理解した。', issue: '足払い動作は赤カード対象の場合あり', body: '足を引っ掛ける動作は2分退場対象、危険な場合は赤（失格）。OFの着地時に足が入ると重大事故', improve: '【練習】足の位置を固定して上半身でDF。足を出すDFは即やめる', approaches: [{ tag: '足は動かさない', text: '上半身でDF' }, { tag: '危険度', text: '怪我リスク高い→赤カード対象' }, { tag: '辞書', text: '30_rules_and_referee.md 退場エスカレーション' }] },
+  r_df_foul_backhit: { good: '背後接触取られた = 見えない位置からの接触は2分退場対象と認識。', issue: 'OFの背後に回らない位置取り', body: 'OFの背後からの接触は2分退場。常にOFを視界内に置く位置取りが必要', improve: '【練習】DF姿勢で常にOFを視野内にキープ。背後を取られそうになったらカバーへ', approaches: [{ tag: '視野管理', text: 'OFを常に視界内' }, { tag: '位置取り', text: '背後を取られない' }, { tag: '辞書', text: '30_rules_and_referee.md DF側反則' }] },
+  r_df_foul_face: { good: '顔面接触自覚 = 最も重い反則と認識した。', issue: '顔面接触は即時2分 or 赤、選手生命にも関わる', body: '顔・首への接触は怪我リスク最高、即時2分退場 or 赤カード（失格）。意図的でなくても処分される', improve: '【練習】手・腕の高さを胸より下に固定するDF姿勢。ジャンプシュートに対しても顔は狙わない', approaches: [{ tag: '手の高さ', text: '胸より下に固定' }, { tag: '怪我リスク', text: '相手選手の安全最優先' }, { tag: '辞書', text: '30_rules_and_referee.md 退場エスカレーション' }] },
   // ⑦ 速攻戻り
   r_df_transit_good: { good: '戻りが間に合った = トランジション意識あり。', issue: 'この戻りスピードを維持', body: '戻りが間に合うのは①即時判断、②全力疾走、③走力の3要素。試合後半でも維持できるスタミナ作り。', improve: '【練習】20m全力スプリント×10本（30秒レスト）週2。後半も維持。', approaches: [{ tag: '即時判断', text: 'OF→DF切替0.5秒' }, { tag: 'スタミナ', text: 'RSA' }, { tag: '辞書', text: '21_physical_training.md' }] },
   r_df_transit_slow: { good: '戻り遅れの認識。', issue: 'OF→DF判断スピード', body: '戻り遅れの主因は判断の遅さ。「シュートが外れた／パスミスした」瞬間にDFへ切替。', improve: '【意識】シュート結果が出る前にDF切替の構え。先読みDF。', approaches: [{ tag: '先読み', text: 'シュート結果前に判断' }, { tag: '辞書', text: '04_cognition.md 先読み' }, { tag: 'スプリント', text: '21_physical_training.md' }] },
@@ -6623,6 +6670,7 @@ const AXIS_MAP = {
   qd_formation: '① 自分の立場', qd_individual: '④ 自分の対応',
   qd_cover_top: '③ リアクション理解', qd_voice_top: '④ 自分の対応',
   qd_contact_top: '④ 自分の対応', qd_transit_top: '④ 自分の対応',
+  qd_contact_foul_type: '③ リアクション理解',
   // スキル
   qs1: '④ 自分の対応', qs_pass: '④ 自分の対応', qs_shoot: '④ 自分の対応', qs_121: '④ 自分の対応',
   // 試合状況
