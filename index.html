@@ -8867,42 +8867,30 @@ function App() {
               </div>
               <div className="solve-title">どれが一番近い？</div>
               <div className="solve-sub">{catData.icon} {catData.title}</div>
-              {catData.id === 'critical' && (() => {
-                const POS_OPTS = [
-                  { label: 'すべて', value: null },
-                  { label: 'SB', value: 'SB' },
-                  { label: 'WB', value: 'WB' },
-                  { label: 'CB', value: 'CB' },
-                  { label: 'PV', value: 'PV' },
-                  { label: 'GK', value: 'GK' },
-                  { label: 'DF', value: 'DF' },
-                ];
-                return (
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0 4px' }}>
-                    {POS_OPTS.map(opt => {
-                      const active = criticalPosFilter === opt.value;
-                      return (
-                        <button key={String(opt.value)} onClick={() => setCriticalPosFilter(opt.value)}
-                          style={{
-                            padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, cursor: 'pointer',
-                            border: active ? '1.5px solid #818cf8' : '1px solid var(--border)',
-                            background: active ? 'rgba(99,102,241,0.18)' : 'var(--surface-1)',
-                            color: active ? '#c7d2fe' : 'var(--tx-muted)',
-                            transition: 'all 0.15s',
-                          }}>
-                          {opt.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
+              {catData.id === 'critical' && (
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0 4px' }}>
+                  {['すべて','SB','WB','CB','PV','GK','DF'].map(lbl => {
+                    const val = lbl === 'すべて' ? null : lbl;
+                    const active = criticalPosFilter === val;
+                    return (
+                      <button key={lbl} onClick={() => setCriticalPosFilter(val)}
+                        style={{
+                          padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, cursor: 'pointer',
+                          border: active ? '1.5px solid #818cf8' : '1px solid var(--border)',
+                          background: active ? 'rgba(99,102,241,0.18)' : 'var(--surface-1)',
+                          color: active ? '#c7d2fe' : 'var(--tx-muted)',
+                          transition: 'all 0.15s',
+                        }}>
+                        {lbl}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
               <div className="solve-sym-list">
-                {(() => {
-                  const visible = (catData.id === 'critical' && criticalPosFilter)
-                    ? catData.symptoms.filter(s => s.title.startsWith(`[${criticalPosFilter}]`))
-                    : catData.symptoms;
-                  return visible.map(s => (
+                {catData.symptoms
+                  .filter(s => !criticalPosFilter || s.title.startsWith('[' + criticalPosFilter + ']'))
+                  .map(s => (
                     <button key={s.id} className="solve-sym-btn" onClick={() => {
                       setSolveSymptom(s.id);
                       addSolveHistory(solveRole, solveCategory, s.id);
@@ -8911,8 +8899,8 @@ function App() {
                       <div className="solve-sym-title">{s.title}</div>
                       <div className="solve-sym-desc">{s.desc}</div>
                     </button>
-                  ));
-                })()}
+                  ))
+                }
               </div>
 
               {/* 該当なしフォールバック */}
