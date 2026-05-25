@@ -1147,6 +1147,26 @@
 </head>
 <body>
 <div id="root"></div>
+<div id="err-display" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#111;color:#f87171;padding:24px;font-family:monospace;font-size:13px;overflow:auto;z-index:9999;white-space:pre-wrap"></div>
+<script>
+window.__errShown = false;
+function showErr(msg) {
+  if (window.__errShown) return;
+  window.__errShown = true;
+  var d = document.getElementById('err-display');
+  d.style.display = 'block';
+  d.textContent = 'ERROR:\n' + msg;
+}
+window.onerror = function(msg, src, line, col, err) {
+  showErr(msg + '\n' + (err ? err.stack : '') + '\nline:' + line + ' col:' + col);
+};
+var _ce = console.error.bind(console);
+console.error = function() {
+  var msg = Array.from(arguments).join(' ');
+  showErr(msg);
+  _ce.apply(console, arguments);
+};
+</script>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
 
