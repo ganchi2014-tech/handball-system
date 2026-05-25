@@ -556,6 +556,33 @@
     .dict-empty { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 40px 20px; line-height: 1.7; }
     .dict-loading { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 60px 20px; }
 
+    /* ── 辞書ファイルカードグリッド（デフォルトビュー） ── */
+    .dict-file-grid { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+    .dict-file-card {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 16px; cursor: pointer; transition: all var(--t-fast);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .dict-file-card:active { background: rgba(6,182,212,0.07); border-color: rgba(34,211,238,0.4); transform: scale(0.99); }
+    .dict-file-card-icon { font-size: 26px; flex-shrink: 0; width: 36px; text-align: center; }
+    .dict-file-card-body { flex: 1; min-width: 0; }
+    .dict-file-card-title { font-size: var(--fs-sm); font-weight: 700; color: var(--tx-primary); line-height: 1.4; }
+    .dict-file-card-meta { font-size: 10px; color: var(--c-dict); font-weight: 700; margin-top: 3px; letter-spacing: 0.04em; }
+    .dict-file-card-arrow { font-size: 22px; color: var(--tx-dim); flex-shrink: 0; }
+    .dict-file-header-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px;
+    }
+    .dict-file-header-icon { font-size: 22px; }
+    .dict-file-header-title { font-size: var(--fs-sm); font-weight: 700; color: var(--c-dict); flex: 1; min-width: 0; }
+    .dict-file-back-btn {
+      background: rgba(34,211,238,0.10); border: 1px solid rgba(34,211,238,0.3);
+      color: #67e8f9; border-radius: 6px; padding: 5px 10px; font-size: 11px;
+      font-family: inherit; cursor: pointer; flex-shrink: 0; white-space: nowrap;
+    }
+    .dict-file-back-btn:active { background: rgba(34,211,238,0.22); }
+
     /* ── 辞書詳細ビュー ── */
     .dict-detail-header {
       padding: 12px 16px 8px;
@@ -7713,7 +7740,6 @@ function App() {
                 value={dictQuery}
                 onChange={e => setDictQuery(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
-                autoFocus
               />
             </div>
           </div>
@@ -7782,36 +7808,72 @@ function App() {
                     </div>
                   );
                 })()}
-                <div className="dict-meta-line">
-                  {filteredSections.length} 件のセクション
-                  {dictQuery && ` ／ 検索: "${dictQuery}"`}
-                  {dictActiveTag && ` ／ タグ: ${dictActiveTag}`}
-                </div>
-                {filteredSections.length === 0 && (
-                  <div className="dict-empty">
-                    該当するセクションがありません。<br />キーワードやタグを変えてみてください。
-                    {(dictQuery || dictActiveTag || dictActiveFileId) && (
-                      <div style={{marginTop: 12}}>
-                        <button
-                          className="dict-back"
-                          style={{background: 'rgba(34,211,238,0.12)', border: '1px solid rgba(34,211,238,0.4)', color: '#67e8f9', padding: '8px 16px', borderRadius: 8}}
-                          onClick={() => { setDictQuery(''); setDictActiveTag(null); setDictActiveFileId(null); }}
-                        >× 検索・絞り込みを全部クリア</button>
-                      </div>
-                    )}
+
+                {/* デフォルトビュー：ファイルカード一覧（検索・フィルターなし時） */}
+                {!dictQuery && !dictActiveFileId && !dictActiveTag && (
+                  <div className="dict-file-grid">
+                    {DICT_FILES.map(f => {
+                      const count = dictSections.filter(s => s.fileId === f.id && !isStubSection(s)).length;
+                      return (
+                        <div key={f.id} className="dict-file-card" onClick={() => setDictActiveFileId(f.id)}>
+                          <div className="dict-file-card-icon">{f.icon}</div>
+                          <div className="dict-file-card-body">
+                            <div className="dict-file-card-title">{f.title}</div>
+                            <div className="dict-file-card-meta">{f.id} · {count} セクション</div>
+                          </div>
+                          <div className="dict-file-card-arrow">›</div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
-                {filteredSections.map(s => {
-                  const excerpt = getExcerpt(s, dictQuery);
-                  const highlighted = highlightExcerpt(excerpt, dictQuery);
-                  return (
-                    <div key={s.id} className="dict-result-card" onClick={() => handleDictSectionOpen(s)}>
-                      <div className="dict-result-filename">{s.fileIcon} {s.fileTitle}（{s.fileId}）</div>
-                      <div className="dict-result-section">{s.title}</div>
-                      <div className="dict-result-excerpt" dangerouslySetInnerHTML={{__html: highlighted}} />
+
+                {/* 検索・フィルター結果ビュー */}
+                {(dictQuery || dictActiveFileId || dictActiveTag) && (
+                  <>
+                    {/* ファイル選択中のヘッダーバー */}
+                    {dictActiveFileId && !dictQuery && (() => {
+                      const f = DICT_FILES.find(f => f.id === dictActiveFileId);
+                      return f ? (
+                        <div className="dict-file-header-bar">
+                          <span className="dict-file-header-icon">{f.icon}</span>
+                          <span className="dict-file-header-title">{f.title}</span>
+                          <button className="dict-file-back-btn" onClick={() => setDictActiveFileId(null)}>← ファイル一覧</button>
+                        </div>
+                      ) : null;
+                    })()}
+                    <div className="dict-meta-line">
+                      {filteredSections.length} 件のセクション
+                      {dictQuery && ` ／ 検索: "${dictQuery}"`}
+                      {dictActiveTag && ` ／ タグ: ${dictActiveTag}`}
                     </div>
-                  );
-                })}
+                    {filteredSections.length === 0 && (
+                      <div className="dict-empty">
+                        該当するセクションがありません。<br />キーワードやタグを変えてみてください。
+                        {(dictQuery || dictActiveTag || dictActiveFileId) && (
+                          <div style={{marginTop: 12}}>
+                            <button
+                              className="dict-back"
+                              style={{background: 'rgba(34,211,238,0.12)', border: '1px solid rgba(34,211,238,0.4)', color: '#67e8f9', padding: '8px 16px', borderRadius: 8}}
+                              onClick={() => { setDictQuery(''); setDictActiveTag(null); setDictActiveFileId(null); }}
+                            >× 検索・絞り込みを全部クリア</button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {filteredSections.map(s => {
+                      const excerpt = getExcerpt(s, dictQuery);
+                      const highlighted = highlightExcerpt(excerpt, dictQuery);
+                      return (
+                        <div key={s.id} className="dict-result-card" onClick={() => handleDictSectionOpen(s)}>
+                          <div className="dict-result-filename">{s.fileIcon} {s.fileTitle}（{s.fileId}）</div>
+                          <div className="dict-result-section">{s.title}</div>
+                          <div className="dict-result-excerpt" dangerouslySetInnerHTML={{__html: highlighted}} />
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
               </>
             )}
           </div>
