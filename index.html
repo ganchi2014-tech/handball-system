@@ -8263,7 +8263,7 @@ function App() {
   };
 
   const handleSolveReset = () => {
-    setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
+    setSolveRole(null); setSolveCategory(null); setSolveSymptom(null); setCriticalPosFilter(null);
   };
 
   // 振り返りモード → 課題解決カテゴリへの直通マッピング
@@ -8889,7 +8889,7 @@ function App() {
               )}
               <div className="solve-sym-list">
                 {catData.symptoms
-                  .filter(s => !criticalPosFilter || s.title.startsWith('[' + criticalPosFilter + ']'))
+                  .filter(s => catData.id !== 'critical' || !criticalPosFilter || s.title.startsWith('[' + criticalPosFilter + ']'))
                   .map(s => (
                     <button key={s.id} className="solve-sym-btn" onClick={() => {
                       setSolveSymptom(s.id);
