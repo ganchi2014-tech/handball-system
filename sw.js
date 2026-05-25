@@ -39,9 +39,10 @@ self.addEventListener('fetch', (event) => {
       })
     );
   } else {
-    // HTML/JS/その他：network-first（常に最新を取得）
+    // HTML/JS/その他：network-first + no-cache（ブラウザHTTPキャッシュも無視して常に最新を取得）
+    const noCache = new Request(event.request, { cache: 'no-store' });
     event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
+      fetch(noCache).catch(() => caches.match(event.request))
     );
   }
 });
