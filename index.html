@@ -803,6 +803,15 @@
     }
     .plan-theme-chip-icon { font-size: 16px; }
     .plan-theme-chip .rec-star { font-size: 11px; color: #fcd34d; margin-left: 3px; line-height: 1; }
+    .plan-theme-chip .pos-badge { font-size: 9px; opacity: 0.55; margin-left: 3px; letter-spacing: 0; }
+    /* 推奨テーマ一括選択ボタン */
+    .plan-rec-select-btn {
+      display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px;
+      background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); color: #fde68a;
+      border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: all var(--t-fast); margin-top: 4px;
+    }
+    .plan-rec-select-btn:active { transform: scale(0.97); opacity: 0.85; }
 
     /* ポジション選択チップ */
     .plan-pos-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 10px; }
@@ -3605,7 +3614,7 @@ const DRILL_THEMES = [
           drillType: 'eco',
           trainingNote: 'ウィング：GKの体重移動のタイミングを感知して逆を突く技術 ／ GK：ウィングの助走角度から「ニア狙い」か「ファー狙い」かを読み先に動くかシュートを待つかを判断',
           constraints: [
-            { type: '選手', text: 'GKは必ずニアかファアに先に体重をかける（中立ポジションで待つのは禁止）' },
+            { type: '選手', text: 'GKは必ずニアかファーに先に体重をかける（中立ポジションで待つのは禁止）' },
             { type: 'タスク', text: 'ウィングはGKが先に動いた方向を確認してから逆を選択する（読み合いを明確にする）' },
           ] },
       ],
@@ -3696,12 +3705,12 @@ const LEVELS = [
   { id: 'adv',   label: '上級', desc: '試合実戦が目的（高2〜高3、全国レベル）' },
 ];
 
-const DURATIONS = [30, 60, 90, 120]; // 分
+const DURATIONS = [30, 45, 60, 90, 120]; // 分
 
 // 練習計画ビルダー：選択された テーマ × レベル × 時間 から計画を作る
 function buildPlan(themeIds, levelId, totalMinutes) {
   // ウォームアップとクールダウンの時間を確保
-  // 30分：W=5分/C=3分、60分：W=8分/C=5分、90分：W=12分/C=7分、120分：W=15分/C=10分
+  // 30分：W=5/C=3、45分：W=6/C=4、60分：W=8/C=5、90分：W=12/C=7、120分：W=15/C=10
   const warmupTime = Math.min(15, Math.max(5, Math.round(totalMinutes * 0.13)));
   const cooldownTime = Math.min(10, Math.max(3, Math.round(totalMinutes * 0.08)));
   const remaining = totalMinutes - warmupTime - cooldownTime;
@@ -7421,9 +7430,13 @@ function App() {
     planResult.blocks.forEach(b => {
       txt += `■ ${b.theme.label} (${b.blockMinutes}分)\n`;
       b.items.forEach(it => {
-        txt += `  ・[${it.minutes}分] ${it.title}\n    ${it.desc}\n`;
+        const typeLabel = it.drillType === 'skill' ? '[スキル練習]' : it.drillType === 'eco' ? '[エコロジカル]' : '';
+        txt += `  ・[${it.minutes}分] ${typeLabel} ${it.title}\n    ${it.desc}\n`;
+        if (it.trainingNote) {
+          txt += `    🔄 OF/DF表裏一体: ${it.trainingNote}\n`;
+        }
         if (it.constraints && it.constraints.length > 0) {
-          txt += `    📌 制約: \n`;
+          txt += `    📌 制約:\n`;
           it.constraints.forEach(c => {
             txt += `      - [${c.type}] ${c.text}\n`;
           });
@@ -8456,13 +8469,13 @@ function App() {
         <div className="plan-screen">
           <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
 
-          {/* STEPインジケーター */}
+          {/* STEPインジケーター：1=ポジション(done固定), 2=テーマ, 3=レベル, 4=時間 */}
           <div className="step-dots plan">
             <span className="step-dot done"></span>
             <span className="step-bar done"></span>
             <span className={`step-dot ${planThemes.length > 0 ? 'done' : 'current'}`}></span>
             <span className={`step-bar ${planThemes.length > 0 ? 'done' : ''}`}></span>
-            <span className={`step-dot ${planThemes.length > 0 ? 'current' : ''}`}></span>
+            <span className={`step-dot ${planThemes.length > 0 ? 'done' : ''}`}></span>
             <span className={`step-bar ${planThemes.length > 0 ? 'done' : ''}`}></span>
             <span className={`step-dot ${planThemes.length > 0 ? 'current' : ''}`}></span>
           </div>
@@ -8484,13 +8497,37 @@ function App() {
           <div className="solve-bar" style={{marginTop: 4}}><span className="plan-step-pill">STEP 2 / 4</span><span className="plan-step-label">テーマ（複数可）</span></div>
           <div className="plan-title">何を強化する？</div>
           <div className="plan-sub">複数選んでOK。★はポジション推奨テーマ。練習時間は自動配分されます。</div>
+          {/* 一括選択ボタン（ポジション選択時のみ表示） */}
+          {planPosition !== 'all' && (() => {
+            const recs = POSITION_RECOMMENDED[planPosition] || [];
+            const posLabel = POSITIONS.find(p => p.id === planPosition)?.label || '';
+            const allSelected = recs.length > 0 && recs.every(id => planThemes.includes(id));
+            return (
+              <button className="plan-rec-select-btn" onClick={() => {
+                if (allSelected) {
+                  setPlanThemes(prev => prev.filter(id => !recs.includes(id)));
+                } else {
+                  setPlanThemes(prev => [...new Set([...prev, ...recs])]);
+                }
+              }}>
+                {allSelected ? '✓ ' : '⚡ '}{posLabel} 推奨テーマを{allSelected ? '解除' : '一括選択'}（{recs.length}件）
+              </button>
+            );
+          })()}
           <div className="plan-themes">
             {DRILL_THEMES.map(t => {
               const recs = POSITION_RECOMMENDED[planPosition] || [];
               const isRec = recs.includes(t.id);
+              // ポジション専用テーマには所属ポジションのバッジを表示
+              const posOwner = t.forPositions
+                ? POSITIONS.find(p => p.id === t.forPositions[0])
+                : null;
               return (
                 <button key={t.id} className={`plan-theme-chip ${planThemes.includes(t.id) ? 'active' : ''}`} onClick={() => handleTogglePlanTheme(t.id)}>
                   <span className="plan-theme-chip-icon">{t.icon}</span>{t.label}
+                  {posOwner && !isRec && planPosition !== 'all' && (
+                    <span className="pos-badge">({posOwner.label})</span>
+                  )}
                   {isRec && <span className="rec-star">★</span>}
                 </button>
               );
