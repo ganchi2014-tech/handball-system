@@ -833,6 +833,9 @@
     /* 表裏一体ノート（OF/DF共に練習になる説明） */
     .plan-training-note { margin-top: 7px; padding: 7px 10px 7px 12px; background: rgba(99,102,241,0.09); border-left: 3px solid #6366f1; border-radius: 0 5px 5px 0; font-size: 11px; color: #c7d2fe; line-height: 1.7; }
     .plan-training-note-label { font-size: 10px; font-weight: 800; color: #818cf8; margin-bottom: 2px; }
+    .plan-pos-banner { display: flex; align-items: center; gap: 10px; margin: 10px 0 6px; padding: 9px 13px; background: rgba(34,211,238,0.09); border: 1px solid rgba(34,211,238,0.3); border-radius: 9px; }
+    .plan-pos-banner-icon { font-size: 20px; line-height: 1; }
+    .plan-pos-banner-text { font-size: 12px; color: #a5f3fc; line-height: 1.5; }
 
     /* レベル選択（セグメント） */
     .plan-levels { display: flex; gap: 8px; }
@@ -3695,6 +3698,540 @@ const POSITION_RECOMMENDED = {
   pivot: ['pivot_body', 'post', '2on2', '1on1'],
 };
 
+// ─────────────────────────────────────────────
+// ポジション別ドリルバリアント
+// buildPlan が positionId != 'all' のとき、DRILL_THEMES の drills より優先される
+// ─────────────────────────────────────────────
+const POSITION_DRILL_VARIANTS = {
+  // ───── GK ─────
+  gk: {
+    shoot: {
+      basic: [
+        { title: 'GK：コーナー別コース予測セーブ', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'シューターがボールを持った瞬間にGKが「左上・右中・右下」等コースを宣言→シューターはそのコースに必ず打つ。GKは宣言後に構え直して止める。', drillType: 'skill',
+          trainingNote: 'GK：予測→ポジショニング→反応の3段階分解 ／ シューター：宣言されたコースに正確に打つ技術',
+          constraints: [{ type: '制約', text: 'GKがコースを宣言してから2秒以内にシュート。宣言コース以外は無効' }] },
+        { title: 'GK：近距離ロングシュートのリバウンド処理', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: '9m付近からのロングシュートをセーブ後、リバウンドボールをすぐに拾って速攻へ繋ぐ。セーブ→素早い起き上がり→スロー、を1セットで練習。', drillType: 'eco',
+          trainingNote: 'GK：セーブ後のリカバリー速度 ／ シューター：GKのリバウンド処理の隙を突くフォロー',
+          constraints: [{ type: 'タスク', text: 'セーブ後3秒以内にボールを持って立つ。遅れたらやり直し' }] },
+      ],
+      mid: [
+        { title: 'GK：2連続シュートへの対応', minutes: 12, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: '左右から交互に2本連続シュート。1本目をセーブまたはブロック後、すぐに2本目に対応。インターバル1秒以内。', drillType: 'eco',
+          trainingNote: 'GK：重心移動とリセットの速さ ／ シューター：GKのセーブ後の隙をついたクイックシュート',
+          constraints: [{ type: '環境', text: '1本目のシュートと2本目の間隔は1〜2秒。GKはゴール中央に戻る時間はない' }] },
+        { title: 'GK：角度別最小面積ポジション取り', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'シューターが6m・7m・9mの各距離で打つ前に、GKはGKライン上の最適ポジションを取る。コーチがシューター位置を変えるたびに素早く修正。', drillType: 'skill',
+          trainingNote: 'GK：距離と角度に応じたポジション計算 ／ シューター：GKが出てきた際の浮かしシュート選択判断',
+          constraints: [{ type: 'タスク', text: 'GKのポジションが正しければ（コーチ判定）シュートを打つ。間違っていたらやり直し' }] },
+      ],
+      adv: [
+        { title: 'GK：1on1フィジカルコンタクト対応セーブ', minutes: 12, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'シューターが6m内に侵入後、フェイントを織り交ぜながらシュート。GKは前に出て角度を消しつつ、実戦的な1on1を守る。', drillType: 'eco',
+          trainingNote: 'GK：飛び出しタイミングと重心コントロール ／ シューター：GKが出てくる読みを逆手に取るダブルフェイント',
+          constraints: [{ type: '環境', text: 'シューターは6mライン内侵入後5秒以内にシュートかパス選択。パスを選んだ場合はフォローシューターが打つ' }] },
+        { title: 'GK：速攻開始役としての初手スロー精度', minutes: 10, fileId: '03', match: '速攻',
+          desc: 'セーブ後すぐにカウンターアタック。GKがボールを持った瞬間に味方が走り出す。GKは走路を確認して3秒以内にロングスローを通す。', drillType: 'eco',
+          trainingNote: 'GK：カウンター起点としての判断とスロー精度 ／ 受け手：GKの視線を読んで走るコース選択',
+          constraints: [{ type: 'タスク', text: 'GKのスローが3秒超えたら速攻権消失。受け手は走りながら捕球必須' }] },
+      ],
+    },
+    fast: {
+      basic: [
+        { title: 'GK：速攻の起点スロー（短中距離）', minutes: 8, fileId: '03', match: '速攻',
+          desc: 'GKがセーブ後に味方ウィングへの速いスローを練習。5m・10m・15mの各距離で正確なキャッチ&スロー。片手スローの安定を目標。', drillType: 'skill',
+          trainingNote: 'GK：セーブ→即スローの連動動作 ／ 受け手：走りながら捕球するタイミング合わせ',
+          constraints: [{ type: 'タスク', text: 'スローはバウンドなし直接キャッチ。落としたら最初からやり直し' }] },
+        { title: 'GK：速攻時の「待て」判断', minutes: 8, fileId: '03', match: '速攻',
+          desc: '速攻可能な状況と不可能な状況をコーチが提示。GKは「スロー」か「待て（保持）」を即判断して声で指示する。', drillType: 'eco',
+          trainingNote: 'GK：数的状況を把握する視野の広さ ／ チーム：GKの指示に従って動く連動訓練',
+          constraints: [{ type: '環境', text: 'コーチがDF枚数（0〜3人）を変えながら提示。2秒以内に「スロー！」か「待て！」を声に出す' }] },
+      ],
+      mid: [
+        { title: 'GK：カウンター起点＋ウィングへのロングスロー', minutes: 10, fileId: '03', match: '速攻',
+          desc: '実戦形式。GKがセーブ後すぐにウィングへロングスロー→ウィングがシュートまたはCBへ繋ぐ。3人以上で通し練習。', drillType: 'eco',
+          trainingNote: 'GK：スローの方向と距離の判断 ／ 受け手：GKの動きを見てスタートを切るタイミング',
+          constraints: [{ type: 'タスク', text: 'GKスローから6秒以内にシュートまで完結。超えたらやり直し' }] },
+        { title: 'GK：速攻後のゴール前リセットポジション', minutes: 8, fileId: '03', match: '速攻',
+          desc: '速攻終了後（成功でも失敗でも）すぐにゴール前の定位置へ戻る練習。ゴールライン上の中央を素早く取れるか計測。', drillType: 'skill',
+          trainingNote: 'GK：攻守の切り替えの素早さ ／ チーム：GKのリセット完了を確認してから次を始める',
+          constraints: [{ type: 'タスク', text: 'スローから3秒以内にゴール中央ポジションへ戻る。ストップウォッチで計測' }] },
+      ],
+      adv: [
+        { title: 'GK：セーブ→速攻→再セット全通し（5v5）', minutes: 15, fileId: '03', match: '速攻',
+          desc: '5v5の実戦で、GKのセーブが速攻のトリガー。GKがスローを出した後は次の攻撃に備えて再セット。試合に近い連続判断を積む。', drillType: 'eco',
+          trainingNote: 'GK：攻守両面での判断量が最大化 ／ チーム：GKの動きを起点とした攻撃構築',
+          constraints: [{ type: '環境', text: 'セーブ後GKは必ずスローを選択（ドリブル禁止）。ハーフラインまでの速攻が成立したら2点' }] },
+      ],
+    },
+    def: {
+      basic: [
+        { title: 'GK：コミュニケーション主導のDF指示', minutes: 8, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'GKがDF陣に「右ブロック！」「スイッチ！」「マーク！」を声で指示しながら6:0DFを整える練習。DFは指示が来るまで動かない（受動的に）。', drillType: 'skill',
+          trainingNote: 'GK：全体視野とコミュニケーション能力 ／ DF：GKの指示を正確に聞いて即実行する',
+          constraints: [{ type: '制約', text: 'DFはGKのコールなしでは動けない。GKのコールを待つ' }] },
+        { title: 'GK：ウィングシュートへの対応ポジション', minutes: 8, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'ウィングからのシュートはGKが最も守りにくい。角度と距離の組み合わせで最適ポジションを繰り返し確認する。', drillType: 'skill',
+          trainingNote: 'GK：ウィングシュートに対する体の向きとポジション ／ DF：ウィングへのパスコースを切る',
+          constraints: [{ type: 'タスク', text: 'GKはサイドラインとゴールポストを結んだ二等分線上に立つ。コーチが正誤判定' }] },
+      ],
+      mid: [
+        { title: 'GK：6:0DFとの連携ブロック', minutes: 12, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'DFブロックの隙間を通ってくるシュートにGKが対応。DFは意図的に隙間を作り、GKの対応力を鍛える。', drillType: 'eco',
+          trainingNote: 'GK：ブロックの向こうのシュートコース予測 ／ DF：ブロックしながらGKの視界を邪魔しない位置取り',
+          constraints: [{ type: '環境', text: 'DFは必ず1か所、意図的な隙間を作る。シューターはその隙間を狙うか、GKとの駆け引きで別コースを選ぶ' }] },
+        { title: 'GK：ファストブレイク後のDF再構築サポート', minutes: 10, fileId: '03', match: '速攻',
+          desc: '相手の速攻時、GKが1人でゴール前を守りながらDFに「戻れ！右！左！」と声をかけてDF再構築をガイドする。', drillType: 'eco',
+          trainingNote: 'GK：ピンチ時の冷静な指示出し ／ DF：戻りながらGKの指示で優先順位をつけてポジションを取る',
+          constraints: [{ type: '環境', text: '速攻側は3人・DF側は1人からスタート。DFが戻り切るまでGKが時間を稼ぐ' }] },
+      ],
+      adv: [
+        { title: 'GK：試合形式でのDF指示＋セーブ複合', minutes: 15, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: '6v6実戦。GKは指示を出しながら実際のシュートを止める。会話と身体動作の同時遂行能力を高める。', drillType: 'eco',
+          trainingNote: 'GK：認知・判断・指示・身体動作の4つを同時並行 ／ DF：GKの指示とプレーへの独自判断のバランス',
+          constraints: [{ type: '環境', text: 'GK無指示のDFミス（マーク漏れ等）はOF側に1点ボーナス。GKが常に声を出す動機付け' }] },
+      ],
+    },
+    link: {
+      basic: [
+        { title: 'GK：ビルドアップ参加（バックパス受け→配球）', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'GKがバックパスを受けてから前線へ展開するシミュレーション。まず受けてからドリブル→スロー、次にワンタッチで出す。', drillType: 'skill',
+          trainingNote: 'GK：フィールドプレーヤー的な受け＆配球技術 ／ チーム：GKを経由したビルドアップのルートを知る',
+          constraints: [{ type: 'タスク', text: 'バックパスを受けたら必ず1回は止まってから配球。焦って急がない' }] },
+        { title: 'GK：味方のシュートを想定した声かけ', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'シュートの打ちやすい状況をGKが見つけて「打て！」と声で合図。FP側はGKの声を合図にシュートする練習。', drillType: 'eco',
+          trainingNote: 'GK：俯瞰視点からOFの状況を把握する認知力 ／ FP：GKの声を信頼して思い切りよく打つ',
+          constraints: [{ type: '制約', text: 'FPは自分の判断では打てない。GKの「打て！」コールがあったらのみシュート可' }] },
+      ],
+      mid: [
+        { title: 'GK：攻守切り替えの連絡役', minutes: 10, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '攻守が切り替わる瞬間にGKが「攻め！」「守れ！」を声で指示。チームの切り替え速度をGKがコントロールする練習。', drillType: 'eco',
+          trainingNote: 'GK：試合の流れを読んだメタ判断 ／ チーム：GKの指示を信頼して判断を委ねる',
+          constraints: [{ type: '環境', text: 'ボール保持が変わった瞬間からGKが3秒以内に方針を叫ぶ。声が出なかった場合は罰則ダッシュ' }] },
+        { title: 'GK：セットプレーのスタートコール', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'フリースロー・スローイン等のセットプレー時にGKが「Aパターン！」「Bパターン！」と事前にパターンをコールして開始させる。', drillType: 'skill',
+          trainingNote: 'GK：サインプレーの管理とタイミング制御 ／ FP：GKのコールに即座に対応してポジションを取る',
+          constraints: [{ type: 'タスク', text: '事前に決めた3パターンをGKがランダムにコール。FPはコールから1.5秒以内に動き始める' }] },
+      ],
+      adv: [
+        { title: 'GK：6v6全通し連携リーダーシップ', minutes: 15, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '試合形式でGKがコート全体のリーダー役。攻撃時も守備時も常に声を出してチームを動かす。発話量・タイミング・内容を評価。', drillType: 'eco',
+          trainingNote: 'GK：コートリーダーとしての認知・指示・実行の全負荷 ／ チーム：GKをリーダーと認め動く',
+          constraints: [{ type: '環境', text: 'GKが10秒間声を出さなかったらOF側に1点ボーナス。常に発信し続けることを強制' }] },
+      ],
+    },
+  },
+
+  // ───── CB ─────
+  cb: {
+    pass: {
+      basic: [
+        { title: 'CB：視野確保パス（正面固定→左右展開）', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'CBが正面を向きながら左右のFPにパス。顔を動かさずに周辺視野でパスコースを読む。ワンハンドパスで速く正確に出す。', drillType: 'skill',
+          trainingNote: 'CB：首振りを最小化した視野の使い方 ／ 受け手：CBからのパスを走りながら捕球する',
+          constraints: [{ type: '制約', text: 'パス前に顔を向けてはいけない。体は常に正面（ゴール方向）を向いたまま' }] },
+        { title: 'CB：バックスクリーンからの展開パス', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'スクリーンプレーの後にCBが空いたスペースへ即パス。スクリーン成立の瞬間を見極めてタイミングよく出す。', drillType: 'eco',
+          trainingNote: 'CB：スクリーン効果の「見極め力」 ／ スクリーナー：CBのパスが出やすいよう角度を作る',
+          constraints: [{ type: 'タスク', text: 'スクリーン成立から1秒以内にパスが出なければリセット。タイミングを体で覚える' }] },
+      ],
+      mid: [
+        { title: 'CB：プレスをかわすドリブル突破後のパス', minutes: 10, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'DFのプレスを受けながらドリブルで突破し、空いたFPへパス。プレス回避とパス精度の複合練習。', drillType: 'eco',
+          trainingNote: 'CB：プレス下でのボール保持と冷静な配球 ／ DF：CBへのプレス強度の調整とカバー連携',
+          constraints: [{ type: '環境', text: 'DFはCBに対して半身でプレス。完全に体を向けたプレスは禁止（CBのドリブルルートを残す）' }] },
+        { title: 'CB：2トラック攻撃の司令塔役', minutes: 10, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '左右に2つの攻撃ルートを用意し、CBがどちらに振るか判断して配球する。判断に迷った場合のデフォルトルートも設定。', drillType: 'eco',
+          trainingNote: 'CB：「どちらを使うか」の優先基準の内面化 ／ 受け手：CBの視線を引き付けてフェイクランで崩す',
+          constraints: [{ type: 'タスク', text: '左右どちらかのルートを選んだら変更不可。判断→実行を素早く' }] },
+      ],
+      adv: [
+        { title: 'CB：実戦プレス回避＋速攻展開（5v5）', minutes: 15, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '5v5実戦でCBがビルドアップの核として機能。強いプレスをかわしながら速攻の起点になる。判断スピードが鍵。', drillType: 'eco',
+          trainingNote: 'CB：実戦レベルの認知・判断・実行の連続 ／ DF：CBへの連携プレスとその対応',
+          constraints: [{ type: '環境', text: 'CBにダブルチームを許容。それでも捌けたら2点ボーナス' }] },
+      ],
+    },
+    setof: {
+      basic: [
+        { title: 'CB：セットOF陣形の初期ポジション確認', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'CBが6:0DFに対してセット攻撃の基本陣形を取る練習。各ポジションが正しい位置にいるかをCBが確認して声で修正する。', drillType: 'skill',
+          trainingNote: 'CB：陣形全体を俯瞰して確認・修正する習慣 ／ チーム：CBの指示で位置を微調整する従順さ',
+          constraints: [{ type: 'タスク', text: 'CBが「OK」と言うまで誰も動かない。CB認定後にプレー開始' }] },
+        { title: 'CB：GK引き出しシュート（ロング）', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'GKを少し前に引き出してから9mロングシュート。引き出しのフェイントとシュートのタイミングを繰り返す。', drillType: 'skill',
+          trainingNote: 'CB：GKの動きを読んで打つタイミングを決める ／ GK：前に出るタイミングと守備のトレードオフ',
+          constraints: [{ type: '制約', text: 'シュートは必ずGKが前に出た瞬間に打つ。GKが動く前に打ったら無効' }] },
+      ],
+      mid: [
+        { title: 'CB：マルチオプションセットプレー', minutes: 12, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '同じスタートから3パターンの攻め方（シュート・パス・ドリブル突破）をCBが状況に応じて選択。DFは3つすべてに備えるため迷いが生まれる。', drillType: 'eco',
+          trainingNote: 'CB：複数選択肢の中から最適解を選ぶ判断力 ／ DF：CBの複数脅威に対するリソース配分判断',
+          constraints: [{ type: '環境', text: '3つのオプションをCBが事前に宣言せずに選択。DFは予測して守る' }] },
+        { title: 'CB：後衛からの動き直しシュート', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'CBが一度後ろに引いてからスプリントでシュートポジションへ入り、パスを受けてシュート。動き直しのスピードとシュート精度。', drillType: 'eco',
+          trainingNote: 'CB：自分でスペースを作って使う「動き直し」 ／ パサー：CBの動き出しに合わせてタイミングよく出す',
+          constraints: [{ type: 'タスク', text: 'CBが引いてから戻る動作が見えた瞬間にパスを出す。遅れたらやり直し' }] },
+      ],
+      adv: [
+        { title: 'CB：試合形式セットOF（6v6）', minutes: 15, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '6v6実戦セット攻撃。CBが攻撃の中心として複数の選択肢を使い分けながら得点を狙う。', drillType: 'eco',
+          trainingNote: 'CB：試合レベルの攻撃司令塔 ／ DF：CBに絞られた場合と分散された場合の両対応',
+          constraints: [{ type: '環境', text: 'CBへのパスが通るたびにOFに+1秒の時間ボーナス（プレッシャー軽減）' }] },
+      ],
+    },
+    '1on1': {
+      basic: [
+        { title: 'CB：体格差を使ったブロックシュート', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'CBが高い打点でシュートを打ちDFのブロックを超える練習。DFはジャンプブロックするが、CBは高い位置から打ち下ろす。', drillType: 'skill',
+          trainingNote: 'CB：打点の高さとブロック回避 ／ DF：CBの高打点に対するジャンプタイミング',
+          constraints: [{ type: '制約', text: 'CBは必ずジャンプシュートで打つ。DFはブロックに飛ぶタイミングを競う' }] },
+        { title: 'CB：ステップフェイントで1on1突破', minutes: 8, fileId: '08', match: 'フェイント',
+          desc: 'ステップフェイントでDFの重心を崩してからドライブ。1歩右→左へ切り返してシュートまたはパス。CBらしい力強い突破。', drillType: 'skill',
+          trainingNote: 'CB：フェイントの「体格差活用」バージョン ／ DF：CBのフェイントに対する体重移動の管理',
+          constraints: [{ type: 'タスク', text: 'DFは必ず最初のステップに反応して移動する（DF役は必ず1歩動く）' }] },
+      ],
+      mid: [
+        { title: 'CB：1on1→パス選択（DF密着時）', minutes: 12, fileId: '08', match: 'フェイント',
+          desc: 'DFが密着してきたらドライブではなくパスを選ぶ判断訓練。「突破できる」「できない」の境界を体で覚える。', drillType: 'eco',
+          trainingNote: 'CB：欲張らずにパスを選ぶ判断力 ／ DF：CBに密着することでパスを誘い他のDF連携でカバー',
+          constraints: [{ type: '環境', text: 'DFが胸の前まで来たらドライブ禁止。必ずパスへ切り替える（実際に胸に触れたらファウルではなく合図）' }] },
+        { title: 'CB：後ろ向きポスト1on1からの反転', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'CBがポストに入って後ろ向きでボールを受け→DFを背負いながら反転→シュートまたはパス。CBが中央ポストに入るシチュエーション。', drillType: 'eco',
+          trainingNote: 'CB：背負いプレーの体の使い方と反転判断 ／ DF：背後からCBを止めるフェア接触',
+          constraints: [{ type: 'タスク', text: '反転後は2秒以内にシュートかパス。迷って保持したらリセット' }] },
+      ],
+      adv: [
+        { title: 'CB：DFの誘い込み→逆突破（高レベル1on1）', minutes: 12, fileId: '08', match: 'フェイント',
+          desc: 'CBが意図的にDFを片側に誘い込んでから逆方向に素早く切り返す。DFのステップを利用した高度な駆け引き。', drillType: 'eco',
+          trainingNote: 'CB：DFの重心を意図的に動かす「誘い」のスキル ／ DF：CBの誘いに乗らないフットワーク',
+          constraints: [{ type: '環境', text: 'CBが最初の方向に3秒以上圧力をかけた後のみ切り返し有効。素早い切り返しは無効' }] },
+      ],
+    },
+    '2on2': {
+      basic: [
+        { title: 'CB×ピボット：2人組スクリーン連携', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'CBとピボットが2on2の基本スクリーンプレー。ピボットがスクリーンをかけ、CBがカットして受ける→シュートまたはドライブ。', drillType: 'skill',
+          trainingNote: 'CB：スクリーンを受けた直後の動き出し ／ ピボット：スクリーンの角度とタイミング',
+          constraints: [{ type: 'タスク', text: 'スクリーン成立を確認してからCBが動く。スクリーン前に動き出したらやり直し' }] },
+        { title: 'CB×バック：2人でのサイドチェンジ展開', minutes: 8, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: 'CBとサイドバック2人でDFの横スライドを引き出す。CB→バック→CB→シュートの展開でDFの移動を最大化。', drillType: 'eco',
+          trainingNote: 'CB：サイドチェンジのテンポ管理 ／ DF：横スライドの素早さとカバー連携',
+          constraints: [{ type: '環境', text: 'パスは最低3本通してからシュート。3本未満のシュートは無効' }] },
+      ],
+      mid: [
+        { title: 'CB×バック：プレス回避2on2', minutes: 12, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '2DFのプレスをCBとバックの2人でかわす。パスして動いてパスして動く「ムービングパス」でプレスを回避。', drillType: 'eco',
+          trainingNote: 'CB：ボールを離した直後の素早い動き直し ／ DF：2人連携プレスのコミュニケーション',
+          constraints: [{ type: '環境', text: 'CBとバックはボールを持ったら2秒以内にパスか突破。保持が長いとプレスが追いつく' }] },
+        { title: 'CB×ピボット：2on2ポストプレー全通し', minutes: 12, fileId: '22', match: 'ポスト',
+          desc: 'ピボットへのパス→CBのカット受け→シュートまたは逆展開。2人のタイミング合わせを反復。', drillType: 'eco',
+          trainingNote: 'CB：ピボットへのパスを出しながら自分が動く2役同時 ／ ピボット：ポジションキープとパスリターン',
+          constraints: [{ type: 'タスク', text: 'CBのカットとピボットへのパスのタイミングを同期させる。バラバラならやり直し' }] },
+      ],
+      adv: [
+        { title: 'CB：2on2→フロー攻撃の起点（5v5内）', minutes: 15, fileId: '26', match: 'OF（オフェンス）陣形',
+          desc: '5v5の試合でCB絡みの2on2を意図的に作り出してフロー攻撃に繋げる。CBが攻撃の起爆剤となる判断。', drillType: 'eco',
+          trainingNote: 'CB：5人攻撃の中から2on2の状況を自分で作り出す能力 ／ チーム：CBの2on2を生かした連動',
+          constraints: [{ type: '環境', text: 'CB絡みの2on2でシュートが生まれたら通常点の2倍。CBの積極性を促進' }] },
+      ],
+    },
+  },
+
+  // ───── Back（LB・RB） ─────
+  back: {
+    shoot: {
+      basic: [
+        { title: 'Back：9mロングシュート（GK引き出し）', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'GKを前に引き出した隙を突く9mシュート。フェイントでGKを動かしてから打つ。コースは右上・左下に固定して精度を高める。', drillType: 'skill',
+          trainingNote: 'Back：GKの動きを見てから打つ「後出し」シュート ／ GK：引き出しのリスクとゴール守備の葛藤',
+          constraints: [{ type: '制約', text: 'GKが前に出た瞬間に打つ。GKが動く前のシュートは無効' }] },
+        { title: 'Back：ジャンプシュートの高打点練習', minutes: 10, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: '踏み切り→最高点でリリース→上から打ち下ろすシュート。打点の高さを最大化することでブロックを超える。', drillType: 'skill',
+          trainingNote: 'Back：高打点シュートによるブロック回避 ／ DF：ジャンプシュートに対するブロックタイミング',
+          constraints: [{ type: 'タスク', text: '踏み切りから最高点までの時間を計測（目安0.4秒以上）。早打ちは練習にならない' }] },
+      ],
+      mid: [
+        { title: 'Back：DFを引き付けてシュートorパス判断', minutes: 12, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'BackがDFを引き付けながらシュートとパスを使い分け。DFが出てきたらパス・引かなかったらシュートの判断基準を養う。', drillType: 'eco',
+          trainingNote: 'Back：DFを使った攻撃の使い分け ／ DF：出る・引くの選択による攻撃の変化を体感',
+          constraints: [{ type: '環境', text: 'DF1人がBackに対応。DFの動きを見てから判断する（先打ち禁止）' }] },
+        { title: 'Back：バウンドシュートの精度練習', minutes: 8, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'GKの足元を狙うバウンドシュート。打点と角度を研究して確実にバウンドをゴール内に入れる技術。', drillType: 'skill',
+          trainingNote: 'Back：バウンドシュートの打点とコース計算 ／ GK：低いシュートへの素早い反応と姿勢',
+          constraints: [{ type: 'タスク', text: '必ずバウンドシュート（ノーバウンドは無効）。バウンドポイントを狙い通りに打てるまで繰り返す' }] },
+      ],
+      adv: [
+        { title: 'Back：実戦速度でのフェイント→シュート（5v5）', minutes: 15, fileId: '08', match: 'フェイント',
+          desc: '5v5実戦でBackが複数のフェイントを使いながら実際にシュートまで持ち込む。試合と同じ速度とプレッシャー下で完遂。', drillType: 'eco',
+          trainingNote: 'Back：プレッシャー下でのフェイント精度 ／ DF：実戦強度でのBackへの対応',
+          constraints: [{ type: '環境', text: 'BackはDFを抜かずにシュートした場合1点。抜いてシュートしたら2点' }] },
+      ],
+    },
+    feint: {
+      basic: [
+        { title: 'Back：スクリーンフェイント（左右）', minutes: 10, fileId: '08', match: 'フェイント',
+          desc: '右に行くふりをして左に切り返すスクリーンフェイント。DFの重心を右に乗せてから逆を突く。3回右→3回左でパターンを体に入れる。', drillType: 'skill',
+          trainingNote: 'Back：フェイントで重心を動かすタイミングの習得 ／ DF：フェイントに対して体重移動しすぎない訓練',
+          constraints: [{ type: '制約', text: 'DF役は必ず最初の動きに反応して1歩動く。Backのフェイント効果を保証' }] },
+        { title: 'Back：ボール保持フェイント（ショット→パス）', minutes: 8, fileId: '08', match: 'フェイント',
+          desc: 'シュートモーションを見せてDFを浮かせてからパス。シュートフェイントの「見せ方」を正確に覚える。', drillType: 'skill',
+          trainingNote: 'Back：シュートフェイントの「本物らしさ」 ／ DF：フェイントに飛んでしまう理由と対策',
+          constraints: [{ type: '制約', text: 'DFはシュートモーションに対して必ずブロックに飛ぶ。飛んだ瞬間にパス→味方がフリーシュート' }] },
+      ],
+      mid: [
+        { title: 'Back：連続フェイント（2段フェイント）', minutes: 12, fileId: '08', match: 'フェイント',
+          desc: '1段目のフェイントでDFを引っかけ、DFが戻ろうとした瞬間に2段目のフェイントで完全に崩す。DFの「戻り」を利用。', drillType: 'eco',
+          trainingNote: 'Back：2段フェイントの「タメ」の入れ方 ／ DF：1段目に引っかかった後のリカバリー法',
+          constraints: [{ type: '環境', text: '1段目フェイント後に0.5秒以上のタメを入れてから2段目。タメなしは無効' }] },
+        { title: 'Back：フェイント→突破→シュート連携', minutes: 10, fileId: '08', match: 'フェイント',
+          desc: 'フェイントで1on1を突破してシュートまで繋げる全行程。フェイントで終わらず必ずシュートまで完結させる訓練。', drillType: 'eco',
+          trainingNote: 'Back：フェイントを手段として使い、ゴールを目的に置く思考 ／ DF：突破後のカバーとリカバリー',
+          constraints: [{ type: 'タスク', text: 'フェイントから3秒以内にシュートかパス。保持したらやり直し' }] },
+      ],
+      adv: [
+        { title: 'Back：複数DFを相手にした連続フェイント', minutes: 12, fileId: '08', match: 'フェイント',
+          desc: '2〜3人のDFを相手にフェイントを使いながら突破路を開く。1人目→2人目と連続してフェイントで崩す高難度プレー。', drillType: 'eco',
+          trainingNote: 'Back：複数相手への視野とフェイントの使い分け ／ DF：連携ブロックとフェイント対応',
+          constraints: [{ type: '環境', text: 'DFは順番に対応（同時ではなく1人ずつ前に出る）。Backは各DFを順にフェイントで崩す' }] },
+      ],
+    },
+    step: {
+      basic: [
+        { title: 'Back：クロスステップ（横移動）', minutes: 8, fileId: '09', match: 'ステップ',
+          desc: 'クロスステップで素早く横移動してシュートポジションへ入る基本練習。左右各10本。スピードと正確さを両立。', drillType: 'skill',
+          trainingNote: 'Back：横移動の効率的なステップ習得 ／ DF：Backの横移動に対するスライドDF',
+          constraints: [{ type: 'タスク', text: '5mをクロスステップで移動。かかとをつかないこと（前足を使う）' }] },
+        { title: 'Back：踏み込みからジャンプシュートへの連携', minutes: 10, fileId: '09', match: 'ステップ',
+          desc: '3ステップで踏み込み→ジャンプシュート。踏み込みのリズムとジャンプの連動を体に入れる基本練習。', drillType: 'skill',
+          trainingNote: 'Back：踏み込みとシュートの連動リズム ／ DF：踏み込みへのブロックタイミング',
+          constraints: [{ type: 'タスク', text: '3ステップのリズムは「1・2・3・ジャンプ」で等間隔。乱れたらやり直し' }] },
+      ],
+      mid: [
+        { title: 'Back：ステップフェイントでDFを外す', minutes: 12, fileId: '09', match: 'ステップ',
+          desc: 'ステップで右に行くふりをして左の空間を使う。DFのステップを引き出してから逆を突く。実DFを相手に。', drillType: 'eco',
+          trainingNote: 'Back：ステップを使ったコース変更の実戦応用 ／ DF：ステップフェイントへのフットワーク対応',
+          constraints: [{ type: '環境', text: 'DFはBackのステップ方向に必ずスライドする（受動的対応）。Backはその逆を使う' }] },
+        { title: 'Back：ゴールライン際でのステップシュート', minutes: 10, fileId: '09', match: 'ステップ',
+          desc: 'ゴールライン付近まで持ち込んでからのステップシュート。角度がきつい位置でのシュート技術を養う。', drillType: 'skill',
+          trainingNote: 'Back：急角度シュートのコース選択とGK位置の読み ／ GK：ゴールライン際のシュートへのポジション',
+          constraints: [{ type: 'タスク', text: '6mライン内からは打てない。外から必ずステップシュート' }] },
+      ],
+      adv: [
+        { title: 'Back：1on1でのステップ突破→決定打', minutes: 12, fileId: '09', match: 'ステップ',
+          desc: '実DFを相手に1on1でステップを駆使して突破。フェイント→ステップ変更→シュートまでを高速で実行。', drillType: 'eco',
+          trainingNote: 'Back：ステップの複合使用による1on1突破 ／ DF：ステップに対するアグレッシブなチャレンジ',
+          constraints: [{ type: '環境', text: 'Back側は5秒以内にシュートまで到達しなければやり直し。速い判断と実行を強制' }] },
+      ],
+    },
+    '1on1': {
+      basic: [
+        { title: 'Back：DF正面からのドライブ（左右）', minutes: 10, fileId: '10', match: '1on1',
+          desc: 'DFが正面にいる状態からドライブ突破。左右どちらにも同等に突破できるよう両方練習。DF役は固定のステップで対応。', drillType: 'skill',
+          trainingNote: 'Back：利き手でない方向への突破技術 ／ DF：正面からの突破に対するフットワークDF',
+          constraints: [{ type: '制約', text: 'DF役は必ず正面を向いたまま。横にずれる動きは禁止' }] },
+        { title: 'Back：オープンスペースへの1on1ドライブ', minutes: 8, fileId: '10', match: '1on1',
+          desc: 'DFの横のスペースへのドライブ。DFを「置いていく」感覚でスピードで勝負。GKと1on1になるところまで繋げる。', drillType: 'eco',
+          trainingNote: 'Back：スピード差で優位を作る1on1 ／ DF：ドライブ方向の予測とアングルDF',
+          constraints: [{ type: 'タスク', text: 'DFを抜いてからGKとの1on1。GKに止められてもよいが必ずGKまで到達する' }] },
+      ],
+      mid: [
+        { title: 'Back：フェイント後の1on1突破', minutes: 12, fileId: '10', match: '1on1',
+          desc: 'フェイントでDFの重心を崩してから1on1突破。フェイントと突破の連続動作をスムーズに行う。', drillType: 'eco',
+          trainingNote: 'Back：フェイントと突破の連続性とスピード維持 ／ DF：フェイント後の重心修正スピード',
+          constraints: [{ type: '環境', text: 'フェイントから突破まで1秒以内。間が空いたらDFが戻れるのでやり直し' }] },
+        { title: 'Back：1on1からのパス選択（CFとの連携）', minutes: 10, fileId: '10', match: '1on1',
+          desc: '1on1を仕掛けて相手が対応した瞬間に味方CFへパス。突破かパスかを状況に応じて選ぶ判断力。', drillType: 'eco',
+          trainingNote: 'Back：1on1を「脅し」として使うパス判断 ／ DF：Backへの対応とCFへのパスコースの両立',
+          constraints: [{ type: '環境', text: 'DF2人（BackDF＋CFのDF）。Backは1on1で引き付けてからCFへパスが基本。Backがシュートは2点ボーナス' }] },
+      ],
+      adv: [
+        { title: 'Back：完全実戦1on1（DF任意対応）', minutes: 12, fileId: '10', match: '1on1',
+          desc: 'DFが任意のDFスキルを使って対応する実戦1on1。Back側はどんな対応にも適応してゴールを狙う。', drillType: 'eco',
+          trainingNote: 'Back：多様なDF対応への適応力 ／ DF：Backの癖を読んでアドバンテージを取る',
+          constraints: [{ type: '環境', text: 'DFは「プレス・待機・フェイクブロック」を任意で選択。Backは毎回違う対応に即応する' }] },
+      ],
+    },
+  },
+
+  // ───── Wing（LW・RW） ─────
+  wing: {
+    shoot: {
+      basic: [
+        { title: 'Wing：ゴールライン際からの至近シュート', minutes: 10, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'ウィングポジションからの至近距離シュート。角度がなくても入りやすい物理的理由（GKの死角）を理解して活用。', drillType: 'skill',
+          trainingNote: 'Wing：GKの死角を使った最適コース選択 ／ GK：ウィングからのシュートへの対応ポジション',
+          constraints: [{ type: 'タスク', text: '6m角から打つ。GKの守れないエリアを狙って繰り返す。10本中7本成功で次のステップへ' }] },
+        { title: 'Wing：走り込みシュート（ゴールライン平行移動）', minutes: 8, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'ゴールラインと平行に走り込みながらのシュート。走行スピードを維持したまま正確に打つ。止まって打たない。', drillType: 'skill',
+          trainingNote: 'Wing：走りながら打つ動的シュート精度 ／ GK：Wingの走行方向を予測したポジション',
+          constraints: [{ type: 'タスク', text: '止まったら無効。必ず走りながら打つ。スピードを落とさずに最後まで走り切る' }] },
+      ],
+      mid: [
+        { title: 'Wing：DFを引き付けてからのシュート', minutes: 12, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'DFが出てきたら中にカットしてシュート、引かなかったら外からシュート。DFの対応に合わせてコースを決める。', drillType: 'eco',
+          trainingNote: 'Wing：DFの出方を読んだ2択シュート選択 ／ DF：ウィングへの対応と中へのカット予防',
+          constraints: [{ type: '環境', text: 'DFは前に出るか引くかどちらか一方のみ。Wingはその対応を見てから選択' }] },
+        { title: 'Wing：バックパスから速攻シュート（ウィング突破）', minutes: 10, fileId: '03', match: '速攻',
+          desc: 'バックからのパスを走りながら受け→GKとの1on1→シュート。速攻でのウィングの役割を練習。', drillType: 'eco',
+          trainingNote: 'Wing：速攻でのスプリントとキャッチ精度 ／ GK：速攻時のWingとの1on1対応',
+          constraints: [{ type: 'タスク', text: 'ハーフラインを超えてからシュートまで3秒以内。スピードを落とさず完結する' }] },
+      ],
+      adv: [
+        { title: 'Wing：GK引き出しフェイント→シュート（至近距離）', minutes: 12, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: 'GKが前に出てきた瞬間にフワシュートで頭上を越す。GKの重心と飛び出しタイミングを完全に読んだ高難度テクニック。', drillType: 'eco',
+          trainingNote: 'Wing：GKの飛び出しを「待つ」忍耐力と正確なフワシュート ／ GK：飛び出しリスクの計算',
+          constraints: [{ type: '環境', text: 'GKが前に出てから打つ。GK静止状態で打ったら無効。フワシュート以外も可だがGKが出た後のみ' }] },
+      ],
+    },
+    fast: {
+      basic: [
+        { title: 'Wing：スプリントキャッチ（40mダッシュ）', minutes: 8, fileId: '03', match: '速攻',
+          desc: 'GKまたはバックからのロングパスを走りながら捕球。40mダッシュしながらボールを落とさず取る基本技術。', drillType: 'skill',
+          trainingNote: 'Wing：走りながら捕球するアイ-ハンド協調 ／ パサー：走者のスピードに合わせたパス軌道',
+          constraints: [{ type: 'タスク', text: 'ドロップしたらやり直し。10本中9本成功が目標' }] },
+        { title: 'Wing：速攻後のゴールライン際1on1', minutes: 10, fileId: '14', match: 'トピックG：ウィングのシュートが入りやすい物理的理由',
+          desc: '速攻でボールを持ったWingがGKとの1on1を制する。シュートかドリブル侵入かをGKの動きで選択。', drillType: 'eco',
+          trainingNote: 'Wing：速攻1on1のシュート選択判断 ／ GK：スプリントで戻りながらWingを止める',
+          constraints: [{ type: '環境', text: 'GKはハーフラインから戻り中。Wing側は5秒以内にシュートまで完結' }] },
+      ],
+      mid: [
+        { title: 'Wing：速攻→ウィングポジション活用（3v2）', minutes: 12, fileId: '03', match: '速攻',
+          desc: '3v2の速攻でウィングがサイドを利用して得点機会を作る。中央とサイドの連動で数的優位を最大活用。', drillType: 'eco',
+          trainingNote: 'Wing：数的優位での役割（幅を取る）と選択判断 ／ DF：3v2の数的不利での対応',
+          constraints: [{ type: '環境', text: 'Wingは必ずサイドに位置取り。中央に入ったら反則。幅を取り続けることがルール' }] },
+        { title: 'Wing：カウンター速攻のスタート反応', minutes: 8, fileId: '03', match: '速攻',
+          desc: 'セーブ（GK）を合図に瞬時に走り出す反応練習。GKのボールキャッチの瞬間に最速でスプリント開始。反応速度を計測。', drillType: 'skill',
+          trainingNote: 'Wing：速攻のスタートタイミング把握 ／ GK：セーブ後の配球スタートとWingへの合図',
+          constraints: [{ type: 'タスク', text: 'GKのキャッチから0.5秒以内にスタートを切る。計測して確認' }] },
+      ],
+      adv: [
+        { title: 'Wing：実戦速攻全通し（Wingが起点と終点）', minutes: 15, fileId: '03', match: '速攻',
+          desc: 'Wingが守備から攻撃への切り替えを起点として走り、速攻の終点（シュート）まで完結。Wingの速攻における全責任を取る。', drillType: 'eco',
+          trainingNote: 'Wing：守→攻の切り替えタイミングと走路選択 ／ チーム：Wingの走りに合わせた展開',
+          constraints: [{ type: '環境', text: 'GKセーブからWingシュートまで5秒以内。超えたら遅すぎ（速攻の意味なし）' }] },
+      ],
+    },
+    step: {
+      basic: [
+        { title: 'Wing：サイドからの切り返しステップ', minutes: 8, fileId: '09', match: 'ステップ',
+          desc: 'ゴールライン方向に走ってからの切り返しで中へカット。ステップの鋭さでDFを外す。DFは固定ステップで対応。', drillType: 'skill',
+          trainingNote: 'Wing：ゴールライン際からのカットとステップ ／ DF：Wingの切り返しへのスライドDF',
+          constraints: [{ type: '制約', text: 'DF役は必ず最初のゴールライン方向の動きについて行く（DF役は必ず1歩動く）。その後のカットに対応' }] },
+        { title: 'Wing：外コース→中コース切り替えステップ', minutes: 8, fileId: '09', match: 'ステップ',
+          desc: '外（アウト）に行くように見せて中（イン）に切り込む。ステップフェイントでDFを外に引きつけて中を空ける。', drillType: 'skill',
+          trainingNote: 'Wing：アウト→インの切り替えタイミング ／ DF：Wingの外行きに対するスライドと中のカバー',
+          constraints: [{ type: 'タスク', text: '外の動きで必ずDFが動いてからイン。DFが動く前のインは意味がない' }] },
+      ],
+      mid: [
+        { title: 'Wing：ゴールライン際1on1（ステップで外→シュート）', minutes: 12, fileId: '09', match: 'ステップ',
+          desc: 'DFを内に引き付けてから外にステップして走り込みシュート。ウィングらしいサイドを使った1on1突破。', drillType: 'eco',
+          trainingNote: 'Wing：ステップを使ったサイドへの抜け方 ／ DF：Wingの外突破を防ぐアングルDF',
+          constraints: [{ type: '環境', text: 'Wingは中に仕掛けてDFが内を閉じた瞬間に外へ。中でのシュートは低得点（1点）、外抜けシュートは高得点（2点）' }] },
+        { title: 'Wing：走り込みステップシュート（DF付き）', minutes: 10, fileId: '09', match: 'ステップ',
+          desc: 'パスを受けながらのステップシュートにDFが付いた状態で実施。DFの体を利用して切り返し→シュート。', drillType: 'eco',
+          trainingNote: 'Wing：DFの体の向きを読んで切り返す ／ DF：走り込んでくるWingへのボディコンタクトDF',
+          constraints: [{ type: '環境', text: 'DFはWingに体を向けて横移動。正面には立たない（スペースを開けてステップを誘う）' }] },
+      ],
+      adv: [
+        { title: 'Wing：複合フェイント→ステップ突破→シュート', minutes: 12, fileId: '09', match: 'ステップ',
+          desc: 'フェイント→ステップ切り返し→シュートの3段階を実DFとGK付きで完全実施。ウィングの実戦技術集大成。', drillType: 'eco',
+          trainingNote: 'Wing：3段階の動作を実戦速度で連続実行する能力 ／ DF・GK：連携してウィングを止める',
+          constraints: [{ type: '環境', text: 'DF1人＋GK。Wingは5秒以内にフェイント→ステップ→シュートを完結' }] },
+      ],
+    },
+  },
+
+  // ───── Pivot ─────
+  pivot: {
+    post: {
+      basic: [
+        { title: 'Pivot：ポストポジション確保（背負いキープ）', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'DFを背負った状態でボールを受けてキープ。体全体でDFを押し返しながらボールを保護する基本技術。', drillType: 'skill',
+          trainingNote: 'Pivot：下半身を使ったポストプレーの基礎 ／ DF：背後からのフェアプレッシャーのかけ方',
+          constraints: [{ type: 'タスク', text: 'DFは胸からプレス（腕は使わない）。Pivotは5秒以上ボールをキープ' }] },
+        { title: 'Pivot：受けてすぐ反転（スピンムーブ）', minutes: 8, fileId: '22', match: 'ポスト',
+          desc: 'パスを受けた瞬間にスピンして反転→シュート。DFが追いつく前に回転を完了させる。左右両方向。', drillType: 'skill',
+          trainingNote: 'Pivot：スピンの速さとシュートへの連動 ／ DF：スピンに対するフォロー速度',
+          constraints: [{ type: 'タスク', text: 'ボールキャッチから1秒以内にスピン完了。遅れたらやり直し。ストップウォッチで計測' }] },
+      ],
+      mid: [
+        { title: 'Pivot：ポスト→フォールダウン（転倒フリースロー）', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'ポストプレーでDFとの接触後にフォールダウン。フリースローを獲得するための正当なファウル誘発技術。', drillType: 'eco',
+          trainingNote: 'Pivot：ファウルを引き出す正当なコンタクトの受け方 ／ DF：ファウルにならない適正プレッシャー',
+          constraints: [{ type: '環境', text: 'DFはPivotへの正当なプレッシャーを加える。Pivotはその力を利用して転倒。審判視点でジャッジ' }] },
+        { title: 'Pivot：ポスト→サイドカット（スペース活用）', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'ポストを抜け出してサイドのスペースへカット→パス受けてシュート。DFをポストに引き付けてから抜け出す。', drillType: 'eco',
+          trainingNote: 'Pivot：ポストから抜け出るタイミングの判断 ／ DF：ポストプレーとカットの両対応',
+          constraints: [{ type: 'タスク', text: 'Pivotがカットする前に必ずDFをポストで足止め（2秒以上）してからカット' }] },
+      ],
+      adv: [
+        { title: 'Pivot：実戦ポストプレー（6v6内）', minutes: 15, fileId: '22', match: 'ポスト',
+          desc: '6v6実戦でPivotが積極的にポストプレーを仕掛ける。シュート・アシスト・ファウル獲得のどれでもOK。', drillType: 'eco',
+          trainingNote: 'Pivot：試合全体の中でポストの使い方を自分で判断 ／ DF：Pivotへの対応とチーム全体のバランス',
+          constraints: [{ type: '環境', text: 'Pivotが関わった得点は2倍ポイント。Pivotの積極参加を促す' }] },
+      ],
+    },
+    '2on2': {
+      basic: [
+        { title: 'Pivot×CB：2on2ドロップパス連携', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'CBからPivotへのドロップパス→Pivotが受けてシュートまたはリターン。2人のタイミングを合わせる基本。', drillType: 'skill',
+          trainingNote: 'Pivot：ドロップパスを受ける体の向きと動き出し ／ CB：Pivotへのドロップパスのタイミング',
+          constraints: [{ type: 'タスク', text: 'Pivotが動き出してからパスを出す。動く前のパスはNG（タイミング練習）' }] },
+        { title: 'Pivot×Back：2on2スクリーン後のカット', minutes: 8, fileId: '22', match: 'ポスト',
+          desc: 'Pivotがスクリーンをかけ、Backがカットしてシュート。スクリーンの角度とBackのカット方向を合わせる。', drillType: 'eco',
+          trainingNote: 'Pivot：スクリーンの体の向きと厚み ／ Back：スクリーンを利用したカット方向の判断',
+          constraints: [{ type: 'タスク', text: 'スクリーン成立から1秒以内にBackがカット。遅れたらDFが戻れる' }] },
+      ],
+      mid: [
+        { title: 'Pivot×CB：2on2 ポストプレー崩し', minutes: 12, fileId: '22', match: 'ポスト',
+          desc: 'CBがボールを持ち、PivotとCBで2on2を展開。Pivotがポストで作ったスペースをCBが使うか、Pivotが抜け出すか。', drillType: 'eco',
+          trainingNote: 'Pivot：CBの判断を待ちながら自分の動きを選択 ／ CB：Pivotの動きを見て2択を選択',
+          constraints: [{ type: '環境', text: '2DFがつく。PivotとCBは言葉なしで動きだけで連携。アイコンタクトのみ許可' }] },
+        { title: 'Pivot×Wing：2on2 ウィング連動', minutes: 10, fileId: '22', match: 'ポスト',
+          desc: 'PivotがポストでDFを引き、Wingがゴールライン際から中にカット→パス受けてシュート。PivotとWingの協力。', drillType: 'eco',
+          trainingNote: 'Pivot：Wingのカットに合わせたポストキープ継続 ／ Wing：Pivotが作ったスペースへの走り込み',
+          constraints: [{ type: 'タスク', text: 'PivotがDFを足止めしている間のみWingのカットが有効。Pivotが離れたらリセット' }] },
+      ],
+      adv: [
+        { title: 'Pivot：チーム内2on2組み合わせ（全パターン）', minutes: 15, fileId: '22', match: 'ポスト',
+          desc: 'Pivotが異なる味方（CB・Back・Wing）と2on2を組み合わせて実施。相手によって動き方を変える適応力訓練。', drillType: 'eco',
+          trainingNote: 'Pivot：パートナーごとに最適な2on2の役割を切り替える ／ DF：Pivot絡みの2on2パターン対応',
+          constraints: [{ type: '環境', text: 'コーチが「CB・Back・Wing」と指示→Pivotはその選手と即座に2on2を始める。切り替え1秒以内' }] },
+      ],
+    },
+    '1on1': {
+      basic: [
+        { title: 'Pivot：DFを背負った状態からの1on1反転', minutes: 10, fileId: '10', match: '1on1',
+          desc: 'ポストポジションからのDFを背負った反転シュート。左右どちらにも反転できるよう両方向練習。', drillType: 'skill',
+          trainingNote: 'Pivot：背負い状態からの反転スピードと方向判断 ／ DF：Pivotの反転を体で止める技術',
+          constraints: [{ type: 'タスク', text: '受けてから1.5秒以内に反転完了。DF役の体を使いながら反転する（フェア接触）' }] },
+        { title: 'Pivot：6m内侵入からの1on1', minutes: 8, fileId: '10', match: '1on1',
+          desc: '6mライン付近のDFを突破して6m内に侵入→GKと1on1→シュート。Pivotの突破力を鍛える。', drillType: 'eco',
+          trainingNote: 'Pivot：DFの体を使って6m内に入る技術 ／ DF：Pivotの6m内侵入を防ぐポジション',
+          constraints: [{ type: '環境', text: 'DF1人。Pivotは3秒以内に6m内に侵入してシュートまで。6m外シュートは無効' }] },
+      ],
+      mid: [
+        { title: 'Pivot：フィジカルコンタクト下の1on1突破', minutes: 12, fileId: '10', match: '1on1',
+          desc: 'DFが体を当ててくる状況でPivotがその力を利用して突破。接触を恐れず前に出る強さを養う。', drillType: 'eco',
+          trainingNote: 'Pivot：接触をプラスに変える体の使い方 ／ DF：フェアなコンタクトDFとPivotへのプレッシャー',
+          constraints: [{ type: '環境', text: 'DF側は腕を使わず体（胸・肩）でのコンタクトのみ許可。Pivotはその力を前進に使う' }] },
+        { title: 'Pivot：1on1→キープ→アシスト選択', minutes: 10, fileId: '10', match: '1on1',
+          desc: '1on1で突破→シュートか→走り込む味方へパスかを状況で選ぶ。Pivotの役割をシューターとアシスターで使い分け。', drillType: 'eco',
+          trainingNote: 'Pivot：得点かアシストかの判断基準を身につける ／ DF：PivotとFPへの同時対応',
+          constraints: [{ type: '環境', text: '1on2（Pivot1人 vs DF2人）。突破後にフリーの味方にパスしたら2点、シュートしたら1点' }] },
+      ],
+      adv: [
+        { title: 'Pivot：実戦フィジカル1on1（全判断込み）', minutes: 12, fileId: '10', match: '1on1',
+          desc: 'フィジカル最大強度での1on1。DFは任意の対応。Pivotは状況判断でシュート・パス・キープを選択。', drillType: 'eco',
+          trainingNote: 'Pivot：最大強度下での認知・判断・実行 ／ DF：Pivotの最高難度への対応',
+          constraints: [{ type: '環境', text: 'DFは任意の対応（プレス・体当たり・引き）をランダムに使用。Pivotは毎回最適解を選ぶ' }] },
+      ],
+    },
+  },
+};
+
 // ウォームアップ／クールダウンのテンプレ
 const DRILL_WARMUP = { title: 'ウォームアップ（ダイナミックストレッチ＋パス）', minutes: 0, desc: '関節可動域→軽いランニング→ペアパスでテンポを上げる。' };
 const DRILL_COOLDOWN = { title: 'クールダウン（ストレッチ＋振り返り）', minutes: 0, desc: '主要筋群のストレッチ＋今日の3秒振り返り（良かった点・課題・次回試すこと）。' };
@@ -3707,8 +4244,8 @@ const LEVELS = [
 
 const DURATIONS = [30, 45, 60, 90, 120]; // 分
 
-// 練習計画ビルダー：選択された テーマ × レベル × 時間 から計画を作る
-function buildPlan(themeIds, levelId, totalMinutes) {
+// 練習計画ビルダー：選択された テーマ × レベル × 時間 × ポジション から計画を作る
+function buildPlan(themeIds, levelId, totalMinutes, positionId = 'all') {
   // ウォームアップとクールダウンの時間を確保
   // 30分：W=5/C=3、45分：W=6/C=4、60分：W=8/C=5、90分：W=12/C=7、120分：W=15/C=10
   const warmupTime = Math.min(15, Math.max(5, Math.round(totalMinutes * 0.13)));
@@ -3716,10 +4253,14 @@ function buildPlan(themeIds, levelId, totalMinutes) {
   const remaining = totalMinutes - warmupTime - cooldownTime;
 
   // 選択されたテーマからレベルに合う drills を集める
+  // ポジション別バリアントがあれば優先使用
   const themeDrills = themeIds.map(tid => {
     const theme = DRILL_THEMES.find(t => t.id === tid);
     if (!theme) return null;
-    return { theme, drills: theme.drills[levelId] || [] };
+    const posDrills = positionId !== 'all'
+      ? (POSITION_DRILL_VARIANTS[positionId]?.[tid]?.[levelId] || null)
+      : null;
+    return { theme, drills: posDrills || theme.drills[levelId] || [] };
   }).filter(Boolean);
 
   if (!themeDrills.length) {
@@ -7413,7 +7954,7 @@ function App() {
     setPlanLevel(saved.level);
     setPlanDuration(saved.duration);
     if (saved.position) setPlanPosition(saved.position);
-    setPlanResult(buildPlan(saved.themes, saved.level, saved.duration));
+    setPlanResult(buildPlan(saved.themes, saved.level, saved.duration, saved.position || 'all'));
     setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
@@ -7685,7 +8226,7 @@ function App() {
   // Phase 2B：練習プラン生成
   const handleGeneratePlan = () => {
     if (!planThemes.length) return;
-    const plan = buildPlan(planThemes, planLevel, planDuration);
+    const plan = buildPlan(planThemes, planLevel, planDuration, planPosition);
     setPlanResult(plan);
     saveResume('plan', { themes: planThemes, level: planLevel, duration: planDuration, position: planPosition, aim: generatePlanAim(planThemes, planLevel, planPosition) });
     setTimeout(() => window.scrollTo(0, 0), 0);
@@ -8604,6 +9145,16 @@ function App() {
 
             {/* 狙い */}
             <div className="plan-aim">🎯 狙い：{generatePlanAim(planThemes, planLevel, planPosition)}</div>
+
+            {/* ポジション特化バナー */}
+            {planPosition !== 'all' && (
+              <div className="plan-pos-banner">
+                <span className="plan-pos-banner-icon">{POSITIONS.find(p => p.id === planPosition)?.icon}</span>
+                <span className="plan-pos-banner-text">
+                  <strong>{POSITIONS.find(p => p.id === planPosition)?.label} 特化ドリル</strong>を適用中 — このポジションに最適化された練習内容が表示されています
+                </span>
+              </div>
+            )}
 
             {/* スキル練習 vs エコロジカルの凡例 */}
             <details className="plan-eco-banner" style={{padding: 0}}>
