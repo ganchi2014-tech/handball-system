@@ -802,6 +802,28 @@
       background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.5); color: #fde68a;
     }
     .plan-theme-chip-icon { font-size: 16px; }
+    .plan-theme-chip .rec-star { font-size: 11px; color: #fcd34d; margin-left: 3px; line-height: 1; }
+
+    /* ポジション選択チップ */
+    .plan-pos-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 10px; }
+    .plan-pos-chip {
+      display: inline-flex; align-items: center; gap: 5px; padding: 8px 13px;
+      border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface-1);
+      font-size: 12px; font-weight: 700; color: var(--tx-secondary); cursor: pointer;
+      transition: all var(--t-fast); min-height: var(--tap); font-family: inherit;
+    }
+    .plan-pos-chip:active { transform: scale(0.96); }
+    .plan-pos-chip.active { border-color: #22d3ee; background: rgba(34,211,238,0.13); color: #67e8f9; }
+    .plan-pos-chip-icon { font-size: 17px; }
+
+    /* ドリルタイプバッジ（スキル練習 vs エコロジカル） */
+    .plan-drill-type { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px; }
+    .plan-drill-type.skill { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .plan-drill-type.eco { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+
+    /* 表裏一体ノート（OF/DF共に練習になる説明） */
+    .plan-training-note { margin-top: 7px; padding: 7px 10px 7px 12px; background: rgba(99,102,241,0.09); border-left: 3px solid #6366f1; border-radius: 0 5px 5px 0; font-size: 11px; color: #c7d2fe; line-height: 1.7; }
+    .plan-training-note-label { font-size: 10px; font-weight: 800; color: #818cf8; margin-bottom: 2px; }
 
     /* レベル選択（セグメント） */
     .plan-levels { display: flex; gap: 8px; }
@@ -3441,7 +3463,224 @@ const DRILL_THEMES = [
       ],
     },
   },
+  // ── ポジション特化テーマ ──────────────────────────────────────────────
+  {
+    id: 'gk_save', icon: '🧤', label: 'GK：セービング', tags: ['GK', 'セービング'],
+    forPositions: ['gk'],
+    drills: {
+      basic: [
+        { title: '5コース基本セービング', minutes: 12, fileId: '05', match: 'GK',
+          desc: 'コーチが5コース（左上/右上/中央/左下/右下）をコール→GKが移動してセービング。各コース10本×3セット。',
+          drillType: 'skill',
+          trainingNote: 'GK：コースカバーの体重移動と手先の正確性を習得 ／ シューター：GKの動き出しパターンを観察して「どのコースに打てば得点できるか」を研究',
+          constraints: [
+            { type: '環境', text: 'シューターは「コールされたコース」に正確に打つ（精度の担保）' },
+            { type: 'タスク', text: 'GKはシューターの助走が始まってからコールを受け取る（先読みNG）' },
+          ] },
+      ],
+      mid: [
+        { title: '1on1ブレイクアウェイ（突破後の1対1）', minutes: 15, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'OF役が9mラインから単独ドリブル突破→GKが前に出るタイミングを判断してセービング。10本×3セット。',
+          drillType: 'eco',
+          trainingNote: 'GK：前に出るタイミングの判断（早すぎ→チップ、遅すぎ→コース空く） ／ OF：GKの出方を読んでチップシュートかコース打ちかをリアルタイムで選択',
+          constraints: [
+            { type: 'タスク', text: 'GKは6mラインを越えるか否かを事前に決めず、OFの動きを見て判断する（勝負の構図を作る）' },
+            { type: '選手', text: 'OFは前半5本はドリブルシュート狙い、後半5本はチップを狙う（GKに読まれにくい使い分けを学ぶ）' },
+          ] },
+      ],
+      adv: [
+        { title: 'GK角度絞りとコース予測（7mスロー複数シューター）', minutes: 15, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
+          desc: 'ペナルティ状況を模擬。複数シューターと交互に打ち、GKがコース絞りと反応でどれだけカバーできるかを測定。',
+          drillType: 'skill',
+          trainingNote: 'GK：コース絞り＋反応の二重戦略でカバー率を上げる ／ バック：GKの絞りパターンを観察して「読まれたときのフェイク」を研究',
+          constraints: [
+            { type: '環境', text: 'シューターは「同一コースを2回連続で使わない」ルール（GKの読み合いを強制）' },
+            { type: 'タスク', text: 'GKは打たれる前に「絞り方向」を1語コールする（判断を声に出す習慣）' },
+          ] },
+      ],
+    },
+  },
+  {
+    id: 'cb_vision', icon: '🎯', label: 'CB：視野と配球', tags: ['CB', '視野', '配球'],
+    forPositions: ['cb'],
+    drills: {
+      basic: [
+        { title: 'CB視野3点チェック（中央→両翼→ポスト）', minutes: 10, fileId: '04', match: 'フィールドプレーヤーの視野の広さ研究',
+          desc: 'CB役が中央でボールを持ち、ウィング→ポストの順に視線を切り替えて状況を確認してからパス。',
+          drillType: 'skill',
+          trainingNote: 'CB：3点の視線切り替え速度と情報処理の優先順位を習得 ／ 受け手（ウィング等）：CBの視線が来るタイミングを体感してフラッシュ（動き出し）の精度を上げる',
+          constraints: [
+            { type: 'タスク', text: 'CBは「中央確認→左確認→右確認→ポスト確認」を必ず声に出してからパス' },
+            { type: '環境', text: 'ウィング・ポスト役の位置はコーチがランダムに変える（毎回同じパスコースを暗記させない）' },
+          ] },
+      ],
+      mid: [
+        { title: 'CBからの即判断配球（プレッシャー付き）', minutes: 15, fileId: '23', match: 'R. 6人DFの集合知',
+          desc: 'CB役に向けてDF役が1人プレッシャーをかける→CBは2秒以内に正しいパス先を判断して出す。',
+          drillType: 'eco',
+          trainingNote: 'CB：プレッシャー下での配球精度と判断速度を磨く ／ DF：CBへのプレッシャーのかけ方とCBの配球パターンの読み（インターセプト位置の判断）',
+          constraints: [
+            { type: 'タスク', text: 'CBのパスが出るまでの時間を計測（2秒以内を合格ラインに）' },
+            { type: '環境', text: 'DFがボールを奪えたらDF側の得点・抜けたらCB側の得点（勝負の構図を作る）' },
+          ] },
+      ],
+      adv: [
+        { title: 'CBの高位置取り→連続展開（5v5）', minutes: 20, fileId: '14', match: 'トピックH：速攻中の認知負荷管理',
+          desc: 'CBが9mラインより前まで上がった状態から5v5で攻撃を組み立てる。CBの位置と展開スピードの連動を体感。',
+          drillType: 'eco',
+          trainingNote: 'CB：高い位置で受けたときの展開テンポとリスク判断 ／ DF全体：CBが高い位置を取ったときのプレッシャー配置とカバーの連動',
+          constraints: [
+            { type: 'タスク', text: 'CBが9mより前に出た場合、他4人全員が即再配置（声掛け必須）' },
+            { type: '環境', text: '5v5：攻撃側はCBがボールを持ったら必ず一度パスを経由させる（CB省略のシュートは無効）' },
+          ] },
+      ],
+    },
+  },
+  {
+    id: 'back_shoot', icon: '💪', label: 'バック：長距離シュート', tags: ['バック', 'シュート', '長距離'],
+    forPositions: ['back'],
+    drills: {
+      basic: [
+        { title: '9mシュートの踏み込みと威力', minutes: 12, fileId: '29', match: '物理学 ジャンプシュートの滞空時間',
+          desc: '9mラインより外からの2ステップシュート。前への踏み込みを最大限にして水平方向の速度をボールに乗せる。30本×3セット。',
+          drillType: 'skill',
+          trainingNote: 'バック：9m超のシュート威力（踏み込み速度をボール速度に変換）の習得 ／ GK：遠距離シュートの軌道（落下点と入射角）を体感してブロッキング基準を作る',
+          constraints: [
+            { type: 'タスク', text: 'GK役は「バックの前足が踏み込んだ瞬間に動き出す」ルール（反応型GKの模擬）' },
+            { type: '環境', text: 'シューターは毎回助走3歩以内で踏み込むこと（助走超過は無効）' },
+          ] },
+      ],
+      mid: [
+        { title: '跳躍時間を使ったGK誘導シュート', minutes: 15, fileId: '29', match: '物理学 ジャンプシュートの滞空時間',
+          desc: '最高点シュートと早打ちを交互に。GKの動き出しタイミングを滞空中に観察してリリースを変える。',
+          drillType: 'skill',
+          trainingNote: 'バック：GKの動き出しを滞空中に観察してリリースタイミングを変える高度なタイミング制御 ／ GK：バックの跳躍とリリースの関係（早打ちか最高点か）を体感して対策を考える',
+          constraints: [
+            { type: '環境', text: 'GK役は3本ごとに「最高点予測型」と「動き出し早め型」をランダムで切り替える' },
+            { type: 'タスク', text: 'バックは打つ直前に「最高点で」か「早打ちで」を声に出してから跳ぶ（判断を言語化）' },
+          ] },
+      ],
+      adv: [
+        { title: 'GK角度を読んだコース選択（実戦型）', minutes: 20, fileId: '14', match: 'トピックG：ウィングシュートの入射角物理と得点率の矛盾',
+          desc: 'GK役がランダムなポジションを取る。バックは構え→GKの位置確認→空きコースを狙ってシュート。',
+          drillType: 'eco',
+          trainingNote: 'バック：GKのポジショニングを瞬時に読んでコースを選択する実戦型意思決定 ／ GK：バックの助走と目線からコース意図を読み取り、どこを空けるかを計算する',
+          constraints: [
+            { type: '環境', text: 'GK役は毎回異なるポジション（中央/右寄り/左寄り/前気味/後ろ気味）で構える' },
+            { type: 'タスク', text: 'バックは助走中に「GKが○○に寄っているから△△コースを狙う」を声に出す（判断の言語化）' },
+          ] },
+      ],
+    },
+  },
+  {
+    id: 'wing_special', icon: '🚀', label: 'ウィング：角度シュート', tags: ['ウィング', 'シュート', '速攻'],
+    forPositions: ['wing'],
+    drills: {
+      basic: [
+        { title: '狭角シュート（ウィングポジション）', minutes: 12, fileId: '14', match: 'トピックG：ウィングシュートの入射角物理と得点率の矛盾',
+          desc: 'ウィングエリア（7m角）からの各種シュート。GKのニアポストギャップを狙う20本×3セット。',
+          drillType: 'skill',
+          trainingNote: 'ウィング：入射角を最大化する踏み切り位置（より内側）とリリースポイントを習得 ／ GK：ウィングからの狭角シュートの軌道パターン（ニア/ファー/チップ）を体感',
+          constraints: [
+            { type: '環境', text: 'GK役は「必ずニアポストを完全に締める」ポジションを取る（ニア封鎖型を強制）' },
+            { type: 'タスク', text: 'ウィングはGKがニアを締めた前提でファーポストかチップを使う（ニアへのシュートは無効）' },
+          ] },
+      ],
+      mid: [
+        { title: '速攻ウィングのフィニッシュ（2on1）', minutes: 15, fileId: '14', match: 'トピックI：ウィングの前からのプレスがDFラインに与える連鎖効果',
+          desc: 'ウィング+センターの2人vsGKの2on1速攻。ウィングがパスかシュートかをGKの動きで判断。',
+          drillType: 'eco',
+          trainingNote: 'ウィング：2on1でGKを引き付けてパスか自分でシュートかをリアルタイムで選択 ／ GK：2on1で1人でどちらを潰すか（出るか待つか）を判断する',
+          constraints: [
+            { type: 'タスク', text: 'ウィングは「GKが自分に寄ったらパス、離れたらシュート」の原則を使う' },
+            { type: '環境', text: 'GKはリアルな判断で守る（出るorポストに残る）——あらかじめ決めない（勝負の構図を作る）' },
+          ] },
+      ],
+      adv: [
+        { title: 'ウィングの切り返し（ニア→ファー フェイント）', minutes: 15, fileId: '14', match: 'トピックG：ウィングシュートの入射角物理と得点率の矛盾',
+          desc: 'GKがニアをケアした瞬間にファーポストへ切り返す。またはその逆。GKの体重移動を見てからリリース。',
+          drillType: 'eco',
+          trainingNote: 'ウィング：GKの体重移動のタイミングを感知して逆を突く技術 ／ GK：ウィングの助走角度から「ニア狙い」か「ファー狙い」かを読み先に動くかシュートを待つかを判断',
+          constraints: [
+            { type: '選手', text: 'GKは必ずニアかファアに先に体重をかける（中立ポジションで待つのは禁止）' },
+            { type: 'タスク', text: 'ウィングはGKが先に動いた方向を確認してから逆を選択する（読み合いを明確にする）' },
+          ] },
+      ],
+    },
+  },
+  {
+    id: 'pivot_body', icon: '🔄', label: 'ピボット：ボディコンタクト', tags: ['ピボット', 'ポスト', 'ボディコンタクト'],
+    forPositions: ['pivot'],
+    drills: {
+      basic: [
+        { title: '重心移動でDFを押し込む（背向き静止）', minutes: 12, fileId: '06', match: 'トピックK：重心移動の物理',
+          desc: 'DF役が背後に密着した状態でピボットが低重心を保ちながら前後左右に重心移動してDFを動かす。3分×4セット。',
+          drillType: 'skill',
+          trainingNote: 'ピボット：重心を低く保ちながら体幹でDFを押し込む技術（小柄でも大柄DFを動かせる力の伝え方） ／ DF：ピボットの重心移動に対する合法的な対抗方法（ファウルにならない押し返し）を体感',
+          constraints: [
+            { type: '選手', text: 'DF役は10回ごとに「重心方向に合わせる（逆らわない）」「逆方向に抵抗する」を切り替える' },
+            { type: 'タスク', text: 'ピボットは30秒間DF役を1cm以上動かせたら成功（静止はNG）' },
+          ] },
+      ],
+      mid: [
+        { title: '背向きボールコントロール→即回転シュート', minutes: 15, fileId: '06', match: 'トピックL：選択肢を意図的に減らす 逆説的コミットメント戦術',
+          desc: 'ピボットが背向きでパスを受ける→DF役の位置を感じて左右どちらかに回転→即シュートorパス。',
+          drillType: 'eco',
+          trainingNote: 'ピボット：背向きでの受け取りと次のアクション（回転方向の選択）を1.5秒以内に決断 ／ GK：ピボットの旋回方向を背中の動きから予測してポジション取りを調整',
+          constraints: [
+            { type: 'タスク', text: 'ピボットはボールを受けてから1.5秒以内に回転方向を決めてアクション（迷ったら無効）' },
+            { type: '環境', text: 'DF役はリアルな守備（どちら側を封じるか自由に決める）——事前に方向を教えない（勝負の構図を作る）' },
+          ] },
+      ],
+      adv: [
+        { title: 'スクリーン→即ロールアウト→バックとの2on2', minutes: 20, fileId: '06', match: 'トピックJ：スクリーン（ブロック）の法的限界と審判判定基準',
+          desc: 'ピボットがスクリーンをセット→バックが抜ける→ピボットがロールアウト→パス受け→シュート。DF2人が対応。',
+          drillType: 'eco',
+          trainingNote: 'ピボット：スクリーン後のロールアウトタイミングとボール受け取り即シュートの連携 ／ DF2人：スクリーン対応（スイッチ/ファイトオーバー/ゴーアンダー）の選択とその結果を体感 ／ GK：ロールアウト後のシュートコースの予測',
+          constraints: [
+            { type: 'タスク', text: 'ピボットのスクリーンは審判基準（足は肩幅・静止）を必ず守る（動くスクリーンは無効）' },
+            { type: '環境', text: 'DF2人は5本ごとに対応を変える（スイッチ→ファイトオーバー→ゴーアンダー）→OFはDFの対応を見て分岐する' },
+          ] },
+      ],
+    },
+  },
 ];
+
+// drillTypeを自動付与（明示指定がないドリルを分類）
+// スキル練習：相手役の動きが固定されている（パーだけ出させる→チョキの練習）
+// エコロジカル：環境制限の中で両者が自由に勝負する（パーなしのじゃんけん）
+(function autoAnnotateDrillTypes() {
+  const skillSignals = /GK役は必ず|DF役は必ず先読み|コーチのコール|GK役のコール|DF役のコール|コールしてタイプ変更|タイプを変える|コール（.+）で即|コーチが意図的/;
+  DRILL_THEMES.forEach(theme => {
+    ['basic', 'mid', 'adv'].forEach(lv => {
+      (theme.drills[lv] || []).forEach(drill => {
+        if (drill.drillType) return; // 明示指定があれば上書きしない
+        const txt = (drill.constraints || []).map(c => c.text).join(' ');
+        drill.drillType = skillSignals.test(txt) ? 'skill' : 'eco';
+      });
+    });
+  });
+})();
+
+// ポジション定義
+const POSITIONS = [
+  { id: 'all',   icon: '👥', label: 'チーム全体',    desc: 'ポジション問わず全員で取り組む' },
+  { id: 'gk',    icon: '🧤', label: 'GK',             desc: 'ゴールキーパー専用' },
+  { id: 'cb',    icon: '🎯', label: 'CB（センター）', desc: 'センターバック特化' },
+  { id: 'back',  icon: '💪', label: 'LB・RB',         desc: 'サイドバック特化' },
+  { id: 'wing',  icon: '🚀', label: 'LW・RW',         desc: 'ウィング特化' },
+  { id: 'pivot', icon: '🔄', label: 'Pivot',          desc: 'ポスト・ピボット特化' },
+];
+
+// ポジション別推奨テーマ
+const POSITION_RECOMMENDED = {
+  all:   [],
+  gk:    ['gk_save', 'fast', 'link', 'def'],
+  cb:    ['cb_vision', '1on1', 'pass', 'setof', '2on2'],
+  back:  ['back_shoot', 'shoot', 'feint', 'step', '1on1'],
+  wing:  ['wing_special', 'shoot', 'fast', 'step'],
+  pivot: ['pivot_body', 'post', '2on2', '1on1'],
+};
 
 // ウォームアップ／クールダウンのテンプレ
 const DRILL_WARMUP = { title: 'ウォームアップ（ダイナミックストレッチ＋パス）', minutes: 0, desc: '関節可動域→軽いランニング→ペアパスでテンポを上げる。' };
@@ -7005,6 +7244,7 @@ function App() {
   const [solveHistory, setSolveHistory] = useState([]);   // 最近の診断履歴
 
   // 練習を組む（Phase 2B）の状態
+  const [planPosition, setPlanPosition] = useState('all'); // ポジション選択
   const [planThemes, setPlanThemes] = useState([]);       // テーマID配列
   const [planLevel, setPlanLevel] = useState('mid');
   const [planDuration, setPlanDuration] = useState(60);
@@ -7120,13 +7360,16 @@ function App() {
   }, []);
 
   // プランの狙いを自動生成
-  const generatePlanAim = (themes, levelId) => {
+  const generatePlanAim = (themes, levelId, positionId) => {
     const labels = themes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.label).filter(Boolean);
     if (labels.length === 0) return '';
     const lv = LEVELS.find(l => l.id === levelId)?.label || '';
-    if (labels.length === 1) return `${labels[0]}の${lv}強化（単一テーマ集中）`;
-    if (labels.length === 2) return `${labels[0]}と${labels[1]}の連動強化（${lv}）`;
-    return `${labels.slice(0, -1).join('・')}＋${labels[labels.length - 1]}の総合強化（${lv}）`;
+    const posLabel = positionId && positionId !== 'all'
+      ? (POSITIONS.find(p => p.id === positionId)?.label || '') + '特化・'
+      : '';
+    if (labels.length === 1) return `${posLabel}${labels[0]}の${lv}強化（単一テーマ集中）`;
+    if (labels.length === 2) return `${posLabel}${labels[0]}と${labels[1]}の連動強化（${lv}）`;
+    return `${posLabel}${labels.slice(0, -1).join('・')}＋${labels[labels.length - 1]}の総合強化（${lv}）`;
   };
 
   // プラン保存（タグ付き）
@@ -7136,7 +7379,8 @@ function App() {
       themes: planThemes,
       level: planLevel,
       duration: planDuration,
-      aim: generatePlanAim(planThemes, planLevel),
+      position: planPosition,
+      aim: generatePlanAim(planThemes, planLevel, planPosition),
       tag: tag || null,
       ts: Date.now(),
     };
@@ -7154,6 +7398,7 @@ function App() {
     setPlanThemes(saved.themes);
     setPlanLevel(saved.level);
     setPlanDuration(saved.duration);
+    if (saved.position) setPlanPosition(saved.position);
     setPlanResult(buildPlan(saved.themes, saved.level, saved.duration));
     setTimeout(() => window.scrollTo(0, 0), 0);
   };
@@ -7162,8 +7407,9 @@ function App() {
   const handlePlanCopy = () => {
     if (!planResult) return;
     const lv = LEVELS.find(l => l.id === planLevel)?.label || '';
-    let txt = `【練習プラン】 ${planResult.totalAllocated}分 / ${lv}\n`;
-    txt += `狙い: ${generatePlanAim(planThemes, planLevel)}\n`;
+    const posLabel = planPosition !== 'all' ? ` / ${POSITIONS.find(p => p.id === planPosition)?.label || ''}` : '';
+    let txt = `【練習プラン】 ${planResult.totalAllocated}分 / ${lv}${posLabel}\n`;
+    txt += `狙い: ${generatePlanAim(planThemes, planLevel, planPosition)}\n`;
     txt += `テーマ: ${planThemes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.label).filter(Boolean).join('・')}\n`;
     txt += '\n';
     if (planResult.warmup) txt += `■ ウォームアップ (${planResult.warmup.minutes}分)\n  ${planResult.warmup.desc}\n\n`;
@@ -7423,7 +7669,7 @@ function App() {
     if (!planThemes.length) return;
     const plan = buildPlan(planThemes, planLevel, planDuration);
     setPlanResult(plan);
-    saveResume('plan', { themes: planThemes, level: planLevel, duration: planDuration, aim: generatePlanAim(planThemes, planLevel) });
+    saveResume('plan', { themes: planThemes, level: planLevel, duration: planDuration, position: planPosition, aim: generatePlanAim(planThemes, planLevel, planPosition) });
     setTimeout(() => window.scrollTo(0, 0), 0);
   };
 
@@ -8205,8 +8451,10 @@ function App() {
         <div className="plan-screen">
           <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
 
-          {/* STEPインジケーター（シンプルに「テーマ選択済みか」で2状態） */}
+          {/* STEPインジケーター */}
           <div className="step-dots plan">
+            <span className="step-dot done"></span>
+            <span className="step-bar done"></span>
             <span className={`step-dot ${planThemes.length > 0 ? 'done' : 'current'}`}></span>
             <span className={`step-bar ${planThemes.length > 0 ? 'done' : ''}`}></span>
             <span className={`step-dot ${planThemes.length > 0 ? 'current' : ''}`}></span>
@@ -8214,20 +8462,38 @@ function App() {
             <span className={`step-dot ${planThemes.length > 0 ? 'current' : ''}`}></span>
           </div>
 
-          {/* テーマ複数選択 */}
-          <div className="solve-bar"><span className="plan-step-pill">STEP 1 / 3</span><span className="plan-step-label">テーマ（複数可）</span></div>
-          <div className="plan-title">何を強化する？</div>
-          <div className="plan-sub">複数選んでOK。練習時間は自動配分されます。</div>
-          <div className="plan-themes">
-            {DRILL_THEMES.map(t => (
-              <button key={t.id} className={`plan-theme-chip ${planThemes.includes(t.id) ? 'active' : ''}`} onClick={() => handleTogglePlanTheme(t.id)}>
-                <span className="plan-theme-chip-icon">{t.icon}</span>{t.label}
+          {/* STEP 1：ポジション選択 */}
+          <div className="solve-bar"><span className="plan-step-pill">STEP 1 / 4</span><span className="plan-step-label">ポジション（任意）</span></div>
+          <div className="plan-title">誰の練習？</div>
+          <div className="plan-sub">選ぶと推奨テーマに★が付きます。チーム全体の場合はそのまま。</div>
+          <div className="plan-pos-chips">
+            {POSITIONS.map(p => (
+              <button key={p.id} className={`plan-pos-chip ${planPosition === p.id ? 'active' : ''}`}
+                onClick={() => setPlanPosition(prev => prev === p.id && p.id !== 'all' ? 'all' : p.id)}>
+                <span className="plan-pos-chip-icon">{p.icon}</span>{p.label}
               </button>
             ))}
           </div>
 
-          {/* レベル選択 */}
-          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 2 / 3</span><span className="plan-step-label">レベル</span></div>
+          {/* STEP 2：テーマ複数選択 */}
+          <div className="solve-bar" style={{marginTop: 4}}><span className="plan-step-pill">STEP 2 / 4</span><span className="plan-step-label">テーマ（複数可）</span></div>
+          <div className="plan-title">何を強化する？</div>
+          <div className="plan-sub">複数選んでOK。★はポジション推奨テーマ。練習時間は自動配分されます。</div>
+          <div className="plan-themes">
+            {DRILL_THEMES.map(t => {
+              const recs = POSITION_RECOMMENDED[planPosition] || [];
+              const isRec = recs.includes(t.id);
+              return (
+                <button key={t.id} className={`plan-theme-chip ${planThemes.includes(t.id) ? 'active' : ''}`} onClick={() => handleTogglePlanTheme(t.id)}>
+                  <span className="plan-theme-chip-icon">{t.icon}</span>{t.label}
+                  {isRec && <span className="rec-star">★</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* STEP 3：レベル選択 */}
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 3 / 4</span><span className="plan-step-label">レベル</span></div>
           <div className="plan-levels">
             {LEVELS.map(l => (
               <button key={l.id} className={`plan-level-btn ${planLevel === l.id ? 'active' : ''}`} onClick={() => setPlanLevel(l.id)}>
@@ -8237,8 +8503,8 @@ function App() {
             ))}
           </div>
 
-          {/* 時間選択 */}
-          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 3 / 3</span><span className="plan-step-label">時間</span></div>
+          {/* STEP 4：時間選択 */}
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 4 / 4</span><span className="plan-step-label">時間</span></div>
           <div className="plan-durations">
             {DURATIONS.map(d => (
               <button key={d} className={`plan-duration-btn ${planDuration === d ? 'active' : ''}`} onClick={() => setPlanDuration(d)}>
@@ -8267,6 +8533,7 @@ function App() {
                       {sv.aim}
                     </div>
                     <div className="plan-saved-detail">
+                      {sv.position && sv.position !== 'all' && <>{POSITIONS.find(p => p.id === sv.position)?.icon}{' '}</>}
                       {sv.duration}分 / {LEVELS.find(l => l.id === sv.level)?.label} /
                       {' '}{sv.themes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.icon).filter(Boolean).join(' ')}
                     </div>
@@ -8287,22 +8554,36 @@ function App() {
             <div className="plan-header">
               <div className="plan-header-time">⏱ {planResult.totalAllocated} 分プラン</div>
               <div className="plan-header-meta">
+                {planPosition !== 'all' && <>{POSITIONS.find(p => p.id === planPosition)?.icon}{' '}{POSITIONS.find(p => p.id === planPosition)?.label}{' ／ '}</>}
                 {LEVELS.find(l => l.id === planLevel)?.label} ／
                 {' '}テーマ: {planThemes.map(tid => DRILL_THEMES.find(t => t.id === tid)?.label).filter(Boolean).join('・')}
               </div>
             </div>
 
             {/* 狙い */}
-            <div className="plan-aim">🎯 狙い：{generatePlanAim(planThemes, planLevel)}</div>
+            <div className="plan-aim">🎯 狙い：{generatePlanAim(planThemes, planLevel, planPosition)}</div>
 
-            {/* エコロジカル制約の説明（折りたたみ可） */}
+            {/* スキル練習 vs エコロジカルの凡例 */}
             <details className="plan-eco-banner" style={{padding: 0}}>
               <summary style={{cursor: 'pointer', padding: '8px 12px', listStyle: 'none', color: 'var(--c-dict)', fontSize: 11, fontWeight: 800}}>
-                📌 制約主導アプローチ（エコロジカル）— 詳しく見る
+                📌 練習タイプの読み方（スキル／エコロジカル）— 詳しく見る
               </summary>
               <div style={{padding: '0 12px 12px', borderTop: '1px solid rgba(34,211,238,0.2)', marginTop: 4, paddingTop: 8}}>
-                各メニューに「制約」を設定。試合に近い状況を再現し、選手が自分で考えて動く力を育てます。
-                <div style={{marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
+                <div style={{marginBottom: 8, fontSize: 11, color: '#94a3b8', lineHeight: 1.6}}>
+                  どちらも<strong style={{color:'#67e8f9'}}>相手と勝負する</strong>練習です。勝負がないと表裏一体にはなりません。
+                </div>
+                <div style={{display: 'flex', gap: 6, alignItems: 'center', marginBottom: 5}}>
+                  <span className="plan-drill-type skill">スキル練習</span>
+                  <span style={{fontSize: 11}}>相手役の動きを固定して勝負（パーだけ出させてチョキを練習）</span>
+                </div>
+                <div style={{display: 'flex', gap: 6, alignItems: 'center', marginBottom: 8}}>
+                  <span className="plan-drill-type eco">エコロジカル</span>
+                  <span style={{fontSize: 11}}>環境制限の中で双方が自由に勝負（パーなしのじゃんけん）</span>
+                </div>
+                <div style={{marginBottom: 8, fontSize: 11, color: '#94a3b8', lineHeight: 1.6}}>
+                  <strong style={{color:'#c7d2fe'}}>🔄 OF/DF表裏一体：</strong>攻撃の練習は守備の練習でもあります。各メニューの「表裏」を確認してください。
+                </div>
+                <div style={{marginTop: 4, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
                   <span style={{background: '#155e75', color: '#67e8f9', fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 700}}>タスク</span>
                   <span style={{fontSize: 11}}>=ルール（時間・回数・声出し等）</span>
                 </div>
@@ -8346,10 +8627,25 @@ function App() {
                       <span className="plan-item-title">{it.title}</span>
                       <span className="plan-item-arrow">›</span>
                     </div>
+                    {/* ドリルタイプバッジ */}
+                    {it.drillType && (
+                      <div style={{marginTop: 4}}>
+                        <span className={`plan-drill-type ${it.drillType}`}>
+                          {it.drillType === 'skill' ? '🔧 スキル練習' : '🌿 エコロジカル'}
+                        </span>
+                      </div>
+                    )}
                     <div className="plan-item-desc">{it.desc}</div>
+                    {/* 表裏一体ノート */}
+                    {it.trainingNote && (
+                      <div className="plan-training-note">
+                        <div className="plan-training-note-label">🔄 OF/DF 表裏一体</div>
+                        {it.trainingNote}
+                      </div>
+                    )}
                     {it.constraints && it.constraints.length > 0 && (
                       <div className="plan-constraints">
-                        <div className="plan-constraints-label">📌 制約（エコロジカル）</div>
+                        <div className="plan-constraints-label">📌 制約（勝負の構図）</div>
                         {it.constraints.map((c, ci) => (
                           <div key={ci} className="plan-constraint-item">
                             <span className="plan-constraint-tag">{c.type}</span>
