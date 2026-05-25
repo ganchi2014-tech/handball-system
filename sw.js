@@ -1,10 +1,20 @@
 // Service Worker — オフライン対応
-// v3: HTML/JS はネットワーク優先（常に最新）、辞書.md のみキャッシュ優先（体育館オフライン対応）
-const CACHE = 'handball-lab-v3';
+// v4: アイコン・manifest をインストール時にキャッシュ（PWAインストール対応）
+const CACHE = 'handball-lab-v4';
+const PRECACHE = [
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './manifest.json',
+];
 
-// インストール時：即座にアクティブ化
+// インストール時：アイコン等を事前キャッシュ
 self.addEventListener('install', (event) => {
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(
+    caches.open(CACHE)
+      .then(cache => cache.addAll(PRECACHE))
+      .then(() => self.skipWaiting())
+  );
 });
 
 // 起動時：古いキャッシュをすべて破棄
