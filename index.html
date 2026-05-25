@@ -979,6 +979,9 @@
       }
       .plan-header-time, .plan-block-title, .plan-item-title, .plan-wc-time, .plan-aim { color: black !important; }
       .plan-item-time { background: #444 !important; color: white !important; }
+      .plan-training-note { background: #f0f0f8 !important; border-color: #6366f1 !important; color: #222 !important; }
+      .plan-training-note-label { color: #444 !important; }
+      .plan-drill-type { border-color: #888 !important; color: #222 !important; background: #eee !important; }
       .plan-constraint-tag { background: #555 !important; color: white !important; }
     }
 
@@ -3469,7 +3472,7 @@ const DRILL_THEMES = [
     forPositions: ['gk'],
     drills: {
       basic: [
-        { title: '5コース基本セービング', minutes: 12, fileId: '05', match: 'GK',
+        { title: '5コース基本セービング', minutes: 12, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
           desc: 'コーチが5コース（左上/右上/中央/左下/右下）をコール→GKが移動してセービング。各コース10本×3セット。',
           drillType: 'skill',
           trainingNote: 'GK：コースカバーの体重移動と手先の正確性を習得 ／ シューター：GKの動き出しパターンを観察して「どのコースに打てば得点できるか」を研究',
@@ -3525,7 +3528,7 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'CBの高位置取り→連続展開（5v5）', minutes: 20, fileId: '14', match: 'トピックH：速攻中の認知負荷管理',
+        { title: 'CBの高位置取り→連続展開（5v5）', minutes: 20, fileId: '26', match: 'OF（オフェンス）陣形',
           desc: 'CBが9mラインより前まで上がった状態から5v5で攻撃を組み立てる。CBの位置と展開スピードの連動を体感。',
           drillType: 'eco',
           trainingNote: 'CB：高い位置で受けたときの展開テンポとリスク判断 ／ DF全体：CBが高い位置を取ったときのプレッシャー配置とカバーの連動',
@@ -3561,7 +3564,7 @@ const DRILL_THEMES = [
           ] },
       ],
       adv: [
-        { title: 'GK角度を読んだコース選択（実戦型）', minutes: 20, fileId: '14', match: 'トピックG：ウィングシュートの入射角物理と得点率の矛盾',
+        { title: 'GK角度を読んだコース選択（実戦型）', minutes: 20, fileId: '05', match: 'トピックM：GKが物理的に守れない面積',
           desc: 'GK役がランダムなポジションを取る。バックは構え→GKの位置確認→空きコースを狙ってシュート。',
           drillType: 'eco',
           trainingNote: 'バック：GKのポジショニングを瞬時に読んでコースを選択する実戦型意思決定 ／ GK：バックの助走と目線からコース意図を読み取り、どこを空けるかを計算する',
@@ -3587,7 +3590,7 @@ const DRILL_THEMES = [
           ] },
       ],
       mid: [
-        { title: '速攻ウィングのフィニッシュ（2on1）', minutes: 15, fileId: '14', match: 'トピックI：ウィングの前からのプレスがDFラインに与える連鎖効果',
+        { title: '速攻ウィングのフィニッシュ（2on1）', minutes: 15, fileId: '03', match: '速攻',
           desc: 'ウィング+センターの2人vsGKの2on1速攻。ウィングがパスかシュートかをGKの動きで判断。',
           drillType: 'eco',
           trainingNote: 'ウィング：2on1でGKを引き付けてパスか自分でシュートかをリアルタイムで選択 ／ GK：2on1で1人でどちらを潰すか（出るか待つか）を判断する',
@@ -3650,7 +3653,8 @@ const DRILL_THEMES = [
 // スキル練習：相手役の動きが固定されている（パーだけ出させる→チョキの練習）
 // エコロジカル：環境制限の中で両者が自由に勝負する（パーなしのじゃんけん）
 (function autoAnnotateDrillTypes() {
-  const skillSignals = /GK役は必ず|DF役は必ず先読み|コーチのコール|GK役のコール|DF役のコール|コールしてタイプ変更|タイプを変える|コール（.+）で即|コーチが意図的/;
+  // スキル判定：相手役の動きが固定・コール式・先読み強制 など
+  const skillSignals = /GK役は必ず|DF役は必ず|コーチのコール|GK役のコール|DF役のコール|コールしてタイプ変更|タイプを変える|コール（.+）で即|コーチが意図的/;
   DRILL_THEMES.forEach(theme => {
     ['basic', 'mid', 'adv'].forEach(lv => {
       (theme.drills[lv] || []).forEach(drill => {
@@ -3697,8 +3701,9 @@ const DURATIONS = [30, 60, 90, 120]; // 分
 // 練習計画ビルダー：選択された テーマ × レベル × 時間 から計画を作る
 function buildPlan(themeIds, levelId, totalMinutes) {
   // ウォームアップとクールダウンの時間を確保
-  const warmupTime = Math.max(8, Math.round(totalMinutes * 0.12));
-  const cooldownTime = Math.max(5, Math.round(totalMinutes * 0.08));
+  // 30分：W=5分/C=3分、60分：W=8分/C=5分、90分：W=12分/C=7分、120分：W=15分/C=10分
+  const warmupTime = Math.min(15, Math.max(5, Math.round(totalMinutes * 0.13)));
+  const cooldownTime = Math.min(10, Math.max(3, Math.round(totalMinutes * 0.08)));
   const remaining = totalMinutes - warmupTime - cooldownTime;
 
   // 選択されたテーマからレベルに合う drills を集める
