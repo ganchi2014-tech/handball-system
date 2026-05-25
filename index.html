@@ -8429,22 +8429,6 @@ function App() {
             <div className="hub-title">「わからない」を解決する</div>
           </div>
           <div className="hub-cards">
-            {/* 続きから（前回の作業を再開） */}
-            {resumeData && (
-              <button className="hub-card resume" onClick={handleResume}>
-                <div className="hub-card-icon">↩️</div>
-                <div className="hub-card-body">
-                  <div className="hub-card-target">前回の続き</div>
-                  <div className="hub-card-title">続きから</div>
-                  <div className="hub-card-desc">
-                    {resumeData.kind === 'solve' && `課題解決：${resumeData.payload?.symptomTitle || resumeData.payload?.symptom || ''}`}
-                    {resumeData.kind === 'dict' && `辞書：${resumeData.payload?.title || resumeData.payload?.sectionId || ''}`}
-                    {resumeData.kind === 'plan' && `練習プラン：${(resumeData.payload?.themes || []).map(id => DRILL_THEMES.find(t => t.id === id)?.label || id).join('・')}`}
-                  </div>
-                </div>
-                <div className="hub-card-arrow">›</div>
-              </button>
-            )}
             {HUB_MODULES.map(mod => (
               <button
                 key={mod.id}
