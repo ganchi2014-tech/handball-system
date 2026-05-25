@@ -1,50 +1,47 @@
-// Service Worker — オフライン対応（cache-first 戦略）
-// 体育館の電波弱い環境でも辞書が見られるよう設計
-const CACHE = 'handball-lab-v2';
+// Service Worker — オフライン対応
+// v3: HTML/JS はネットワーク優先（常に最新）、辞書.md のみキャッシュ優先（体育館オフライン対応）
+const CACHE = 'handball-lab-v3';
 
-const PRECACHE_URLS = [
-  './',
-  './index.html',
-  './manifest.json',
-  // React / Babel CDN は外部のため動的キャッシュ
-];
-
-// インストール時：必須ファイルをプリキャッシュ
+// インストール時：即座にアクティブ化
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
-// 起動時：古いキャッシュを掃除
+// 起動時：古いキャッシュをすべて破棄
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
-// fetch：cache-first（オフラインでも読める）+ 取得後に背景更新
+// fetch：辞書ファイル(.md)のみ cache-first、それ以外は network-first
 self.addEventListener('fetch', (event) => {
-  // chrome-extension などは無視
   if (!event.request.url.startsWith('http')) return;
-  // POST 等のキャッシュ対象外メソッドはネット直行
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const networkFetch = fetch(event.request).then((response) => {
-        if (response && response.status === 200 && response.type !== 'opaque') {
-          const clone = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(event.request, clone));
-        }
-        return response;
-      }).catch(() => cached);
+  const url = event.request.url;
+  const isDictFile = url.includes('/dictionary/') && url.endsWith('.md');
 
-      // キャッシュがあればまず即返却、背景でネット更新
-      return cached || networkFetch;
-    })
-  );
+  if (isDictFile) {
+    // 辞書：cache-first（電波なし環境でも読める）
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        const networkFetch = fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => cached);
+        return cached || networkFetch;
+      })
+    );
+  } else {
+    // HTML/JS/その他：network-first（常に最新を取得）
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+  }
 });
