@@ -239,6 +239,35 @@
     /* ── Content ── */
     .content { flex: 1; padding: 20px 20px 36px; display: flex; flex-direction: column; gap: 18px; }
 
+    /* ── Emotion screen ── */
+    .emotion-screen {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      gap: 24px; padding: 24px 20px;
+    }
+    .emotion-title { font-size: 20px; font-weight: 800; color: var(--tx-primary); line-height: 1.5; text-align: center; letter-spacing: -0.01em; }
+    .emotion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .emotion-btn {
+      background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 20px 12px; text-align: center; cursor: pointer;
+      transition: all var(--t-fast); display: flex; flex-direction: column; gap: 7px; align-items: center;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .emotion-btn:active { transform: scale(0.96); }
+    .emotion-btn.bad     { border-color: rgba(239,68,68,0.4);   background: rgba(239,68,68,0.08); }
+    .emotion-btn.good    { border-color: rgba(34,197,94,0.4);   background: rgba(34,197,94,0.08); }
+    .emotion-btn.confused{ border-color: rgba(245,158,11,0.4);  background: rgba(245,158,11,0.08); }
+    .emotion-btn.blank   { border-color: rgba(100,116,139,0.4); background: rgba(100,116,139,0.06); }
+    .emotion-emoji { font-size: 32px; }
+    .emotion-label { font-size: 13px; font-weight: 800; }
+    .emotion-btn.bad .emotion-label      { color: #fca5a5; }
+    .emotion-btn.good .emotion-label     { color: #86efac; }
+    .emotion-btn.confused .emotion-label { color: #fcd34d; }
+    .emotion-btn.blank .emotion-label    { color: #94a3b8; }
+    .skip-btn {
+      background: transparent; border: none; color: var(--tx-dim); font-size: 13px;
+      cursor: pointer; padding: 10px; text-align: center;
+    }
+
     /* ── Questions ── */
     .q-label { font-size: 10px; font-weight: 800; color: var(--c-reflect); letter-spacing: 0.14em; text-transform: uppercase; }
     .q-text { font-size: var(--fs-lg); font-weight: 800; color: var(--tx-primary); line-height: 1.55; margin-top: 6px; letter-spacing: -0.01em; }
@@ -7670,10 +7699,18 @@ const MODES = {
   gk:       { label: '相手GK分析',   color: '#f97316', firstQ: 'qg1',         icon: '🥅', desc: '相手GKのタイプを特定 → 有効なシュート戦略' },
 };
 
+const EMOTIONS = [
+  { id: 'bad',      emoji: '😤', label: '悔しい',   cls: 'bad' },
+  { id: 'good',     emoji: '😊', label: 'よかった', cls: 'good' },
+  { id: 'confused', emoji: '😕', label: '迷った',   cls: 'confused' },
+  { id: 'blank',    emoji: '😶', label: 'わからん', cls: 'blank' },
+];
+
 function getProgress(phase, histLen) {
   if (phase === 'hub' || phase === 'start') return 0;
   if (phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan') return 0;
   if (phase === 'result') return 100;
+  if (phase === 'emotion') return 10;
   return Math.min(20 + histLen * 20, 85);
 }
 
@@ -7761,6 +7798,7 @@ function GText({ text, query, className, as }) {
 function App() {
   const [phase, setPhase] = useState('hub');
   const [mode, setMode] = useState(null);
+  const [emotion, setEmotion] = useState(null);
   const [currentQ, setCurrentQ] = useState(null);
   const [selected, setSelected] = useState(null);
   const [history, setHistory] = useState([]);
@@ -7782,7 +7820,6 @@ function App() {
   const [solveCategory, setSolveCategory] = useState(null);
   const [solveSymptom, setSolveSymptom] = useState(null);
   const [solveHistory, setSolveHistory] = useState([]);   // 最近の診断履歴
-  const [criticalPosFilter, setCriticalPosFilter] = useState(null); // criticalカテゴリのポジションフィルタ
 
   // 練習を組む（Phase 2B）の状態
   const [planPosition, setPlanPosition] = useState('all'); // ポジション選択
@@ -7926,7 +7963,7 @@ function App() {
       ts: Date.now(),
     };
     setPlanSaved(prev => {
-      const next = [entry, ...prev].slice(0, 5);
+      const next = [entry, ...prev].slice(0, 8);
       lsSet('plan-saved', next);
       return next;
     });
@@ -8027,8 +8064,8 @@ function App() {
   // 辞書ファイルを一度だけfetch
   useEffect(() => {
     if (dictLoaded || dictError) return;
-    // hub表示と同時にバックグラウンドでプリロード開始。他タブからのリンク遷移で未ロードにならないようにする
-    if (phase !== 'hub' && phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve' && phase !== 'plan') return;
+    // 辞書は dictionary 系のほか、solve・plan の関連リンク遷移でも使う
+    if (phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve' && phase !== 'plan') return;
 
     (async () => {
       try {
@@ -8157,7 +8194,17 @@ function App() {
 
   const handleModeSelect = (m) => {
     setMode(m);
-    setCurrentQ(MODES[m].firstQ);
+    if (m === 'context' || m === 'janken' || m === 'gk') {
+      setCurrentQ(MODES[m].firstQ);
+      setPhase('question');
+    } else {
+      setPhase('emotion');
+    }
+  };
+
+  const handleEmotion = (e) => {
+    setEmotion(e);
+    setCurrentQ(MODES[mode].firstQ);
     setPhase('question');
   };
 
@@ -8178,13 +8225,13 @@ function App() {
   };
 
   const handleReset = () => {
-    setPhase('start'); setMode(null);
+    setPhase('start'); setMode(null); setEmotion(null);
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
   };
 
   const handleBackToHub = () => {
-    setPhase('hub'); setMode(null);
+    setPhase('hub'); setMode(null); setEmotion(null);
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
     setDictDetail(null);
@@ -8263,7 +8310,7 @@ function App() {
   };
 
   const handleSolveReset = () => {
-    setSolveRole(null); setSolveCategory(null); setSolveSymptom(null); setCriticalPosFilter(null);
+    setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
   };
 
   // 振り返りモード → 課題解決カテゴリへの直通マッピング
@@ -8366,6 +8413,7 @@ function App() {
   // 国別深掘り：現在のmodeから「じゃんけん→国別逆引き」へジャンプ
   const handleJumpToCountry = () => {
     setMode('janken');
+    setEmotion(null);
     setCurrentQ('qj_school');
     setSelected(null);
     setHistory([]);
@@ -8387,14 +8435,14 @@ function App() {
               {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
               {phase === 'solve' && '課題を解決する'}
               {phase === 'plan' && '練習を組む'}
-              {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
+              {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
               {phase === 'hub' && ''}
               {(phase === 'dictionary' || phase === 'dictionary-detail') && 'Dictionary'}
               {phase === 'solve' && 'Symptom Diagnosis'}
               {phase === 'plan' && 'Practice Planner'}
-              {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
+              {(phase === 'start' || phase === 'emotion' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
           </div>
           {modeInfo && (
@@ -8853,7 +8901,7 @@ function App() {
         if (!solveSymptom) {
           return (
             <div className="solve-screen">
-              <button className="dict-back" onClick={() => { setSolveCategory(null); setCriticalPosFilter(null); }}>← 戻る（カテゴリの選び直し）</button>
+              <button className="dict-back" onClick={() => setSolveCategory(null)}>← 戻る（カテゴリの選び直し）</button>
               <div className="solve-bar">
                 <span className="solve-step-pill">STEP 3 / 3</span>
                 <span className="solve-step-label">具体的な症状</span>
@@ -8867,40 +8915,17 @@ function App() {
               </div>
               <div className="solve-title">どれが一番近い？</div>
               <div className="solve-sub">{catData.icon} {catData.title}</div>
-              {catData.id === 'critical' && (
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0 4px' }}>
-                  {['すべて','SB','WB','CB','PV','GK','DF'].map(lbl => {
-                    const val = lbl === 'すべて' ? null : lbl;
-                    const active = criticalPosFilter === val;
-                    return (
-                      <button key={lbl} onClick={() => setCriticalPosFilter(val)}
-                        style={{
-                          padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 800, cursor: 'pointer',
-                          border: active ? '1.5px solid #818cf8' : '1px solid var(--border)',
-                          background: active ? 'rgba(99,102,241,0.18)' : 'var(--surface-1)',
-                          color: active ? '#c7d2fe' : 'var(--tx-muted)',
-                          transition: 'all 0.15s',
-                        }}>
-                        {lbl}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
               <div className="solve-sym-list">
-                {catData.symptoms
-                  .filter(s => catData.id !== 'critical' || !criticalPosFilter || s.title.startsWith('[' + criticalPosFilter + ']'))
-                  .map(s => (
-                    <button key={s.id} className="solve-sym-btn" onClick={() => {
-                      setSolveSymptom(s.id);
-                      addSolveHistory(solveRole, solveCategory, s.id);
-                      saveResume('solve', { role: solveRole, category: solveCategory, symptom: s.id, symptomTitle: s.title });
-                    }}>
-                      <div className="solve-sym-title">{s.title}</div>
-                      <div className="solve-sym-desc">{s.desc}</div>
-                    </button>
-                  ))
-                }
+                {catData.symptoms.map(s => (
+                  <button key={s.id} className="solve-sym-btn" onClick={() => {
+                    setSolveSymptom(s.id);
+                    addSolveHistory(solveRole, solveCategory, s.id);
+                    saveResume('solve', { role: solveRole, category: solveCategory, symptom: s.id, symptomTitle: s.title });
+                  }}>
+                    <div className="solve-sym-title">{s.title}</div>
+                    <div className="solve-sym-desc">{s.desc}</div>
+                  </button>
+                ))}
               </div>
 
               {/* 該当なしフォールバック */}
@@ -9367,6 +9392,24 @@ function App() {
         );
       })()}
 
+      {/* 感情トリガー */}
+      {phase === 'emotion' && (
+        <div className="emotion-screen">
+          <div className="emotion-title">そのプレーで<br />何を感じた？</div>
+          <div className="emotion-grid">
+            {EMOTIONS.map(e => (
+              <button key={e.id} className={`emotion-btn ${e.cls}`} onClick={() => handleEmotion(e.id)}>
+                <div className="emotion-emoji">{e.emoji}</div>
+                <div className="emotion-label">{e.label}</div>
+              </button>
+            ))}
+          </div>
+          <button className="skip-btn" onClick={() => handleEmotion('none')}>
+            感情は関係なく振り返る →
+          </button>
+        </div>
+      )}
+
       {/* 問い */}
       {phase === 'question' && q && (
         <div className="content">
@@ -9511,14 +9554,14 @@ function App() {
 
       {/* ── Bottom Navigation ── */}
       {(() => {
-        const isReflect = ['start','question','result'].includes(phase);
+        const isReflect = ['start','emotion','question','result'].includes(phase);
         const isDict    = ['dictionary','dictionary-detail'].includes(phase);
         const isSolve   = phase === 'solve';
         const isPlan    = phase === 'plan';
         const isHub     = phase === 'hub';
         const go = (target) => {
           if (target === 'hub')    { handleBackToHub(); }
-          else if (target === 'reflect') { setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
+          else if (target === 'reflect') { setPhase('start'); setMode(null); setHistory([]); setResultId(null); setEmotion(null); setCurrentQ(null); setSelected(null); }
           else if (target === 'dict')  { setDictDetail(null); setPhase('dictionary'); }
           else if (target === 'solve') { handleSolveReset(); setPhase('solve'); }
           else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
