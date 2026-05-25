@@ -1,6 +1,6 @@
 // Service Worker — オフライン対応（cache-first 戦略）
 // 体育館の電波弱い環境でも辞書が見られるよう設計
-const CACHE = 'handball-lab-v1';
+const CACHE = 'handball-lab-v2';
 
 const PRECACHE_URLS = [
   './',
