@@ -4975,7 +4975,7 @@ const QUESTIONS = {
     ],
   },
   qof_noball: {
-    label: 'Q2', mode: 'of',
+    label: 'Q3', mode: 'of',
     text: 'どのあたりで詰まった感じがある？',
     choices: [
       { label: '動き出しが遅れた（隣がボールを触る前に自分の動き出しが遅れた）', next: 'r_timing' },
@@ -4985,7 +4985,7 @@ const QUESTIONS = {
     ],
   },
   qof_close_react: {
-    label: 'Q2', mode: 'of',
+    label: 'Q3', mode: 'of',
     text: 'クローズの状況で、自分がアクションしたとき、隣のDFはどう動いた？',
     choices: [
       { label: '寄せてきていた（守りに来た）', next: 'qof_close_press_self' },
@@ -4994,7 +4994,7 @@ const QUESTIONS = {
     ],
   },
   qof_close_press_self: {
-    label: 'Q3', mode: 'of',
+    label: 'Q4', mode: 'of',
     text: 'DFが寄ってきた。その瞬間、パスを出せた？',
     choices: [
       { label: '出せた（タイミングよく判断できた）', next: 'r_close_pass_good' },
@@ -5002,7 +5002,7 @@ const QUESTIONS = {
     ],
   },
   qof_close_pull_self: {
-    label: 'Q3', mode: 'of',
+    label: 'Q4', mode: 'of',
     text: 'DFが引いた。カットインできた？',
     choices: [
       { label: 'できた（切り込んで仕掛けた）', next: 'r_close_cutin_good' },
@@ -5010,7 +5010,7 @@ const QUESTIONS = {
     ],
   },
   qof_wide_react: {
-    label: 'Q2', mode: 'of',
+    label: 'Q3', mode: 'of',
     text: 'ワイドの状況で、クロスアタックに来ていたか？',
     choices: [
       { label: '来ていた', next: 'qof_wide_cross_self' },
@@ -5019,7 +5019,7 @@ const QUESTIONS = {
     ],
   },
   qof_wide_cross_self: {
-    label: 'Q3', mode: 'of',
+    label: 'Q4', mode: 'of',
     text: '内側に割り込んだとき、自分のマークはどこにいた？',
     choices: [
       { label: '内側にとどまっていた（パスコースが空いた）', next: 'r_cross_pass' },
@@ -5028,7 +5028,7 @@ const QUESTIONS = {
     ],
   },
   qof_wide_normal_self: {
-    label: 'Q3', mode: 'of',
+    label: 'Q4', mode: 'of',
     text: '1対1で、有効なアクションができた？',
     choices: [
       { label: 'シュートかドライブを選べた（判断できた）', next: 'r_wide_good' },
@@ -5145,7 +5145,7 @@ const QUESTIONS = {
     ],
   },
   qd_good: {
-    label: 'Q2', mode: 'df',
+    label: 'Q3', mode: 'df',
     text: 'どこが良かった？',
     choices: [
       { label: '相手の予備動作を先に読めた', next: 'qd_good_read' },
@@ -5155,7 +5155,7 @@ const QUESTIONS = {
   },
   // 成功の言語化（深掘り）
   qd_good_read: {
-    label: 'Q3', mode: 'df',
+    label: 'Q4', mode: 'df',
     text: '何を見て読めた？',
     choices: [
       { label: '相手の重心・体の傾き', next: 'r_good_read_body' },
@@ -5165,7 +5165,7 @@ const QUESTIONS = {
     ],
   },
   qd_good_pos: {
-    label: 'Q3', mode: 'df',
+    label: 'Q4', mode: 'df',
     text: '正しかったポジションはどれ？',
     choices: [
       { label: '体の向き（ゴールとOFの間に入れた）', next: 'r_good_pos_angle' },
@@ -5174,7 +5174,7 @@ const QUESTIONS = {
     ],
   },
   qd_good_team: {
-    label: 'Q3', mode: 'df',
+    label: 'Q4', mode: 'df',
     text: '連動のトリガーは何だった？',
     choices: [
       { label: '隣のDFが動いたのを見た', next: 'r_good_team_see' },
@@ -5183,7 +5183,7 @@ const QUESTIONS = {
     ],
   },
   qd2: {
-    label: 'Q2', mode: 'df',
+    label: 'Q3', mode: 'df',
     text: 'どこで崩された感覚がある？',
     choices: [
       { label: 'フェイントに反応してしまった（体が先に動いた）', next: 'r_df_fake' },
