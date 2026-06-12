@@ -36,6 +36,7 @@
       --c-dict:    #22d3ee;
       --c-solve:   #c084fc;
       --c-plan:    #fbbf24;
+      --c-chat:    #34d399;
 
       /* Text */
       --tx-primary:   #f1f5f9;
@@ -160,6 +161,7 @@
     .bn-item.active-dict    .bn-label { color: var(--c-dict); }
     .bn-item.active-solve   .bn-label { color: var(--c-solve); }
     .bn-item.active-plan    .bn-label { color: var(--c-plan); }
+    .bn-item.active-chat    .bn-label { color: var(--c-chat); }
     .bn-item.active-hub     .bn-label { color: var(--tx-primary); }
     .bn-dot {
       position: absolute;
@@ -173,6 +175,7 @@
     .bn-item.active-dict    .bn-dot { background: var(--c-dict);    opacity: 1; }
     .bn-item.active-solve   .bn-dot { background: var(--c-solve);   opacity: 1; }
     .bn-item.active-plan    .bn-dot { background: var(--c-plan);    opacity: 1; }
+    .bn-item.active-chat    .bn-dot { background: var(--c-chat);    opacity: 1; }
     .bn-item.active-hub     .bn-dot { background: var(--tx-primary);opacity: 1; }
 
     /* ── Back button ── */
@@ -364,6 +367,7 @@
     /* reflect, plan, resume: full-width horizontal */
     .hub-card.reflect,
     .hub-card.plan,
+    .hub-card.chat,
     .hub-card.resume {
       grid-column: 1 / -1;
       flex-direction: row;
@@ -378,6 +382,7 @@
     /* Icon */
     .hub-card-icon { font-size: 30px; line-height: 1; flex-shrink: 0; }
     .hub-card.reflect .hub-card-icon,
+    .hub-card.chat    .hub-card-icon,
     .hub-card.resume  .hub-card-icon { font-size: 36px; }
 
     /* Body */
@@ -422,6 +427,13 @@
     }
     .hub-card.plan .hub-card-title { color: #fde68a; }
     .hub-card.plan:active { border-color: rgba(251,191,36,0.45); box-shadow: 0 0 20px rgba(245,158,11,0.15); }
+
+    .hub-card.chat {
+      border-color: rgba(52,211,153,0.28);
+      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04));
+    }
+    .hub-card.chat .hub-card-title { color: #6ee7b7; }
+    .hub-card.chat:active { border-color: rgba(52,211,153,0.55); box-shadow: 0 0 24px rgba(16,185,129,0.2); }
 
     .hub-card.resume {
       border-color: rgba(251,191,36,0.28);
@@ -1119,6 +1131,128 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .animate-in { animation: fadeInUp 0.3s cubic-bezier(0.2,0.8,0.2,1); }
+
+    /* ── 質問チャット（辞書ボット） ── */
+    .chat-screen { display: flex; flex-direction: column; gap: 10px; padding-bottom: 86px; }
+    .chat-topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .chat-clear {
+      background: none; border: 1px solid var(--border); color: var(--tx-dim);
+      border-radius: 999px; padding: 6px 12px; font-size: var(--fs-xs); font-weight: 700;
+      cursor: pointer; font-family: inherit; flex-shrink: 0; transition: all var(--t-fast);
+    }
+    .chat-clear:active { border-color: var(--border-hi); color: var(--tx-muted); }
+    .chat-note { font-size: var(--fs-xs); color: var(--tx-dim); text-align: center; line-height: 1.6; }
+    .chat-messages { display: flex; flex-direction: column; gap: 12px; }
+    .chat-msg { display: flex; gap: 8px; align-items: flex-end; }
+    .chat-msg.user { justify-content: flex-end; }
+    .chat-avatar {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      background: color-mix(in oklab, var(--c-chat) 16%, var(--surface-1));
+      border: 1px solid color-mix(in oklab, var(--c-chat) 40%, transparent);
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+    }
+    .chat-bubble {
+      max-width: 86%; min-width: 0; border-radius: 16px; padding: 11px 13px;
+      font-size: var(--fs-sm); line-height: 1.75;
+    }
+    .chat-bubble.user {
+      background: linear-gradient(135deg, color-mix(in oklab, var(--c-chat) 28%, var(--surface-1)), color-mix(in oklab, var(--c-chat) 12%, var(--surface-1)));
+      border: 1px solid color-mix(in oklab, var(--c-chat) 45%, transparent);
+      color: var(--tx-primary); border-bottom-right-radius: 6px;
+    }
+    .chat-bubble.bot {
+      background: var(--surface-1); border: 1px solid var(--border);
+      color: var(--tx-secondary); border-bottom-left-radius: 6px;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+    .chat-text { white-space: pre-line; word-break: break-word; }
+    .chat-src-head {
+      display: flex; flex-direction: column; gap: 2px; align-items: flex-start; text-align: left;
+      background: color-mix(in oklab, var(--c-chat) 10%, transparent);
+      border: 1px solid color-mix(in oklab, var(--c-chat) 32%, transparent);
+      border-radius: 10px; padding: 8px 11px; cursor: pointer; font-family: inherit; width: 100%;
+      transition: border-color var(--t-fast);
+    }
+    .chat-src-head:active { border-color: var(--c-chat); }
+    .chat-src-head-file { font-size: 10px; font-weight: 700; color: var(--c-chat); letter-spacing: 0.04em; }
+    .chat-src-head-title { font-size: var(--fs-sm); font-weight: 800; color: var(--tx-primary); line-height: 1.5; }
+    .chat-md { font-size: var(--fs-sm); color: var(--tx-secondary); line-height: 1.8; overflow-x: auto; }
+    .chat-md h1, .chat-md h2, .chat-md h3, .chat-md h4, .chat-md h5, .chat-md h6 {
+      font-size: var(--fs-sm); font-weight: 800; color: var(--tx-primary); margin: 8px 0 4px;
+    }
+    .chat-md p { margin: 6px 0; }
+    .chat-md ul, .chat-md ol { margin: 6px 0; padding-left: 18px; }
+    .chat-md li { margin: 3px 0; }
+    .chat-md table { border-collapse: collapse; font-size: var(--fs-xs); margin: 8px 0; }
+    .chat-md th, .chat-md td { border: 1px solid var(--border); padding: 5px 8px; text-align: left; vertical-align: top; }
+    .chat-md th { background: var(--surface-2); color: var(--tx-primary); font-weight: 700; white-space: nowrap; }
+    .chat-md code { background: var(--surface-2); border-radius: 4px; padding: 1px 5px; font-size: 0.9em; }
+    .chat-md strong { color: var(--tx-primary); }
+    .chat-md blockquote { border-left: 3px solid var(--c-chat); padding: 4px 10px; margin: 6px 0; color: var(--tx-muted); }
+    .chat-md hr { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+    .chat-readmore {
+      align-self: flex-start; background: none;
+      border: 1px solid color-mix(in oklab, var(--c-chat) 45%, transparent);
+      color: var(--c-chat); border-radius: 999px; padding: 7px 14px;
+      font-size: var(--fs-xs); font-weight: 800; cursor: pointer; font-family: inherit;
+      transition: all var(--t-fast);
+    }
+    .chat-readmore:active { background: color-mix(in oklab, var(--c-chat) 14%, transparent); }
+    .chat-srcs { display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed var(--border); padding-top: 9px; }
+    .chat-srcs-label { font-size: 10px; font-weight: 800; color: var(--tx-dim); letter-spacing: 0.08em; }
+    .chat-src-card {
+      display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 10px; cursor: pointer; font-family: inherit; transition: border-color var(--t-fast);
+    }
+    .chat-src-card:active { border-color: var(--c-chat); }
+    .chat-src-card-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+    .chat-src-card-file { font-size: 9px; color: var(--tx-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chat-src-card-title { font-size: var(--fs-xs); font-weight: 700; color: var(--tx-secondary); line-height: 1.5; }
+    .chat-src-card-arrow { color: var(--tx-dim); flex-shrink: 0; }
+    .chat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chat-chip {
+      background: color-mix(in oklab, var(--c-chat) 12%, var(--surface-1));
+      border: 1px solid color-mix(in oklab, var(--c-chat) 35%, transparent);
+      color: var(--tx-secondary); border-radius: 999px; padding: 7px 12px;
+      font-size: var(--fs-xs); font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: all var(--t-fast);
+    }
+    .chat-chip:active { border-color: var(--c-chat); color: var(--tx-primary); }
+    .chat-chip:disabled { opacity: 0.4; cursor: default; }
+    .chat-typing { flex-direction: row !important; gap: 5px !important; padding: 15px 16px; }
+    .chat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tx-muted); animation: chatBlink 1.2s infinite; }
+    .chat-dot:nth-child(2) { animation-delay: 0.2s; }
+    .chat-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes chatBlink { 0%, 60%, 100% { opacity: 0.25; } 30% { opacity: 1; } }
+    .chat-input-bar {
+      position: fixed; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+      left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      display: flex; gap: 8px; padding: 10px 14px;
+      background: rgba(8,12,22,0.94);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border); z-index: 15;
+    }
+    .chat-input {
+      flex: 1; background: var(--surface-1); border: 1.5px solid var(--border);
+      border-radius: 999px; padding: 11px 16px; color: var(--tx-primary);
+      font-size: 16px; font-family: inherit; outline: none; min-width: 0;
+      transition: border-color var(--t-fast);
+    }
+    .chat-input:focus { border-color: var(--c-chat); }
+    .chat-input::placeholder { color: var(--tx-dim); }
+    .chat-input:disabled { opacity: 0.5; }
+    .chat-send {
+      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--c-chat), #059669);
+      border: none; color: #06281c; font-size: 17px; font-weight: 900; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px color-mix(in oklab, var(--c-chat) 30%, transparent);
+      transition: all var(--t-fast);
+    }
+    .chat-send:active { transform: scale(0.94); }
+    .chat-send:disabled { opacity: 0.35; box-shadow: none; }
   </style>
 </head>
 <body>
@@ -4555,6 +4689,300 @@ function splitSections(md, fileMeta) {
 }
 
 // ─────────────────────────────────────────────
+// 質問チャット（辞書検索ボット）
+// LLM・外部API不使用：質問からキーワードを抽出し、読み込み済みの
+// 辞書386セクションを採点して最良の箇所から回答を合成する。
+// 辞書はSWがキャッシュするためオフラインでも動作する。
+// ─────────────────────────────────────────────
+
+// 全角英数→半角・ダッシュ統一・小文字化
+function chatNormalize(s) {
+  return String(s || '')
+    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+    .replace(/　/g, ' ')
+    .replace(/[‐－―−–—]/g, '-')
+    .toLowerCase();
+}
+
+// 短い英数キーワード（of/gk/5-1等）は前後が英数だと誤ヒット（offense等）するため境界チェック
+function chatIsAsciiKey(k) { return /^[a-z0-9-]+$/.test(k); }
+function chatHasTerm(text, k) {
+  if (!k) return false;
+  if (!chatIsAsciiKey(k)) return text.includes(k);
+  let idx = 0;
+  while ((idx = text.indexOf(k, idx)) !== -1) {
+    const before = idx > 0 ? text[idx - 1] : '';
+    const after = idx + k.length < text.length ? text[idx + k.length] : '';
+    if (!/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after)) return true;
+    idx += 1;
+  }
+  return false;
+}
+function chatCountTerm(text, k, cap) {
+  if (!k) return 0;
+  let cnt = 0, idx = 0;
+  const ascii = chatIsAsciiKey(k);
+  while (cnt < cap && (idx = text.indexOf(k, idx)) !== -1) {
+    const before = idx > 0 ? text[idx - 1] : '';
+    const after = idx + k.length < text.length ? text[idx + k.length] : '';
+    if (!ascii || (!/[a-z0-9]/.test(before) && !/[a-z0-9]/.test(after))) cnt++;
+    idx += k.length;
+  }
+  return cnt;
+}
+
+// 言い換え・話し言葉 → 辞書側の表記キーワード（file: 優先ブーストする辞書ファイルID）
+const CHAT_SYNONYMS = [
+  { m: ['キーパー', 'ゴーリー', 'gk'], kw: ['GK'], file: '05' },
+  { m: ['ディフェンス', '守備', '守り方', '守れない', '止め方', '止められない', '抜かれる', '抜かれた', 'df'], kw: ['DF', '守備'] },
+  { m: ['オフェンス', '攻撃', '攻め方', 'of'], kw: ['OF', '攻撃'] },
+  { m: ['ペナルティ', 'pk', '7m', '7メートル', 'セブンメーター'], kw: ['7m'], file: '22' },
+  { m: ['フェイント', 'かわし方', '抜き方', '抜けない', 'フェイク'], kw: ['フェイント'], file: '02' },
+  { m: ['1on1', '1対1', '一対一', 'タイマン'], kw: ['1on1'], file: '02' },
+  { m: ['シュートが入らない', '入らない', '外れる', '外す', '決まらない', '決められない'], kw: ['シュート', 'コース'] },
+  { m: ['速攻', 'カウンター', 'ファストブレイク', '走り方'], kw: ['速攻', 'ウェーブ'], file: '03' },
+  { m: ['キャッチ', '捕れない', 'ボールを取れない', 'ファンブル'], kw: ['キャッチ', '顔横'] },
+  { m: ['ポスト', 'ピボット', 'ピボ'], kw: ['ピボット', 'ポスト'], file: '06' },
+  { m: ['スクリーン', 'ピック'], kw: ['スクリーン'], file: '12' },
+  { m: ['サインプレー', 'サイン', 'セットプレー', '約束事'], kw: ['サインプレー', 'セットプレー'], file: '27' },
+  { m: ['フォーメーション', '陣形', 'システム', 'dfシステム'], kw: ['陣形', 'フォーメーション'], file: '26' },
+  { m: ['マンツーマン', 'マンツー', 'マンマーク'], kw: ['マンツーマン'], file: '26' },
+  { m: ['ルール', '反則', 'ファウル', '退場', 'カード', '審判', 'レフェリー'], kw: ['反則', 'ルール'], file: '30' },
+  { m: ['パッシブ', '消極的'], kw: ['パッシブ'], file: '08' },
+  { m: ['練習', 'メニュー', 'ドリル', 'トレーニング方法'], kw: ['練習'], file: '19' },
+  { m: ['筋トレ', 'フィジカル', '体力', 'スタミナ', '持久力', '筋力'], kw: ['フィジカル', '体力'], file: '21' },
+  { m: ['けが', 'ケガ', '怪我', '痛い', '痛み', '捻挫', 'リハビリ', '違和感'], kw: ['ケガ予防'], file: '25' },
+  { m: ['メンタル', '緊張', 'プレッシャー', 'あがり', '不安', 'ビビ', '自信がない', '弱気'], kw: ['メンタル', 'プレッシャー'], file: '18' },
+  { m: ['ウィング', 'サイドプレーヤー'], kw: ['ウィング'] },
+  { m: ['バックプレーヤー', 'バックの'], kw: ['バックプレーヤー'], file: '20' },
+  { m: ['センター', '司令塔', 'cb'], kw: ['センター'] },
+  { m: ['ジャンプ', '跳躍', '高く飛ぶ'], kw: ['ジャンプ', '跳躍'] },
+  { m: ['スカウティング', 'スカウト', '相手分析', 'ビデオ', '映像'], kw: ['スカウティング', '分析'], file: '28' },
+  { m: ['0-6', '6-0', 'ゼロロク', 'ロクゼロ', 'シックスゼロ'], kw: ['0-6', '6-0'], file: '26' },
+  { m: ['5-1', '1-5', 'ファイブワン'], kw: ['5-1', '1-5'], file: '26' },
+  { m: ['3-2-1'], kw: ['3-2-1'], file: '26' },
+  { m: ['3-3'], kw: ['3-3'], file: '26' },
+  { m: ['2-4', '4-2'], kw: ['2-4', '4-2'], file: '26' },
+  { m: ['7on6', '7対6', '7人攻撃', '空ゴール', 'エンプティ'], kw: ['7on6'], file: '08' },
+  { m: ['5on6', '退場中', '数的不利', '1人少ない'], kw: ['5on6', '数的'], file: '03' },
+  { m: ['数的優位', '2対1', '3対2', 'アウトナンバー'], kw: ['数的', '2on1', '3on2'], file: '03' },
+  { m: ['タイムアウト'], kw: ['タイムアウト'], file: '08' },
+  { m: ['ハーフタイム'], kw: ['ハーフタイム'], file: '10' },
+  { m: ['装備', 'シューズ', 'ユニフォーム', 'マウスピース', 'サポーター', 'メガネ', '眼鏡', 'アクセサリー'], kw: ['装備'], file: '31' },
+  { m: ['試合当日', '大会', 'ウォームアップ', 'ウォーミングアップ', 'アップの'], kw: ['ウォームアップ', '試合当日'], file: '32' },
+  { m: ['食事', '栄養', '睡眠', 'ご飯'], kw: ['栄養', '睡眠'], file: '25' },
+  { m: ['コンタクト', '当たり負け', '接触', '押し負け', '体の使い方'], kw: ['コンタクト', '勝ち位置'] },
+  { m: ['左利き', 'サウスポー', 'レフティ'], kw: ['左利き'], file: '09' },
+  { m: ['身長', '背が低い', '背が高い', '小さい選手', '大きい選手'], kw: ['身長', '個人差'], file: '09' },
+  { m: ['判断が遅い', '判断', '迷う', '考えすぎ', '認知', '視野'], kw: ['判断', '認知'], file: '04' },
+  { m: ['声かけ', '声掛け', 'コミュニケーション', '声が出ない'], kw: ['声掛け', '声'] },
+  { m: ['点差', '残り時間', '終盤', '逆転', 'リード', 'ビハインド'], kw: ['スコア差', '時間帯'], file: '11' },
+  { m: ['攻略', '崩し方', '崩す', '崩せない', '対策', '破り方', '破る', '倒し方', '勝ち方', '弱点'], kw: ['じゃんけん'], file: '00' },
+  { m: ['ケンパ', '空中パス', 'スカイ'], kw: ['ケンパ'], file: '27' },
+  { m: ['早打ち', 'クイック'], kw: ['早打ち'] },
+  { m: ['ループ', '山なり'], kw: ['ループ'] },
+  { m: ['ドリブル'], kw: ['ドリブル'] },
+];
+
+// 自由トークンから除外する一般語（辞書中の頻出語＝識別力なし）
+const CHAT_STOPWORDS = new Set([
+  'こと', 'もの', 'とき', 'ため', 'よう', '感じ', '場合', 'ところ', 'どこ', 'どう',
+  'なに', '何', 'いつ', 'だれ', '誰', '自分', '相手', 'チーム', '試合', 'プレー',
+  'ハンドボール', '選手', '今日', '明日', '今度', 'する', 'なる', 'ある', 'いる',
+  'たい', 'ほしい', 'いい', 'よい', 'ない', 'もっと', 'すごく', 'とても', 'これ', 'それ', 'あれ',
+]);
+
+// 依頼・疑問の飾り表現 → 区切りに変換
+const CHAT_NOISE_RE = /(について|を?教えてほしい|お?しえてください|を?教えて|ください|下さい|お願いします|お願い|したいです|したいんですけど|したい|できるようになりたい|できないです|できません|できない|出来ない|わからないです|わからない|分からない|わかりません|どうすればいい|どうすれば|どうやって|どうしたら|どんな感じ|なんですか|何ですか|ですか|でしょうか|ますか|とはなに|とは何|とは|って何|ってなに|のやり方|やり方|の方法|方法|のコツ|コツ|攻略法|攻略|対策|です|ます)/g;
+
+// レキシコン（タグ・用語集・補助語彙から構築、長い順）
+let CHAT_LEXICON_CACHE = null;
+function chatLexicon() {
+  if (CHAT_LEXICON_CACHE) return CHAT_LEXICON_CACHE;
+  const set = new Set();
+  const addTerm = (raw) => {
+    if (!raw) return;
+    const base = raw.split('（')[0].trim();
+    if (base.length >= 2) set.add(base);
+    const m = raw.match(/（([^）]+)）/);
+    if (m) m[1].split(/[／/・,、]/).forEach(x => { x = x.trim(); if (x.length >= 2) set.add(x); });
+  };
+  ALL_TAGS.forEach(addTerm);
+  GLOSSARY.forEach(g => g.items.forEach(it => addTerm(it.term)));
+  [
+    'ピボット', 'ポスト', 'スクリーン', 'カットイン', 'ドライブ', 'ステップシュート',
+    'ジャンプシュート', 'ループシュート', 'バウンドシュート', 'ドリブル', 'ロングパス',
+    'トラベリング', 'オーバーステップ', 'ダブルドリブル', 'キックボール', 'チャージング',
+    'プッシング', 'ホールディング', 'ハッキング', 'ケンパ', 'クロス', 'パラレル',
+    'デンマーク', 'フランス', 'ドイツ', 'スペイン', 'クロアチア', 'ノルウェー',
+    'アイスランド', 'ポルトガル', 'スロベニア', 'スウェーデン', 'ソビエト', 'ロシア',
+    '日本', '韓国', 'カタール', 'エジプト', 'バーレーン',
+    '逆速攻', 'トランジション', '戻り', '勝ち位置', '山側', '谷側', '早打ち',
+    '飛び出し', '受け渡し', 'スライド', 'スイッチ', 'ブロック', 'リバウンド',
+    'ルーズボール', 'スローイン', 'スローオフ', 'ゴールスロー', 'フリースロー',
+    'パッシブ', '退場', '警告', 'イエローカード', 'レッドカード', '2分',
+    'ウォームアップ', 'クールダウン', 'ストレッチ', 'V字', 'フラッシュ', '回転プレー',
+  ].forEach(addTerm);
+  CHAT_LEXICON_CACHE = [...set]
+    .map(raw => ({ raw, n: chatNormalize(raw) }))
+    .filter(t => t.n.length >= 2)
+    .sort((a, b) => b.n.length - a.n.length);
+  return CHAT_LEXICON_CACHE;
+}
+
+// 質問 → キーワード抽出（シノニム w=2 / レキシコン w=2 / 自由トークン w=1）
+function chatExtractKeywords(question) {
+  const qn = chatNormalize(question);
+  const kws = new Map();
+  const fileBoosts = new Set();
+  const addKw = (raw, w) => {
+    const n = chatNormalize(raw);
+    if (n.length < 2) return;
+    const cur = kws.get(n);
+    if (!cur || cur.w < w) kws.set(n, { raw, w });
+  };
+  for (const syn of CHAT_SYNONYMS) {
+    if (syn.m.some(m => chatHasTerm(qn, chatNormalize(m)))) {
+      syn.kw.forEach(k => addKw(k, 2));
+      if (syn.file) fileBoosts.add(syn.file);
+    }
+  }
+  for (const t of chatLexicon()) {
+    if (chatHasTerm(qn, t.n)) addKw(t.raw, 2);
+  }
+  // 自由トークン：飾り表現を区切り化 → 記号で分割 → ひらがな助詞で分割
+  qn.replace(CHAT_NOISE_RE, '|')
+    .split(/[|、。．，,.!?！？\s・:：;；()（）「」『』〜~*％%]+/)
+    .flatMap(chunk => chunk.split(/(?:の|は|が|を|に|で|や|も|へ)/))
+    .map(tok => tok.trim())
+    .filter(tok => tok.length >= 2 && !CHAT_STOPWORDS.has(tok))
+    .forEach(tok => addKw(tok, 1));
+  const sorted = [...kws.values()]
+    .sort((a, b) => b.w - a.w || b.raw.length - a.raw.length)
+    .slice(0, 10);
+  return { kws: sorted, fileBoosts };
+}
+
+// セクション本文の正規化キャッシュ
+const CHAT_NBODY = new WeakMap();
+function chatNBody(s) {
+  let v = CHAT_NBODY.get(s);
+  if (v == null) { v = chatNormalize(s.body); CHAT_NBODY.set(s, v); }
+  return v;
+}
+function chatIsStub(s) {
+  const txt = s.body.replace(/^#.*$/gm, '').replace(/^[-=*]+$/gm, '').replace(/\s+/g, '');
+  return txt.length < 30;
+}
+
+// 全セクション採点 → 上位4件
+function chatSearch(question, sections) {
+  const { kws, fileBoosts } = chatExtractKeywords(question);
+  if (!kws.length) return { kws, hits: [] };
+  const scored = [];
+  for (const s of sections) {
+    if (s.title === '冒頭' || chatIsStub(s)) continue;
+    const nTitle = chatNormalize(s.title);
+    const nMeta = chatNormalize(s.fileTitle + ' ' + s.fileTags.join(' '));
+    const nBody = chatNBody(s);
+    let score = 0, cover = 0;
+    for (const { raw, w } of kws) {
+      const k = chatNormalize(raw);
+      let pts = 0;
+      if (chatHasTerm(nTitle, k)) pts += 8;
+      if (chatHasTerm(nMeta, k)) pts += 2;
+      pts += chatCountTerm(nBody, k, 5);
+      if (pts > 0) { cover++; score += pts * w; }
+    }
+    if (score <= 0) continue;
+    if (cover > 1) score *= 1 + 0.5 * (cover - 1);  // 複数キーワード網羅ボーナス
+    if (fileBoosts.has(s.fileId)) score *= 1.6;      // 意図ファイルブースト
+    scored.push({ s, score });
+  }
+  scored.sort((a, b) => b.score - a.score);
+  return { kws, hits: scored.slice(0, 4).map(x => x.s) };
+}
+
+// 最良セクションからキーワード密度の高いブロックを抜粋（表は行単位で安全に切る）
+function chatBestExcerpt(section, kws) {
+  const body = section.body.replace(/\r\n?/g, '\n');
+  let blocks = body.split(/\n{2,}/).map(b => b.trim()).filter(b => {
+    if (!b) return false;
+    const lines = b.split('\n');
+    if (lines.length === 1 && /^#{1,6}\s/.test(b)) return false; // 見出しのみ
+    if (/^[-=*]{3,}$/.test(b)) return false;                      // 区切り線のみ
+    return true;
+  });
+  // ASCII図（罫線アート）はチャット内で崩れるため、散文ブロックを優先
+  const isArtBlock = (b) => (b.match(/[━─│┃┌┐└┘├┤┬┴╋]/g) || []).length >= 6;
+  const proseBlocks = blocks.filter(b => !isArtBlock(b));
+  if (proseBlocks.length) blocks = proseBlocks;
+  if (!blocks.length) return '';
+  const scoreBlock = (b) => {
+    const nb = chatNormalize(b);
+    let sc = 0;
+    for (const { raw, w } of kws) sc += chatCountTerm(nb, chatNormalize(raw), 5) * w;
+    return sc;
+  };
+  const ranked = blocks.map((b, i) => ({ b, i, sc: scoreBlock(b) }))
+    .sort((x, y) => y.sc - x.sc || x.i - y.i);
+  const picked = [ranked[0]];
+  if (ranked[0].b.length < 220 && ranked[1] && ranked[1].sc > 0) picked.push(ranked[1]);
+  picked.sort((x, y) => x.i - y.i);
+  let out = picked.map(p => p.b).join('\n\n');
+  const LIMIT = 900;
+  if (out.length > LIMIT) {
+    if (/^\s*\|/m.test(out)) {
+      const cutAt = out.lastIndexOf('\n', LIMIT);
+      out = out.slice(0, cutAt > 100 ? cutAt : LIMIT);
+    } else {
+      let cut = out.lastIndexOf('。', LIMIT);
+      if (cut < 100) cut = LIMIT;
+      out = out.slice(0, cut + 1);
+    }
+    out += '\n\n…（続きは「全文を読む」へ）';
+  }
+  return out;
+}
+
+const CHAT_SUGGESTIONS = [
+  '5-1はどう攻略する？',
+  'フェイントの種類を教えて',
+  '7mシュートのコツは？',
+  '速攻の走り方は？',
+  'パッシブプレーとは？',
+  '緊張に勝つには？',
+];
+
+// 質問 → ボット返信メッセージを構築
+function buildChatReply(question, sections) {
+  const { kws, hits } = chatSearch(question, sections);
+  if (!kws.length) {
+    return {
+      role: 'bot', kind: 'nokw',
+      text: 'うまく読み取れませんでした…。「5-1 攻略」「フェイント 種類」のように、プレー用語を入れて聞いてみてください。',
+      chips: CHAT_SUGGESTIONS, ts: Date.now(),
+    };
+  }
+  if (!hits.length) {
+    return {
+      role: 'bot', kind: 'nohit',
+      text: `「${kws.slice(0, 3).map(k => k.raw).join('・')}」に当てはまるセクションが見つかりませんでした。別の言い方で試すか、下の例から選んでみてください。`,
+      chips: CHAT_SUGGESTIONS, ts: Date.now(),
+    };
+  }
+  const best = hits[0];
+  const excerpt = chatBestExcerpt(best, kws);
+  return {
+    role: 'bot', kind: 'answer',
+    head: { id: best.id, icon: best.fileIcon, fileTitle: best.fileTitle, title: best.title },
+    html: renderMarkdown(excerpt),
+    srcs: hits.slice(1).map(s => ({ id: s.id, icon: s.fileIcon, fileTitle: s.fileTitle, title: s.title })),
+    ts: Date.now(),
+  };
+}
+
+// ─────────────────────────────────────────────
 // 問いの定義
 // ─────────────────────────────────────────────
 const QUESTIONS = {
@@ -7670,7 +8098,7 @@ const MODES = {
 
 function getProgress(phase, histLen) {
   if (phase === 'hub' || phase === 'start') return 0;
-  if (phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan') return 0;
+  if (phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'chat') return 0;
   if (phase === 'result') return 100;
   return Math.min(20 + histLen * 20, 85);
 }
@@ -7683,6 +8111,12 @@ const HUB_MODULES = [
     id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
     title: '振り返る',
     desc: '試合・練習のプレーを10モードで自己問答 → 良かった点／課題／改善案',
+    enabled: true,
+  },
+  {
+    id: 'chat', cls: 'chat', icon: '💬', target: '選手・指導者',
+    title: '質問する',
+    desc: 'チャットで質問 → 辞書386セクションから該当箇所を探してその場で回答',
     enabled: true,
   },
   {
@@ -7775,6 +8209,27 @@ function App() {
   const [dictDetail, setDictDetail] = useState(null); // 選択中のセクション
   const [dictTagsExpanded, setDictTagsExpanded] = useState(false); // タグ展開
 
+  // 質問チャット（辞書ボット）の状態
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [chatTyping, setChatTyping] = useState(false);
+  const chatEndRef = useRef(null);
+  // 現在のphaseを参照するref（イベントハンドラ内のstale closure対策）
+  const phaseRef = useRef('hub');
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
+  // 辞書詳細を開いた元画面（'dictionary' | 'chat'）— 戻り先の判定に使う
+  const dictOriginRef = useRef('dictionary');
+  // チャット履歴の復元・保存
+  useEffect(() => {
+    const stored = lsGet('chat-history');
+    if (Array.isArray(stored)) setChatMessages(stored);
+  }, []);
+  const saveChatHistory = (msgs) => {
+    const capped = msgs.slice(-60);
+    lsSet('chat-history', capped);
+    return capped;
+  };
+
   // 課題を解決する（Phase 2A）の状態
   const [solveRole, setSolveRole] = useState(null);       // 'player' | 'coach'
   const [solveCategory, setSolveCategory] = useState(null);
@@ -7828,7 +8283,7 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '4つの使い方', desc: '🤾 振り返る — 試合プレーを10モードで自己問答\n📖 辞書 — 33ファイル386セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — テーマ×時間でプラン作成' },
+    { icon: '🧭',   title: '5つの使い方', desc: '🤾 振り返る — 試合プレーを10モードで自己問答\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — 33ファイル386セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — テーマ×時間でプラン作成' },
     { icon: '✨',   title: '始めましょう', desc: '困ったら右下の 📘 用語 をタップ。\nメニューやヘルプはホームから何度でも開けます。' },
   ];
   const handleOnboardNext = () => {
@@ -7998,6 +8453,8 @@ function App() {
       const fileId = e.detail;
       const target = dictSections.find(s => s.fileId === fileId);
       if (target) {
+        // チャット回答内のリンクから来た場合は戻り先をチャットにする
+        dictOriginRef.current = phaseRef.current === 'chat' ? 'chat' : 'dictionary';
         setDictDetail(target);
         setPhase('dictionary-detail');
         setTimeout(() => window.scrollTo(0, 0), 0);
@@ -8025,8 +8482,8 @@ function App() {
   // 辞書ファイルを一度だけfetch
   useEffect(() => {
     if (dictLoaded || dictError) return;
-    // 辞書は dictionary 系のほか、solve・plan の関連リンク遷移でも使う
-    if (phase !== 'hub' && phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve' && phase !== 'plan') return;
+    // 辞書は dictionary 系のほか、solve・plan の関連リンク遷移、チャット回答でも使う
+    if (phase !== 'hub' && phase !== 'dictionary' && phase !== 'dictionary-detail' && phase !== 'solve' && phase !== 'plan' && phase !== 'chat') return;
 
     (async () => {
       try {
@@ -8064,6 +8521,7 @@ function App() {
     if (!pendingResumeDictId || !dictLoaded) return;
     const target = dictSections.find(s => s.id === pendingResumeDictId);
     if (target) {
+      dictOriginRef.current = 'dictionary';
       setDictDetail(target);
       setPhase('dictionary-detail');
       setTimeout(() => window.scrollTo(0, 0), 0);
@@ -8328,6 +8786,7 @@ function App() {
     const mod = HUB_MODULES.find(m => m.id === modId);
     if (!mod || !mod.enabled) return;
     if (modId === 'reflect') setPhase('start');
+    else if (modId === 'chat') setPhase('chat');
     else if (modId === 'dictionary') {
       setDictDetail(null);
       setPhase('dictionary');
@@ -8346,6 +8805,7 @@ function App() {
   const dictListScrollRef = useRef(0);
   const handleDictSectionOpen = (section) => {
     dictListScrollRef.current = window.scrollY;
+    dictOriginRef.current = 'dictionary';
     setDictDetail(section);
     setPhase('dictionary-detail');
     saveResume('dict', { sectionId: section.id, title: section.title, fileTitle: section.fileTitle });
@@ -8355,11 +8815,64 @@ function App() {
 
   const handleDictBack = () => {
     setDictDetail(null);
+    // チャットから開いた詳細はチャットへ戻す
+    if (dictOriginRef.current === 'chat') {
+      dictOriginRef.current = 'dictionary';
+      setPhase('chat');
+      setTimeout(() => {
+        if (chatEndRef.current) chatEndRef.current.scrollIntoView({ block: 'end' });
+      }, 0);
+      return;
+    }
     setPhase('dictionary');
     // 一覧側に戻ったら覚えていたスクロール位置を復元
     const y = dictListScrollRef.current;
     setTimeout(() => window.scrollTo(0, y), 0);
   };
+
+  // ── 質問チャットのハンドラ ──
+  const handleChatSend = (preset) => {
+    const text = (typeof preset === 'string' ? preset : chatInput).trim();
+    if (!text || !dictLoaded || chatTyping) return;
+    setChatInput('');
+    setChatMessages(prev => saveChatHistory([...prev, { role: 'user', text, ts: Date.now() }]));
+    setChatTyping(true);
+    setTimeout(() => {
+      let reply;
+      try {
+        reply = buildChatReply(text, dictSections);
+      } catch (e) {
+        console.warn('chat reply failed', e);
+        reply = { role: 'bot', kind: 'nokw', text: 'エラーが起きました。別の聞き方で試してみてください。', chips: CHAT_SUGGESTIONS, ts: Date.now() };
+      }
+      setChatMessages(prev => saveChatHistory([...prev, reply]));
+      setChatTyping(false);
+    }, 450);
+  };
+
+  const handleChatClear = () => {
+    setChatMessages(saveChatHistory([]));
+  };
+
+  // チャットの出典カード → 辞書詳細（戻るとチャットに復帰）
+  const handleChatOpenSection = (sectionId) => {
+    const target = dictSections.find(s => s.id === sectionId);
+    if (!target) return;
+    dictOriginRef.current = 'chat';
+    setDictDetail(target);
+    setPhase('dictionary-detail');
+    saveResume('dict', { sectionId: target.id, title: target.title, fileTitle: target.fileTitle });
+    setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+
+  // 新着メッセージ・入力中表示で最下部へスクロール
+  useEffect(() => {
+    if (phase !== 'chat') return;
+    const t = setTimeout(() => {
+      if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 60);
+    return () => clearTimeout(t);
+  }, [chatMessages.length, chatTyping, phase]);
 
   // 国別深掘り：現在のmodeから「じゃんけん→国別逆引き」へジャンプ
   const handleJumpToCountry = () => {
@@ -8385,6 +8898,7 @@ function App() {
               {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
               {phase === 'solve' && '課題を解決する'}
               {phase === 'plan' && '練習を組む'}
+              {phase === 'chat' && '質問する'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
@@ -8392,6 +8906,7 @@ function App() {
               {(phase === 'dictionary' || phase === 'dictionary-detail') && 'Dictionary'}
               {phase === 'solve' && 'Symptom Diagnosis'}
               {phase === 'plan' && 'Practice Planner'}
+              {phase === 'chat' && 'Dictionary Chat'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
           </div>
@@ -8415,8 +8930,13 @@ function App() {
               計画
             </div>
           )}
+          {phase === 'chat' && (
+            <div className="header-mode" style={{ color: 'var(--c-chat)', borderColor: 'color-mix(in oklab, var(--c-chat) 40%, transparent)' }}>
+              質問
+            </div>
+          )}
         </div>
-        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' ? 'hidden' : ''}`}>
+        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'chat' ? 'hidden' : ''}`}>
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
@@ -8646,7 +9166,7 @@ function App() {
       {phase === 'dictionary-detail' && dictDetail && (
         <div className="dict-screen">
           <div className="dict-detail-header">
-            <button className="dict-back" onClick={handleDictBack}>← 戻る（辞書一覧）</button>
+            <button className="dict-back" onClick={handleDictBack}>{dictOriginRef.current === 'chat' ? '← 戻る（質問チャット）' : '← 戻る（辞書一覧）'}</button>
             <div className="dict-detail-file">{dictDetail.fileIcon} {dictDetail.fileTitle}（{dictDetail.fileId}）</div>
             <div className="dict-detail-title">{dictDetail.title}</div>
             <div className="dict-detail-tags" style={{justifyContent: 'space-between', alignItems: 'center'}}>
@@ -8700,6 +9220,116 @@ function App() {
               </div>
             );
           })()}
+        </div>
+      )}
+
+      {/* 質問チャット（辞書ボット） */}
+      {phase === 'chat' && (
+        <div className="chat-screen animate-in">
+          <div className="chat-topbar">
+            <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
+            {chatMessages.length > 0 && (
+              <button className="chat-clear" onClick={handleChatClear}>🗑 履歴クリア</button>
+            )}
+          </div>
+          <div className="chat-note">📖 辞書33ファイル・386セクションから探して回答します（通信なし・オフラインOK）</div>
+          {!dictLoaded && !dictError && (
+            <div className="dict-loading">📖 辞書を読み込み中… ({dictLoadedCount} / {DICT_FILES.length})</div>
+          )}
+          {dictError && (
+            <div className="dict-empty">読み込みエラー：{dictError}</div>
+          )}
+          <div className="chat-messages">
+            {chatMessages.length === 0 && (
+              <div className="chat-msg bot">
+                <div className="chat-avatar" aria-hidden="true">📖</div>
+                <div className="chat-bubble bot">
+                  <div className="chat-text">{'こんにちは！辞書チャットです。\n質問を入力すると、戦術辞書から該当する内容を探して答えます。たとえば👇'}</div>
+                  <div className="chat-chips">
+                    {CHAT_SUGGESTIONS.map(c => (
+                      <button key={c} className="chat-chip" onClick={() => handleChatSend(c)} disabled={!dictLoaded}>{c}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            {chatMessages.map((m, i) => m.role === 'user' ? (
+              <div key={i} className="chat-msg user">
+                <div className="chat-bubble user"><div className="chat-text">{m.text}</div></div>
+              </div>
+            ) : (
+              <div key={i} className="chat-msg bot">
+                <div className="chat-avatar" aria-hidden="true">📖</div>
+                <div className="chat-bubble bot">
+                  {m.kind === 'answer' ? (
+                    <React.Fragment>
+                      <button className="chat-src-head" onClick={() => handleChatOpenSection(m.head.id)}>
+                        <span className="chat-src-head-file">{m.head.icon} {m.head.fileTitle}（{m.head.id.split('-')[0]}）</span>
+                        <span className="chat-src-head-title">{m.head.title}</span>
+                      </button>
+                      <div className="chat-md" dangerouslySetInnerHTML={{ __html: m.html }} />
+                      <button className="chat-readmore" onClick={() => handleChatOpenSection(m.head.id)}>📖 全文を読む</button>
+                      {m.srcs && m.srcs.length > 0 && (
+                        <div className="chat-srcs">
+                          <div className="chat-srcs-label">関連セクション</div>
+                          {m.srcs.map(s => (
+                            <button key={s.id} className="chat-src-card" onClick={() => handleChatOpenSection(s.id)}>
+                              <span aria-hidden="true">{s.icon}</span>
+                              <span className="chat-src-card-text">
+                                <span className="chat-src-card-file">{s.fileTitle}</span>
+                                <span className="chat-src-card-title">{s.title}</span>
+                              </span>
+                              <span className="chat-src-card-arrow" aria-hidden="true">›</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      <div className="chat-text">{m.text}</div>
+                      {m.chips && (
+                        <div className="chat-chips">
+                          {m.chips.map(c => (
+                            <button key={c} className="chat-chip" onClick={() => handleChatSend(c)}>{c}</button>
+                          ))}
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )}
+                </div>
+              </div>
+            ))}
+            {chatTyping && (
+              <div className="chat-msg bot">
+                <div className="chat-avatar" aria-hidden="true">📖</div>
+                <div className="chat-bubble bot chat-typing">
+                  <span className="chat-dot"/><span className="chat-dot"/><span className="chat-dot"/>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+          <div className="chat-input-bar">
+            <input
+              type="text"
+              className="chat-input"
+              enterKeyHint="send"
+              placeholder={dictLoaded ? '質問を入力（例：5-1の攻略は？）' : '辞書を読み込み中…'}
+              value={chatInput}
+              disabled={!dictLoaded}
+              onChange={e => setChatInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); handleChatSend(); }
+              }}
+            />
+            <button
+              className="chat-send"
+              onClick={() => handleChatSend()}
+              disabled={!dictLoaded || !chatInput.trim() || chatTyping}
+              aria-label="送信"
+            >➤</button>
+          </div>
         </div>
       )}
 
@@ -9278,7 +9908,11 @@ function App() {
       )}
 
       {/* 用語集FAB（全画面で表示：オンボーディング案内と整合） */}
-      <button className="help-fab" onClick={() => setGlossaryOpen(true)} title="用語集" aria-label="用語集を開く">📘 用語</button>
+      <button
+        className="help-fab"
+        style={phase === 'chat' ? { bottom: 'calc(var(--nav-h) + 80px + env(safe-area-inset-bottom, 0px))' } : undefined}
+        onClick={() => setGlossaryOpen(true)} title="用語集" aria-label="用語集を開く"
+      >📘 用語</button>
 
       {/* 用語集モーダル */}
       {glossaryOpen && (
@@ -9498,6 +10132,7 @@ function App() {
         const isDict    = ['dictionary','dictionary-detail'].includes(phase);
         const isSolve   = phase === 'solve';
         const isPlan    = phase === 'plan';
+        const isChat    = phase === 'chat';
         const isHub     = phase === 'hub';
         const go = (target) => {
           if (target === 'hub')    { handleBackToHub(); }
@@ -9505,6 +10140,7 @@ function App() {
           else if (target === 'dict')  { setDictDetail(null); setPhase('dictionary'); }
           else if (target === 'solve') { handleSolveReset(); setPhase('solve'); }
           else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
+          else if (target === 'chat')  { setPhase('chat'); }
         };
         return (
           <nav className="bottom-nav" aria-label="メインナビゲーション">
@@ -9521,6 +10157,11 @@ function App() {
             <button className={`bn-item ${isDict ? 'active-dict' : ''}`} onClick={() => go('dict')} aria-label="辞書を読む画面へ" aria-current={isDict ? 'page' : undefined}>
               <span className="bn-icon" aria-hidden="true">📖</span>
               <span className="bn-label">辞書</span>
+              <span className="bn-dot" aria-hidden="true"/>
+            </button>
+            <button className={`bn-item ${isChat ? 'active-chat' : ''}`} onClick={() => go('chat')} aria-label="質問チャット画面へ" aria-current={isChat ? 'page' : undefined}>
+              <span className="bn-icon" aria-hidden="true">💬</span>
+              <span className="bn-label">質問</span>
               <span className="bn-dot" aria-hidden="true"/>
             </button>
             <button className={`bn-item ${isSolve ? 'active-solve' : ''}`} onClick={() => go('solve')} aria-label="課題解決画面へ" aria-current={isSolve ? 'page' : undefined}>
