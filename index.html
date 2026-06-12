@@ -1020,6 +1020,13 @@
     }
     .glossary-close:active { background: rgba(255,255,255,0.12); }
     .glossary-body { flex: 1; overflow-y: auto; padding: 12px 20px 40px; }
+    .glossary-search { padding: 12px 20px 0; }
+    .glossary-search input {
+      width: 100%; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      color: var(--tx-primary); font-size: var(--fs-md); font-family: inherit; padding: 11px 14px; line-height: 1.4;
+    }
+    .glossary-search input::placeholder { color: var(--tx-muted); }
+    .glossary-empty { text-align: center; color: var(--tx-muted); font-size: var(--fs-sm); padding: 28px 0; }
     .glossary-group {
       font-size: var(--fs-xs); font-weight: 800; color: var(--c-dict);
       letter-spacing: 0.1em; margin: 16px 0 7px; text-transform: uppercase;
@@ -1253,6 +1260,79 @@
     }
     .chat-send:active { transform: scale(0.94); }
     .chat-send:disabled { opacity: 0.35; box-shadow: none; }
+    /* ─── 課題ビルダー（自作課題）─── */
+    .tb-field { display: flex; flex-direction: column; }
+    .tb-field + .tb-field { margin-top: 14px; }
+    .tb-field-label { font-size: var(--fs-xs); font-weight: 800; color: var(--tx-muted); letter-spacing: 0.08em; margin-bottom: 6px; }
+    .tb-field textarea, .tb-field input[type="text"], .tb-field input[type="number"] {
+      width: 100%; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      color: var(--tx-primary); font-size: var(--fs-md); font-family: inherit; padding: 13px 14px; line-height: 1.6; }
+    .tb-field textarea { min-height: 84px; resize: vertical; }
+    .tb-yn-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+      background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; }
+    .tb-yn-q { font-size: 14px; color: var(--tx-secondary); line-height: 1.5; flex: 1; }
+    .tb-yn-q b { color: var(--tx-primary); }
+    .tb-yn-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .tb-yn-btn { border: 1px solid var(--border); background: transparent; color: var(--tx-muted); border-radius: var(--r-sm);
+      padding: 8px 14px; font-weight: 800; font-size: var(--fs-sm); cursor: pointer; font-family: inherit; min-height: 40px; }
+    .tb-yn-btn.yes.on { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.5); color: #a7f3d0; }
+    .tb-yn-btn.no.on { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.45); color: #fca5a5; }
+    .tb-yn-warn { font-size: var(--fs-xs); color: #fca5a5; margin-top: 8px; line-height: 1.6; }
+    .tb-yn-warn button { background: none; border: none; color: var(--c-dict); cursor: pointer; font-family: inherit;
+      font-size: var(--fs-xs); text-decoration: underline; padding: 4px 0; }
+    .tb-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .tb-card-name { font-size: var(--fs-lg); font-weight: 900; color: var(--tx-primary); line-height: 1.4; }
+    .tb-card-row { margin-top: 12px; }
+    .tb-card-k { font-size: 10px; font-weight: 800; color: #34d399; letter-spacing: 0.12em; text-transform: uppercase; }
+    .tb-card-v { font-size: var(--fs-sm); color: var(--tx-secondary); line-height: 1.7; margin-top: 3px; white-space: pre-wrap; }
+    .tb-task-item { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 16px;
+      cursor: pointer; transition: all var(--t-fast); }
+    .tb-task-item:active { transform: scale(0.99); border-color: var(--border-hi); }
+    .tb-task-name { font-size: var(--fs-md); font-weight: 700; color: var(--tx-primary); }
+    .tb-task-meta { font-size: var(--fs-xs); color: var(--tx-muted); margin-top: 4px; }
+    .tb-choice { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 14px 16px; text-align: left; color: var(--tx-secondary); font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all var(--t-fast); line-height: 1.5; font-family: inherit; min-height: var(--tap); width: 100%;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .tb-choice:active { transform: scale(0.99); }
+    .tb-choice.selected { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.5); color: #a7f3d0; }
+    .tb-choice-title { font-weight: 700; color: var(--tx-primary); font-size: var(--fs-md); }
+    .tb-choice-desc { font-size: var(--fs-xs); color: var(--tx-muted); margin-top: 3px; }
+    .tb-choice.selected .tb-choice-title { color: #a7f3d0; }
+    .tb-choices { display: flex; flex-direction: column; gap: 8px; }
+    .tb-next-btn { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: var(--r-md);
+      padding: 15px; font-size: var(--fs-md); font-weight: 800; cursor: pointer; width: 100%; transition: all var(--t-fast);
+      box-shadow: 0 4px 20px rgba(16,185,129,0.25); font-family: inherit; min-height: var(--tap); }
+    .tb-next-btn:disabled { background: rgba(255,255,255,0.06); color: var(--tx-muted); box-shadow: none; cursor: not-allowed; }
+    .tb-next-btn:not(:disabled):active { transform: scale(0.98); opacity: 0.9; }
+    .tb-ghost-btn { background: transparent; border: 1px solid var(--border); color: var(--tx-secondary); border-radius: var(--r-md);
+      padding: 13px; font-size: var(--fs-sm); font-weight: 700; cursor: pointer; width: 100%; font-family: inherit; min-height: var(--tap); }
+    .tb-ghost-btn:active { border-color: var(--border-hi); }
+    .tb-q-label { font-size: 10px; font-weight: 800; color: #34d399; letter-spacing: 0.14em; text-transform: uppercase; }
+    .tb-q-text { font-size: var(--fs-lg); font-weight: 800; color: var(--tx-primary); line-height: 1.55; margin-top: 6px; letter-spacing: -0.01em; }
+    .tb-q-hint { font-size: 12px; color: var(--tx-muted); line-height: 1.65; margin-top: 10px;
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 14px; }
+    .tb-map-row { border: 1px solid var(--border); border-radius: var(--r-md); padding: 13px 15px; background: var(--surface-2); }
+    .tb-map-row + .tb-map-row { margin-top: 8px; }
+    .tb-map-row.hit { border-color: rgba(52,211,153,0.55); background: rgba(52,211,153,0.07); }
+    .tb-map-cond { font-size: var(--fs-sm); font-weight: 800; color: var(--tx-primary); }
+    .tb-map-read { font-size: var(--fs-xs); color: var(--tx-muted); margin-top: 3px; }
+    .tb-map-note { font-size: var(--fs-xs); color: var(--tx-dim); margin-top: 6px; line-height: 1.55; }
+    .tb-map-opts { display: flex; flex-direction: column; gap: 6px; margin-top: 9px; }
+    .tb-map-opt { text-align: left; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-sm);
+      color: var(--tx-secondary); font-size: var(--fs-sm); padding: 11px 13px; cursor: pointer; font-family: inherit; line-height: 1.5; width: 100%; }
+    .tb-map-opt.selected { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.55); color: #a7f3d0; }
+    .tb-session-log { border-left: 2px solid rgba(52,211,153,0.4); padding-left: 12px; margin-top: 8px; }
+    .tb-session-line { font-size: var(--fs-xs); color: var(--tx-muted); line-height: 1.7; }
+    .tb-session-line b { color: var(--tx-secondary); }
+    .tb-toast { position: fixed; bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
+      background: rgba(16,185,129,0.95); color: #fff; font-size: var(--fs-sm); font-weight: 700;
+      padding: 11px 20px; border-radius: 999px; z-index: 200; box-shadow: 0 6px 24px rgba(0,0,0,0.4); }
+    .tb-small-note { font-size: var(--fs-xs); color: var(--tx-dim); line-height: 1.6; }
+    .tb-rule-box { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.25); border-radius: var(--r-md);
+      padding: 12px 15px; font-size: var(--fs-xs); color: var(--tx-muted); line-height: 1.8; }
+    .tb-rule-box b { color: var(--c-plan); }
   </style>
 </head>
 <body>
@@ -8098,7 +8178,7 @@ const MODES = {
 
 function getProgress(phase, histLen) {
   if (phase === 'hub' || phase === 'start') return 0;
-  if (phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'chat') return 0;
+  if (phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'build' || phase === 'chat') return 0;
   if (phase === 'result') return 100;
   return Math.min(20 + histLen * 20, 85);
 }
@@ -8190,6 +8270,432 @@ function GText({ text, query, className, as }) {
 // ─────────────────────────────────────────────
 // App
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// 課題ビルダー（自作課題）：選手が制約課題を自作→検証→実施→改訂するモジュール
+// 設計原則：①課題自作自体がアプローチ能力の訓練 ②解の数・成功カウントはペアが観察
+// ③次の一手テーブルは判定機でなく地図 ④1つの課題は攻防両面の教材
+// ─────────────────────────────────────────────
+const TB_CONSTRAINTS = [
+  { id: 'space',  name: '空間',     order: 1, desc: 'コート幅・ゾーン・距離を変える。知覚そのものが変わる',
+    examples: ['センターゾーン幅12mに制限', '9m〜FTライン間のみ使用可', 'サイドライン側1/3を使用禁止'] },
+  { id: 'number', name: '人数',     order: 2, desc: 'OF/DFの人数比を変える。知覚そのものが変わる',
+    examples: ['4対3（遅攻限定）', '3対3＋フリーマン1', '6対5から10秒後に6対6へ'] },
+  { id: 'score',  name: '得点条件', order: 3, desc: '特定の崩し方に価値を付ける。意図を誘導する（副次的）',
+    examples: ['逆サイド展開からの得点は2点', '受け前に空きを指差してからの得点は2点', 'スクリーン経由の得点は2点'] },
+  { id: 'rule',   name: 'ルール',   order: 4, desc: 'タッチ数・時間などを変える。意図を誘導する（副次的）',
+    examples: ['3秒以内にパスかシュート', 'ドリブル1回まで', '攻撃時間20秒以内'] },
+];
+const TB_COGNITION_OPTS = [
+  'Nia（近い空間）が見えていなかった',
+  'Space（中間の空間）が見えていなかった',
+  'Far（遠い展開先）が見えていなかった',
+  'DFの重心を見ていなかった',
+  '隣DFとの連結（カバー関係）を見ていなかった',
+  'GKの位置・タイプを見ていなかった',
+];
+const TB_Q0_TARGETS = ['重心', '意識', '連結'];
+const TB_CHECKS = [
+  { id: 'living', text: 'その練習中、生きたDFを見続けるか？', back: 2, hint: 'Noならドリル化している。制約の設定を見直す' },
+  { id: 'multi',  text: '答え（攻め方）は2つ以上あるか？', back: 2, hint: 'Noなら解が1つに固定。得点条件などで複数解を残す' },
+  { id: 'count',  text: '成功と失敗をペアが数えられるか？', back: 3, hint: 'Noなら成功の定義が曖昧。結果指標を観察可能な形に' },
+  { id: 'single', text: '変えた制約は1つだけか？', back: 2, hint: 'Noなら原因が特定できない。制約を1つに絞る' },
+];
+const TB_NEXT_MOVE_MAP = [
+  { id: 'hi-multi', cond: '成功率8割超 × 解が複数', read: '探索の余地が減ってきた',
+    opts: ['空間を狭める', 'DFを1人増やす'], note: 'どちらが「見るもの」を増やすかを考えて選ぶ' },
+  { id: 'hi-one',   cond: '成功率8割超 × 解が1つ', read: '難易度ではなく構造の問題',
+    opts: ['その解の得点価値を下げる', '別ルートに2点ボーナスを付ける'], note: '解の禁止は「解の指定」になるため最終手段' },
+  { id: 'band-multi', cond: '70%帯 × 解が複数', read: '学習が進行中',
+    opts: ['変えない（継続する）'], note: '「変えない」も選択。理由を記録する' },
+  { id: 'band-one', cond: '70%帯 × 解が1つ', read: '成功しているが決めつけが進行中',
+    opts: ['別解にボーナスを付ける', 'ペアに「他に何が見えてた？」を聞いてから決める'], note: '' },
+  { id: 'low',      cond: '成功率5割未満', read: '探索が止まる水準',
+    opts: ['直近で変えた変数を1段戻す', '戻しても5割未満ならDFを1人減らす'], note: '' },
+];
+function tbJudgeRow(rate, solutions) {
+  if (rate < 0.5) return 'low';
+  if (rate > 0.8) return solutions >= 2 ? 'hi-multi' : 'hi-one';
+  return solutions >= 2 ? 'band-multi' : 'band-one';
+}
+function tbTaskToCardText(t) {
+  const c = TB_CONSTRAINTS.find(x => x.id === t.constraintId);
+  return [
+    `【自作課題】${t.name}${(t.version || 1) > 1 ? `（v${t.version}）` : ''}`,
+    `■ 起点（受け前に見えていなかったもの）`,
+    `  ${[...(t.cognition || []), t.cognitionNote].filter(Boolean).join(' / ')}`,
+    `■ 制約（1つ）：${c ? c.name : ''}`,
+    `  ${t.constraintDetail}`,
+    `■ 成功の定義（${t.attempts}本セット）`,
+    `  結果：${t.successResult}`,
+    `  プロセス：${t.successProcess}（ペアが観察）`,
+    `■ この課題がDFに変えさせるもの：${(t.q0Targets || []).join('・')}`,
+    `  ${t.q0Note}`,
+    t.overrideReason ? `■ 検証を通過せず実施する理由：${t.overrideReason}` : null,
+    `■ ペアへの依頼：解の数と成功数を数えてください`,
+  ].filter(x => x !== null).join('\n');
+}
+function tbExportAllText(tasks) {
+  const lines = ['# 自作課題 全履歴エクスポート', `# ${new Date().toLocaleString('ja-JP')}`, ''];
+  tasks.forEach(t => {
+    lines.push(tbTaskToCardText(t), '');
+    (t.history || []).forEach(h => {
+      lines.push(`  [旧版 v${h.v}] ${h.constraintDetail}` + (h.movedBy ? `　→ 一手：${h.movedBy.move}（${h.movedBy.reason}）` : ''));
+    });
+    if ((t.history || []).length) lines.push('');
+    (t.sessions || []).forEach((s, i) => {
+      lines.push(`  [実施${i + 1}${s.version ? ` v${s.version}` : ''}] ${s.date}　成功 ${s.success}/${s.attempts}（${Math.round(s.success / s.attempts * 100)}%）　解の数 ${s.solutions}（ペア観察）`);
+      lines.push(`  → 次の一手：${s.move}`);
+      lines.push(`  → 理由：${s.reason}`);
+      if (s.insight) lines.push(`  → 見えるようになったもの：${s.insight}`);
+      lines.push('');
+    });
+    lines.push('────────────────', '');
+  });
+  return lines.join('\n');
+}
+function tbCopy(text, setToast) {
+  const done = () => { setToast('コピーした。LINEに貼り付けて共有'); setTimeout(() => setToast(null), 2200); };
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); done();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  } else fallback();
+}
+
+function TBHome({ tasks, onNew, onOpen, onExport, onBackPlan }) {
+  return (
+    <React.Fragment>
+      <button className="dict-back" onClick={onBackPlan}>← 練習を組むへ</button>
+      <div>
+        <div className="tb-q-label">自分の課題は自分で作る</div>
+        <div className="tb-q-text">課題を作る行為が、課題と向き合う練習になる</div>
+        <div className="tb-q-hint">流れ：①できなかった場面 → ②制約を1つ → ③成功の定義 → ④検証 → カード化してペアに共有 → 実施 → 振り返り</div>
+      </div>
+      <button className="tb-next-btn" onClick={onNew}>＋ 新しい課題を作る</button>
+      {tasks.length > 0 && (
+        <div>
+          <div className="tb-field-label">作った課題（{tasks.length}）</div>
+          <div className="tb-choices">
+            {tasks.map(t => (
+              <div key={t.id} className="tb-task-item" onClick={() => onOpen(t.id)}>
+                <div className="tb-task-name">{t.name}{(t.version || 1) > 1 ? `　v${t.version}` : ''}</div>
+                <div className="tb-task-meta">
+                  {TB_CONSTRAINTS.find(c => c.id === t.constraintId)?.name}を操作 ・ 実施{(t.sessions || []).length}回
+                  {t.sessions && t.sessions.length > 0 && ` ・ 直近 ${Math.round(t.sessions[t.sessions.length - 1].success / t.sessions[t.sessions.length - 1].attempts * 100)}%`}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {tasks.length > 0 && (
+        <div>
+          <button className="tb-ghost-btn" onClick={onExport}>全履歴をテキストでコピー（保全用）</button>
+          <div className="tb-small-note" style={{ marginTop: 6 }}>※ 履歴は端末内に保存される。機種変更やキャッシュ削除で消えるため、定期的にコピーしてLINEのKeepなどに保存すること</div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
+
+function TBWizard({ baseTask, onSave, onCancel }) {
+  const [step, setStep] = useState(1);
+  const [cognition, setCognition] = useState(baseTask?.cognition || []);
+  const [cognitionNote, setCognitionNote] = useState(baseTask?.cognitionNote || '');
+  const [constraintId, setConstraintId] = useState(baseTask?.constraintId || null);
+  const [constraintDetail, setConstraintDetail] = useState(baseTask?.constraintDetail || '');
+  const [successResult, setSuccessResult] = useState(baseTask?.successResult || '');
+  const [successProcess, setSuccessProcess] = useState(baseTask?.successProcess || '');
+  const [attempts, setAttempts] = useState(baseTask?.attempts || 10);
+  const [q0Targets, setQ0Targets] = useState(baseTask?.q0Targets || []);
+  const [q0Note, setQ0Note] = useState(baseTask?.q0Note || '');
+  const [checks, setChecks] = useState({});
+  const [overrideReason, setOverrideReason] = useState('');
+  const [name, setName] = useState(baseTask?.name || '');
+
+  const toggle = (arr, set, v) => set(arr.includes(v) ? arr.filter(x => x !== v) : [...arr, v]);
+  const constraint = TB_CONSTRAINTS.find(c => c.id === constraintId);
+  const hasNo = TB_CHECKS.some(c => checks[c.id] === false);
+  const allAnswered = TB_CHECKS.every(c => checks[c.id] !== undefined);
+  const stepTitle = ['', '① できなかった場面', '② 制約を1つ選ぶ', '③ 成功の定義', '④ 検証', '⑤ 課題カード'][step];
+
+  return (
+    <React.Fragment>
+      <button className="dict-back" onClick={() => step === 1 ? onCancel() : setStep(step - 1)}>← 戻る</button>
+      <div className="tb-q-label">STEP {step} / 5 — {stepTitle}</div>
+
+      {step === 1 && (<div>
+        <div className="tb-q-text">受ける前、何が見えていなかった？</div>
+        <div className="tb-q-hint">「シュートを外した」は症状。その手前、ボールを受ける前に見ていなかったものまで掘る。それが課題の起点になる</div>
+        <div className="tb-choices" style={{ marginTop: 14 }}>
+          {TB_COGNITION_OPTS.map(o => (
+            <button key={o} className={`tb-choice ${cognition.includes(o) ? 'selected' : ''}`}
+              onClick={() => toggle(cognition, setCognition, o)}>{o}</button>
+          ))}
+        </div>
+        <div className="tb-field" style={{ marginTop: 14 }}>
+          <div className="tb-field-label">場面メモ（いつ・どこで・何が起きたか）</div>
+          <textarea value={cognitionNote} onChange={e => setCognitionNote(e.target.value)}
+            placeholder="例：右45で受けた時、ポストの位置を見ておらず1択でカットインした" />
+        </div>
+        <button className="tb-next-btn" style={{ marginTop: 16 }} disabled={cognition.length === 0}
+          onClick={() => setStep(2)}>次へ</button>
+      </div>)}
+
+      {step === 2 && (<div>
+        <div className="tb-q-text">変える制約を1つだけ選ぶ</div>
+        <div className="tb-q-hint">優先順位は 空間 → 人数 → 得点条件 → ルール。空間と人数は「見えるもの」自体を変える。1つしか選べない（複数変えると原因が分からなくなる）</div>
+        <div className="tb-choices" style={{ marginTop: 14 }}>
+          {TB_CONSTRAINTS.map(c => (
+            <button key={c.id} className={`tb-choice ${constraintId === c.id ? 'selected' : ''}`}
+              onClick={() => setConstraintId(c.id)}>
+              <div className="tb-choice-title">{c.order}. {c.name}</div>
+              <div className="tb-choice-desc">{c.desc}</div>
+            </button>
+          ))}
+        </div>
+        {constraint && (
+          <div className="tb-field" style={{ marginTop: 14 }}>
+            <div className="tb-field-label">具体的な設定（例：{constraint.examples.join(' ／ ')}）</div>
+            <textarea value={constraintDetail} onChange={e => setConstraintDetail(e.target.value)}
+              placeholder="自分の課題に合わせて書く" />
+          </div>
+        )}
+        <button className="tb-next-btn" style={{ marginTop: 16 }} disabled={!constraintId || !constraintDetail.trim()}
+          onClick={() => setStep(3)}>次へ</button>
+      </div>)}
+
+      {step === 3 && (<div>
+        <div className="tb-q-text">「成功」を2層で決める</div>
+        <div className="tb-q-hint">ここが一番むずかしい。結果だけだと「見てないけど入った」が混ざる。プロセスだけだと数えられない。両方を決めて、カウントはペアに任せる</div>
+        <div className="tb-field" style={{ marginTop: 14 }}>
+          <div className="tb-field-label">結果指標（ペアが数えられる形で）</div>
+          <textarea value={successResult} onChange={e => setSuccessResult(e.target.value)}
+            placeholder="例：シュートまたはアシストで終わる" />
+        </div>
+        <div className="tb-field">
+          <div className="tb-field-label">プロセス指標（受け前に何をしていれば成功か）</div>
+          <textarea value={successProcess} onChange={e => setSuccessProcess(e.target.value)}
+            placeholder="例：受ける前にDFの重心を見て、逆を取る動きから始める" />
+        </div>
+        <div className="tb-field">
+          <div className="tb-field-label">1セットの本数</div>
+          <input type="number" min="5" max="30" value={attempts}
+            onChange={e => setAttempts(parseInt(e.target.value || '10', 10))} />
+        </div>
+        <button className="tb-next-btn" style={{ marginTop: 16 }}
+          disabled={!successResult.trim() || !successProcess.trim()}
+          onClick={() => setStep(4)}>次へ</button>
+      </div>)}
+
+      {step === 4 && (<div>
+        <div className="tb-q-text">第0問：この課題は、DFの何を変えさせる？</div>
+        <div className="tb-q-hint">答えられなければ、それはDFのいない「動作の練習」になっている疑いが強い</div>
+        <div className="tb-choices" style={{ marginTop: 12 }}>
+          {TB_Q0_TARGETS.map(t => (
+            <button key={t} className={`tb-choice ${q0Targets.includes(t) ? 'selected' : ''}`}
+              onClick={() => toggle(q0Targets, setQ0Targets, t)}>DFの{t}</button>
+          ))}
+        </div>
+        <div className="tb-field" style={{ marginTop: 12 }}>
+          <div className="tb-field-label">どう変えさせるか（一言）</div>
+          <input type="text" value={q0Note} onChange={e => setQ0Note(e.target.value)}
+            placeholder="例：狭い空間でDFの連結を密にさせ、揺さぶらないと割れない状況を作る" />
+        </div>
+        <div className="tb-q-text" style={{ marginTop: 22, fontSize: 'var(--fs-md)' }}>検証4問</div>
+        <div className="tb-choices" style={{ marginTop: 10 }}>
+          {TB_CHECKS.map(c => (
+            <div key={c.id}>
+              <div className="tb-yn-row">
+                <div className="tb-yn-q">{c.text}</div>
+                <div className="tb-yn-btns">
+                  <button className={`tb-yn-btn yes ${checks[c.id] === true ? 'on' : ''}`}
+                    onClick={() => setChecks({ ...checks, [c.id]: true })}>Yes</button>
+                  <button className={`tb-yn-btn no ${checks[c.id] === false ? 'on' : ''}`}
+                    onClick={() => setChecks({ ...checks, [c.id]: false })}>No</button>
+                </div>
+              </div>
+              {checks[c.id] === false && (
+                <div className="tb-yn-warn">{c.hint} — <button onClick={() => setStep(c.back)}>STEP {c.back} に戻って直す</button></div>
+              )}
+            </div>
+          ))}
+        </div>
+        {hasNo && allAnswered && (
+          <div className="tb-field" style={{ marginTop: 14 }}>
+            <div className="tb-field-label">それでも実施するなら、理由を書く（自分への説明）</div>
+            <textarea value={overrideReason} onChange={e => setOverrideReason(e.target.value)}
+              placeholder="Noのまま実施する理由。理由が書けないなら戻った方が早い" />
+          </div>
+        )}
+        <button className="tb-next-btn" style={{ marginTop: 16 }}
+          disabled={!allAnswered || q0Targets.length === 0 || !q0Note.trim() || (hasNo && !overrideReason.trim())}
+          onClick={() => setStep(5)}>次へ</button>
+      </div>)}
+
+      {step === 5 && (<div>
+        <div className="tb-q-text">課題に名前をつけて保存</div>
+        <div className="tb-field" style={{ marginTop: 12 }}>
+          <div className="tb-field-label">課題名</div>
+          <input type="text" value={name} onChange={e => setName(e.target.value)}
+            placeholder="例：狭いセンター3対3" />
+        </div>
+        <div className="tb-card" style={{ marginTop: 14 }}>
+          <div className="tb-card-name">{name || '（課題名）'}</div>
+          <div className="tb-card-row"><div className="tb-card-k">起点</div>
+            <div className="tb-card-v">{[...cognition, cognitionNote].filter(Boolean).join(' / ')}</div></div>
+          <div className="tb-card-row"><div className="tb-card-k">制約：{constraint?.name}</div>
+            <div className="tb-card-v">{constraintDetail}</div></div>
+          <div className="tb-card-row"><div className="tb-card-k">成功の定義（{attempts}本）</div>
+            <div className="tb-card-v">{`結果：${successResult}\nプロセス：${successProcess}（ペアが観察）`}</div></div>
+          <div className="tb-card-row"><div className="tb-card-k">DFに変えさせるもの</div>
+            <div className="tb-card-v">{q0Targets.join('・')} — {q0Note}</div></div>
+          {overrideReason && (<div className="tb-card-row"><div className="tb-card-k">検証を通さず実施する理由</div>
+            <div className="tb-card-v">{overrideReason}</div></div>)}
+        </div>
+        <div className="tb-q-hint" style={{ marginTop: 12 }}>保存したらカードをコピーしてLINEに共有 → ペアが「俺がDFならこう攻略する」をレビュー。攻略されたら解が1つの証拠、作り直す</div>
+        <button className="tb-next-btn" style={{ marginTop: 14 }} disabled={!name.trim()}
+          onClick={() => onSave({
+            id: baseTask?.id || Date.now().toString(36),
+            name, cognition, cognitionNote, constraintId, constraintDetail,
+            successResult, successProcess, attempts, q0Targets, q0Note,
+            overrideReason: overrideReason || null,
+            sessions: baseTask?.sessions || [],
+            version: baseTask?.version, history: baseTask?.history,
+            created: baseTask?.created || new Date().toISOString(),
+          })}>保存して共有へ</button>
+      </div>)}
+    </React.Fragment>
+  );
+}
+
+function TBTaskDetail({ task, onUpdate, onRevise, onBack, setToast }) {
+  const [tbPhase, setTbPhase] = useState('view');
+  const [success, setSuccess] = useState('');
+  const [solutions, setSolutions] = useState('');
+  const [insight, setInsight] = useState('');
+  const [move, setMove] = useState(null);
+  const [reason, setReason] = useState('');
+
+  const rate = success !== '' ? Number(success) / task.attempts : null;
+  const hitRow = (rate !== null && solutions !== '') ? tbJudgeRow(rate, Number(solutions)) : null;
+  const sessions = task.sessions || [];
+
+  const saveSession = () => {
+    const s = {
+      date: new Date().toLocaleDateString('ja-JP'),
+      version: task.version || 1,
+      success: Number(success), attempts: task.attempts,
+      solutions: Number(solutions), insight, move, reason,
+    };
+    onUpdate({ ...task, sessions: [...sessions, s] });
+    setTbPhase('view'); setSuccess(''); setSolutions(''); setInsight(''); setMove(null); setReason('');
+    setToast('記録した'); setTimeout(() => setToast(null), 1800);
+  };
+
+  return (
+    <React.Fragment>
+      <button className="dict-back" onClick={onBack}>← 課題一覧へ</button>
+      <div className="tb-card">
+        <div className="tb-card-name">{task.name}{(task.version || 1) > 1 ? `　v${task.version}` : ''}</div>
+        <div className="tb-card-row"><div className="tb-card-k">制約：{TB_CONSTRAINTS.find(c => c.id === task.constraintId)?.name}</div>
+          <div className="tb-card-v">{task.constraintDetail}</div></div>
+        <div className="tb-card-row"><div className="tb-card-k">成功の定義（{task.attempts}本）</div>
+          <div className="tb-card-v">{`結果：${task.successResult}\nプロセス：${task.successProcess}（ペアが観察）`}</div></div>
+        <div className="tb-card-row"><div className="tb-card-k">DFに変えさせるもの</div>
+          <div className="tb-card-v">{(task.q0Targets || []).join('・')} — {task.q0Note}</div></div>
+      </div>
+      <button className="tb-ghost-btn" onClick={() => tbCopy(tbTaskToCardText(task), setToast)}>カードをコピー（LINE共有・ペアレビュー用）</button>
+
+      {tbPhase === 'view' && (<div>
+        <button className="tb-next-btn" onClick={() => setTbPhase('review')}>実施した → 振り返る</button>
+        {sessions.length > 0 && (
+          <div style={{ marginTop: 18 }}>
+            <div className="tb-field-label">実施ログ（{sessions.length}回）</div>
+            {sessions.map((s, i) => (
+              <div key={i} className="tb-session-log">
+                <div className="tb-session-line"><b>{s.date}</b>{s.version ? `（v${s.version}）` : ''}　成功 {s.success}/{s.attempts}（{Math.round(s.success / s.attempts * 100)}%）　解 {s.solutions}つ</div>
+                <div className="tb-session-line">次の一手：<b>{s.move}</b> — {s.reason}</div>
+                {s.insight && <div className="tb-session-line">見えたもの：{s.insight}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+        {(task.history || []).length > 0 && (
+          <div style={{ marginTop: 18 }}>
+            <div className="tb-field-label">課題の変遷</div>
+            {task.history.map((h, i) => (
+              <div key={i} className="tb-session-log">
+                <div className="tb-session-line"><b>v{h.v}</b>　{TB_CONSTRAINTS.find(c => c.id === h.constraintId)?.name}：{h.constraintDetail}</div>
+                {h.movedBy && <div className="tb-session-line">→ 動かした一手：<b>{h.movedBy.move}</b> — {h.movedBy.reason}</div>}
+              </div>
+            ))}
+            <div className="tb-session-log">
+              <div className="tb-session-line"><b>v{task.version || 1}（現在）</b>　{TB_CONSTRAINTS.find(c => c.id === task.constraintId)?.name}：{task.constraintDetail}</div>
+            </div>
+          </div>
+        )}
+        {sessions.length > 0 && (
+          <button className="tb-ghost-btn" style={{ marginTop: 14 }} onClick={onRevise}>この課題を改訂する（次の一手を反映・履歴は引き継ぐ）</button>
+        )}
+      </div>)}
+
+      {tbPhase === 'review' && (<div>
+        <div className="tb-q-label">実施後の自己問答</div>
+        <div className="tb-q-text" style={{ fontSize: 'var(--fs-md)' }}>ペアの観察データを入れる</div>
+        <div className="tb-field" style={{ marginTop: 12 }}>
+          <div className="tb-field-label">成功数（{task.attempts}本中・ペアのカウント）</div>
+          <input type="number" min="0" max={task.attempts} value={success} onChange={e => setSuccess(e.target.value)} />
+        </div>
+        <div className="tb-field">
+          <div className="tb-field-label">出ていた解の数（ペアのカウント）</div>
+          <input type="number" min="0" max="9" value={solutions} onChange={e => setSolutions(e.target.value)} />
+        </div>
+        <div className="tb-field">
+          <div className="tb-field-label">何が見えるようになった？（自分の言葉で）</div>
+          <textarea value={insight} onChange={e => setInsight(e.target.value)} placeholder="例：受ける前に隣DFの距離が見えるようになった" />
+        </div>
+        {hitRow && (<div style={{ marginTop: 16 }}>
+          <div className="tb-q-text" style={{ fontSize: 'var(--fs-md)' }}>次の一手 — 地図を見て自分で選ぶ</div>
+          <div className="tb-rule-box" style={{ margin: '10px 0' }}>
+            <b>運用ルール</b>：①動かすのは1回1変数 ②1回の結果で動かさない（3セッション連続で帯を外れてから） ③「変えない」も選択であり、理由を記録する
+          </div>
+          <div>
+            {TB_NEXT_MOVE_MAP.map(r => (
+              <div key={r.id} className={`tb-map-row ${r.id === hitRow ? 'hit' : ''}`}>
+                <div className="tb-map-cond">{r.cond}{r.id === hitRow ? '　← いまここ' : ''}</div>
+                <div className="tb-map-read">読み：{r.read}</div>
+                {r.id === hitRow && (
+                  <div className="tb-map-opts">
+                    {r.opts.map(o => (
+                      <button key={o} className={`tb-map-opt ${move === o ? 'selected' : ''}`} onClick={() => setMove(o)}>{o}</button>
+                    ))}
+                    <button className={`tb-map-opt ${move === '別の一手（自分で考えた）' ? 'selected' : ''}`}
+                      onClick={() => setMove('別の一手（自分で考えた）')}>別の一手（自分で考えた）</button>
+                  </div>
+                )}
+                {r.note && r.id === hitRow && <div className="tb-map-note">{r.note}</div>}
+              </div>
+            ))}
+          </div>
+          <div className="tb-field" style={{ marginTop: 12 }}>
+            <div className="tb-field-label">その一手を選んだ理由（ここが自己問答）</div>
+            <textarea value={reason} onChange={e => setReason(e.target.value)} placeholder="なぜそれを動かすのか。何が見えるようになると考えたか" />
+          </div>
+        </div>)}
+        <button className="tb-next-btn" style={{ marginTop: 14 }}
+          disabled={success === '' || solutions === '' || !move || !reason.trim()}
+          onClick={saveSession}>記録する</button>
+        <button className="tb-ghost-btn" style={{ marginTop: 8 }} onClick={() => setTbPhase('view')}>やめる</button>
+      </div>)}
+    </React.Fragment>
+  );
+}
+
 function App() {
   const [phase, setPhase] = useState('hub');
   const [mode, setMode] = useState(null);
@@ -8246,9 +8752,24 @@ function App() {
   const [planSaved, setPlanSaved] = useState([]);         // 保存済みプラン
   const [planCopyMsg, setPlanCopyMsg] = useState('');     // コピー成功表示
 
+  // 課題ビルダー（自作課題）
+  const [tbTasks, setTbTasks] = useState(() => lsGet('tb-tasks') || []);
+  const [tbView, setTbView] = useState({ name: 'home' }); // home | wizard | detail
+  const [tbToast, setTbToast] = useState(null);
+  const [planMyTasks, setPlanMyTasks] = useState([]);     // プランに混ぜる自作課題ID
+  useEffect(() => { lsSet('tb-tasks', tbTasks); }, [tbTasks]);
+  const tbUpsert = (t) => {
+    setTbTasks(prev => {
+      const i = prev.findIndex(x => x.id === t.id);
+      if (i >= 0) { const next = [...prev]; next[i] = t; return next; }
+      return [t, ...prev];
+    });
+  };
+
   // 用語集モーダル
   const [glossaryOpen, setGlossaryOpen] = useState(false);
   const [glossaryHighlight, setGlossaryHighlight] = useState(null); // 強調対象 term
+  const [glossaryQuery, setGlossaryQuery] = useState(''); // 用語集内検索
 
   // 本文中の用語装飾クリックを捕捉 → 用語集モーダルを開いて該当項目までスクロール
   useEffect(() => {
@@ -8259,6 +8780,7 @@ function App() {
       e.stopPropagation();
       const term = el.dataset.term;
       setGlossaryHighlight(term);
+      setGlossaryQuery('');
       setGlossaryOpen(true);
     };
     document.addEventListener('click', handler);
@@ -8283,7 +8805,7 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '5つの使い方', desc: '🤾 振り返る — 試合プレーを10モードで自己問答\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — 33ファイル386セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — テーマ×時間でプラン作成' },
+    { icon: '🧭',   title: '5つの使い方', desc: '🤾 振り返る — 試合プレーを10モードで自己問答\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — 33ファイル386セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）' },
     { icon: '✨',   title: '始めましょう', desc: '困ったら右下の 📘 用語 をタップ。\nメニューやヘルプはホームから何度でも開けます。' },
   ];
   const handleOnboardNext = () => {
@@ -8424,6 +8946,14 @@ function App() {
       });
       txt += '\n';
     });
+    const tbMyTasks = planMyTasks.map(id => tbTasks.find(t => t.id === id)).filter(Boolean);
+    if (tbMyTasks.length) {
+      txt += `■ 自作課題 (約${tbMyTasks.length * 15}分)\n`;
+      tbMyTasks.forEach(t => {
+        txt += `  ・[15分] ${t.name}${(t.version || 1) > 1 ? `（v${t.version}）` : ''}\n    ${TB_CONSTRAINTS.find(c => c.id === t.constraintId)?.name}：${t.constraintDetail}\n    成功の定義: 結果=${t.successResult} / 過程=${t.successProcess}（${t.attempts}本・ペア観察）\n`;
+      });
+      txt += '\n';
+    }
     if (planResult.cooldown) txt += `■ クールダウン (${planResult.cooldown.minutes}分)\n  ${planResult.cooldown.desc}\n`;
     if (planResult.mismatch > 0) txt += `\n※ 余裕時間 ${planResult.mismatch} 分（休憩・追加練習・質疑応答に活用）\n`;
 
@@ -8898,6 +9428,7 @@ function App() {
               {(phase === 'dictionary' || phase === 'dictionary-detail') && '辞書を読む'}
               {phase === 'solve' && '課題を解決する'}
               {phase === 'plan' && '練習を組む'}
+              {phase === 'build' && '課題を自作する'}
               {phase === 'chat' && '質問する'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
@@ -8906,6 +9437,7 @@ function App() {
               {(phase === 'dictionary' || phase === 'dictionary-detail') && 'Dictionary'}
               {phase === 'solve' && 'Symptom Diagnosis'}
               {phase === 'plan' && 'Practice Planner'}
+              {phase === 'build' && 'Task Builder'}
               {phase === 'chat' && 'Dictionary Chat'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
@@ -8930,13 +9462,18 @@ function App() {
               計画
             </div>
           )}
+          {phase === 'build' && (
+            <div className="header-mode" style={{ color: '#34d399', borderColor: 'rgba(52,211,153,0.4)' }}>
+              自作
+            </div>
+          )}
           {phase === 'chat' && (
             <div className="header-mode" style={{ color: 'var(--c-chat)', borderColor: 'color-mix(in oklab, var(--c-chat) 40%, transparent)' }}>
               質問
             </div>
           )}
         </div>
-        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'chat' ? 'hidden' : ''}`}>
+        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'build' || phase === 'chat' ? 'hidden' : ''}`}>
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
@@ -9685,6 +10222,24 @@ function App() {
             })}
           </div>
 
+          {/* ＋α：自作課題をプランに混ぜる */}
+          <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">＋α</span><span className="plan-step-label">自作課題（任意）</span></div>
+          <div className="plan-title">自分の課題を混ぜる</div>
+          <div className="plan-sub">自作した制約課題を生成プランの最後に追加できます（各 約15分目安）。まだ無ければ「課題ビルダー」で作る。</div>
+          {tbTasks.length > 0 && (
+            <div className="plan-themes">
+              {tbTasks.map(t => (
+                <button key={t.id} className={`plan-theme-chip ${planMyTasks.includes(t.id) ? 'active' : ''}`}
+                  onClick={() => setPlanMyTasks(prev => prev.includes(t.id) ? prev.filter(x => x !== t.id) : [...prev, t.id])}>
+                  <span className="plan-theme-chip-icon">🛠</span>{t.name}{(t.version || 1) > 1 ? ` v${t.version}` : ''}
+                </button>
+              ))}
+            </div>
+          )}
+          <button className="plan-rec-select-btn" onClick={() => { setTbView({ name: 'home' }); setPhase('build'); setTimeout(() => window.scrollTo(0, 0), 0); }}>
+            🛠 課題ビルダーを開く（自作・検証・振り返り）
+          </button>
+
           {/* STEP 3：レベル選択 */}
           <div className="solve-bar" style={{marginTop: 8}}><span className="plan-step-pill">STEP 3 / 4</span><span className="plan-step-label">レベル</span></div>
           <div className="plan-levels">
@@ -9862,6 +10417,38 @@ function App() {
               </div>
             ))}
 
+            {/* 自作課題ブロック */}
+            {planMyTasks.length > 0 && (() => {
+              const myTasks = planMyTasks.map(id => tbTasks.find(t => t.id === id)).filter(Boolean);
+              if (!myTasks.length) return null;
+              return (
+                <div className="plan-block">
+                  <div className="plan-block-title">
+                    <span>🛠</span><span>自作課題</span>
+                    <span className="plan-block-time">＋約{myTasks.length * 15}分</span>
+                  </div>
+                  {myTasks.map(t => (
+                    <div key={t.id} className="plan-item" onClick={() => { setTbView({ name: 'detail', id: t.id }); setPhase('build'); setTimeout(() => window.scrollTo(0, 0), 0); }}>
+                      <div className="plan-item-row">
+                        <span className="plan-item-time">15分</span>
+                        <span className="plan-item-title">{t.name}{(t.version || 1) > 1 ? ` v${t.version}` : ''}</span>
+                        <span className="plan-item-arrow">›</span>
+                      </div>
+                      <div style={{marginTop: 4}}>
+                        <span className="plan-drill-type eco">🌿 エコロジカル（自作）</span>
+                      </div>
+                      <div className="plan-item-desc">{TB_CONSTRAINTS.find(c => c.id === t.constraintId)?.name}：{t.constraintDetail}</div>
+                      <div className="plan-constraints">
+                        <div className="plan-constraints-label">📌 成功の定義（{t.attempts}本・ペアが観察）</div>
+                        <div className="plan-constraint-item"><span className="plan-constraint-tag">結果</span><span>{t.successResult}</span></div>
+                        <div className="plan-constraint-item"><span className="plan-constraint-tag">過程</span><span>{t.successProcess}</span></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
             {/* クールダウン */}
             {planResult.cooldown && (
               <div className="plan-wc">
@@ -9916,14 +10503,29 @@ function App() {
 
       {/* 用語集モーダル */}
       {glossaryOpen && (
-        <div className="glossary-overlay" onClick={() => { setGlossaryOpen(false); setGlossaryHighlight(null); }}>
+        <div className="glossary-overlay" onClick={() => { setGlossaryOpen(false); setGlossaryHighlight(null); setGlossaryQuery(''); }}>
           <div className="glossary-modal" onClick={e => e.stopPropagation()}>
             <div className="glossary-head">
               <span className="glossary-title">📘 用語集</span>
-              <button className="glossary-close" onClick={() => { setGlossaryOpen(false); setGlossaryHighlight(null); }} aria-label="閉じる">×</button>
+              <button className="glossary-close" onClick={() => { setGlossaryOpen(false); setGlossaryHighlight(null); setGlossaryQuery(''); }} aria-label="閉じる">×</button>
+            </div>
+            <div className="glossary-search">
+              <input
+                type="text"
+                value={glossaryQuery}
+                placeholder="🔍 用語をさがす（例: フェイント、6-0）"
+                onChange={e => setGlossaryQuery(e.target.value)}
+                aria-label="用語集内を検索"
+              />
             </div>
             <div className="glossary-body">
-              {GLOSSARY.map((g, gi) => (
+              {(() => {
+                const q = glossaryQuery.trim().toLowerCase();
+                const shown = GLOSSARY
+                  .map(g => ({ ...g, items: q ? g.items.filter(it => (it.term + it.desc).toLowerCase().includes(q)) : g.items }))
+                  .filter(g => g.items.length > 0);
+                if (!shown.length) return <div className="glossary-empty">「{glossaryQuery}」に一致する用語はありません</div>;
+                return shown.map((g, gi) => (
                 <div key={gi}>
                   <div className="glossary-group">{g.group}</div>
                   {g.items.map((it, ii) => {
@@ -9938,7 +10540,8 @@ function App() {
                     );
                   })}
                 </div>
-              ))}
+                ));
+              })()}
             </div>
           </div>
         </div>
@@ -10126,12 +10729,59 @@ function App() {
         </div>
       )}
 
+      {/* 課題ビルダー画面 */}
+      {phase === 'build' && (
+        <div className="plan-screen">
+          {tbView.name === 'home' && (
+            <TBHome tasks={tbTasks}
+              onBackPlan={() => { setPlanResult(null); setPhase('plan'); }}
+              onNew={() => setTbView({ name: 'wizard' })}
+              onOpen={(id) => setTbView({ name: 'detail', id })}
+              onExport={() => tbCopy(tbExportAllText(tbTasks), setTbToast)} />
+          )}
+          {tbView.name === 'wizard' && (
+            <TBWizard baseTask={tbView.base || null}
+              onCancel={() => setTbView({ name: 'home' })}
+              onSave={(t) => {
+                let next = t;
+                if (tbView.revise) {
+                  const old = tbTasks.find(x => x.id === t.id);
+                  if (old) {
+                    const lastS = (old.sessions || [])[(old.sessions || []).length - 1] || null;
+                    const snap = {
+                      v: old.version || 1, date: new Date().toLocaleDateString('ja-JP'),
+                      constraintId: old.constraintId, constraintDetail: old.constraintDetail,
+                      successResult: old.successResult, successProcess: old.successProcess,
+                      attempts: old.attempts, q0Targets: old.q0Targets, q0Note: old.q0Note,
+                      movedBy: lastS ? { move: lastS.move, reason: lastS.reason } : null,
+                    };
+                    next = { ...t, version: (old.version || 1) + 1, history: [...(old.history || []), snap], sessions: old.sessions || [] };
+                  }
+                }
+                tbUpsert(next); setTbView({ name: 'detail', id: next.id });
+                setTbToast('保存した'); setTimeout(() => setTbToast(null), 1800);
+              }} />
+          )}
+          {tbView.name === 'detail' && (() => {
+            const cur = tbTasks.find(t => t.id === tbView.id);
+            if (!cur) return <TBHome tasks={tbTasks} onBackPlan={() => { setPlanResult(null); setPhase('plan'); }} onNew={() => setTbView({ name: 'wizard' })} onOpen={(id) => setTbView({ name: 'detail', id })} onExport={() => tbCopy(tbExportAllText(tbTasks), setTbToast)} />;
+            return (
+              <TBTaskDetail task={cur} setToast={setTbToast}
+                onUpdate={tbUpsert}
+                onRevise={() => setTbView({ name: 'wizard', base: cur, revise: true })}
+                onBack={() => setTbView({ name: 'home' })} />
+            );
+          })()}
+          {tbToast && <div className="tb-toast">{tbToast}</div>}
+        </div>
+      )}
+
       {/* ── Bottom Navigation ── */}
       {(() => {
         const isReflect = ['start','emotion','question','result'].includes(phase);
         const isDict    = ['dictionary','dictionary-detail'].includes(phase);
         const isSolve   = phase === 'solve';
-        const isPlan    = phase === 'plan';
+        const isPlan    = phase === 'plan' || phase === 'build';
         const isChat    = phase === 'chat';
         const isHub     = phase === 'hub';
         const go = (target) => {
