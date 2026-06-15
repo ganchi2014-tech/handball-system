@@ -85,7 +85,7 @@
 例：股関節・胸椎・肩甲骨のモビリティドリル
 ```
 
-**A = アクティヴィーレン（活性化）（アクティベーション）**
+**A = Aktivieren（アクティベーション）**
 ```
 筋の柔軟性・血流・神経支配・代謝の活性化
 伸張耐性の向上
@@ -113,7 +113,7 @@
 ```
 4つの柱：
 1. Stabilisation und Kräftigung（安定化と強化）
-2. Mobilisation und ベヴェークリヒカイト（柔軟性）（モビライゼーションと柔軟性）
+2. Mobilisation und Beweglichkeit（モビライゼーションと柔軟性）
 3. Schulterkontrolle（肩コントロール）
 4. 脚軸制御と着地技術（下肢アライメントと着地技術）
 
@@ -209,7 +209,7 @@ Yレイズ（Y Raise）：下部僧帽筋・回旋筋腱板・肩甲骨安定筋
 ### D-1. ACL（前十字靭帯）傷害予防
 
 ```
-ACL = 前十字靭帯 / Vorderes クロイツ（クロス）band (VKB) / Fremre korsbånd
+ACL = 前十字靭帯 / Vorderes Kreuzband (VKB) / Fremre korsbånd
 
 リスクプロファイル：
   女性ハンドボール選手（15〜19歳）が特に高リスク
@@ -284,7 +284,7 @@ Jumper's ニー（膝） / Patellarsehnentendinopathie / Hopperkneet
 捻挫歴なし選手への予防効果は限定的
 テープ vs. ブレース：同等の効果
 
-バディテープ（Buddy Taping / パートner-Taping）：
+バディテープ（Buddy Taping / Partner-Taping）：
   非弾性スポーツテープで隣接指同士を固定
   締め付けすぎず、緩くない張力で
   指の捻挫・脱臼予防にも活用
@@ -494,7 +494,7 @@ Foam Rolling（フォームローリング）：
 | 過負荷傷害 | Überlastungsverletzung | Overbelastningsskade | Overuse injury |
 | 肩甲骨 | Schulterblatt / Skapula | Skulderblad | Scapula |
 | 回旋筋腱板 | Rotatorenmanschette | Rotatormansjett | Rotator cuff |
-| 前十字靭帯 | Vorderes クロイツ（クロス）band (VKB) | Fremre korsbånd | ACL |
+| 前十字靭帯 | Vorderes Kreuzband (VKB) | Fremre korsbånd | ACL |
 | 膝蓋腱炎 | Patellarsehnentendinopathie | Hopperkneet | Jumper's knee |
 | 神経筋トレーニング | Neuromuskuläres トレーニング | Nevromuskulær trening | NMT |
 | 着地技術 | Landetechnik | Landingsteknikk | Landing technique |
