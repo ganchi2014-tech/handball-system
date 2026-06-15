@@ -165,7 +165,7 @@
 | **相手ピボットに何度もやられる** | DF：5-1 → 6-0（コンパクト化してピボット封鎖） | `26_tactical_formations.md` |
 | **相手の速攻をよく食らう** | DF：3-2-1 or 2-4（縦の速さに対応） | `26_tactical_formations.md` |
 | **7on6発動（終盤ビハインド）** | 7on6陣形：標準3-3 / ピボット多め2-4 / 外野4人4-2 | `26_tactical_formations.md`, `08_game_management.md` |
-| **速攻後のセットOF移行** | OF：状況に応じて3-3（標準）or 2-1-3（ダブルピボット） | `26_tactical_formations.md` |
+| **速攻後のセットOF移行** | OF：状況に応じて3-3（標準）or ダブルポスト（2-2-2・ダブルピボット） | `26_tactical_formations.md` |
 | **リードして時間を使いたい** | OF：クローズ形式（ボール保持・内側押し込み） | `26_tactical_formations.md`, `07_formations.md` |
 | **ハーフタイム後に相手が修正してきた** | 陣形切り替えプロトコル確認（観察→分析→切り替えの3段階） | `26_tactical_formations.md` |
 
