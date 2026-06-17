@@ -1,6 +1,6 @@
 // Service Worker — オフライン対応
-// v4: アイコン・manifest をインストール時にキャッシュ（PWAインストール対応）
-const CACHE = 'handball-lab-v4';
+// v5: 辞書(.md)を network-first 化（更新が即リピーターに届く・オフライン時のみキャッシュ）
+const CACHE = 'handball-lab-v5';
 const PRECACHE = [
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -35,18 +35,17 @@ self.addEventListener('fetch', (event) => {
   const isDictFile = url.includes('/dictionary/') && url.endsWith('.md');
 
   if (isDictFile) {
-    // 辞書：cache-first（電波なし環境でも読める）
+    // 辞書：network-first（オンラインは常に最新を取得＝更新が即届く／オフライン時のみキャッシュ）
+    // no-cache＝サーバーへ条件付きGET（未変更は304で高速、変更時は最新を取得）
+    const fresh = new Request(event.request, { cache: 'no-cache' });
     event.respondWith(
-      caches.match(event.request).then((cached) => {
-        const networkFetch = fetch(event.request).then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        }).catch(() => cached);
-        return cached || networkFetch;
-      })
+      fetch(fresh).then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(event.request))
     );
   } else {
     // HTML/JS/その他：network-first + no-cache（ブラウザHTTPキャッシュも無視して常に最新を取得）
