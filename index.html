@@ -11,26 +11,6 @@
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <title>HANDBALL LAB</title>
   <script>
-    // 自動復旧：壊れたSW/キャッシュ（v5 network-firstの障害で.mdが空配信される状態）を検知して直す。
-    // index.html は常に最新が配信されるので、影響端末の次の読み込みで自動的に復旧する。
-    (async () => {
-      try {
-        if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) return; // SW未制御なら不要
-        if (sessionStorage.getItem('swChecked')) return; // セッション中1回だけ
-        const get = (u) => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.text() : '').catch(() => '');
-        // クエリ付き=SWの.mdキャッシュ判定を外れ素のネットワーク取得＝真の内容
-        const real = await get('./dictionary/00_janken_map.md?cb=' + Date.now());
-        if (real.length < 500) return; // 真の取得に失敗（オフライン等）なら判定しない
-        const viaSW = await get('./dictionary/00_janken_map.md'); // SW経由（壊れていると空）
-        if (viaSW.length >= 200) { sessionStorage.setItem('swChecked', '1'); return; } // 正常
-        // 壊れている → SW解除＋全キャッシュ削除＋1回だけ再読込（SW無しで素の取得＝確実に直る）
-        sessionStorage.setItem('swChecked', '1');
-        const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map(r => r.unregister()));
-        if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
-        location.reload();
-      } catch (e) {}
-    })();
     // Service Worker 登録（ホーム画面追加・体育館オフライン対応）
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -9446,19 +9426,28 @@ function App() {
         });
         setDictSections(allSections);
         setDictLoaded(true);
-        // 自動復旧（真値判定）：実際に読めた辞書セクションが異常に少ない＝SWが空の.mdを返している
-        // （v5 network-first障害の後始末。ファイルによってムラがあるため単一ファイル判定では漏れる）
-        // → SW解除＋全キャッシュ削除＋1回だけ再読込（SW無しで素のネットワーク取得＝確実にロード）
-        try {
-          if (allSections.length < 50 && navigator.serviceWorker && navigator.serviceWorker.controller && !sessionStorage.getItem('dictHealed')) {
-            sessionStorage.setItem('dictHealed', '1');
-            const regs = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(regs.map(r => r.unregister()));
-            if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
-            location.reload();
-            return;
-          }
-        } catch (e) { /* 復旧失敗は無視（通常表示にフォールバック） */ }
+        // 自動復旧（リロード不要・SW迂回）：読めた辞書セクションが異常に少ない＝壊れたSWが空の.mdを返している。
+        // クエリ付き(?fresh=)で取り直すとSWの「.md cache分岐」を外れ、index.html自体と同じ正常経路(network-first)で
+        // 取得できる→壊れたSWを迂回してセクションを再構築する。リロードしないので競合・ちらつき・ループが起きない。
+        if (allSections.length < 50 && navigator.serviceWorker && navigator.serviceWorker.controller) {
+          try {
+            const retry = [];
+            await Promise.all(DICT_FILES.map(async (f) => {
+              try {
+                const res = await fetch(`./dictionary/${f.name}?fresh=${Date.now()}`, { cache: 'no-store' });
+                if (res.ok) { const md = await res.text(); if (md && md.length > 50) retry.push(...splitSections(md, f)); }
+              } catch (e) { /* skip file */ }
+            }));
+            if (retry.length > allSections.length) {
+              // 壊れが確認できた（迂回取得の方が多い）→ セクション差し替え＋壊れたSW/キャッシュを掃除
+              retry.sort((a, b) => (a.fileId !== b.fileId ? a.fileId.localeCompare(b.fileId) : 0));
+              setDictSections(retry);
+              const regs = await navigator.serviceWorker.getRegistrations();
+              await Promise.all(regs.map(r => r.unregister()));
+              if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+            }
+          } catch (e) { /* 復旧失敗は無視 */ }
+        }
       } catch (e) {
         setDictError(String(e));
       }
