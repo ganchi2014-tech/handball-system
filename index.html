@@ -9446,6 +9446,19 @@ function App() {
         });
         setDictSections(allSections);
         setDictLoaded(true);
+        // 自動復旧（真値判定）：実際に読めた辞書セクションが異常に少ない＝SWが空の.mdを返している
+        // （v5 network-first障害の後始末。ファイルによってムラがあるため単一ファイル判定では漏れる）
+        // → SW解除＋全キャッシュ削除＋1回だけ再読込（SW無しで素のネットワーク取得＝確実にロード）
+        try {
+          if (allSections.length < 50 && navigator.serviceWorker && navigator.serviceWorker.controller && !sessionStorage.getItem('dictHealed')) {
+            sessionStorage.setItem('dictHealed', '1');
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(r => r.unregister()));
+            if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+            location.reload();
+            return;
+          }
+        } catch (e) { /* 復旧失敗は無視（通常表示にフォールバック） */ }
       } catch (e) {
         setDictError(String(e));
       }
