@@ -76,8 +76,15 @@ const BATTERY = [
   '判断が遅い', '声が出せない', '視野を広げるには',
 ];
 
-const single = process.argv[2];
-const list = single ? [single] : BATTERY;
+// 入力: 引数なし=内蔵バッテリー / "質問"=単発 / --file path=ファイル(1行1問・#と空行は無視)
+let list = BATTERY;
+const arg = process.argv[2];
+if (arg === '--file') {
+  const qpath = process.argv[3];
+  list = fs.readFileSync(qpath, 'utf8').split(/\r?\n/).map(s => s.trim()).filter(s => s && !s.startsWith('#'));
+} else if (arg) {
+  list = [arg];
+}
 
 function topN(q, n) {
   const { kws, hits } = chatSearch(q, sections);
