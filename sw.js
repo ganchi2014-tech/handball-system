@@ -1,6 +1,8 @@
 // Service Worker — オフライン対応
-// v5: 辞書(.md)を network-first 化（更新が即リピーターに届く・オフライン時のみキャッシュ）
-const CACHE = 'handball-lab-v5';
+// v6: 辞書(.md)は cache-first(stale-while-revalidate) に戻す（確実にロード＝空セクション化を防ぐ）。
+//     背景でネットワーク更新するため次回読み込みで最新化される。activateで旧キャッシュ全削除。
+// ※v5でno-cache条件付きGETに変えたらGitHub Pagesの304応答で辞書が全滅した→撤回。
+const CACHE = 'handball-lab-v6';
 const PRECACHE = [
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -35,17 +37,19 @@ self.addEventListener('fetch', (event) => {
   const isDictFile = url.includes('/dictionary/') && url.endsWith('.md');
 
   if (isDictFile) {
-    // 辞書：network-first（オンラインは常に最新を取得＝更新が即届く／オフライン時のみキャッシュ）
-    // no-cache＝サーバーへ条件付きGET（未変更は304で高速、変更時は最新を取得）
-    const fresh = new Request(event.request, { cache: 'no-cache' });
+    // 辞書：cache-first（即表示・確実にロード）＋背景でネットワーク更新（次回最新化）
+    // ※キャッシュがあれば必ず返すので「空セクション」にならない。更新は1読込遅れで反映。
     event.respondWith(
-      fetch(fresh).then((response) => {
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(event.request, clone));
-        }
-        return response;
-      }).catch(() => caches.match(event.request))
+      caches.match(event.request).then((cached) => {
+        const networkFetch = fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => cached);
+        return cached || networkFetch;
+      })
     );
   } else {
     // HTML/JS/その他：network-first + no-cache（ブラウザHTTPキャッシュも無視して常に最新を取得）
