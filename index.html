@@ -1264,6 +1264,33 @@
     }
     .chat-send:active { transform: scale(0.94); }
     .chat-send:disabled { opacity: 0.35; box-shadow: none; }
+    /* ─── GK予測モジュール ─── */
+    .gk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .gk-cell { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      color: var(--tx-secondary); font-size: var(--fs-md); font-weight: 800; padding: 22px 0; cursor: pointer;
+      font-family: inherit; min-height: var(--tap); transition: all var(--t-fast); }
+    .gk-cell:active { transform: scale(0.98); }
+    .gk-cell.selected { background: rgba(45,212,191,0.14); border-color: rgba(45,212,191,0.55); color: #5eead4; }
+    .gk-result-row { display: flex; gap: 10px; margin-top: 16px; }
+    .gk-result-btn { flex: 1; border-radius: var(--r-md); border: 1px solid var(--border); background: var(--surface-1);
+      font-size: var(--fs-lg); font-weight: 900; padding: 26px 0; cursor: pointer; font-family: inherit;
+      transition: all var(--t-fast); min-height: var(--tap); }
+    .gk-result-btn.hit { border-color: rgba(52,211,153,0.5); color: #a7f3d0; background: rgba(52,211,153,0.08); }
+    .gk-result-btn.miss { border-color: rgba(239,68,68,0.45); color: #fca5a5; background: rgba(239,68,68,0.06); }
+    .gk-result-btn:active { transform: scale(0.98); }
+    .gk-list-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .gk-del-btn { background: none; border: 1px solid var(--border); color: var(--tx-muted); border-radius: var(--r-sm);
+      padding: 4px 10px; font-size: var(--fs-xs); cursor: pointer; font-family: inherit; flex-shrink: 0; }
+    .gk-add-row { display: flex; gap: 8px; margin-top: 8px; }
+    .gk-add-row input { flex: 1; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--r-md);
+      color: var(--tx-primary); font-size: var(--fs-md); font-family: inherit; padding: 10px 12px; min-width: 0; }
+    .gk-add-btn { background: rgba(45,212,191,0.12); border: 1px solid rgba(45,212,191,0.4); color: #5eead4;
+      border-radius: var(--r-md); padding: 10px 14px; font-weight: 800; font-size: var(--fs-sm); cursor: pointer;
+      font-family: inherit; flex-shrink: 0; }
+    .hub-card.gk { background: linear-gradient(135deg, rgba(45,212,191,0.10), rgba(20,184,166,0.04)); border-color: rgba(45,212,191,0.28); }
+    .hub-card.gk .hub-card-title { color: #5eead4; }
+    .hub-card.gk:active { border-color: rgba(45,212,191,0.5); box-shadow: 0 0 20px rgba(20,184,166,0.15); }
+
     /* ─── 課題ビルダー（自作課題）─── */
     .tb-field { display: flex; flex-direction: column; }
     .tb-field + .tb-field { margin-top: 14px; }
