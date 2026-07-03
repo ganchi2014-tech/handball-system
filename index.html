@@ -1291,6 +1291,19 @@
     .hub-card.gk .hub-card-title { color: #5eead4; }
     .hub-card.gk:active { border-color: rgba(45,212,191,0.5); box-shadow: 0 0 20px rgba(20,184,166,0.15); }
 
+    /* ─── ピヴォット認知モジュール ─── */
+    .pv-result-row { display: flex; gap: 8px; margin-top: 16px; }
+    .pv-result-btn { flex: 1; border-radius: var(--r-md); border: 1px solid var(--border); background: var(--surface-1);
+      font-size: var(--fs-md); font-weight: 900; padding: 20px 0; cursor: pointer; font-family: inherit;
+      transition: all var(--t-fast); min-height: var(--tap); color: var(--tx-secondary); }
+    .pv-result-btn:active { transform: scale(0.98); }
+    .pv-result-btn.break { border-color: rgba(52,211,153,0.5); color: #a7f3d0; background: rgba(52,211,153,0.08); }
+    .pv-result-btn.stopped { border-color: rgba(239,68,68,0.45); color: #fca5a5; background: rgba(239,68,68,0.06); }
+    .pv-result-btn.rereceive { border-color: rgba(96,165,250,0.5); color: #bfdbfe; background: rgba(96,165,250,0.08); }
+    .hub-card.pv { background: linear-gradient(135deg, rgba(251,113,133,0.10), rgba(244,63,94,0.04)); border-color: rgba(251,113,133,0.28); }
+    .hub-card.pv .hub-card-title { color: #fda4af; }
+    .hub-card.pv:active { border-color: rgba(251,113,133,0.5); box-shadow: 0 0 20px rgba(244,63,94,0.15); }
+
     /* ─── 課題ビルダー（自作課題）─── */
     .tb-field { display: flex; flex-direction: column; }
     .tb-field + .tb-field { margin-top: 14px; }
