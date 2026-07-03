@@ -9563,7 +9563,6 @@ function PVRecordWizard({ players, initial, onSave, onExit }) {
   const [type, setType] = useState(null);
   const [predict, setPredict] = useState('');
   const [cues, setCues] = useState([]);
-  const [result, setResult] = useState(null);
   const [stage, setStage] = useState('setup'); // setup | predict | result
 
   const handleSave = (res) => {
@@ -9573,7 +9572,7 @@ function PVRecordWizard({ players, initial, onSave, onExit }) {
       pivot, axis1, axis2, type, predict: predict.trim(), cues, result: res,
     });
     // 連続入力：ピヴォットは維持し、2軸・類型・予測・事実はリセット（毎プレー変わるため）
-    setAxis1(null); setAxis2(null); setType(null); setPredict(''); setCues([]); setResult(null);
+    setAxis1(null); setAxis2(null); setType(null); setPredict(''); setCues([]);
     setStage('setup');
   };
 
