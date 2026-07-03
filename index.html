@@ -1413,6 +1413,11 @@ const DICT_FILES = [
 // 全タグ（フィルタチップ用、重複排除）
 const ALL_TAGS = Array.from(new Set(DICT_FILES.flatMap(f => f.tags))).sort();
 
+// 辞書の総セクション数（dictionary/*.md の #/## 見出し実測値）。
+// 読み込み完了後は dictSections.length（実数）を優先して表示し、これは読み込み前のフォールバック。
+// 辞書を増減したらこの値を更新する。
+const DICT_SECTION_COUNT = 406;
+
 // ─────────────────────────────────────────────
 // 用語集（知識浅めユーザー向け）
 // ─────────────────────────────────────────────
@@ -5171,7 +5176,7 @@ function splitSections(md, fileMeta) {
 // ─────────────────────────────────────────────
 // 質問チャット（辞書検索ボット）
 // LLM・外部API不使用：質問からキーワードを抽出し、読み込み済みの
-// 辞書386セクションを採点して最良の箇所から回答を合成する。
+// 辞書の全セクションを採点して最良の箇所から回答を合成する。
 // 辞書はSWがキャッシュするためオフラインでも動作する。
 // ─────────────────────────────────────────────
 
@@ -8609,13 +8614,13 @@ const HUB_MODULES = [
   {
     id: 'chat', cls: 'chat', icon: '💬', target: '選手・指導者',
     title: '質問する',
-    desc: 'チャットで質問 → 辞書386セクションから該当箇所を探してその場で回答',
+    desc: `チャットで質問 → 辞書${DICT_SECTION_COUNT}セクションから該当箇所を探してその場で回答`,
     enabled: true,
   },
   {
     id: 'dictionary', cls: 'dict', icon: '📖', target: '選手・指導者',
     title: '辞書を読む',
-    desc: '33ファイル386セクションの戦術辞書を横断検索・タグでフィルタ',
+    desc: `${DICT_FILES.length}ファイル${DICT_SECTION_COUNT}セクションの戦術辞書を横断検索・タグでフィルタ`,
     enabled: true,
   },
   {
@@ -9557,7 +9562,7 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '5つの使い方', desc: '🤾 振り返る — 試合プレーを10モードで自己問答\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — 33ファイル386セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）' },
+    { icon: '🧭',   title: '5つの使い方', desc: `🤾 振り返る — 試合プレーを10モードで自己問答\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}ファイル${DICT_SECTION_COUNT}セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）` },
     { icon: '✨',   title: '始めましょう', desc: '困ったら右下の 📘 用語 をタップ。\nメニューやヘルプはホームから何度でも開けます。' },
   ];
   const handleOnboardNext = () => {
@@ -10554,7 +10559,7 @@ function App() {
               <button className="chat-clear" onClick={handleChatClear}>🗑 履歴クリア</button>
             )}
           </div>
-          <div className="chat-note">📖 辞書33ファイル・386セクションから探して回答します（通信なし・オフラインOK）</div>
+          <div className="chat-note">📖 辞書{DICT_FILES.length}ファイル・{dictLoaded ? dictSections.length : DICT_SECTION_COUNT}セクションから探して回答します（通信なし・オフラインOK）</div>
           {!dictLoaded && !dictError && (
             <div className="dict-loading">📖 辞書を読み込み中… ({dictLoadedCount} / {DICT_FILES.length})</div>
           )}
