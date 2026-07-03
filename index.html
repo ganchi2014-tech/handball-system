@@ -8630,6 +8630,12 @@ const HUB_MODULES = [
     desc: 'テーマ×レベル×時間 → 時間配分付き練習プランを生成（印刷可）',
     enabled: true,
   },
+  {
+    id: 'gk', cls: 'gk', icon: '🧤', target: 'GK・シューター',
+    title: 'GK予測',
+    desc: 'シュート前にコースを予測 → シュート後に的中/不的中を照合（6分割・シューター側が入力）',
+    enabled: true,
+  },
 ];
 
 // ─────────────────────────────────────────────
@@ -9493,6 +9499,17 @@ function App() {
   const [tbToast, setTbToast] = useState(null);
   const [planMyTasks, setPlanMyTasks] = useState([]);     // プランに混ぜる自作課題ID
   useEffect(() => { lsSet('tb-tasks', tbTasks); }, [tbTasks]);
+  // GK予測（2026-07 GK先行サイクル）
+  const [gkPreds, setGkPreds] = useState(() => lsGet('gk_predictions') || []);
+  const [gkPlayers, setGkPlayers] = useState(() => lsGet('gk_players') || { keepers: [], shooters: [] });
+  const [gkView, setGkView] = useState({ name: 'home' }); // home | record
+  const [gkToast, setGkToast] = useState(null);
+  const gkLastSetup = useRef({}); // 連続入力用に直前のGK・状況・シューターを保持
+  useEffect(() => {
+    lsSet('gk_predictions', gkPreds);
+    lsSet('shooter_tendencies', gkCalcTendencies(gkPreds)); // 仕様キー：常に予測記録から再計算
+  }, [gkPreds]);
+  useEffect(() => { lsSet('gk_players', gkPlayers); }, [gkPlayers]);
   const tbUpsert = (t) => {
     setTbTasks(prev => {
       const i = prev.findIndex(x => x.id === t.id);
@@ -10086,6 +10103,10 @@ function App() {
       setPlanResult(null);
       setPhase('plan');
     }
+    else if (modId === 'gk') {
+      setGkView({ name: 'home' });
+      setPhase('gk');
+    }
   };
 
   // 辞書一覧→詳細遷移時に一覧側のスクロール位置を覚えておく
@@ -10186,6 +10207,7 @@ function App() {
               {phase === 'solve' && '課題を解決する'}
               {phase === 'plan' && '練習を組む'}
               {phase === 'build' && '課題を自作する'}
+              {phase === 'gk' && 'GK予測'}
               {phase === 'chat' && '質問する'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
@@ -10195,6 +10217,7 @@ function App() {
               {phase === 'solve' && 'Symptom Diagnosis'}
               {phase === 'plan' && 'Practice Planner'}
               {phase === 'build' && 'Task Builder'}
+              {phase === 'gk' && 'GK Prediction'}
               {phase === 'chat' && 'Dictionary Chat'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
@@ -10224,13 +10247,18 @@ function App() {
               自作
             </div>
           )}
+          {phase === 'gk' && (
+            <div className="header-mode" style={{ color: '#5eead4', borderColor: 'rgba(45,212,191,0.4)' }}>
+              予測
+            </div>
+          )}
           {phase === 'chat' && (
             <div className="header-mode" style={{ color: 'var(--c-chat)', borderColor: 'color-mix(in oklab, var(--c-chat) 40%, transparent)' }}>
               質問
             </div>
           )}
         </div>
-        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'build' || phase === 'chat' ? 'hidden' : ''}`}>
+        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'build' || phase === 'chat' || phase === 'gk' ? 'hidden' : ''}`}>
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
@@ -11530,6 +11558,37 @@ function App() {
             );
           })()}
           {tbToast && <div className="tb-toast">{tbToast}</div>}
+        </div>
+      )}
+
+      {/* GK予測画面 */}
+      {phase === 'gk' && (
+        <div className="plan-screen">
+          {gkView.name === 'home' && (
+            <GKHome preds={gkPreds} players={gkPlayers}
+              onStart={() => setGkView({ name: 'record' })}
+              onDelete={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
+              onAddPlayer={(role, name) => setGkPlayers(prev => prev[role].includes(name) ? prev : Object.assign({}, prev, { [role]: [...prev[role], name] }))}
+              onRemovePlayer={(role, name) => {
+                // 削除した選手が連続入力の直前選択に残っていたらクリア（Task 3レビュー指摘）
+                if (role === 'keepers' && gkLastSetup.current.gk === name) delete gkLastSetup.current.gk;
+                if (role === 'shooters' && gkLastSetup.current.shooter === name) delete gkLastSetup.current.shooter;
+                setGkPlayers(prev => Object.assign({}, prev, { [role]: prev[role].filter(n => n !== name) }));
+              }}
+              onExport={() => tbCopy(gkExportWeekText(gkPreds), setGkToast)}
+              onBackHub={handleBackToHub} />
+          )}
+          {gkView.name === 'record' && (
+            <GKRecordWizard players={gkPlayers} initial={gkLastSetup.current}
+              onSave={(rec) => {
+                gkLastSetup.current = { gk: rec.gk, situation: rec.situation, shooter: rec.shooter };
+                setGkPreds(prev => [rec, ...prev]);
+                setGkToast(rec.hit ? '記録した：○的中' : '記録した：×不的中');
+                setTimeout(() => setGkToast(null), 1800);
+              }}
+              onExit={() => setGkView({ name: 'home' })} />
+          )}
+          {gkToast && <div className="tb-toast">{gkToast}</div>}
         </div>
       )}
 
