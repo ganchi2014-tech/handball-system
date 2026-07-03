@@ -8654,6 +8654,12 @@ const HUB_MODULES = [
     desc: 'シュート前にコースを予測 → シュート後に的中/不的中を照合（6分割・シューター側が入力）',
     enabled: true,
   },
+  {
+    id: 'pv', cls: 'pv', icon: '🧲', target: 'ピヴォット・バック陣',
+    title: 'ピヴォット認知',
+    desc: '第0問（2軸）→ 類型選択 → 予測 → プレー → 事実と結果を照合（バック陣が入力）',
+    enabled: true,
+  },
 ];
 
 // ─────────────────────────────────────────────
@@ -9831,6 +9837,14 @@ function App() {
     lsSet('shooter_tendencies', gkCalcTendencies(gkPreds)); // 仕様キー：常に予測記録から再計算
   }, [gkPreds]);
   useEffect(() => { lsSet('gk_players', gkPlayers); }, [gkPlayers]);
+  // ピヴォット認知（GKサイクル後続）
+  const [pvRecords, setPvRecords] = useState(() => lsGet('pv_records') || []);
+  const [pvPlayers, setPvPlayers] = useState(() => lsGet('pv_players') || { pivots: [] });
+  const [pvView, setPvView] = useState({ name: 'home' }); // home | record
+  const [pvToast, setPvToast] = useState(null);
+  const pvLastSetup = useRef({}); // 連続入力用に直前のピヴォットを保持
+  useEffect(() => { lsSet('pv_records', pvRecords); }, [pvRecords]);
+  useEffect(() => { lsSet('pv_players', pvPlayers); }, [pvPlayers]);
   const tbUpsert = (t) => {
     setTbTasks(prev => {
       const i = prev.findIndex(x => x.id === t.id);
@@ -10428,6 +10442,10 @@ function App() {
       setGkView({ name: 'home' });
       setPhase('gk');
     }
+    else if (modId === 'pv') {
+      setPvView({ name: 'home' });
+      setPhase('pv');
+    }
   };
 
   // 辞書一覧→詳細遷移時に一覧側のスクロール位置を覚えておく
@@ -10529,6 +10547,7 @@ function App() {
               {phase === 'plan' && '練習を組む'}
               {phase === 'build' && '課題を自作する'}
               {phase === 'gk' && 'GK予測'}
+              {phase === 'pv' && 'ピヴォット認知'}
               {phase === 'chat' && '質問する'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
@@ -10539,6 +10558,7 @@ function App() {
               {phase === 'plan' && 'Practice Planner'}
               {phase === 'build' && 'Task Builder'}
               {phase === 'gk' && 'GK Prediction'}
+              {phase === 'pv' && 'Pivot Cognition'}
               {phase === 'chat' && 'Dictionary Chat'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
@@ -10573,13 +10593,18 @@ function App() {
               予測
             </div>
           )}
+          {phase === 'pv' && (
+            <div className="header-mode" style={{ color: '#fda4af', borderColor: 'rgba(251,113,133,0.4)' }}>
+              認知
+            </div>
+          )}
           {phase === 'chat' && (
             <div className="header-mode" style={{ color: 'var(--c-chat)', borderColor: 'color-mix(in oklab, var(--c-chat) 40%, transparent)' }}>
               質問
             </div>
           )}
         </div>
-        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'build' || phase === 'chat' || phase === 'gk' ? 'hidden' : ''}`}>
+        <div className={`progress-bar ${phase === 'hub' || phase === 'dictionary' || phase === 'dictionary-detail' || phase === 'solve' || phase === 'plan' || phase === 'build' || phase === 'chat' || phase === 'gk' || phase === 'pv' ? 'hidden' : ''}`}>
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
       </div>
@@ -11910,6 +11935,36 @@ function App() {
               onExit={() => setGkView({ name: 'home' })} />
           )}
           {gkToast && <div className="tb-toast">{gkToast}</div>}
+        </div>
+      )}
+
+      {/* ピヴォット認知画面 */}
+      {phase === 'pv' && (
+        <div className="plan-screen">
+          {pvView.name === 'home' && (
+            <PVHome records={pvRecords} players={pvPlayers}
+              onStart={() => setPvView({ name: 'record' })}
+              onDelete={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
+              onAddPlayer={(name) => setPvPlayers(prev => prev.pivots.includes(name) ? prev : { pivots: [...prev.pivots, name] })}
+              onRemovePlayer={(name) => {
+                // 削除した選手が連続入力の直前選択に残っていたらクリア（GKモジュールと同じガード）
+                if (pvLastSetup.current.pivot === name) delete pvLastSetup.current.pivot;
+                setPvPlayers(prev => ({ pivots: prev.pivots.filter(n => n !== name) }));
+              }}
+              onExport={() => tbCopy(pvExportWeekText(pvRecords), setPvToast)}
+              onBackHub={handleBackToHub} />
+          )}
+          {pvView.name === 'record' && (
+            <PVRecordWizard players={pvPlayers} initial={pvLastSetup.current}
+              onSave={(rec) => {
+                pvLastSetup.current = { pivot: rec.pivot };
+                setPvRecords(prev => [rec, ...prev]);
+                setPvToast(`記録した：${pvResultLabel(rec.result)}`);
+                setTimeout(() => setPvToast(null), 1800);
+              }}
+              onExit={() => setPvView({ name: 'home' })} />
+          )}
+          {pvToast && <div className="tb-toast">{pvToast}</div>}
         </div>
       )}
 
