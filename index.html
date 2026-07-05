@@ -9252,20 +9252,23 @@ function gkExportWeekText(preds, weekStartStr) {
 }
 
 // GK予測：記録ウィザード（①状況・メンバー → ②予測コース＋根拠 → シュート → ③結果）
-function GKRecordWizard({ players, initial, onSave, onExit }) {
+function GKRecordWizard({ players, initial, onSave, onUndo, onExit }) {
   const [gk, setGk] = useState(initial.gk || null);
   const [situation, setSituation] = useState(initial.situation || null);
   const [shooter, setShooter] = useState(initial.shooter || null);
   const [course, setCourse] = useState(null);
   const [cue, setCue] = useState('');
   const [stage, setStage] = useState('setup'); // setup | predict | result
+  const [lastSaved, setLastSaved] = useState(null);
 
   const handleResult = (hit) => {
-    onSave({
+    const rec = {
       id: 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       date: gkDateStr(), ts: Date.now(),
       gk, situation, shooter, course, cue: cue.trim(), hit,
-    });
+    };
+    onSave(rec);
+    setLastSaved(rec);
     // 連続入力：GK・状況・シューターは維持し、コース・根拠だけリセット
     setCourse(null); setCue('');
     setStage('predict');
@@ -9321,6 +9324,11 @@ function GKRecordWizard({ players, initial, onSave, onExit }) {
       <button className="tb-next-btn" style={{marginTop: 16}} disabled={!course} onClick={() => setStage('result')}>
         予測を確定 → シュートへ
       </button>
+      {lastSaved && (
+        <button className="tb-ghost-btn" style={{marginTop: 10}} onClick={() => { onUndo(lastSaved.id); setLastSaved(null); }}>
+          ↩ 直前の記録を取り消す（{lastSaved.shooter}・{gkCourseLabel(lastSaved.course)}・{lastSaved.hit ? '○的中' : '×不的中'}）
+        </button>
+      )}
     </React.Fragment>
   );
 
@@ -9386,6 +9394,24 @@ function GKHome({ preds, players, onStart, onDelete, onAddPlayer, onRemovePlayer
                     推移：{series.map(w => `${gkFmtDate(w.week)}週 ${w.rate}%`).join(' → ')}
                   </div>
                 )}
+                {(() => {
+                  const bySit = GK_SITUATIONS.map(sit => ({ sit, s: gkStats(preds.filter(p => p.gk === g && p.situation === sit.id)) })).filter(x => x.s.total);
+                  if (!bySit.length) return null;
+                  return (
+                    <div className="tb-card-v" style={{fontSize: 'var(--fs-xs)'}}>
+                      累計内訳：{bySit.map(x => `${x.sit.label} ${x.s.hits}/${x.s.total}（${x.s.rate}%）`).join('／')}
+                    </div>
+                  );
+                })()}
+                {(() => {
+                  const cmp = gkBaselineCompare(preds, g);
+                  if (!cmp) return null;
+                  return (
+                    <div className="tb-card-v" style={{fontSize: 'var(--fs-xs)'}}>
+                      照合：基準期 {cmp.baseRate}% → 直近週 {cmp.recentRate}%（{cmp.delta >= 0 ? '+' : ''}{cmp.delta}pt）
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
@@ -9418,7 +9444,7 @@ function GKHome({ preds, players, onStart, onDelete, onAddPlayer, onRemovePlayer
                 {gkFmtDate(p.date)} {p.gk}×{p.shooter}｜{gkSituationLabel(p.situation)}｜予測{gkCourseLabel(p.course)}｜{p.hit ? '○的中' : '×不的中'}
                 {p.cue ? <span style={{color: 'var(--tx-muted)'}}>｜{p.cue}</span> : null}
               </div>
-              <button className="gk-del-btn" onClick={() => onDelete(p.id)}>削除</button>
+              <button className="gk-del-btn" onClick={() => { if (window.confirm('この記録を削除しますか？')) onDelete(p.id); }}>削除</button>
             </div>
           ))}
         </div>
@@ -9431,7 +9457,7 @@ function GKHome({ preds, players, onStart, onDelete, onAddPlayer, onRemovePlayer
           {players.keepers.map(n => (
             <div key={n} className="gk-list-row tb-card-row">
               <div className="tb-card-v">{n}</div>
-              <button className="gk-del-btn" onClick={() => onRemovePlayer('keepers', n)}>削除</button>
+              <button className="gk-del-btn" onClick={() => { if (window.confirm('「' + n + '」をリストから削除しますか？（過去の記録は消えません）')) onRemovePlayer('keepers', n); }}>削除</button>
             </div>
           ))}
           <div className="gk-add-row">
@@ -9444,7 +9470,7 @@ function GKHome({ preds, players, onStart, onDelete, onAddPlayer, onRemovePlayer
           {players.shooters.map(n => (
             <div key={n} className="gk-list-row tb-card-row">
               <div className="tb-card-v">{n}</div>
-              <button className="gk-del-btn" onClick={() => onRemovePlayer('shooters', n)}>削除</button>
+              <button className="gk-del-btn" onClick={() => { if (window.confirm('「' + n + '」をリストから削除しますか？（過去の記録は消えません）')) onRemovePlayer('shooters', n); }}>削除</button>
             </div>
           ))}
           <div className="gk-add-row">
@@ -9623,7 +9649,7 @@ function gkBaselineCompare(preds, gkName) {
 }
 
 // ピヴォット認知：記録ウィザード（①第0問2軸＋類型＋予測 → プレー → ②事実チェック＋結果）
-function PVRecordWizard({ players, initial, onSave, onExit }) {
+function PVRecordWizard({ players, initial, onSave, onUndo, onExit }) {
   const [pivot, setPivot] = useState(initial.pivot || null);
   const [axis1, setAxis1] = useState(null);
   const [axis2, setAxis2] = useState(null);
@@ -9631,13 +9657,16 @@ function PVRecordWizard({ players, initial, onSave, onExit }) {
   const [predict, setPredict] = useState('');
   const [cues, setCues] = useState([]);
   const [stage, setStage] = useState('setup'); // setup | predict | result
+  const [lastSaved, setLastSaved] = useState(null);
 
   const handleSave = (res) => {
-    onSave({
+    const rec = {
       id: 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
       date: gkDateStr(), ts: Date.now(),
       pivot, axis1, axis2, type, predict: predict.trim(), cues, result: res,
-    });
+    };
+    onSave(rec);
+    setLastSaved(rec);
     // 連続入力：ピヴォットは維持し、2軸・類型・予測・事実はリセット（毎プレー変わるため）
     setAxis1(null); setAxis2(null); setType(null); setPredict(''); setCues([]);
     setStage('setup');
@@ -9667,6 +9696,11 @@ function PVRecordWizard({ players, initial, onSave, onExit }) {
       <button className="tb-next-btn" style={{marginTop: 16}} disabled={!pivot || !axis1 || !axis2} onClick={() => setStage('predict')}>
         次へ：類型を選ぶ →
       </button>
+      {lastSaved && (
+        <button className="tb-ghost-btn" style={{marginTop: 10}} onClick={() => { onUndo(lastSaved.id); setLastSaved(null); }}>
+          ↩ 直前の記録を取り消す（{lastSaved.pivot}・{pvTypeLabel(lastSaved.type)}・{pvResultLabel(lastSaved.result)}）
+        </button>
+      )}
     </React.Fragment>
   );
 
@@ -9795,7 +9829,7 @@ function PVHome({ records, players, onStart, onDelete, onAddPlayer, onRemovePlay
                 {gkFmtDate(r.date)} {r.pivot}｜{pvAxisLabel(r)}｜{pvTypeLabel(r.type)}｜{pvResultLabel(r.result)}
                 {r.predict ? <span style={{color: 'var(--tx-muted)'}}>｜{r.predict}</span> : null}
               </div>
-              <button className="gk-del-btn" onClick={() => onDelete(r.id)}>削除</button>
+              <button className="gk-del-btn" onClick={() => { if (window.confirm('この記録を削除しますか？')) onDelete(r.id); }}>削除</button>
             </div>
           ))}
         </div>
@@ -9808,7 +9842,7 @@ function PVHome({ records, players, onStart, onDelete, onAddPlayer, onRemovePlay
           {players.pivots.map(n => (
             <div key={n} className="gk-list-row tb-card-row">
               <div className="tb-card-v">{n}</div>
-              <button className="gk-del-btn" onClick={() => onRemovePlayer(n)}>削除</button>
+              <button className="gk-del-btn" onClick={() => { if (window.confirm('「' + n + '」をリストから削除しますか？（過去の記録は消えません）')) onRemovePlayer(n); }}>削除</button>
             </div>
           ))}
           <div className="gk-add-row">
@@ -11987,6 +12021,7 @@ function App() {
           )}
           {gkView.name === 'record' && (
             <GKRecordWizard players={gkPlayers} initial={gkLastSetup.current}
+              onUndo={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
               onSave={(rec) => {
                 gkLastSetup.current = { gk: rec.gk, situation: rec.situation, shooter: rec.shooter };
                 setGkPreds(prev => [rec, ...prev]);
@@ -12017,6 +12052,7 @@ function App() {
           )}
           {pvView.name === 'record' && (
             <PVRecordWizard players={pvPlayers} initial={pvLastSetup.current}
+              onUndo={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
               onSave={(rec) => {
                 pvLastSetup.current = { pivot: rec.pivot };
                 setPvRecords(prev => [rec, ...prev]);
