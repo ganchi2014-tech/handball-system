@@ -9940,6 +9940,29 @@ function App() {
   const pvLastSetup = useRef({}); // 連続入力用に直前のピヴォットを保持
   useEffect(() => { lsSet('pv_records', pvRecords); }, [pvRecords]);
   useEffect(() => { lsSet('pv_players', pvPlayers); }, [pvPlayers]);
+  // データバックアップ（書き出し/取り込み）
+  const [backupOpen, setBackupOpen] = useState(false);
+  const [backupText, setBackupText] = useState('');
+  const [backupMsg, setBackupMsg] = useState('');
+  const handleBackupExport = () => {
+    const txt = buildBackupText({
+      gk_predictions: gkPreds, gk_players: gkPlayers,
+      pv_records: pvRecords, pv_players: pvPlayers,
+      'tb-tasks': tbTasks,
+    });
+    tbCopy(txt, setBackupMsg);
+  };
+  const handleBackupImport = () => {
+    try {
+      const r = mergeBackup({ gkPreds, gkPlayers, pvRecords, pvPlayers, tbTasks }, backupText);
+      setGkPreds(r.gkPreds); setGkPlayers(r.gkPlayers);
+      setPvRecords(r.pvRecords); setPvPlayers(r.pvPlayers); setTbTasks(r.tbTasks);
+      setBackupText('');
+      setBackupMsg(`取り込み完了：GK記録+${r.added.gk}・PV記録+${r.added.pv}・自作課題+${r.added.tb}・選手+${r.added.players}（重複はスキップ）`);
+    } catch (e) {
+      setBackupMsg('取り込み失敗：' + e.message);
+    }
+  };
   const tbUpsert = (t) => {
     setTbTasks(prev => {
       const i = prev.findIndex(x => x.id === t.id);
@@ -10736,6 +10759,11 @@ function App() {
             style={{marginTop: 12}}
             onClick={handleOnboardOpen}
           >🌱 初めての方はこちら</button>
+          <button
+            className="help-btn"
+            style={{marginTop: 8}}
+            onClick={() => setBackupOpen(true)}
+          >💾 データの書き出し / 取り込み</button>
         </div>
       )}
 
@@ -10769,6 +10797,30 @@ function App() {
           </div>
         );
       })()}
+
+      {/* データバックアップモーダル */}
+      {backupOpen && (
+        <div className="onboard-overlay">
+          <div className="onboard-card">
+            <div className="onboard-title">💾 データの書き出し / 取り込み</div>
+            <div className="onboard-desc" style={{textAlign: 'left', whiteSpace: 'pre-line'}}>
+              GK予測・ピヴォット認知・自作課題の全記録をテキスト1つで持ち運べます。{'\n'}
+              書き出し → LINEのKeep等に保管（端末故障へのバックアップ）。{'\n'}
+              取り込み → 別端末で記録したテキストを貼り付けて合流（記録ID単位で追加・重複はスキップ）。
+            </div>
+            <button className="tb-next-btn" onClick={handleBackupExport}>📤 全データを書き出す（コピー）</button>
+            <div className="tb-field" style={{marginTop: 12}}>
+              <div className="tb-field-label">取り込み（書き出したテキストを貼り付け）</div>
+              <textarea value={backupText} onChange={e => setBackupText(e.target.value)} placeholder='{"app":"handball-lab-backup", ...}' />
+            </div>
+            <button className="tb-ghost-btn" style={{marginTop: 8}} onClick={handleBackupImport} disabled={!backupText.trim()}>📥 取り込む（重複スキップ）</button>
+            {backupMsg && <div className="tb-q-hint" style={{marginTop: 8}}>{backupMsg}</div>}
+            <div className="onboard-actions">
+              <button className="onboard-btn" onClick={() => { setBackupOpen(false); setBackupMsg(''); setBackupText(''); }}>閉じる</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 辞書ブラウザ（一覧・検索） */}
       {phase === 'dictionary' && (
@@ -12023,6 +12075,7 @@ function App() {
             <GKRecordWizard players={gkPlayers} initial={gkLastSetup.current}
               onUndo={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
               onSave={(rec) => {
+                if (navigator.vibrate) navigator.vibrate(30);
                 gkLastSetup.current = { gk: rec.gk, situation: rec.situation, shooter: rec.shooter };
                 setGkPreds(prev => [rec, ...prev]);
                 setGkToast(rec.hit ? '記録した：○的中' : '記録した：×不的中');
@@ -12054,6 +12107,7 @@ function App() {
             <PVRecordWizard players={pvPlayers} initial={pvLastSetup.current}
               onUndo={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
               onSave={(rec) => {
+                if (navigator.vibrate) navigator.vibrate(30);
                 pvLastSetup.current = { pivot: rec.pivot };
                 setPvRecords(prev => [rec, ...prev]);
                 setPvToast(`記録した：${pvResultLabel(rec.result)}`);
