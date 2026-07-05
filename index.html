@@ -9561,6 +9561,66 @@ function pvExportWeekText(records, weekStartStr) {
   return lines.join('\n');
 }
 
+// ─── データバックアップ（GK予測・ピヴォット認知・自作課題の全記録） ───
+// 端末故障・機種変・複数端末の記録合流に対応する。取り込みはID単位マージ（重複スキップ）。
+
+function buildBackupText(data) {
+  return JSON.stringify({
+    app: 'handball-lab-backup',
+    v: 1,
+    exportedAt: new Date().toLocaleString('ja-JP'),
+    data,
+  });
+}
+
+// ID付きレコード配列のマージ。既存IDはスキップし、追加件数を返す
+function mergeById(curArr, impArr) {
+  const ids = new Set(curArr.map(x => x && x.id));
+  const added = (Array.isArray(impArr) ? impArr : []).filter(x => x && x.id && !ids.has(x.id));
+  return { merged: [...curArr, ...added], added: added.length };
+}
+
+// バックアップテキストを現在データにマージ。形式不正は Error を投げる
+function mergeBackup(current, text) {
+  let obj;
+  try { obj = JSON.parse(text); } catch (e) { throw new Error('JSONとして読めませんでした'); }
+  if (!obj || obj.app !== 'handball-lab-backup' || !obj.data) throw new Error('このアプリのバックアップ形式ではありません');
+  const d = obj.data;
+  const gk = mergeById(current.gkPreds, d.gk_predictions);
+  const pv = mergeById(current.pvRecords, d.pv_records);
+  const tb = mergeById(current.tbTasks, d['tb-tasks']);
+  // 記録系は新しい順の不変条件を維持（ts降順）。自作課題はtsを持たないため順序維持のみ
+  gk.merged = gk.merged.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  pv.merged = pv.merged.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  const unionArr = (a, b) => [...new Set([...(a || []), ...(Array.isArray(b) ? b : [])])];
+  const gkPlayers = {
+    keepers: unionArr(current.gkPlayers.keepers, d.gk_players && d.gk_players.keepers),
+    shooters: unionArr(current.gkPlayers.shooters, d.gk_players && d.gk_players.shooters),
+  };
+  const pvPlayers = { pivots: unionArr(current.pvPlayers.pivots, d.pv_players && d.pv_players.pivots) };
+  const playersAdded =
+    (gkPlayers.keepers.length - current.gkPlayers.keepers.length) +
+    (gkPlayers.shooters.length - current.gkPlayers.shooters.length) +
+    (pvPlayers.pivots.length - current.pvPlayers.pivots.length);
+  return {
+    gkPreds: gk.merged, pvRecords: pv.merged, tbTasks: tb.merged, gkPlayers, pvPlayers,
+    added: { gk: gk.added, pv: pv.added, tb: tb.added, players: playersAdded },
+  };
+}
+
+// ─── GK中間照合（第5週運用の材料）：基準期（最初の1〜2週）と直近週の比較 ───
+function gkBaselineCompare(preds, gkName) {
+  const series = gkWeeklySeries(preds, gkName);
+  if (series.length < 2) return null;
+  const nBase = Math.min(2, series.length - 1);
+  const baseWeeks = series.slice(0, nBase);
+  const hits = baseWeeks.reduce((a, w) => a + w.hits, 0);
+  const total = baseWeeks.reduce((a, w) => a + w.total, 0);
+  const baseRate = Math.round(hits / total * 100);
+  const recent = series[series.length - 1];
+  return { baseRate, recentRate: recent.rate, recentWeek: recent.week, delta: recent.rate - baseRate };
+}
+
 // ピヴォット認知：記録ウィザード（①第0問2軸＋類型＋予測 → プレー → ②事実チェック＋結果）
 function PVRecordWizard({ players, initial, onSave, onExit }) {
   const [pivot, setPivot] = useState(initial.pivot || null);
