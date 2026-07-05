@@ -9612,6 +9612,7 @@ function mergeBackup(current, text) {
 function gkBaselineCompare(preds, gkName) {
   const series = gkWeeklySeries(preds, gkName);
   if (series.length < 2) return null;
+  // 基準期は最大2週。`- 1` は直近週を基準期に含めない（比較対象を必ず残す）ための予約
   const nBase = Math.min(2, series.length - 1);
   const baseWeeks = series.slice(0, nBase);
   const hits = baseWeeks.reduce((a, w) => a + w.hits, 0);
