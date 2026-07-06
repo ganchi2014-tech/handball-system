@@ -343,6 +343,32 @@
     .hub-sub { display: none; }
 
     /* Bento grid container */
+    /* ── 保存失敗の警告バナー ── */
+    .storage-warn {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      background: #7f1d1d; color: #fecaca; font-size: 12px; line-height: 1.5;
+      padding: 10px 14px; border-bottom: 1px solid #ef4444; cursor: pointer;
+    }
+
+    /* ── 前回の宣言（照合カード） ── */
+    .hub-declare {
+      background: linear-gradient(135deg, rgba(251,191,36,0.10), rgba(245,158,11,0.03));
+      border: 1px solid rgba(251,191,36,0.35);
+      border-radius: 14px; padding: 14px 16px; margin-bottom: 14px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .hub-declare-label { font-size: 11px; font-weight: 800; color: #fbbf24; letter-spacing: 0.04em; }
+    .hub-declare-text { font-size: var(--fs-md); color: var(--tx-primary); font-weight: 700; line-height: 1.5; }
+    .hub-declare-sub { display: block; font-size: 11px; color: var(--tx-muted); font-weight: 500; margin-top: 4px; }
+    .hub-declare-actions { display: flex; gap: 8px; }
+    .hub-declare-btn {
+      flex: 1; padding: 9px 10px; border-radius: 10px; font-weight: 800; font-size: 13px;
+      border: 1px solid rgba(251,191,36,0.45); background: rgba(251,191,36,0.12); color: #fde68a; cursor: pointer;
+    }
+    .hub-declare-btn.ghost { border-color: var(--border); background: transparent; color: var(--tx-muted); }
+    .hub-declare-btn:active { transform: scale(0.97); }
+    .hub-declare-count { font-size: 11px; color: var(--tx-dim); }
+
     .hub-cards {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1399,7 +1425,7 @@ const DICT_FILES = [
   { id: '08', name: '08_game_management.md',                title: 'ゲームマネジメント・ファウル戦略',             icon: '⏱️', tags: ['ファウル', 'パッシブ', '7on6', 'タイムアウト', 'クローズ'] },
   { id: '09', name: '09_individual_differences.md',         title: '個人差・身体特性が戦術選択に与える影響',       icon: '👥', tags: ['個人差', '身長', 'スピード', '利き手', '左利き右バック'] },
   { id: '10', name: '10_opponent_scouting.md',              title: '相手チームの視点・スカウティング',             icon: '🔍', tags: ['スカウト', 'ハーフタイム', 'アジャスト'] },
-  { id: '11', name: '11_game_context.md',                   title: '試合文脈による戦術変化',                       icon: '🧭', tags: ['試合文脈', 'スコア差', '時間帯', '退場'] },
+  { id: '11', name: '11_game_context.md',                   title: '試合文脈による戦術変化',                       icon: '🧭', tags: ['試合文脈', 'スコア差', '時間帯', '退場'], redirect: true },
   { id: '12', name: '12_set_plays.md',                      title: 'セットプレー・サインプレー・スクリーン技術',   icon: '📋', tags: ['セットプレー', 'サイン', 'スクリーン', 'フリースロー'] },
   { id: '13', name: '13_global_tactics.md',                 title: 'グローバル戦術辞書（国別・クラブ別）',         icon: '🌍', tags: ['国別', 'グローバル', 'クラブ', '監督', '普遍原則', 'バルセロナ', 'PSG', 'マグデブルク', 'キール', 'ヴェスプレーム', 'ギゼル'] },
   { id: '14', name: '14_position_roles_international.md',   title: 'ポジション役割（多言語）',                     icon: '🌐', tags: ['ポジション', '多言語', 'ピボット', 'バック', 'ウィング', 'センター'] },
@@ -4865,7 +4891,7 @@ const LEVELS = [
   { id: 'adv',   label: '上級', desc: '試合実戦が目的（高2〜高3、全国レベル）' },
 ];
 
-const DURATIONS = [30, 45, 60, 90, 120]; // 分
+const DURATIONS = [30, 45, 60, 90]; // 分（練習は1日90分上限の方針。120分は撤去 2026-07-06）
 
 // 練習計画ビルダー：選択された テーマ × レベル × 時間 × ポジション から計画を作る
 function buildPlan(themeIds, levelId, totalMinutes, positionId = 'all') {
@@ -5245,7 +5271,8 @@ const CHAT_SYNONYMS = [
   { m: ['サインプレー', 'サイン', 'セットプレー', '約束事'], kw: ['サインプレー', 'セットプレー'], file: '27' },
   { m: ['フォーメーション', '陣形', 'システム', 'dfシステム'], kw: ['陣形', 'フォーメーション'], file: '26' },
   { m: ['マンツーマン', 'マンツー', 'マンマーク'], kw: ['マンツーマン'], file: '26' },
-  { m: ['ルール', '反則', 'ファウル', '退場', 'カード', '審判', 'レフェリー'], kw: ['反則', 'ルール'], file: '30' },
+  // 「退場」単独は5on6（退場中の戦い方）の質問まで乗っ取るため、ルール系はより具体的な表現のみで発火させる
+  { m: ['ルール', '反則', 'ファウル', '退場のルール', '退場になる', '退場って', '失格', '2分', 'カード', '審判', 'レフェリー'], kw: ['反則', 'ルール'], file: '30' },
   { m: ['パッシブ', '消極的'], kw: ['パッシブ'], file: '08' },
   { m: ['練習', 'メニュー', 'ドリル', 'トレーニング方法'], kw: ['練習'], file: '19' },
   { m: ['筋トレ', 'フィジカル', '体力', 'スタミナ', '持久力', '筋力'], kw: ['フィジカル', '体力'], file: '21' },
@@ -5262,7 +5289,7 @@ const CHAT_SYNONYMS = [
   { m: ['3-3'], kw: ['3-3'], file: '26' },
   { m: ['2-4', '4-2'], kw: ['2-4', '4-2'], file: '26' },
   { m: ['7on6', '7対6', '7人攻撃', '空ゴール', 'エンプティ'], kw: ['7on6'], file: '08' },
-  { m: ['5on6', '退場中', '数的不利', '1人少ない'], kw: ['5on6', '数的'], file: '03' },
+  { m: ['5on6', '退場中', '退場された', '退場者', '数的不利', '1人少ない', '一人少な', 'ひとり少な'], kw: ['5on6', '数的'], file: '03' },
   { m: ['数的優位', '2対1', '3対2', 'アウトナンバー'], kw: ['数的', '2on1', '3on2'], file: '03' },
   { m: ['タイムアウト'], kw: ['タイムアウト'], file: '08' },
   { m: ['ハーフタイム'], kw: ['ハーフタイム'], file: '10' },
@@ -5274,7 +5301,7 @@ const CHAT_SYNONYMS = [
   { m: ['身長', '背が低い', '背が高い', '小さい選手', '大きい選手'], kw: ['身長', '個人差'], file: '09' },
   { m: ['判断が遅い', '判断', '迷う', '考えすぎ', '認知', '視野'], kw: ['判断', '認知'], file: '04' },
   { m: ['声かけ', '声掛け', 'コミュニケーション', '声が出ない', '声が出せない', '声出し', '声を出す', 'コーチング'], kw: ['声掛け', '声'], file: '04' },
-  { m: ['点差', '残り時間', '終盤', '逆転', 'リード', 'ビハインド'], kw: ['スコア差', '時間帯'], file: '11' },
+  { m: ['点差', '残り時間', '終盤', '逆転', 'リード', 'ビハインド'], kw: ['スコア差', '時間帯'], file: '08' },
   { m: ['攻略', '崩し方', '崩す', '崩せない', '対策', '破り方', '破る', '倒し方', '勝ち方', '弱点'], kw: ['じゃんけん'], file: '00' },
   { m: ['ケンパ', '空中パス', 'スカイ'], kw: ['ケンパ'], file: '27' },
   { m: ['早打ち', 'クイック'], kw: ['早打ち'] },
@@ -5291,6 +5318,17 @@ const CHAT_SYNONYMS = [
   { m: ['交代エリア', '交代ゾーン', '選手交代', '交代ライン', '交代する'], kw: ['交代'], file: '30' },
   { m: ['フットワーク', '足さばき', 'あしこん', '足がこん', 'ステップワーク', '足の運び'], kw: ['フットワーク', 'ステップ'], file: '23' },
   { m: ['パス回', 'ぱす回', '回らない', 'つながらない', 'パスがつな', 'ボール回らない'], kw: ['コンビネーション', 'パス'], file: '16' },
+  // ── 症状語レイヤー（2026-07-06）：体の部位・症状の話し言葉を専門節タイトルへ直結する ──
+  { m: ['肩が痛', '肩の痛', '肩を痛', '肩痛', '肩がだる', '肩'], kw: ['肩傷害予防', '肩'], file: '25' },
+  { m: ['膝が痛', '膝の痛', '膝痛', 'ひざが痛', 'ひざ', '膝', 'オスグッド', 'ジャンパー膝'], kw: ['膝傷害予防', '膝'], file: '25' },
+  { m: ['腰が痛', '腰の痛', '腰痛', '腰'], kw: ['ケガ予防', '過負荷', '腰'], file: '25' },
+  { m: ['足首', '捻挫', 'ねんざ'], kw: ['足関節捻挫予防', '捻挫'], file: '25' },
+  { m: ['復帰', 'リハビリ明け', '治ったら', 'ケガ明け', 'けが明け'], kw: ['復帰プロトコル'], file: '25' },
+  { m: ['つる', 'つった', '痙攣', 'けいれん', '熱中症', '水分', '脱水'], kw: ['水分補給', '睡眠'], file: '25' },
+  { m: ['ダブルポスト', '2人ポスト', 'ツーポスト', '2枚ポスト'], kw: ['ダブルポスト', 'ツインポスト', 'OF（オフェンス）陣形'], file: '26' },
+  { m: ['抜かれる', '抜かれた', '抜かれて', 'ドライブを止め', '1対1で守', '1on1で守'], kw: ['ドライブ対応', '基本姿勢'], file: '23' },
+  { m: ['筋トレ', '筋力トレ', 'ウェイト'], kw: ['筋力トレーニング'], file: '21' },
+  { m: ['スタミナ', '持久力', 'バテる', 'ばてる', '息が上が'], kw: ['持久力'], file: '21' },
 ];
 
 // 自由トークンから除外する一般語（辞書中の頻出語＝識別力なし）
@@ -5339,6 +5377,9 @@ function chatLexicon() {
   return CHAT_LEXICON_CACHE;
 }
 
+// 1文字でもキーワードとして許可する体部位語
+const CHAT_BODY_CHARS = new Set(['肩', '膝', '腰', '肘', '指']);
+
 // 質問 → キーワード抽出（シノニム w=2 / レキシコン w=2 / 自由トークン w=1）
 function chatExtractKeywords(question) {
   const qn = chatNormalize(question);
@@ -5346,7 +5387,8 @@ function chatExtractKeywords(question) {
   const fileBoosts = new Set();
   const addKw = (raw, w) => {
     const n = chatNormalize(raw);
-    if (n.length < 2) return;
+    // 体の部位は1文字でも識別力が高い（「肩が痛い」等）ため除外しない
+    if (n.length < 2 && !CHAT_BODY_CHARS.has(n)) return;
     const cur = kws.get(n);
     if (!cur || cur.w < w) kws.set(n, { raw, w });
   };
@@ -5384,15 +5426,18 @@ function chatIsStub(s) {
   return txt.length < 30;
 }
 
+// リダイレクト専用ファイル（「○○に統合済み」の道標）はチャット回答から除外する
+const CHAT_EXCLUDED_FILES = new Set(DICT_FILES.filter(f => f.redirect).map(f => f.id));
+
 // 全セクション採点 → 上位4件
 function chatSearch(question, sections) {
   const { kws, fileBoosts } = chatExtractKeywords(question);
   if (!kws.length) return { kws, hits: [] };
   const scored = [];
   for (const s of sections) {
-    // 冒頭/ファイル見出し(H1=ファイル名)/スタブは回答にしない
+    // 冒頭/ファイル見出し(H1=ファイル名)/スタブ/リダイレクト専用ファイルは回答にしない
     // （H1タイトルはファイル名で広いKWを含み、具体的な節より誤って上位化するため除外）
-    if (s.title === '冒頭' || s.level === 1 || chatIsStub(s)) continue;
+    if (s.title === '冒頭' || s.level === 1 || chatIsStub(s) || CHAT_EXCLUDED_FILES.has(s.fileId)) continue;
     const nTitle = chatNormalize(s.title);
     const nMeta = chatNormalize(s.fileTitle + ' ' + s.fileTags.join(' '));
     const nBody = chatNBody(s);
@@ -8645,7 +8690,7 @@ const HUB_MODULES = [
   {
     id: 'plan', cls: 'plan', icon: '📋', target: '指導者・選手',
     title: '練習を組む',
-    desc: 'テーマ×レベル×時間 → 時間配分付き練習プランを生成（印刷可）',
+    desc: 'テーマ×レベル×時間 → 時間配分付き練習プランを生成（コピーして共有）',
     enabled: true,
   },
   {
@@ -8664,7 +8709,8 @@ const HUB_MODULES = [
 
 // ─────────────────────────────────────────────
 // localStorage helpers — version 管理＋安全な JSON 入出力
-// 将来データ構造を変えた時は STORAGE_VERSION を上げると旧データを自動破棄
+// ⚠ STORAGE_VERSION を上げると旧データが読まれなくなる＝選手の全記録リセットに等しい。
+//   データ構造を変える時は上げるのではなく、lsGet 側に旧形式→新形式のマイグレーションを実装すること（破棄禁止）。
 // ─────────────────────────────────────────────
 const STORAGE_VERSION = 1;
 const STORAGE_PREFIX = `hb_v${STORAGE_VERSION}_`;
@@ -8688,7 +8734,10 @@ const lsSet = (key, value) => {
   try {
     localStorage.setItem(STORAGE_PREFIX + key,
       typeof value === 'string' ? value : JSON.stringify(value));
-  } catch (e) {}
+  } catch (e) {
+    // 保存失敗（容量超過・プライベートブラウズ等）を黙殺しない — App がバナーで知らせる
+    try { window.dispatchEvent(new CustomEvent('hb-storage-error', { detail: { key } })); } catch (e2) {}
+  }
 };
 const lsRemove = (key) => {
   try {
@@ -9587,8 +9636,36 @@ function pvExportWeekText(records, weekStartStr) {
   return lines.join('\n');
 }
 
-// ─── データバックアップ（GK予測・ピヴォット認知・自作課題の全記録） ───
+// ─── データバックアップ（hb_v1_* の全キー） ───
 // 端末故障・機種変・複数端末の記録合流に対応する。取り込みはID単位マージ（重複スキップ）。
+// 書き出しはキーを機械的に列挙する（キーのハードコード漏れで「全データ」が嘘になるのを防ぐ）。
+
+function collectAllData() {
+  const data = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith(STORAGE_PREFIX)) continue;
+      try { data[k.slice(STORAGE_PREFIX.length)] = JSON.parse(localStorage.getItem(k)); } catch (e) {}
+    }
+  } catch (e) {}
+  return data;
+}
+
+// GK/PV/TB以外の追加キーの汎用マージ：配列はID（無ければ内容）単位の和集合、それ以外はローカル優先
+function mergeExtraKey(curVal, impVal) {
+  if (impVal == null) return { val: curVal, added: 0 };
+  if (Array.isArray(impVal) || Array.isArray(curVal)) {
+    const curArr = Array.isArray(curVal) ? curVal : [];
+    const impArr = Array.isArray(impVal) ? impVal : [];
+    const keyOf = (x) => (x && typeof x === 'object' && x.id) ? 'id:' + x.id : 'j:' + JSON.stringify(x);
+    const seen = new Set(curArr.map(keyOf));
+    const added = impArr.filter(x => !seen.has(keyOf(x)));
+    return { val: [...curArr, ...added], added: added.length };
+  }
+  if (curVal == null) return { val: impVal, added: 1 };
+  return { val: curVal, added: 0 };
+}
 
 function buildBackupText(data) {
   return JSON.stringify({
@@ -9868,6 +9945,56 @@ function App() {
   const [resultId, setResultId] = useState(null);
   const [nextStep, setNextStep] = useState('');
 
+  // ── 振り返りの永続化（2026-07-06）──
+  // 結果到達時に記録を作成し、「次に試すこと」は宣言として保存 → 次回ホームで「できた？」を照合する。
+  // これまで振り返り結果は一切保存されず「やっても何も残らない」構造だった欠陥の修正。
+  const [reflectHistory, setReflectHistory] = useState(() => lsGet('reflect-history') || []);
+  const [declaration, setDeclaration] = useState(() => lsGet('next-declaration') || null);
+  const [decSnooze, setDecSnooze] = useState(false); // 「まだこれから」＝このセッション中だけボタンを畳む
+  const reflectIdRef = useRef(null);
+  const recordReflectStart = (rid, hist) => {
+    const entry = {
+      id: 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      ts: Date.now(), mode, resultId: rid,
+      crumbs: (hist || []).map(h => h.text),
+      next: '',
+    };
+    reflectIdRef.current = entry.id;
+    setReflectHistory(prev => {
+      const list = [entry, ...prev].slice(0, 200);
+      lsSet('reflect-history', list);
+      return list;
+    });
+  };
+  const commitNextStep = (text) => {
+    const t = (text != null ? text : nextStep).trim();
+    if (!reflectIdRef.current) return;
+    setReflectHistory(prev => {
+      const list = prev.map(e => e.id === reflectIdRef.current ? { ...e, next: t } : e);
+      lsSet('reflect-history', list);
+      return list;
+    });
+    if (t) {
+      const dec = { text: t, ts: Date.now(), mode, done: null };
+      setDeclaration(dec);
+      lsSet('next-declaration', dec);
+    }
+  };
+  const answerDeclaration = (done) => {
+    if (!declaration) return;
+    const dec = { ...declaration, done, answeredTs: Date.now() };
+    setDeclaration(dec);
+    lsSet('next-declaration', dec);
+  };
+
+  // 保存失敗（容量超過・プライベートブラウズ等）の可視化 — lsSet が発火するイベントを受ける
+  const [storageError, setStorageError] = useState(false);
+  useEffect(() => {
+    const onErr = () => setStorageError(true);
+    window.addEventListener('hb-storage-error', onErr);
+    return () => window.removeEventListener('hb-storage-error', onErr);
+  }, []);
+
   // 辞書ブラウザの状態
   const [dictLoaded, setDictLoaded] = useState(false);
   const [dictSections, setDictSections] = useState([]);
@@ -9945,11 +10072,8 @@ function App() {
   const [backupText, setBackupText] = useState('');
   const [backupMsg, setBackupMsg] = useState('');
   const handleBackupExport = () => {
-    const txt = buildBackupText({
-      gk_predictions: gkPreds, gk_players: gkPlayers,
-      pv_records: pvRecords, pv_players: pvPlayers,
-      'tb-tasks': tbTasks,
-    });
+    // hb_v1_* の全キーを機械列挙（振り返り・保存プラン・お気に入り等も漏らさない）
+    const txt = buildBackupText(collectAllData());
     tbCopy(txt, setBackupMsg);
   };
   const handleBackupImport = () => {
@@ -9957,8 +10081,21 @@ function App() {
       const r = mergeBackup({ gkPreds, gkPlayers, pvRecords, pvPlayers, tbTasks }, backupText);
       setGkPreds(r.gkPreds); setGkPlayers(r.gkPlayers);
       setPvRecords(r.pvRecords); setPvPlayers(r.pvPlayers); setTbTasks(r.tbTasks);
+      // GK/PV/TB以外の記録キーも汎用マージ（配列=和集合／スカラー=ローカル優先）
+      const d = JSON.parse(backupText).data || {};
+      let extraAdded = 0;
+      const applyExtra = (key, curVal, apply) => {
+        const m = mergeExtraKey(curVal, d[key]);
+        if (m.added > 0) { lsSet(key, m.val); if (apply) apply(m.val); extraAdded += m.added; }
+      };
+      applyExtra('reflect-history', reflectHistory, (v) => setReflectHistory(v.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 200)));
+      applyExtra('solve-history', solveHistory, setSolveHistory);
+      applyExtra('plan-saved', planSaved, setPlanSaved);
+      applyExtra('dict-favs', dictFavs, setDictFavs);
+      applyExtra('chat-history', chatMessages, (v) => setChatMessages(v.slice(-60)));
+      if (!declaration && d['next-declaration']) { setDeclaration(d['next-declaration']); lsSet('next-declaration', d['next-declaration']); }
       setBackupText('');
-      setBackupMsg(`取り込み完了：GK記録+${r.added.gk}・PV記録+${r.added.pv}・自作課題+${r.added.tb}・選手+${r.added.players}（重複はスキップ）`);
+      setBackupMsg(`取り込み完了：GK記録+${r.added.gk}・PV記録+${r.added.pv}・自作課題+${r.added.tb}・選手+${r.added.players}・その他+${extraAdded}（重複はスキップ）`);
     } catch (e) {
       setBackupMsg('取り込み失敗：' + e.message);
     }
@@ -10010,8 +10147,9 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '5つの使い方', desc: `🤾 振り返る — 試合プレーを10モードで自己問答\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}ファイル${DICT_SECTION_COUNT}セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）` },
-    { icon: '✨',   title: '始めましょう', desc: '困ったら右下の 📘 用語 をタップ。\nメニューやヘルプはホームから何度でも開けます。' },
+    { icon: '🧭',   title: '7つの使い方', desc: `🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}ファイル${DICT_SECTION_COUNT}セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）\n🧤 GK予測 — シュートコースの読みを記録・照合\n🧲 ピヴォット認知 — DFの見え方→予測→照合` },
+    { icon: '📲',   title: 'ホーム画面に追加しよう', desc: 'アプリとして入れておくと体育館（オフライン）でも開けて、記録も消えにくくなります。\n\niPhone：共有ボタン →「ホーム画面に追加」\nAndroid：ブラウザのメニュー →「アプリをインストール」' },
+    { icon: '✨',   title: '始めましょう', desc: 'まずは「🤾 振り返る」で最近の1プレーを1つだけ。\n困ったら右下の 📘 用語 をタップ。ヘルプはホームから何度でも開けます。' },
   ];
   const handleOnboardNext = () => {
     if (onboardStep < ONBOARD_STEPS.length - 1) setOnboardStep(onboardStep + 1);
@@ -10385,18 +10523,21 @@ function App() {
     if (RESULTS[choice.next]) {
       setResultId(choice.next);
       setPhase('result');
+      recordReflectStart(choice.next, newHist);
     } else if (QUESTIONS[choice.next]) {
       setCurrentQ(choice.next);
     }
   };
 
   const handleReset = () => {
+    if (phase === 'result') commitNextStep();
     setPhase('start'); setMode(null);
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
   };
 
   const handleBackToHub = () => {
+    if (phase === 'result') commitNextStep();
     setPhase('hub'); setMode(null);
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
@@ -10727,6 +10868,13 @@ function App() {
         </div>
       </div>
 
+      {/* 保存失敗の警告バナー */}
+      {storageError && (
+        <div className="storage-warn" onClick={() => setStorageError(false)}>
+          ⚠ 記録の保存に失敗しています（空き容量不足やプライベートブラウズの可能性）。この端末では記録が残らないおそれがあります。ホームの「💾 データの書き出し」で控えを取ってください。（タップで閉じる）
+        </div>
+      )}
+
       {/* ハブ画面（最初の入口） */}
       {phase === 'hub' && (
         <div className="hub-screen animate-in">
@@ -10734,6 +10882,31 @@ function App() {
             <div className="hub-hero-eyebrow">近江兄弟社高校ハンドボール部</div>
             <div className="hub-title">「わからない」を解決する</div>
           </div>
+          {/* 前回の宣言の照合（振り返り→次のプレー→照合、のループを閉じる） */}
+          {declaration && (
+            <div className="hub-declare">
+              {declaration.done === true ? (
+                <div className="hub-declare-text">
+                  ✅ 達成した宣言：「{declaration.text}」
+                  <span className="hub-declare-sub">次の振り返りで新しい宣言を書こう</span>
+                </div>
+              ) : (
+                <React.Fragment>
+                  <div className="hub-declare-label">🎯 前回の宣言 — 次のプレーで試すこと</div>
+                  <div className="hub-declare-text">「{declaration.text}」</div>
+                  {!decSnooze && (
+                    <div className="hub-declare-actions">
+                      <button className="hub-declare-btn" onClick={() => answerDeclaration(true)}>✓ できた</button>
+                      <button className="hub-declare-btn ghost" onClick={() => setDecSnooze(true)}>まだこれから</button>
+                    </div>
+                  )}
+                </React.Fragment>
+              )}
+              {reflectHistory.length > 0 && (
+                <div className="hub-declare-count">これまでの振り返り：{reflectHistory.length}回</div>
+              )}
+            </div>
+          )}
           <div className="hub-cards">
             {HUB_MODULES.map(mod => (
               <button
@@ -10804,7 +10977,7 @@ function App() {
           <div className="onboard-card">
             <div className="onboard-title">💾 データの書き出し / 取り込み</div>
             <div className="onboard-desc" style={{textAlign: 'left', whiteSpace: 'pre-line'}}>
-              GK予測・ピヴォット認知・自作課題の全記録をテキスト1つで持ち運べます。{'\n'}
+              アプリ内の全記録（GK予測・ピヴォット認知・自作課題・振り返り・保存プラン・お気に入り等）をテキスト1つで持ち運べます。{'\n'}
               書き出し → LINEのKeep等に保管（端末故障へのバックアップ）。{'\n'}
               取り込み → 別端末で記録したテキストを貼り付けて合流（記録ID単位で追加・重複はスキップ）。
             </div>
@@ -11047,7 +11220,7 @@ function App() {
               <button className="chat-clear" onClick={handleChatClear}>🗑 履歴クリア</button>
             )}
           </div>
-          <div className="chat-note">📖 辞書{DICT_FILES.length}ファイル・{dictLoaded ? dictSections.length : DICT_SECTION_COUNT}セクションから探して回答します（通信なし・オフラインOK）</div>
+          <div className="chat-note">📖 辞書{DICT_FILES.length}ファイル・{dictLoaded ? dictSections.length : DICT_SECTION_COUNT}セクションから探して回答します（検索は端末内。一度開けば2回目以降はオフラインでも使えます）</div>
           {!dictLoaded && !dictError && (
             <div className="dict-loading">📖 辞書を読み込み中… ({dictLoadedCount} / {DICT_FILES.length})</div>
           )}
@@ -11752,10 +11925,9 @@ function App() {
             )}
           </div>
 
-          {/* 操作ボタン：印刷を主役に */}
+          {/* 操作ボタン：コピー（LINE共有）を主役に。紙は全廃方針のため印刷ボタンは置かない */}
           <div className="plan-actions">
-            <button className="plan-action-btn primary" onClick={() => window.print()}>🖨 印刷</button>
-            <button className="plan-action-btn" onClick={handlePlanCopy}>📋 コピー</button>
+            <button className="plan-action-btn primary" onClick={handlePlanCopy}>📋 コピー</button>
             <button className="plan-action-btn" onClick={() => handlePlanSave(null)}>★ 保存</button>
           </div>
           {/* タグ付き保存（時系列ラベル） */}
@@ -11951,6 +12123,7 @@ function App() {
                 placeholder="例：もらう前に隣のDFを一度見てから動き出す"
                 value={nextStep}
                 onChange={e => setNextStep(e.target.value)}
+                onBlur={e => commitNextStep(e.target.value)}
               />
             </div>
           )}
@@ -12129,7 +12302,7 @@ function App() {
         const isHub     = phase === 'hub';
         const go = (target) => {
           if (target === 'hub')    { handleBackToHub(); }
-          else if (target === 'reflect') { setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
+          else if (target === 'reflect') { if (phase === 'result') commitNextStep(); setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
           else if (target === 'dict')  { setDictDetail(null); setPhase('dictionary'); }
           else if (target === 'solve') { handleSolveReset(); setPhase('solve'); }
           else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
