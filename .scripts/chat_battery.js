@@ -77,8 +77,48 @@ const BATTERY = [
 ];
 
 // 入力: 引数なし=内蔵バッテリー / "質問"=単発 / --file path=ファイル(1行1問・#と空行は無視)
+// 回帰テスト（--check）：2026-07-06レビューで外れた質問＋守るべき代表質問。
+// top1 が期待ファイル（と title 部分一致）を外したら exit 1。CIで実行する。
+const EXPECTED = [
+  // 2026-07-06 検証で外れていた質問（修正済み・再発防止）
+  // ※file26の各陣形は###（セクション化されない）ため、着地点は親のOF陣形節。抜粋がダブルポスト部を表示する
+  { q: 'ダブルポストって何？',       file: '26', title: 'OF（オフェンス）陣形' },
+  { q: '肩が痛い',                   file: '25', title: '肩傷害予防' },
+  { q: '膝が痛いとき',               file: '25', title: '膝傷害予防' },
+  { q: 'ケガから復帰するには',       file: '25', title: '復帰プロトコル' },
+  { q: '退場中の守り方は？',         file: '03' },
+  { q: '点差があるときの戦い方',     file: '08' },
+  { q: 'ディフェンスで抜かれる',     file: '23' },
+  { q: '腰が痛い',                   file: '25' },
+  { q: '足がつる',                   file: '25' },
+  // 元から正しい代表質問（デグレ防止の見張り）
+  { q: '緊張して力が出ない',         file: '18' },
+  { q: 'ポストパスが通らない',       file: '06' },
+  { q: 'トラベリングって何歩から？', file: '30' },
+  { q: '5-1はどう攻略する？',        file: '26' },
+  { q: '7mシュートのコツは？',       file: '22' },
+];
+
 let list = BATTERY;
 const arg = process.argv[2];
+if (arg === '--check') {
+  let fail = 0;
+  for (const ex of EXPECTED) {
+    const { hits } = chatSearch(ex.q, sections);
+    const top = hits && hits[0];
+    const okFile = top && top.fileId === ex.file;
+    const okTitle = !ex.title || (top && top.title.includes(ex.title));
+    if (okFile && okTitle) {
+      console.log(`OK  ${ex.q} → file${top.fileId} ${top.title}`);
+    } else {
+      fail++;
+      console.log(`NG  ${ex.q} → ${top ? `file${top.fileId} ${top.title}` : '[nohit]'}  (期待: file${ex.file}${ex.title ? ' ' + ex.title : ''})`);
+    }
+  }
+  console.log('-'.repeat(60));
+  console.log(fail === 0 ? `全${EXPECTED.length}問 合格` : `${fail}/${EXPECTED.length}問 不合格`);
+  process.exit(fail === 0 ? 0 : 1);
+}
 if (arg === '--file') {
   const qpath = process.argv[3];
   list = fs.readFileSync(qpath, 'utf8').split(/\r?\n/).map(s => s.trim()).filter(s => s && !s.startsWith('#'));

@@ -17,6 +17,14 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Babel変換スモークテスト（白画面デプロイの防止）
+        run: |
+          npm i --no-save @babel/standalone@7.26.4
+          node .scripts/smoke_babel.js
+
+      - name: チャット回帰テスト（top1ルーティング）
+        run: node .scripts/chat_battery.js --check
+
       - name: 参照整合性監査（SOLVE_DATA / DRILL_THEMES 関連辞書リンク）
         run: node .scripts/audit_all.js
 
