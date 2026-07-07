@@ -2379,6 +2379,7 @@ function App() {
       {(phase === 'gk' || phase === 'pv') && (
         <div className="plan-screen">
           <RecordModule
+            key={phase}
             def={RECORD_MODULES[phase]}
             records={phase === 'gk' ? gkPreds : pvRecords}
             setRecords={phase === 'gk' ? setGkPreds : setPvRecords}
