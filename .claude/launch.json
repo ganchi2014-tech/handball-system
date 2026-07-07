@@ -8,10 +8,10 @@
       "port": 5173
     },
     {
-      "name": "legacy-static",
-      "runtimeExecutable": "node",
-      "runtimeArgs": [".claude\\server.js"],
-      "port": 8765
+      "name": "vite-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "preview"],
+      "port": 4173
     }
   ]
 }

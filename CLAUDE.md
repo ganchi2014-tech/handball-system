@@ -5,6 +5,8 @@
 
 > **全面刷新 2026-07-07（Phase 1）**。旧CLAUDE.mdには「4軸未実装」等の実装と乖離した記載があり削除した。
 > 全体計画は `C:\Users\togan1080\HANDBALL_LAB_羽化設計図_2026-07-06.md`（Critical/ロードマップ/YOMI LOOP構想）を必読。
+> **切替完了 2026-07-07**: 旧・単一index.html（Babel CDN版）は撤去済み。本番はViteビルドが直接配信されている。
+> 問題発生時のロールバックは `git revert`（旧アプリ復元は切替コミットのrevertで可能）。
 
 ## 憲法（オーナー決裁済 2026-07-07・変更禁止）
 
@@ -15,25 +17,24 @@
 ## アーキテクチャ（Phase 1 以降）
 
 ```
-app/                     ← 新アプリ（Vite + React 18）
+app/                     ← アプリ本体（Vite + React 18）
   index.html               エントリ
   src/
-    main.jsx               起動＋ErrorBoundary＋旧キャッシュ掃除
+    main.jsx               起動＋ErrorBoundary＋旧世代キャッシュ掃除
     App.jsx                画面全体（Phase 2でループホーム化・分割予定）
     styles.css             全スタイル
     data/*.json            ★コンテンツ正本（GLOSSARY/SOLVE_DATA/DRILL_THEMES/QUESTIONS/RESULTS…13ファイル）
     lib/                   純ロジック（テスト対象）: dict/chat/markdown/plan/storage/gk/pv/tb/backup/content/appData
     components/            GText / tb / gk / pv
-dictionary/*.md          ← 辞書33ファイル（母データ。新旧アプリで共有・唯一の正本）
-tests/                   ← Vitest。*.legacy.test.js は新旧パリティ（切替時に削除）
-index.html + sw.js       ← 旧アプリ（並走中・★凍結。編集禁止）
-.github/workflows/ci.yml ← テスト→ビルド→Pages合成デプロイ（root=旧 / next/=新）
-.scripts/                ← 旧アプリ用の監査・バッテリー（凍結ガードとしてCIで継続実行）
+dictionary/*.md          ← 辞書33ファイル（母データ・唯一の正本。ビルドで dist へ複製）
+tests/                   ← Vitest（回帰・集計・コンテンツ整合性監査）
+.github/workflows/ci.yml ← テスト→ビルド→Pagesデプロイ（dist直接配信）
+.scripts/                ← 辞書製造の一回性ツール群＋phase1_split_modules.js（移行記録）
 ```
 
 - **データを直すときは `app/src/data/*.json`**。JSXやJSリテラルにコンテンツを書き戻さない（構文エラーで白画面になる歴史への逆行）。
-- 旧 `index.html` は並走用に**凍結**。`tests/parity-data.legacy.test.js` が新旧一致をCIで強制するため、片方だけ編集すると必ず落ちる（意図的なガード）。
-- 辞書 `dictionary/*.md` は共有なので並走中も編集可（両アプリに反映）。
+- 参照（related / ドリルのfileId+match）を書くときはタイトル正引きで書く。`tests/content-integrity.test.js` が
+  リンク切れと「本文フォールバック着地」をCIで検出する（2026-07-07に旧監査の正規表現漏れで残っていた55件を修正済み）。
 
 ## コマンド
 
@@ -48,22 +49,25 @@ npm run preview   # ビルド産物の確認
 ## デプロイ（運用者の体験は「pushするだけ」）
 
 1. mainへpush → GitHub Actions がテスト→ビルド→デプロイ。**CIが赤だと本番に届かない**（白画面デプロイの構造的封鎖）。
-2. 並走中の配置: 本番URL直下=旧アプリ（従来どおり）、`/next/`=新アプリ。
-3. **切替**（ユーザー承認必須）: ci.ymlの合成ステップを「dist→_site直下」に変え、旧index.html/sw.js/.scripts と *.legacy.test.js を削除。URLは不変、localStorageも同一オリジンなので選手データはそのまま。
-4. Pages のソースは「GitHub Actions」（切替済みでなければ Settings→Pages で変更が必要）。
+2. 配信物は `dist/`（ビルド資産＋辞書＋icons＋manifest.json）だけ。リポジトリのソースや作業ファイルは公開されない。
+3. Pages のソースは「GitHub Actions」（ci.yml の configure-pages が維持する）。
+4. ロールバック: 問題のあるコミットを `git revert` して push すれば前の状態が再デプロイされる。
 
 ## 地雷（実際に起きた障害。絶対に踏まない）
 
-- **SWの条件付きGET禁止**: `no-cache`等でIf-None-Matchを送るとGitHub Pagesの304で辞書全滅（sw.js v5事故）。新SW（vite-plugin-pwa/Workbox）は条件付きヘッダを付けないので安全。辞書.mdは StaleWhileRevalidate を維持。
-- **旧アプリのBabelはv7固定**（@babel/standalone@7.26.4）。無指定はv8でJSX自動ランタイム化→白画面（2026-06事故）。
-- **Cache Storageはオリジン共有**: 並走中に `handball-lab-*` キャッシュを消すと旧アプリのオフラインが壊れる。掃除は切替後のみ（main.jsxで条件分岐済み）。
-- **python-pptx等とは無関係**だが、リポジトリ直下に作業ファイル（スクリーンショット等）を置かない。Actionsデプロイでは合成ステップに列挙したものだけが公開される。
+- **SWの条件付きGET禁止**: `no-cache`等でIf-None-Matchを送るとGitHub Pagesの304で辞書全滅（旧sw.js v5事故）。現SW（vite-plugin-pwa/Workbox）は条件付きヘッダを付けないので安全。辞書.mdは StaleWhileRevalidate を維持。
+- **CDN Babel v8白画面事故（2026-06・歴史）**: 旧構成が捨てられた理由。無ビルド＋CDN＋手書きSWに戻さない。
+- **main.jsx の旧世代キャッシュ掃除（`handball-lab-*` 削除）は残す**: 選手の端末には旧SWのキャッシュが残っており、切替後の初回訪問で掃除される。
+- **STORAGE_VERSION は上げない**（上げると選手の旧データが自動破棄される仕様が lib/storage.js に残っている）。
 
 ## テストの読み方
 
 - `tests/chat-regression.test.js` — 回帰14問（「肩が痛い」→file25等）。チャットロジックを触ったら必ず見る。
 - `tests/aggregation.test.js` — GK/PV/TB集計とmergeBackupの期待値。**選手に見せる数字**の退行検知。
-- `tests/parity-*.legacy.test.js` — 旧index.htmlとの完全一致（データ13ブロック・チャット72問・集計・プラン生成）。**切替時に helpers/legacy.js ごと削除**。
+- `tests/content-integrity.test.js` — 旧 .scripts/audit_*.js のJSON移植＋拡大版。全 related/ドリル参照の辞書解決、
+  SOLVE_DATA・DRILL_THEMES・RESULTS系の完備性。コンテンツを足したら必ず通す。
+- 新旧パリティテスト（*.legacy.test.js）は切替完了に伴い削除済み（旧index.htmlと共に）。移行の正しさは
+  2026-07-07時点の136テスト全緑で証明済み（git履歴 25a222c 以前を参照）。
 
 ## 辞書ファイル（母データ・33ファイル406セクション）
 

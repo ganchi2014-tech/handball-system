@@ -29,35 +29,16 @@ jobs:
       - name: 依存インストール
         run: npm ci
 
-      - name: Vitest（チャット回帰14問・新旧パリティ・GK/PV/TB集計・mergeBackup）
+      - name: Vitest（チャット回帰・GK/PV/TB集計・mergeBackup・コンテンツ整合性監査）
         run: npm test
 
-      - name: 旧アプリ Babelスモーク（並走中の白画面デプロイ防止）
-        run: |
-          npm i --no-save @babel/standalone@7.26.4
-          node .scripts/smoke_babel.js
-
-      - name: 旧アプリ チャット回帰＋監査（並走中の凍結ガード）
-        run: |
-          node .scripts/chat_battery.js --check
-          node .scripts/audit_all.js
-          node .scripts/audit_completeness.js
-          node .scripts/audit_results.js
-
-      - name: Vite build（新アプリ）
+      - name: Vite build（辞書・icons・manifest.json も dist へ複製される）
         run: npm run build
-
-      - name: サイト合成（root=旧アプリ／next/=新アプリ。本番URL不変）
-        run: |
-          mkdir -p _site
-          cp index.html sw.js manifest.json _site/
-          cp -r icons dictionary _site/
-          cp -r dist _site/next
 
       - uses: actions/upload-pages-artifact@v3
         if: github.event_name == 'push'
         with:
-          path: _site
+          path: dist
 
   deploy:
     needs: test-build
@@ -67,7 +48,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Pagesのソースを「ブランチ配信」→「GitHub Actions」へ自動切替（設定画面の手動操作を不要にする）
       - uses: actions/configure-pages@v5
         with:
           enablement: true

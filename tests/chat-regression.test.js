@@ -3,7 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { DICT_FILES, splitSections } from '../app/src/lib/dict.js';
 import { chatSearch } from '../app/src/lib/chat.js';
-import { buildSections } from './helpers/legacy.js';
+import { buildSections } from './helpers/sections.js';
 
 const sections = buildSections(splitSections, DICT_FILES);
 
