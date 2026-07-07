@@ -2137,10 +2137,10 @@ function App() {
 
       {/* スタート画面（振り返るモード入口・グループ表示） */}
       {phase === 'start' && (() => {
+        // Phase 2: 逆引き3種（janken/context/gk）はホームの「📖リファレンス」へ降格（設計書1-5）
         const MODE_GROUPS = [
-          { label: '🟦 自分のプレー', ids: ['of', 'df', 'gk_self', 'skill'] },
-          { label: '🟢 特殊場面',     ids: ['physical', 'shot_7m', 'sign'] },
-          { label: '🟠 対戦・分析',   ids: ['context', 'janken', 'gk'] },
+          { label: '🟦 自分のプレー（① 自分の立場から選ぶ）', ids: ['of', 'df', 'gk_self', 'skill'] },
+          { label: '🟢 特殊場面', ids: ['physical', 'shot_7m', 'sign'] },
         ];
         return (
           <div className="start-screen">
@@ -2169,6 +2169,9 @@ function App() {
                   })}
                 </div>
               ))}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--tx-muted)', marginTop: 8 }}>
+              🔍 相手の分析（じゃんけん・試合状況・相手GK）はホームの「📖 リファレンス」へ移動しました
             </div>
           </div>
         );
