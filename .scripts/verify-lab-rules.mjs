@@ -98,7 +98,8 @@ function record(name, expected, actual, pass) {
 
 function isPermissionDenied(err) {
   const msg = String(err && (err.code || err.message) || err);
-  return /PERMISSION_DENIED/i.test(msg);
+  // 書き込み拒否は code=PERMISSION_DENIED、読み取り(get)拒否は message='Permission denied' で飛ぶ（SDK仕様差）
+  return /PERMISSION_DENIED/i.test(msg) || /permission[ _]denied/i.test(msg);
 }
 
 async function expectAllow(name, fn) {
