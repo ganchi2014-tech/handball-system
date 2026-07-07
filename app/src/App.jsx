@@ -648,6 +648,7 @@ function App() {
 
   const handleReset = () => {
     if (phase === 'result') commitNextStep();
+    // カード起点の連続振り返りでは activeCardIdRef を維持（カードには最新の振り返りが載る）
     setPhase('start'); setMode(null);
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
@@ -801,7 +802,7 @@ function App() {
   const handleHubSelect = (modId) => {
     const mod = HUB_MODULES.find(m => m.id === modId);
     if (!mod || !mod.enabled) return;
-    if (modId === 'reflect') setPhase('start');
+    if (modId === 'reflect') { activeCardIdRef.current = null; setPhase('start'); }
     else if (modId === 'chat') setPhase('chat');
     else if (modId === 'dictionary') {
       setDictDetail(null);
@@ -2449,7 +2450,7 @@ function App() {
         const isHub     = phase === 'hub';
         const go = (target) => {
           if (target === 'hub')    { handleBackToHub(); }
-          else if (target === 'reflect') { if (phase === 'result') commitNextStep(); setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
+          else if (target === 'reflect') { if (phase === 'result') commitNextStep(); activeCardIdRef.current = null; setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
           else if (target === 'dict')  { setDictDetail(null); setPhase('dictionary'); }
           else if (target === 'solve') { handleSolveReset(); setPhase('solve'); }
           else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
