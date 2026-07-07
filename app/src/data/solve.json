@@ -1125,11 +1125,11 @@
             "related": [
               {
                 "fileId": "02",
-                "match": "7種フェイント"
+                "match": "フェイント7種類"
               },
               {
                 "fileId": "19",
-                "match": "フェイント"
+                "match": "A. 個人練習"
               }
             ],
             "actions": [
@@ -1170,8 +1170,8 @@
                 "match": "シュート打点"
               },
               {
-                "fileId": "22",
-                "match": "物理学的最適"
+                "fileId": "29",
+                "match": "物理学 ジャンプシュートの滞空時間と入射角の優位性"
               }
             ],
             "actions": [
@@ -1188,7 +1188,7 @@
             "related": [
               {
                 "fileId": "02",
-                "match": "7種フェイント"
+                "match": "フェイント7種類"
               },
               {
                 "fileId": "09",
@@ -1209,11 +1209,11 @@
             "related": [
               {
                 "fileId": "16",
-                "match": "クロス"
+                "match": "3. コンビネーションプレー（2人）"
               },
               {
                 "fileId": "27",
-                "match": "クロス"
+                "match": "パート 2：フリースロー（9m）からのサインプレー"
               }
             ],
             "actions": [
@@ -1230,11 +1230,11 @@
             "related": [
               {
                 "fileId": "10",
-                "match": "スカウト"
+                "match": "スカウティング項目"
               },
               {
                 "fileId": "02",
-                "match": "ダブルフェイント"
+                "match": "フェイント7種類"
               }
             ],
             "actions": [
@@ -1360,7 +1360,7 @@
               },
               {
                 "fileId": "23",
-                "match": "1on1"
+                "match": "H. 守備コミュニケーション"
               }
             ],
             "actions": [
@@ -1377,11 +1377,11 @@
             "related": [
               {
                 "fileId": "01",
-                "match": "サイドシュート"
+                "match": "シュート"
               },
               {
                 "fileId": "14",
-                "match": "サイド"
+                "match": "ウィング（Wing / Flügel）"
               }
             ],
             "actions": [
@@ -1398,7 +1398,7 @@
             "related": [
               {
                 "fileId": "01",
-                "match": "ループシュート"
+                "match": "シュート"
               },
               {
                 "fileId": "05",
@@ -1465,7 +1465,7 @@
               },
               {
                 "fileId": "27",
-                "match": "クロス"
+                "match": "パート 2：フリースロー（9m）からのサインプレー"
               }
             ],
             "actions": [
@@ -1528,7 +1528,7 @@
             "related": [
               {
                 "fileId": "06",
-                "match": "V字位置取り"
+                "match": "ポストのポジション取り"
               },
               {
                 "fileId": "04",
@@ -1637,7 +1637,7 @@
               },
               {
                 "fileId": "00",
-                "match": "パッシブ"
+                "match": "ゲームクローズサイクル"
               }
             ],
             "actions": [
@@ -1675,11 +1675,11 @@
             "related": [
               {
                 "fileId": "10",
-                "match": "スカウト"
+                "match": "スカウティング項目"
               },
               {
                 "fileId": "02",
-                "match": "ダブルフェイント"
+                "match": "フェイント7種類"
               }
             ],
             "actions": [
@@ -1742,7 +1742,7 @@
               },
               {
                 "fileId": "06",
-                "match": "DFとの駆引"
+                "match": "ポストのポジション取り"
               }
             ],
             "actions": [
@@ -1780,7 +1780,7 @@
             "related": [
               {
                 "fileId": "01",
-                "match": "山側／谷側"
+                "match": "コンタクト技術"
               },
               {
                 "fileId": "06",
@@ -1801,11 +1801,11 @@
             "related": [
               {
                 "fileId": "06",
-                "match": "V字位置取り"
+                "match": "ポストのポジション取り"
               },
               {
                 "fileId": "04",
-                "match": "Blickkontakt"
+                "match": "ボールを受ける前の認知ルーティン"
               }
             ],
             "actions": [
@@ -1826,7 +1826,7 @@
               },
               {
                 "fileId": "26",
-                "match": "5+1"
+                "match": "パート 1：DF（ディフェンス）陣形"
               }
             ],
             "actions": [
@@ -1843,7 +1843,7 @@
             "related": [
               {
                 "fileId": "01",
-                "match": "山側／谷側"
+                "match": "コンタクト技術"
               },
               {
                 "fileId": "21",
@@ -1864,11 +1864,11 @@
             "related": [
               {
                 "fileId": "04",
-                "match": "Blickkontakt"
+                "match": "声掛け"
               },
               {
                 "fileId": "06",
-                "match": "V字位置取り"
+                "match": "ポストのポジション取り"
               }
             ],
             "actions": [
@@ -1927,7 +1927,7 @@
             "related": [
               {
                 "fileId": "25",
-                "match": "怪我予防"
+                "match": "A. バックプレーヤーの傷害リスク"
               },
               {
                 "fileId": "06",
@@ -1969,7 +1969,7 @@
             "related": [
               {
                 "fileId": "05",
-                "match": "3方向の法則"
+                "match": "核心原則（コーチ直伝）"
               },
               {
                 "fileId": "05",
@@ -2015,7 +2015,7 @@
               },
               {
                 "fileId": "32",
-                "match": "切替"
+                "match": "K. 試合当日のメンタル管理"
               }
             ],
             "actions": [
@@ -2174,7 +2174,7 @@
             "related": [
               {
                 "fileId": "23",
-                "match": "1on1"
+                "match": "H. 守備コミュニケーション"
               },
               {
                 "fileId": "26",
@@ -2195,11 +2195,11 @@
             "related": [
               {
                 "fileId": "23",
-                "match": "1on1"
+                "match": "E. 先読み・アンティシペーション"
               },
               {
                 "fileId": "02",
-                "match": "予備動作"
+                "match": "フェイント7種類"
               }
             ],
             "actions": [
@@ -2220,7 +2220,7 @@
               },
               {
                 "fileId": "02",
-                "match": "7種フェイント"
+                "match": "フェイント7種類"
               }
             ],
             "actions": [
@@ -2241,7 +2241,7 @@
               },
               {
                 "fileId": "23",
-                "match": "1on1"
+                "match": "D. ドライブ（突破）への対応"
               }
             ],
             "actions": [
@@ -2262,7 +2262,7 @@
               },
               {
                 "fileId": "32",
-                "match": "切替"
+                "match": "K. 試合当日のメンタル管理"
               }
             ],
             "actions": [
@@ -2283,7 +2283,7 @@
               },
               {
                 "fileId": "21",
-                "match": "体力"
+                "match": "E. 持久力トレーニング"
               }
             ],
             "actions": [
@@ -2321,7 +2321,7 @@
             "related": [
               {
                 "fileId": "23",
-                "match": "1on1"
+                "match": "H. 守備コミュニケーション"
               },
               {
                 "fileId": "26",
@@ -2367,7 +2367,7 @@
               },
               {
                 "fileId": "23",
-                "match": "1on1"
+                "match": "位置づけ なぜバックプレーヤーの個人DFが必要か"
               }
             ],
             "actions": [
@@ -2468,11 +2468,11 @@
             "related": [
               {
                 "fileId": "10",
-                "match": "スカウト"
+                "match": "スカウティング項目"
               },
               {
                 "fileId": "02",
-                "match": "ダブルフェイント"
+                "match": "フェイント7種類"
               }
             ],
             "actions": [
@@ -2514,7 +2514,7 @@
               },
               {
                 "fileId": "06",
-                "match": "V字位置取り"
+                "match": "ポストのポジション取り"
               }
             ],
             "actions": [
@@ -2556,7 +2556,7 @@
               },
               {
                 "fileId": "21",
-                "match": "体力"
+                "match": "E. 持久力トレーニング"
               }
             ],
             "actions": [
