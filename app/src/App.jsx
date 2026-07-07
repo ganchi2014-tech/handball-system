@@ -27,7 +27,7 @@ import { RecordModule } from './components/record.jsx';
 // ・マウント初回はスキップ（prevRef を初期配列で初期化 → 起動時の整合は fbFullSync が担う）
 // ・削除は同期しない（リモート側は保持＝誤削除からの復元手段を残すデータ保全方針）
 // ・未接続(enabled=0)なら何もしない。接続設定済みでもオフライン/エラー中はキューへ。
-function useFbPushOnChange(node, arr, enabled, statusRef, addToQueue) {
+function useFbPushOnChange(node, arr, enabled, statusRef, addToQueue, skipIdsRef) {
   const prevRef = useRef(arr);
   useEffect(() => {
     const prev = prevRef.current;
@@ -38,9 +38,12 @@ function useFbPushOnChange(node, arr, enabled, statusRef, addToQueue) {
     if (!changed.length) return;
     const st = statusRef.current;
     for (const rec of changed) {
-      if (st === 'on' || st === 'connecting') {
+      // fbFullSync で リモートから取り込んだ直後の記録は押し返さない（エコー送信防止）
+      if (skipIdsRef && skipIdsRef.current.has(rec.id)) { skipIdsRef.current.delete(rec.id); continue; }
+      if (st === 'on') {
         fbPush(node, rec).catch(() => addToQueue(node, rec.id));
       } else {
+        // connecting/error/オフライン中はキューへ（接続完了時と online 復帰時に flush される）
         addToQueue(node, rec.id);
       }
     }
@@ -270,6 +273,7 @@ function App() {
   const fbDataRef = useRef({});
   fbDataRef.current = { 'match-cards': matchCards, 'gk_predictions': gkPreds, 'pv_records': pvRecords, 'tb-tasks': tbTasks };
   const rosterUnsubRef = useRef(null);
+  const fbSkipPushRef = useRef(new Set()); // fbFullSync で取り込んだIDの押し返し防止（レビュー反映）
   const resolveRecord = (node, id) => {
     const def = FB_NODES.find(n => n.node === node);
     const arr = def ? (fbDataRef.current[def.lsKey] || []) : [];
@@ -310,6 +314,9 @@ function App() {
       } catch (e) { /* 非致命: fb-roster-cache で表示継続 */ }
       try {
         const { failed } = await fbFullSync(fbDataRef.current, (lsKey, merged) => {
+          // リモート由来（ローカルに無かったID）を記録 → push-on-change がエコー送信しないように
+          const prevIds = new Set((fbDataRef.current[lsKey] || []).map(r => r && r.id));
+          merged.forEach(r => { if (r && r.id && !prevIds.has(r.id)) fbSkipPushRef.current.add(r.id); });
           const byTsDesc = (a, b) => (b.ts || 0) - (a.ts || 0);
           if (lsKey === 'match-cards') setMatchCards(merged.slice().sort(byTsDesc).slice(0, 300));
           else if (lsKey === 'gk_predictions') setGkPreds(merged.slice().sort(byTsDesc));
@@ -327,6 +334,8 @@ function App() {
           return fbQueueAdd([...remaining, ...newly]);
         });
         setFbStatus('on');
+        // connecting 中にキューへ積まれた保存分をここで排出（push は status='on' のみのため）
+        flushQueueNow().catch(() => {});
       } catch (e) {
         if (!cancelled) setFbStatus('error'); // 例: /lab ルール未デプロイ → PERMISSION_DENIED。ローカルは無傷
       }
@@ -349,10 +358,10 @@ function App() {
     return () => window.removeEventListener('online', onOnline);
   }, []);
   // 保存経路ごとの push（新規ID・参照変更のみ。削除は同期しない=リモート保持のデータ保全方針）
-  useFbPushOnChange('matchCards', matchCards, fbEnabled, fbStatusRef, addToQueue);
-  useFbPushOnChange('gkPredictions', gkPreds, fbEnabled, fbStatusRef, addToQueue);
-  useFbPushOnChange('pvRecords', pvRecords, fbEnabled, fbStatusRef, addToQueue);
-  useFbPushOnChange('tbTasks', tbTasks, fbEnabled, fbStatusRef, addToQueue);
+  useFbPushOnChange('matchCards', matchCards, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
+  useFbPushOnChange('gkPredictions', gkPreds, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
+  useFbPushOnChange('pvRecords', pvRecords, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
+  useFbPushOnChange('tbTasks', tbTasks, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
   // 名簿 → RecordModule 用選手リスト（手入力リストとの和集合。gk_players/pv_players 自体は書き換えない）
   const effGkPlayers = useMemo(() => {
     if (!fbEnabled || !fbRoster.length) return gkPlayers;
