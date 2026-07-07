@@ -92,10 +92,16 @@ npm run preview   # ビルド産物の確認
 
 ## 次のフェーズ（羽化設計図 §4）
 
-- ~~Phase 2 ループ化~~ ✅ **実装済 2026-07-07**（ブランチ phase2-loop。検証フロー実測14タップ／GK・PV共通エンジン化は-534/+517行。
+- ~~Phase 2 ループ化~~ ✅ **本番デプロイ済 2026-07-07**（検証フロー実測14タップ／GK・PV共通エンジン化は-534/+517行。
   ループ新設分を含む全体では +1053/-576 で「削除量≧追加量」は未達＝検収記録参照）
-- **Phase 3 Firebase**: `handball-mental` RTDBの `/roster` 購読で名簿手入力廃止→ `/lab/...` 同期→ mental マイ統計に的中率タイル。
-  ⚠ `/rosterToUid` へ書き込み絶対禁止・顧問不関与など、着手前に `HANDBALL_LAB_Phase2-3_設計書.md` §2 必読
-- **Phase 4 展開**: 90分コンパイラ／プレイブック拡張（自分の辞書転記の判断）／読みの回覧（選手発意のみ）
+- ~~Phase 3 Firebase~~ ✅ **実装済 2026-07-07**（ブランチ phase3-firebase）: `lib/fb.js`（firebase@12.15.0固定・**全APIがdynamic import**＝
+  未接続なら1バイトもロードしない・SWプリキャッシュからも除外）／「チームと繋ぐ」（components/connect.jsx・選手発意オプトイン）／
+  `/lab/{uid}/{matchCards|gkPredictions|pvRecords|tbTasks}/{id}` へ push-on-change＋オフラインキュー（fb-queue）／
+  `/roster` 購読で選手チップ拡張（手入力リストは温存・和集合）／名寄せ（fb-name-map・既存キーは書き換えない）。
+  ルールは mental の database.rules.json に lab/labShared 追加済み（本番デプロイ済・権限マトリクス14項目PASS）。
+  ⚠ **`/rosterToUid` への書き込みは絶対禁止 — fb.js に write API は存在しない（get のみ）。今後も追加禁止**（uid分裂端末で
+  mental の名簿連携を破壊するため）。削除は同期しない（リモート保持＝誤削除復元のデータ保全方針）。
+  §2-5 の analyzer実測コース表示は**オーナー決裁待ちでスコープ外**のまま。
+- **Phase 4 展開**: 90分コンパイラ／プレイブック拡張（自分の辞書転記の判断）／読みの回覧（labSharedルールは整備済み・UIが未実装・選手発意のみ）
 
 **mainへのpush・本番切替は必ずユーザー（オーナー）の承認を得ること。**
