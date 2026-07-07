@@ -3,19 +3,21 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ALL_TAGS, DICT_FILES, DICT_SECTION_COUNT, GLOSSARY, splitSections } from './lib/dict.js';
 import { renderMarkdown } from './lib/markdown.js';
-import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, axisStyle, getProgress } from './lib/appData.js';
+import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, REFERENCE_MODES, axisStyle, getProgress } from './lib/appData.js';
 import { QUESTIONS, RESULTS, SOLVE_DATA } from './lib/content.js';
 import { DRILL_THEMES, DURATIONS, LEVELS, POSITIONS, POSITION_RECOMMENDED, buildPlan } from './lib/plan.js';
 import { CHAT_SUGGESTIONS, buildChatReply } from './lib/chat.js';
 import { lsGet, lsSet } from './lib/storage.js';
 import { TB_CONSTRAINTS, tbExportAllText } from './lib/tb.js';
-import { gkCalcTendencies, gkExportWeekText } from './lib/gk.js';
-import { pvExportWeekText, pvResultLabel } from './lib/pv.js';
+import { gkCalcTendencies } from './lib/gk.js';
+import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
+import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
+import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
+import { Playbook } from './components/playbook.jsx';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
-import { GKHome, GKRecordWizard } from './components/gk.jsx';
-import { PVHome, PVRecordWizard } from './components/pv.jsx';
+import { RecordModule } from './components/record.jsx';
 
 function App() {
   const [phase, setPhase] = useState('hub');
@@ -33,6 +35,7 @@ function App() {
   const [declaration, setDeclaration] = useState(() => lsGet('next-declaration') || null);
   const [decSnooze, setDecSnooze] = useState(false); // 「まだこれから」＝このセッション中だけボタンを畳む
   const reflectIdRef = useRef(null);
+  const activeCardIdRef = useRef(null);
   const recordReflectStart = (rid, hist) => {
     const entry = {
       id: 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
@@ -46,6 +49,12 @@ function App() {
       lsSet('reflect-history', list);
       return list;
     });
+    // Phase 2: カード起点の振り返りなら、カードにも接続する（reflect-history と二重保存＝旧経路互換）
+    if (activeCardIdRef.current) {
+      const cid = activeCardIdRef.current;
+      setMatchCards(prev => prev.map(c => c.id === cid
+        ? { ...c, reflect: { mode, resultId: rid, crumbs: (hist || []).map(h => h.text) } } : c));
+    }
   };
   const commitNextStep = (text) => {
     const t = (text != null ? text : nextStep).trim();
@@ -59,6 +68,10 @@ function App() {
       const dec = { text: t, ts: Date.now(), mode, done: null };
       setDeclaration(dec);
       lsSet('next-declaration', dec);
+      if (activeCardIdRef.current) {
+        const cid = activeCardIdRef.current;
+        setMatchCards(prev => prev.map(c => c.id === cid ? { ...c, next: t } : c));
+      }
     }
   };
   const answerDeclaration = (done) => {
@@ -66,6 +79,27 @@ function App() {
     const dec = { ...declaration, done, answeredTs: Date.now() };
     setDeclaration(dec);
     lsSet('next-declaration', dec);
+  };
+
+  // ── Phase 2: 1試合=1カード＋ループ状態 ──
+  // match-cards は新規保存先。reflect-history は読み続ける（破棄禁止）が、初回起動時に
+  // 変換コピーする（migrateReflectToCards は冪等なので多重実行しても安全）。
+  const [matchCards, setMatchCards] = useState(() => lsGet('match-cards') || []);
+  const [loopState, setLoopState] = useState(() => lsGet('loop-state') || { nextMatch: null, migrated: 0 });
+  useEffect(() => { lsSet('match-cards', matchCards); }, [matchCards]);
+  useEffect(() => { lsSet('loop-state', loopState); }, [loopState]);
+  useEffect(() => {
+    if (loopState.migrated) return;
+    const { cards, added } = migrateReflectToCards(reflectHistory, matchCards);
+    if (added > 0) setMatchCards(cards);
+    setLoopState(prev => ({ ...prev, migrated: 1 }));
+  }, []);  // 初回マウント時のみ
+  const upsertCard = (card) => {
+    setMatchCards(prev => {
+      const i = prev.findIndex(c => c.id === card.id);
+      const next = i >= 0 ? prev.map(c => c.id === card.id ? card : c) : [card, ...prev];
+      return next.sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 300);
+    });
   };
 
   // 保存失敗（容量超過・プライベートブラウズ等）の可視化 — lsSet が発火するイベントを受ける
@@ -133,7 +167,6 @@ function App() {
   const [gkPreds, setGkPreds] = useState(() => lsGet('gk_predictions') || []);
   const [gkPlayers, setGkPlayers] = useState(() => lsGet('gk_players') || { keepers: [], shooters: [] });
   const [gkView, setGkView] = useState({ name: 'home' }); // home | record
-  const [gkToast, setGkToast] = useState(null);
   const gkLastSetup = useRef({}); // 連続入力用に直前のGK・状況・シューターを保持
   useEffect(() => {
     lsSet('gk_predictions', gkPreds);
@@ -144,7 +177,6 @@ function App() {
   const [pvRecords, setPvRecords] = useState(() => lsGet('pv_records') || []);
   const [pvPlayers, setPvPlayers] = useState(() => lsGet('pv_players') || { pivots: [] });
   const [pvView, setPvView] = useState({ name: 'home' }); // home | record
-  const [pvToast, setPvToast] = useState(null);
   const pvLastSetup = useRef({}); // 連続入力用に直前のピヴォットを保持
   useEffect(() => { lsSet('pv_records', pvRecords); }, [pvRecords]);
   useEffect(() => { lsSet('pv_players', pvPlayers); }, [pvPlayers]);
@@ -170,6 +202,8 @@ function App() {
         if (m.added > 0) { lsSet(key, m.val); if (apply) apply(m.val); extraAdded += m.added; }
       };
       applyExtra('reflect-history', reflectHistory, (v) => setReflectHistory(v.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 200)));
+      applyExtra('match-cards', matchCards, (v) => setMatchCards(v.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 300)));
+      applyExtra('loop-state', loopState, null);   // スカラー＝ローカル優先（端末設定なので上書きしない）
       applyExtra('solve-history', solveHistory, setSolveHistory);
       applyExtra('plan-saved', planSaved, setPlanSaved);
       applyExtra('dict-favs', dictFavs, setDictFavs);
@@ -612,6 +646,7 @@ function App() {
 
   const handleReset = () => {
     if (phase === 'result') commitNextStep();
+    // カード起点の連続振り返りでは activeCardIdRef を維持（カードには最新の振り返りが載る）
     setPhase('start'); setMode(null);
     setCurrentQ(null); setSelected(null); setHistory([]);
     setResultId(null); setNextStep('');
@@ -625,6 +660,7 @@ function App() {
     setDictDetail(null);
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
     setPlanResult(null);
+    activeCardIdRef.current = null;
   };
 
   // Phase 2B：テーマON/OFF切替
@@ -764,7 +800,7 @@ function App() {
   const handleHubSelect = (modId) => {
     const mod = HUB_MODULES.find(m => m.id === modId);
     if (!mod || !mod.enabled) return;
-    if (modId === 'reflect') setPhase('start');
+    if (modId === 'reflect') { activeCardIdRef.current = null; setPhase('start'); }
     else if (modId === 'chat') setPhase('chat');
     else if (modId === 'dictionary') {
       setDictDetail(null);
@@ -786,6 +822,7 @@ function App() {
       setPvView({ name: 'home' });
       setPhase('pv');
     }
+    else if (modId === 'playbook') setPhase('playbook');
   };
 
   // 辞書一覧→詳細遷移時に一覧側のスクロール位置を覚えておく
@@ -889,6 +926,9 @@ function App() {
               {phase === 'gk' && 'GK予測'}
               {phase === 'pv' && 'ピヴォット認知'}
               {phase === 'chat' && '質問する'}
+              {phase === 'yomi' && '読みを宣言する'}
+              {phase === 'card' && '5分振り返り'}
+              {phase === 'playbook' && 'マイ・プレイブック'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
@@ -900,6 +940,9 @@ function App() {
               {phase === 'gk' && 'GK Prediction'}
               {phase === 'pv' && 'Pivot Cognition'}
               {phase === 'chat' && 'Dictionary Chat'}
+              {phase === 'yomi' && 'Yomi Declaration'}
+              {phase === 'card' && 'Match Card'}
+              {phase === 'playbook' && 'My Playbook'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
           </div>
@@ -958,36 +1001,18 @@ function App() {
 
       {/* ハブ画面（最初の入口） */}
       {phase === 'hub' && (
-        <div className="hub-screen animate-in">
-          <div className="hub-hero">
-            <div className="hub-hero-eyebrow">近江兄弟社高校ハンドボール部</div>
-            <div className="hub-title">「わからない」を解決する</div>
-          </div>
-          {/* 前回の宣言の照合（振り返り→次のプレー→照合、のループを閉じる） */}
-          {declaration && (
-            <div className="hub-declare">
-              {declaration.done === true ? (
-                <div className="hub-declare-text">
-                  ✅ 達成した宣言：「{declaration.text}」
-                  <span className="hub-declare-sub">次の振り返りで新しい宣言を書こう</span>
-                </div>
-              ) : (
-                <React.Fragment>
-                  <div className="hub-declare-label">🎯 前回の宣言 — 次のプレーで試すこと</div>
-                  <div className="hub-declare-text">「{declaration.text}」</div>
-                  {!decSnooze && (
-                    <div className="hub-declare-actions">
-                      <button className="hub-declare-btn" onClick={() => answerDeclaration(true)}>✓ できた</button>
-                      <button className="hub-declare-btn ghost" onClick={() => setDecSnooze(true)}>まだこれから</button>
-                    </div>
-                  )}
-                </React.Fragment>
-              )}
-              {reflectHistory.length > 0 && (
-                <div className="hub-declare-count">これまでの振り返り：{reflectHistory.length}回</div>
-              )}
-            </div>
-          )}
+        <LoopHome
+          loopState={loopState}
+          onSetNextMatch={(nm) => setLoopState(prev => ({ ...prev, nextMatch: nm }))}
+          declaration={declaration} decSnooze={decSnooze}
+          onAnswerDeclaration={answerDeclaration} onSnooze={() => setDecSnooze(true)}
+          reflectCount={matchCards.length}
+          onAction={(p) => {
+            if (p === 'predict') setPhase('yomi');
+            else if (p === 'verify') setPhase('card');
+            else { setTbView({ name: 'home' }); setPhase('build'); }
+          }}
+        >
           <div className="hub-cards">
             {HUB_MODULES.map(mod => (
               <button
@@ -1008,6 +1033,14 @@ function App() {
               </button>
             ))}
           </div>
+          <div className="loop-ref-row">
+            <div className="loop-ref-label">📖 リファレンス（逆引き）</div>
+            {REFERENCE_MODES.map(key => (
+              <button key={key} className="loop-ref-btn" onClick={() => handleModeSelect(key)}>
+                {MODES[key].icon} {MODES[key].label}
+              </button>
+            ))}
+          </div>
           <button
             className="help-btn"
             style={{marginTop: 12}}
@@ -1018,7 +1051,31 @@ function App() {
             style={{marginTop: 8}}
             onClick={() => setBackupOpen(true)}
           >💾 データの書き出し / 取り込み</button>
-        </div>
+        </LoopHome>
+      )}
+
+      {phase === 'yomi' && (() => {
+        const targetDate = loopState.nextMatch?.date;
+        const existing = matchCards.find(c => !c.reflect && targetDate && c.date === targetDate);
+        const target = existing
+          || newMatchCard({ date: targetDate, kind: loopState.nextMatch ? 'match' : 'scrimmage', opponent: loopState.nextMatch?.opponent });
+        return <YomiWizard card={target} onExit={handleBackToHub}
+          onSave={(c) => { upsertCard(c); setPhase('hub'); }} />;
+      })()}
+
+      {phase === 'card' && (
+        <CardFlow cards={matchCards} nextMatch={loopState.nextMatch}
+          resumeCardId={activeCardIdRef.current}
+          onUpsert={upsertCard} onExit={handleBackToHub}
+          onStartReflect={(c) => { activeCardIdRef.current = c.id; setPhase('start'); }}
+          onPickIssue={(c) => {
+            const sym = c.reflect && RESULT_TO_SYMPTOM[c.reflect.resultId];
+            const mm = c.reflect && MODE_TO_SOLVE[c.reflect.mode];
+            if (sym) { setSolveRole(sym.role); setSolveCategory(sym.category); setSolveSymptom(sym.symptom); }
+            else if (mm) { setSolveRole(mm.role); setSolveCategory(mm.category); setSolveSymptom(null); }
+            else { handleSolveReset(); }
+            setPhase('solve');
+          }} />
       )}
 
       {/* オンボーディングモーダル */}
@@ -2080,10 +2137,10 @@ function App() {
 
       {/* スタート画面（振り返るモード入口・グループ表示） */}
       {phase === 'start' && (() => {
+        // Phase 2: 逆引き3種（janken/context/gk）はホームの「📖リファレンス」へ降格（設計書1-5）
         const MODE_GROUPS = [
-          { label: '🟦 自分のプレー', ids: ['of', 'df', 'gk_self', 'skill'] },
-          { label: '🟢 特殊場面',     ids: ['physical', 'shot_7m', 'sign'] },
-          { label: '🟠 対戦・分析',   ids: ['context', 'janken', 'gk'] },
+          { label: '🟦 自分のプレー（① 自分の立場から選ぶ）', ids: ['of', 'df', 'gk_self', 'skill'] },
+          { label: '🟢 特殊場面', ids: ['physical', 'shot_7m', 'sign'] },
         ];
         return (
           <div className="start-screen">
@@ -2112,6 +2169,9 @@ function App() {
                   })}
                 </div>
               ))}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--tx-muted)', marginTop: 8 }}>
+              🔍 相手の分析（じゃんけん・試合状況・相手GK）はホームの「📖 リファレンス」へ移動しました
             </div>
           </div>
         );
@@ -2252,6 +2312,16 @@ function App() {
               </button>
             );
           })()}
+          {activeCardIdRef.current && (
+            <button className="reset-btn" style={{ borderColor: '#22d3ee', color: '#67e8f9', marginBottom: 8 }}
+              onClick={() => {
+                commitNextStep();
+                setPhase('card'); setMode(null); setHistory([]);
+                setResultId(null); setCurrentQ(null); setSelected(null); setNextStep('');
+              }}>
+              ← カードに戻る（読みの丸付け・課題選び）
+            </button>
+          )}
           <button className="reset-btn" onClick={handleReset}>
             もう一度振り返る
           </button>
@@ -2308,69 +2378,27 @@ function App() {
         </div>
       )}
 
-      {/* GK予測画面 */}
-      {phase === 'gk' && (
+      {/* GK予測・ピヴォット認知画面（共通エンジン） */}
+      {(phase === 'gk' || phase === 'pv') && (
         <div className="plan-screen">
-          {gkView.name === 'home' && (
-            <GKHome preds={gkPreds} players={gkPlayers}
-              onStart={() => setGkView({ name: 'record' })}
-              onDelete={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
-              onAddPlayer={(role, name) => setGkPlayers(prev => prev[role].includes(name) ? prev : Object.assign({}, prev, { [role]: [...prev[role], name] }))}
-              onRemovePlayer={(role, name) => {
-                // 削除した選手が連続入力の直前選択に残っていたらクリア（Task 3レビュー指摘）
-                if (role === 'keepers' && gkLastSetup.current.gk === name) delete gkLastSetup.current.gk;
-                if (role === 'shooters' && gkLastSetup.current.shooter === name) delete gkLastSetup.current.shooter;
-                setGkPlayers(prev => Object.assign({}, prev, { [role]: prev[role].filter(n => n !== name) }));
-              }}
-              onExport={() => tbCopy(gkExportWeekText(gkPreds), setGkToast)}
-              onBackHub={handleBackToHub} />
-          )}
-          {gkView.name === 'record' && (
-            <GKRecordWizard players={gkPlayers} initial={gkLastSetup.current}
-              onUndo={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
-              onSave={(rec) => {
-                if (navigator.vibrate) navigator.vibrate(30);
-                gkLastSetup.current = { gk: rec.gk, situation: rec.situation, shooter: rec.shooter };
-                setGkPreds(prev => [rec, ...prev]);
-                setGkToast(rec.hit ? '記録した：○的中' : '記録した：×不的中');
-                setTimeout(() => setGkToast(null), 1800);
-              }}
-              onExit={() => setGkView({ name: 'home' })} />
-          )}
-          {gkToast && <div className="tb-toast">{gkToast}</div>}
+          <RecordModule
+            key={phase}
+            def={RECORD_MODULES[phase]}
+            records={phase === 'gk' ? gkPreds : pvRecords}
+            setRecords={phase === 'gk' ? setGkPreds : setPvRecords}
+            players={phase === 'gk' ? gkPlayers : pvPlayers}
+            setPlayers={phase === 'gk' ? setGkPlayers : setPvPlayers}
+            view={phase === 'gk' ? gkView : pvView}
+            setView={phase === 'gk' ? setGkView : setPvView}
+            lastSetupRef={phase === 'gk' ? gkLastSetup : pvLastSetup}
+            onBackHub={handleBackToHub}
+          />
         </div>
       )}
 
-      {/* ピヴォット認知画面 */}
-      {phase === 'pv' && (
-        <div className="plan-screen">
-          {pvView.name === 'home' && (
-            <PVHome records={pvRecords} players={pvPlayers}
-              onStart={() => setPvView({ name: 'record' })}
-              onDelete={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
-              onAddPlayer={(name) => setPvPlayers(prev => prev.pivots.includes(name) ? prev : { pivots: [...prev.pivots, name] })}
-              onRemovePlayer={(name) => {
-                // 削除した選手が連続入力の直前選択に残っていたらクリア（GKモジュールと同じガード）
-                if (pvLastSetup.current.pivot === name) delete pvLastSetup.current.pivot;
-                setPvPlayers(prev => ({ pivots: prev.pivots.filter(n => n !== name) }));
-              }}
-              onExport={() => tbCopy(pvExportWeekText(pvRecords), setPvToast)}
-              onBackHub={handleBackToHub} />
-          )}
-          {pvView.name === 'record' && (
-            <PVRecordWizard players={pvPlayers} initial={pvLastSetup.current}
-              onUndo={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
-              onSave={(rec) => {
-                if (navigator.vibrate) navigator.vibrate(30);
-                pvLastSetup.current = { pivot: rec.pivot };
-                setPvRecords(prev => [rec, ...prev]);
-                setPvToast(`記録した：${pvResultLabel(rec.result)}`);
-                setTimeout(() => setPvToast(null), 1800);
-              }}
-              onExit={() => setPvView({ name: 'home' })} />
-          )}
-          {pvToast && <div className="tb-toast">{pvToast}</div>}
-        </div>
+      {phase === 'playbook' && (
+        <Playbook cards={matchCards} gkPreds={gkPreds} pvRecords={pvRecords}
+          gkPlayers={gkPlayers} pvPlayers={pvPlayers} onBack={handleBackToHub} />
       )}
 
       {/* ── Bottom Navigation ── */}
@@ -2383,7 +2411,7 @@ function App() {
         const isHub     = phase === 'hub';
         const go = (target) => {
           if (target === 'hub')    { handleBackToHub(); }
-          else if (target === 'reflect') { if (phase === 'result') commitNextStep(); setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
+          else if (target === 'reflect') { if (phase === 'result') commitNextStep(); activeCardIdRef.current = null; setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
           else if (target === 'dict')  { setDictDetail(null); setPhase('dictionary'); }
           else if (target === 'solve') { handleSolveReset(); setPhase('solve'); }
           else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
