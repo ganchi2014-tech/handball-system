@@ -144,12 +144,6 @@ const HUB_MODULES = [
     enabled: true,
   },
   {
-    id: 'solve', cls: 'solve', icon: '🎯', target: '選手・指導者',
-    title: '課題を解決する',
-    desc: '「○○ができない」「わからない」を選ぶ → 辞書からアドバイス＋具体アクション',
-    enabled: true,
-  },
-  {
     id: 'plan', cls: 'plan', icon: '📋', target: '指導者・選手',
     title: '練習を組む',
     desc: 'テーマ×レベル×時間 → 時間配分付き練習プランを生成（コピーして共有）',
@@ -167,7 +161,16 @@ const HUB_MODULES = [
     desc: '第0問（2軸）→ 類型選択 → 予測 → プレー → 事実と結果を照合（バック陣が入力）',
     enabled: true,
   },
+  {
+    id: 'playbook', cls: 'dict', icon: '🗂', target: '選手',
+    title: 'マイ・プレイブック',
+    desc: '振り返り回数・宣言達成率・読み的中率・効いた技 — 自分の記録が1枚で見える',
+    enabled: true,
+  },
 ];
+
+// 振り返り10モードから「逆引きリファレンス」へ降格した3モード（設計書1-5）
+const REFERENCE_MODES = ['janken', 'context', 'gk'];
 
 // ─────────────────────────────────────────────
 // localStorage helpers — version 管理＋安全な JSON 入出力
@@ -175,4 +178,4 @@ const HUB_MODULES = [
 //   データ構造を変える時は上げるのではなく、lsGet 側に旧形式→新形式のマイグレーションを実装すること（破棄禁止）。
 // ─────────────────────────────────────────────
 
-export { FEINT_LEGEND, AXIS_MAP, axisStyle, MODES, getProgress, HUB_MODULES };
+export { FEINT_LEGEND, AXIS_MAP, axisStyle, MODES, getProgress, HUB_MODULES, REFERENCE_MODES };

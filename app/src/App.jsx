@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ALL_TAGS, DICT_FILES, DICT_SECTION_COUNT, GLOSSARY, splitSections } from './lib/dict.js';
 import { renderMarkdown } from './lib/markdown.js';
-import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, axisStyle, getProgress } from './lib/appData.js';
+import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, REFERENCE_MODES, axisStyle, getProgress } from './lib/appData.js';
 import { QUESTIONS, RESULTS, SOLVE_DATA } from './lib/content.js';
 import { DRILL_THEMES, DURATIONS, LEVELS, POSITIONS, POSITION_RECOMMENDED, buildPlan } from './lib/plan.js';
 import { CHAT_SUGGESTIONS, buildChatReply } from './lib/chat.js';
@@ -13,6 +13,7 @@ import { gkCalcTendencies, gkExportWeekText } from './lib/gk.js';
 import { pvExportWeekText, pvResultLabel } from './lib/pv.js';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards } from './lib/loop.js';
+import { LoopHome } from './components/loop.jsx';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
 import { GKHome, GKRecordWizard } from './components/gk.jsx';
@@ -810,6 +811,7 @@ function App() {
       setPvView({ name: 'home' });
       setPhase('pv');
     }
+    else if (modId === 'playbook') setPhase('playbook');
   };
 
   // 辞書一覧→詳細遷移時に一覧側のスクロール位置を覚えておく
@@ -913,6 +915,8 @@ function App() {
               {phase === 'gk' && 'GK予測'}
               {phase === 'pv' && 'ピヴォット認知'}
               {phase === 'chat' && '質問する'}
+              {phase === 'yomi' && '読みを宣言する'}
+              {phase === 'card' && '5分振り返り'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
@@ -924,6 +928,8 @@ function App() {
               {phase === 'gk' && 'GK Prediction'}
               {phase === 'pv' && 'Pivot Cognition'}
               {phase === 'chat' && 'Dictionary Chat'}
+              {phase === 'yomi' && 'Yomi Declaration'}
+              {phase === 'card' && 'Match Card'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
           </div>
@@ -982,36 +988,18 @@ function App() {
 
       {/* ハブ画面（最初の入口） */}
       {phase === 'hub' && (
-        <div className="hub-screen animate-in">
-          <div className="hub-hero">
-            <div className="hub-hero-eyebrow">近江兄弟社高校ハンドボール部</div>
-            <div className="hub-title">「わからない」を解決する</div>
-          </div>
-          {/* 前回の宣言の照合（振り返り→次のプレー→照合、のループを閉じる） */}
-          {declaration && (
-            <div className="hub-declare">
-              {declaration.done === true ? (
-                <div className="hub-declare-text">
-                  ✅ 達成した宣言：「{declaration.text}」
-                  <span className="hub-declare-sub">次の振り返りで新しい宣言を書こう</span>
-                </div>
-              ) : (
-                <React.Fragment>
-                  <div className="hub-declare-label">🎯 前回の宣言 — 次のプレーで試すこと</div>
-                  <div className="hub-declare-text">「{declaration.text}」</div>
-                  {!decSnooze && (
-                    <div className="hub-declare-actions">
-                      <button className="hub-declare-btn" onClick={() => answerDeclaration(true)}>✓ できた</button>
-                      <button className="hub-declare-btn ghost" onClick={() => setDecSnooze(true)}>まだこれから</button>
-                    </div>
-                  )}
-                </React.Fragment>
-              )}
-              {reflectHistory.length > 0 && (
-                <div className="hub-declare-count">これまでの振り返り：{reflectHistory.length}回</div>
-              )}
-            </div>
-          )}
+        <LoopHome
+          loopState={loopState}
+          onSetNextMatch={(nm) => setLoopState(prev => ({ ...prev, nextMatch: nm }))}
+          declaration={declaration} decSnooze={decSnooze}
+          onAnswerDeclaration={answerDeclaration} onSnooze={() => setDecSnooze(true)}
+          reflectCount={matchCards.length}
+          onAction={(p) => {
+            if (p === 'predict') setPhase('yomi');
+            else if (p === 'verify') setPhase('card');
+            else { setTbView({ name: 'home' }); setPhase('build'); }
+          }}
+        >
           <div className="hub-cards">
             {HUB_MODULES.map(mod => (
               <button
@@ -1032,6 +1020,14 @@ function App() {
               </button>
             ))}
           </div>
+          <div className="loop-ref-row">
+            <div className="loop-ref-label">📖 リファレンス（逆引き）</div>
+            {REFERENCE_MODES.map(key => (
+              <button key={key} className="loop-ref-btn" onClick={() => handleModeSelect(key)}>
+                {MODES[key].icon} {MODES[key].label}
+              </button>
+            ))}
+          </div>
           <button
             className="help-btn"
             style={{marginTop: 12}}
@@ -1042,6 +1038,13 @@ function App() {
             style={{marginTop: 8}}
             onClick={() => setBackupOpen(true)}
           >💾 データの書き出し / 取り込み</button>
+        </LoopHome>
+      )}
+
+      {(phase === 'yomi' || phase === 'card') && (
+        <div className="plan-screen">
+          <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
+          <div className="tb-q-hint" style={{ marginTop: 12 }}>この画面は Task 4 で実装されます。</div>
         </div>
       )}
 
