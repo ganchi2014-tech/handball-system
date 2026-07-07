@@ -55,6 +55,10 @@ export default defineConfig({
       manifest: false, // 既存のルート manifest.json をそのまま使う（closeBundleでdistへコピー）
       workbox: {
         globPatterns: ['**/*.{js,css,html,png}'],
+        // ⚠ 二層原則（Phase 3）: firebase チャンクは未接続端末では1バイトもロードしない。
+        // プリキャッシュに含めるとコールドスタートでSWが全端末にダウンロードさせてしまうため除外。
+        // （接続を選んだ端末だけが dynamic import で取得し、HTTPキャッシュに乗る）
+        globIgnores: ['**/firebase-*.js'],
         navigateFallback: 'index.html',
         runtimeCaching: [
           {
@@ -72,5 +76,14 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        // firebase を明示名の遅延チャンクに集約（lib/fb.js の dynamic import 経由でのみロード）。
+        // 名前を固定するのは上の globIgnores（SWプリキャッシュ除外）と対にするため。
+        manualChunks(id) {
+          if (id.includes('node_modules/firebase') || id.includes('node_modules/@firebase')) return 'firebase';
+        },
+      },
+    },
   },
 });
