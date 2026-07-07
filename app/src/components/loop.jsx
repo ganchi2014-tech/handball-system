@@ -1,7 +1,7 @@
 // Phase 2: ループホーム。「いまループのどこにいるか」＋位相別の主ボタン1つ。
 // 他モジュールは下段に格納（設計書1-2）。試合日は選手自身が設定・未設定でも全機能が動く。
 import React, { useState } from 'react';
-import { loopPhaseInfo } from '../lib/loop.js';
+import { loopPhaseInfo, newMatchCard, YOMI_TARGETS, CARD_KINDS, kindLabel } from '../lib/loop.js';
 
 const PHASE_META = {
   predict:  { icon: '🔮', label: '予測位相',  main: '🔮 読みを宣言する',   sub: '試合前に相手DF/GKの読みを3タップで宣言' },
@@ -104,4 +104,116 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, onAnswerD
   );
 }
 
-export { LoopHome, MatchDateEditor };
+// 予測位相：試合前の読み宣言（3タップ起点・最大3件）。カードを作る/再開して yomi を書く。
+function YomiWizard({ card, onSave, onExit }) {
+  const [yomi, setYomi] = useState(card.yomi.length ? card.yomi : [{ target: null, claim: '', hit: null }]);
+  const setAt = (i, patch) => setYomi(prev => prev.map((y, j) => j === i ? { ...y, ...patch } : y));
+  const valid = yomi.filter(y => y.target && y.claim.trim());
+  return (
+    <div className="plan-screen">
+      <button className="dict-back" onClick={onExit}>← 戻る（ホーム）</button>
+      <div className="tb-q-label">🔮 読みを宣言する ─ 試合の前に</div>
+      <div className="tb-q-text">{card.opponent ? `vs ${card.opponent}：` : ''}相手をどう読む？（最大3つ）</div>
+      <div className="tb-q-hint">正解はない。「先に読んだ方が選択肢を持てる」— 試合後に丸付けして自分の読みを育てる。</div>
+      {yomi.map((y, i) => (
+        <div key={i} className="tb-card" style={{ marginTop: 12 }}>
+          <div className="tb-field-label">読み {i + 1} ─ 何についての読み？</div>
+          <div className="plan-themes">
+            {YOMI_TARGETS.map(t => (
+              <button key={t.id} className={`plan-theme-chip ${y.target === t.id ? 'active' : ''}`}
+                onClick={() => setAt(i, { target: t.id })}>{t.label}</button>
+            ))}
+          </div>
+          <div className="tb-field" style={{ marginTop: 8 }}>
+            <input type="text" value={y.claim} onChange={e => setAt(i, { claim: e.target.value })}
+              placeholder={(YOMI_TARGETS.find(t => t.id === y.target) || YOMI_TARGETS[0]).hint} />
+          </div>
+        </div>
+      ))}
+      {yomi.length < 3 && (
+        <button className="tb-ghost-btn" style={{ marginTop: 10 }}
+          onClick={() => setYomi(prev => [...prev, { target: null, claim: '', hit: null }])}>＋ もう1つ読む</button>
+      )}
+      <button className="tb-next-btn" style={{ marginTop: 14 }} disabled={!valid.length}
+        onClick={() => onSave({ ...card, yomi: valid.map(y => ({ ...y, claim: y.claim.trim() })) })}>
+        ✓ 宣言する（{valid.length}件）
+      </button>
+    </div>
+  );
+}
+
+// 検証位相：試合後5分。カード起点(1タップ)→読みの丸付け→4軸振り返り(既存フロー)→宣言。
+function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, onPickIssue, onExit }) {
+  // 再開対象: reflect 未接続の直近カード（読み宣言済みを優先）
+  const pending = cards.find(c => !c.reflect && (c.yomi || []).length) || cards.find(c => !c.reflect);
+  const initial = (resumeCardId && cards.find(c => c.id === resumeCardId)) || pending || null;
+  const [card, setCard] = useState(initial);
+  const save = (c) => { onUpsert(c); setCard(c); };
+  // ストア側が新しければそちらを優先（reflect flow から戻った直後に反映されるように）
+  const live = card && (cards.find(c => c.id === card.id) || card);
+
+  if (!live) return (
+    <div className="plan-screen">
+      <button className="dict-back" onClick={onExit}>← 戻る（ホーム）</button>
+      <div className="tb-q-label">📝 5分振り返り ─ 1試合=1カード</div>
+      <div className="tb-q-text">何を振り返る？</div>
+      <div className="tb-choices" style={{ marginTop: 12 }}>
+        {CARD_KINDS.map(k => (
+          <button key={k.id} className="tb-choice" onClick={() => {
+            save(newMatchCard({ kind: k.id, opponent: nextMatch?.opponent || '' }));
+          }}>
+            <div className="tb-choice-title">{k.label}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const unmarked = (live.yomi || []).filter(y => y.hit === null);
+  return (
+    <div className="plan-screen">
+      <button className="dict-back" onClick={onExit}>← 戻る（ホーム）</button>
+      <div className="tb-q-label">📝 5分振り返り ─ {kindLabel(live.kind)}{live.opponent ? ` vs ${live.opponent}` : ''}（{live.date}）</div>
+
+      {(live.yomi || []).length > 0 && (
+        <div className="tb-card" style={{ marginTop: 10 }}>
+          <div className="tb-card-k">🔮 試合前の読み — 丸付け（事実のみ）</div>
+          {live.yomi.map((y, i) => (
+            <div key={i} className="tb-card-row">
+              <div className="tb-card-v">【{(YOMI_TARGETS.find(t => t.id === y.target) || {}).label}】{y.claim}</div>
+              <div className="gk-result-row" style={{ marginTop: 4 }}>
+                <button className={`gk-result-btn hit ${y.hit === true ? 'selected' : ''}`}
+                  onClick={() => save({ ...live, yomi: live.yomi.map((x, j) => j === i ? { ...x, hit: true } : x) })}>○ 当たった</button>
+                <button className={`gk-result-btn miss ${y.hit === false ? 'selected' : ''}`}
+                  onClick={() => save({ ...live, yomi: live.yomi.map((x, j) => j === i ? { ...x, hit: false } : x) })}>× 外れた</button>
+              </div>
+            </div>
+          ))}
+          {unmarked.length > 0 && <div className="tb-q-hint">未丸付け {unmarked.length} 件（わからないものは飛ばしてOK）</div>}
+        </div>
+      )}
+
+      {!live.reflect ? (
+        <button className="tb-next-btn" style={{ marginTop: 14 }} onClick={() => onStartReflect(live)}>
+          🤾 4軸で振り返る →（良かった点・課題・改善案・次の一手）
+        </button>
+      ) : (
+        <React.Fragment>
+          <div className="tb-card" style={{ marginTop: 10 }}>
+            <div className="tb-card-k">✓ 振り返り済み</div>
+            <div className="tb-card-v">{(live.reflect.crumbs || []).join(' › ')}</div>
+            {live.next && <div className="tb-card-v">🎯 宣言：「{live.next}」</div>}
+          </div>
+          <button className="tb-next-btn" style={{ marginTop: 10 }} onClick={() => onPickIssue(live)}>
+            🎯 このカードから課題を1つ選ぶ →（課題解決へ）
+          </button>
+          <button className="tb-ghost-btn" style={{ marginTop: 8 }} onClick={() => onStartReflect(live)}>
+            🤾 もう1プレー振り返る
+          </button>
+        </React.Fragment>
+      )}
+    </div>
+  );
+}
+
+export { LoopHome, MatchDateEditor, YomiWizard, CardFlow };

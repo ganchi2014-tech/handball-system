@@ -12,8 +12,8 @@ import { TB_CONSTRAINTS, tbExportAllText } from './lib/tb.js';
 import { gkCalcTendencies, gkExportWeekText } from './lib/gk.js';
 import { pvExportWeekText, pvResultLabel } from './lib/pv.js';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
-import { migrateReflectToCards } from './lib/loop.js';
-import { LoopHome } from './components/loop.jsx';
+import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
+import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
 import { GKHome, GKRecordWizard } from './components/gk.jsx';
@@ -35,6 +35,7 @@ function App() {
   const [declaration, setDeclaration] = useState(() => lsGet('next-declaration') || null);
   const [decSnooze, setDecSnooze] = useState(false); // 「まだこれから」＝このセッション中だけボタンを畳む
   const reflectIdRef = useRef(null);
+  const activeCardIdRef = useRef(null);
   const recordReflectStart = (rid, hist) => {
     const entry = {
       id: 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
@@ -48,6 +49,12 @@ function App() {
       lsSet('reflect-history', list);
       return list;
     });
+    // Phase 2: カード起点の振り返りなら、カードにも接続する（reflect-history と二重保存＝旧経路互換）
+    if (activeCardIdRef.current) {
+      const cid = activeCardIdRef.current;
+      setMatchCards(prev => prev.map(c => c.id === cid
+        ? { ...c, reflect: { mode, resultId: rid, crumbs: (hist || []).map(h => h.text) } } : c));
+    }
   };
   const commitNextStep = (text) => {
     const t = (text != null ? text : nextStep).trim();
@@ -61,6 +68,10 @@ function App() {
       const dec = { text: t, ts: Date.now(), mode, done: null };
       setDeclaration(dec);
       lsSet('next-declaration', dec);
+      if (activeCardIdRef.current) {
+        const cid = activeCardIdRef.current;
+        setMatchCards(prev => prev.map(c => c.id === cid ? { ...c, next: t } : c));
+      }
     }
   };
   const answerDeclaration = (done) => {
@@ -650,6 +661,7 @@ function App() {
     setDictDetail(null);
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null);
     setPlanResult(null);
+    activeCardIdRef.current = null;
   };
 
   // Phase 2B：テーマON/OFF切替
@@ -1041,11 +1053,28 @@ function App() {
         </LoopHome>
       )}
 
-      {(phase === 'yomi' || phase === 'card') && (
-        <div className="plan-screen">
-          <button className="dict-back" onClick={handleBackToHub}>← 戻る（ホーム）</button>
-          <div className="tb-q-hint" style={{ marginTop: 12 }}>この画面は Task 4 で実装されます。</div>
-        </div>
+      {phase === 'yomi' && (() => {
+        const targetDate = loopState.nextMatch?.date;
+        const existing = matchCards.find(c => !c.reflect && targetDate && c.date === targetDate);
+        const target = existing
+          || newMatchCard({ date: targetDate, kind: loopState.nextMatch ? 'match' : 'scrimmage', opponent: loopState.nextMatch?.opponent });
+        return <YomiWizard card={target} onExit={handleBackToHub}
+          onSave={(c) => { upsertCard(c); setPhase('hub'); }} />;
+      })()}
+
+      {phase === 'card' && (
+        <CardFlow cards={matchCards} nextMatch={loopState.nextMatch}
+          resumeCardId={activeCardIdRef.current}
+          onUpsert={upsertCard} onExit={handleBackToHub}
+          onStartReflect={(c) => { activeCardIdRef.current = c.id; setPhase('start'); }}
+          onPickIssue={(c) => {
+            const sym = c.reflect && RESULT_TO_SYMPTOM[c.reflect.resultId];
+            const mm = c.reflect && MODE_TO_SOLVE[c.reflect.mode];
+            if (sym) { setSolveRole(sym.role); setSolveCategory(sym.category); setSolveSymptom(sym.symptom); }
+            else if (mm) { setSolveRole(mm.role); setSolveCategory(mm.category); setSolveSymptom(null); }
+            else { handleSolveReset(); }
+            setPhase('solve');
+          }} />
       )}
 
       {/* オンボーディングモーダル */}
@@ -2279,6 +2308,16 @@ function App() {
               </button>
             );
           })()}
+          {activeCardIdRef.current && (
+            <button className="reset-btn" style={{ borderColor: '#22d3ee', color: '#67e8f9', marginBottom: 8 }}
+              onClick={() => {
+                commitNextStep();
+                setPhase('card'); setMode(null); setHistory([]);
+                setResultId(null); setCurrentQ(null); setSelected(null); setNextStep('');
+              }}>
+              ← カードに戻る（読みの丸付け・課題選び）
+            </button>
+          )}
           <button className="reset-btn" onClick={handleReset}>
             もう一度振り返る
           </button>
