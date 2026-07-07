@@ -4,7 +4,10 @@
 本番: https://ganchi2014-tech.github.io/handball-system/ ／ リポジトリ: https://github.com/ganchi2014-tech/handball-system
 
 > **全面刷新 2026-07-07（Phase 1）**。旧CLAUDE.mdには「4軸未実装」等の実装と乖離した記載があり削除した。
-> 全体計画は `C:\Users\togan1080\HANDBALL_LAB_羽化設計図_2026-07-06.md`（Critical/ロードマップ/YOMI LOOP構想）を必読。
+> 全体計画は `C:\Users\togan1080\OneDrive\Claude\HANDBALL_LAB_羽化設計図_2026-07-06.md`（Critical/ロードマップ/YOMI LOOP構想）と
+> `HANDBALL_LAB_Phase2-3_設計書.md`（同フォルダ）を必読。
+> **Phase 2 YOMI LOOP 実装済 2026-07-07（ブランチ phase2-loop）**: ループホーム／1試合=1カード（match-cards）／
+> 読み宣言→丸付け／SOLVE吸収／GK・PV共通エンジン化／マイ・プレイブック。実装計画: docs/superpowers/plans/2026-07-07-phase2-yomi-loop.md
 > **切替完了 2026-07-07**: 旧・単一index.html（Babel CDN版）は撤去済み。本番はViteビルドが直接配信されている。
 > 問題発生時のロールバックは `git revert`（旧アプリ復元は切替コミットのrevertで可能）。
 
@@ -12,6 +15,8 @@
 
 1. **顧問向け集計ビューは作らない**。記録は選手自身のもの（自己組織化の優先）。データ接続は選手の保全・マイ統計のみ。
 2. **選手データ無傷**: localStorageキーは `hb_v1_*` を維持。`STORAGE_VERSION` を上げると旧データ破棄＝実質全損なので上げない。
+   Phase 2追加キー: `match-cards`（1試合=1カード。reflect-history は破棄せず初回起動時に冪等変換コピー）と `loop-state`（次の試合日・端末設定）。
+   どちらもバックアップの書き出し（全キー機械列挙）・取り込み（ID単位マージ）対象。
 3. **本番URLは不変**。選手のホーム画面アイコン・ブックマークを壊さない。
 
 ## アーキテクチャ（Phase 1 以降）
@@ -21,11 +26,14 @@ app/                     ← アプリ本体（Vite + React 18）
   index.html               エントリ
   src/
     main.jsx               起動＋ErrorBoundary＋旧世代キャッシュ掃除
-    App.jsx                画面全体（Phase 2でループホーム化・分割予定）
+    App.jsx                画面全体の配線（ホーム=ループホーム。Phase 2でハブ画面を置換済み）
     styles.css             全スタイル
     data/*.json            ★コンテンツ正本（GLOSSARY/SOLVE_DATA/DRILL_THEMES/QUESTIONS/RESULTS…13ファイル）
     lib/                   純ロジック（テスト対象）: dict/chat/markdown/plan/storage/gk/pv/tb/backup/content/appData
-    components/            GText / tb / gk / pv
+                           ＋ loop.js（位相判定・match-cards・変換コピー・cardStats）
+                           ＋ recordModules.jsx（GK/PV記録モジュールの宣言的スキーマ＋集計カード）
+    components/            GText / tb / record（GK・PV共通エンジン。旧 gk.jsx/pv.jsx は削除済み）
+                           ＋ loop（LoopHome/YomiWizard/CardFlow）／ playbook
 dictionary/*.md          ← 辞書33ファイル（母データ・唯一の正本。ビルドで dist へ複製）
 tests/                   ← Vitest（回帰・集計・コンテンツ整合性監査）
 .github/workflows/ci.yml ← テスト→ビルド→Pagesデプロイ（dist直接配信）
@@ -62,6 +70,7 @@ npm run preview   # ビルド産物の確認
 
 ## テストの読み方
 
+- `tests/loop.test.js` — ループ位相（D-3/D-2〜D-0/+1〜+2/+3の境界）・カード生成・reflect-history変換コピーの冪等性・cardStats。
 - `tests/chat-regression.test.js` — 回帰14問（「肩が痛い」→file25等）。チャットロジックを触ったら必ず見る。
 - `tests/aggregation.test.js` — GK/PV/TB集計とmergeBackupの期待値。**選手に見せる数字**の退行検知。
 - `tests/content-integrity.test.js` — 旧 .scripts/audit_*.js のJSON移植＋拡大版。全 related/ドリル参照の辞書解決、
@@ -83,8 +92,10 @@ npm run preview   # ビルド産物の確認
 
 ## 次のフェーズ（羽化設計図 §4）
 
-- **Phase 2 ループ化**: ループホーム／1試合=1カード（4軸統合・10モード降格）／SOLVE・課題ビルダー吸収／記録モジュールのスキーマ駆動共通化（削除量≧追加量が検収条件）
-- **Phase 3 Firebase**: `handball-mental` RTDBの `/roster` 購読で名簿手入力廃止→ `/lab/...` 同期→ mental マイ統計に的中率タイル
-- **Phase 4 展開**: 90分コンパイラ／マイ・プレイブック／読みの回覧（選手発意のみ）
+- ~~Phase 2 ループ化~~ ✅ **実装済 2026-07-07**（ブランチ phase2-loop。検証フロー実測14タップ／GK・PV共通エンジン化は-534/+517行。
+  ループ新設分を含む全体では +1053/-576 で「削除量≧追加量」は未達＝検収記録参照）
+- **Phase 3 Firebase**: `handball-mental` RTDBの `/roster` 購読で名簿手入力廃止→ `/lab/...` 同期→ mental マイ統計に的中率タイル。
+  ⚠ `/rosterToUid` へ書き込み絶対禁止・顧問不関与など、着手前に `HANDBALL_LAB_Phase2-3_設計書.md` §2 必読
+- **Phase 4 展開**: 90分コンパイラ／プレイブック拡張（自分の辞書転記の判断）／読みの回覧（選手発意のみ）
 
 **mainへのpush・本番切替は必ずユーザー（オーナー）の承認を得ること。**
