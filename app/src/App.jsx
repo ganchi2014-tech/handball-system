@@ -9,15 +9,14 @@ import { DRILL_THEMES, DURATIONS, LEVELS, POSITIONS, POSITION_RECOMMENDED, build
 import { CHAT_SUGGESTIONS, buildChatReply } from './lib/chat.js';
 import { lsGet, lsSet } from './lib/storage.js';
 import { TB_CONSTRAINTS, tbExportAllText } from './lib/tb.js';
-import { gkCalcTendencies, gkExportWeekText } from './lib/gk.js';
-import { pvExportWeekText, pvResultLabel } from './lib/pv.js';
+import { gkCalcTendencies } from './lib/gk.js';
+import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
-import { GKHome, GKRecordWizard } from './components/gk.jsx';
-import { PVHome, PVRecordWizard } from './components/pv.jsx';
+import { RecordModule } from './components/record.jsx';
 
 function App() {
   const [phase, setPhase] = useState('hub');
@@ -167,7 +166,6 @@ function App() {
   const [gkPreds, setGkPreds] = useState(() => lsGet('gk_predictions') || []);
   const [gkPlayers, setGkPlayers] = useState(() => lsGet('gk_players') || { keepers: [], shooters: [] });
   const [gkView, setGkView] = useState({ name: 'home' }); // home | record
-  const [gkToast, setGkToast] = useState(null);
   const gkLastSetup = useRef({}); // 連続入力用に直前のGK・状況・シューターを保持
   useEffect(() => {
     lsSet('gk_predictions', gkPreds);
@@ -178,7 +176,6 @@ function App() {
   const [pvRecords, setPvRecords] = useState(() => lsGet('pv_records') || []);
   const [pvPlayers, setPvPlayers] = useState(() => lsGet('pv_players') || { pivots: [] });
   const [pvView, setPvView] = useState({ name: 'home' }); // home | record
-  const [pvToast, setPvToast] = useState(null);
   const pvLastSetup = useRef({}); // 連続入力用に直前のピヴォットを保持
   useEffect(() => { lsSet('pv_records', pvRecords); }, [pvRecords]);
   useEffect(() => { lsSet('pv_players', pvPlayers); }, [pvPlayers]);
@@ -2378,68 +2375,20 @@ function App() {
         </div>
       )}
 
-      {/* GK予測画面 */}
-      {phase === 'gk' && (
+      {/* GK予測・ピヴォット認知画面（共通エンジン） */}
+      {(phase === 'gk' || phase === 'pv') && (
         <div className="plan-screen">
-          {gkView.name === 'home' && (
-            <GKHome preds={gkPreds} players={gkPlayers}
-              onStart={() => setGkView({ name: 'record' })}
-              onDelete={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
-              onAddPlayer={(role, name) => setGkPlayers(prev => prev[role].includes(name) ? prev : Object.assign({}, prev, { [role]: [...prev[role], name] }))}
-              onRemovePlayer={(role, name) => {
-                // 削除した選手が連続入力の直前選択に残っていたらクリア（Task 3レビュー指摘）
-                if (role === 'keepers' && gkLastSetup.current.gk === name) delete gkLastSetup.current.gk;
-                if (role === 'shooters' && gkLastSetup.current.shooter === name) delete gkLastSetup.current.shooter;
-                setGkPlayers(prev => Object.assign({}, prev, { [role]: prev[role].filter(n => n !== name) }));
-              }}
-              onExport={() => tbCopy(gkExportWeekText(gkPreds), setGkToast)}
-              onBackHub={handleBackToHub} />
-          )}
-          {gkView.name === 'record' && (
-            <GKRecordWizard players={gkPlayers} initial={gkLastSetup.current}
-              onUndo={(id) => setGkPreds(prev => prev.filter(p => p.id !== id))}
-              onSave={(rec) => {
-                if (navigator.vibrate) navigator.vibrate(30);
-                gkLastSetup.current = { gk: rec.gk, situation: rec.situation, shooter: rec.shooter };
-                setGkPreds(prev => [rec, ...prev]);
-                setGkToast(rec.hit ? '記録した：○的中' : '記録した：×不的中');
-                setTimeout(() => setGkToast(null), 1800);
-              }}
-              onExit={() => setGkView({ name: 'home' })} />
-          )}
-          {gkToast && <div className="tb-toast">{gkToast}</div>}
-        </div>
-      )}
-
-      {/* ピヴォット認知画面 */}
-      {phase === 'pv' && (
-        <div className="plan-screen">
-          {pvView.name === 'home' && (
-            <PVHome records={pvRecords} players={pvPlayers}
-              onStart={() => setPvView({ name: 'record' })}
-              onDelete={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
-              onAddPlayer={(name) => setPvPlayers(prev => prev.pivots.includes(name) ? prev : { pivots: [...prev.pivots, name] })}
-              onRemovePlayer={(name) => {
-                // 削除した選手が連続入力の直前選択に残っていたらクリア（GKモジュールと同じガード）
-                if (pvLastSetup.current.pivot === name) delete pvLastSetup.current.pivot;
-                setPvPlayers(prev => ({ pivots: prev.pivots.filter(n => n !== name) }));
-              }}
-              onExport={() => tbCopy(pvExportWeekText(pvRecords), setPvToast)}
-              onBackHub={handleBackToHub} />
-          )}
-          {pvView.name === 'record' && (
-            <PVRecordWizard players={pvPlayers} initial={pvLastSetup.current}
-              onUndo={(id) => setPvRecords(prev => prev.filter(r => r.id !== id))}
-              onSave={(rec) => {
-                if (navigator.vibrate) navigator.vibrate(30);
-                pvLastSetup.current = { pivot: rec.pivot };
-                setPvRecords(prev => [rec, ...prev]);
-                setPvToast(`記録した：${pvResultLabel(rec.result)}`);
-                setTimeout(() => setPvToast(null), 1800);
-              }}
-              onExit={() => setPvView({ name: 'home' })} />
-          )}
-          {pvToast && <div className="tb-toast">{pvToast}</div>}
+          <RecordModule
+            def={RECORD_MODULES[phase]}
+            records={phase === 'gk' ? gkPreds : pvRecords}
+            setRecords={phase === 'gk' ? setGkPreds : setPvRecords}
+            players={phase === 'gk' ? gkPlayers : pvPlayers}
+            setPlayers={phase === 'gk' ? setGkPlayers : setPvPlayers}
+            view={phase === 'gk' ? gkView : pvView}
+            setView={phase === 'gk' ? setGkView : setPvView}
+            lastSetupRef={phase === 'gk' ? gkLastSetup : pvLastSetup}
+            onBackHub={handleBackToHub}
+          />
         </div>
       )}
 
