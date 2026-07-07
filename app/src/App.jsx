@@ -13,11 +13,39 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbQueueAdd, fbRosterToPlayers } from './lib/fb.js';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
+// パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
+const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
 import { Playbook } from './components/playbook.jsx';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
 import { RecordModule } from './components/record.jsx';
+
+// ── Phase 3: 変更検知 push（1ノードにつき1フック）──
+// 新規ID or オブジェクト参照が変わった記録（カード編集を含む）だけを fbPush する。
+// ・マウント初回はスキップ（prevRef を初期配列で初期化 → 起動時の整合は fbFullSync が担う）
+// ・削除は同期しない（リモート側は保持＝誤削除からの復元手段を残すデータ保全方針）
+// ・未接続(enabled=0)なら何もしない。接続設定済みでもオフライン/エラー中はキューへ。
+function useFbPushOnChange(node, arr, enabled, statusRef, addToQueue) {
+  const prevRef = useRef(arr);
+  useEffect(() => {
+    const prev = prevRef.current;
+    prevRef.current = arr;
+    if (prev === arr || !enabled) return;
+    const prevById = new Map((Array.isArray(prev) ? prev : []).map(r => [r && r.id, r]));
+    const changed = (Array.isArray(arr) ? arr : []).filter(r => r && r.id && prevById.get(r.id) !== r);
+    if (!changed.length) return;
+    const st = statusRef.current;
+    for (const rec of changed) {
+      if (st === 'on' || st === 'connecting') {
+        fbPush(node, rec).catch(() => addToQueue(node, rec.id));
+      } else {
+        addToQueue(node, rec.id);
+      }
+    }
+  }, [arr, enabled]);
+}
 
 function App() {
   const [phase, setPhase] = useState('hub');
@@ -221,6 +249,138 @@ function App() {
       if (i >= 0) { const next = [...prev]; next[i] = t; return next; }
       return [t, ...prev];
     });
+  };
+
+  // ── Phase 3: チームと繋ぐ（fb-link.enabled のときだけ fb.js が firebase をロードする）──
+  const [fbLink, setFbLink] = useState(() => lsGet('fb-link') || { enabled: 0, rosterId: null, rosterName: null, mismatch: 0 });
+  const [fbQueue, setFbQueue] = useState(() => lsGet('fb-queue') || []);
+  const [fbRoster, setFbRoster] = useState(() => lsGet('fb-roster-cache') || []);
+  const [fbNameMap, setFbNameMap] = useState(() => lsGet('fb-name-map') || {});
+  const [fbStatus, setFbStatus] = useState('off'); // off | connecting | on | error
+  const [fbNotice, setFbNotice] = useState(null);  // none | mismatch | mine | checkfail（ConnectPanel の案内）
+  const [connectOpen, setConnectOpen] = useState(false);
+  useEffect(() => { lsSet('fb-link', fbLink); }, [fbLink]);
+  useEffect(() => { lsSet('fb-queue', fbQueue); }, [fbQueue]);
+  useEffect(() => { lsSet('fb-name-map', fbNameMap); }, [fbNameMap]);
+  const fbEnabled = !!fbLink.enabled;
+  // 最新値をイベントハンドラ/非同期処理から参照するための ref 群
+  const fbStatusRef = useRef(fbStatus); fbStatusRef.current = fbStatus;
+  const fbLinkRef = useRef(fbLink); fbLinkRef.current = fbLink;
+  const fbQueueRef = useRef(fbQueue); fbQueueRef.current = fbQueue;
+  const fbDataRef = useRef({});
+  fbDataRef.current = { 'match-cards': matchCards, 'gk_predictions': gkPreds, 'pv_records': pvRecords, 'tb-tasks': tbTasks };
+  const rosterUnsubRef = useRef(null);
+  const resolveRecord = (node, id) => {
+    const def = FB_NODES.find(n => n.node === node);
+    const arr = def ? (fbDataRef.current[def.lsKey] || []) : [];
+    return arr.find(r => r && r.id === id) || null;
+  };
+  const addToQueue = (node, id) => setFbQueue(q => fbQueueAdd(q, node, id));
+  // キュー再送。snapshot に無い（送信中に積まれた）エントリは残す。残キュー配列を返す（null=送るものなし）
+  const flushQueueNow = async () => {
+    const snapshot = fbQueueRef.current;
+    if (!snapshot.length) return null;
+    const remaining = await fbFlushQueue(snapshot, resolveRecord);
+    setFbQueue(prev => {
+      const key = (e) => e.node + '|' + e.id;
+      const snapKeys = new Set(snapshot.map(key));
+      const newly = prev.filter(e => !snapKeys.has(key(e)));
+      return fbQueueAdd([...remaining, ...newly]);
+    });
+    return remaining;
+  };
+  // 接続エフェクト: enabled=1 になったとき（起動時に既に1なら初回マウントでも）実行。
+  // 接続失敗は非致命 — アプリはローカルで動き続け、記録はキューに積まれる。
+  useEffect(() => {
+    if (!fbEnabled) { setFbStatus('off'); return; }
+    let cancelled = false;
+    (async () => {
+      setFbStatus('connecting');
+      try {
+        await fbConnect(); // 匿名サインイン（多重呼び出し安全）
+      } catch (e) {
+        if (!cancelled) setFbStatus('error');
+        return;
+      }
+      // 名簿購読は /lab と独立（auth があれば read 可）— /lab 同期が失敗しても名簿は出す
+      try {
+        const unsub = await fbSubscribeRoster((r) => { setFbRoster(r); lsSet('fb-roster-cache', r); });
+        if (cancelled) { unsub(); return; }
+        rosterUnsubRef.current = unsub;
+      } catch (e) { /* 非致命: fb-roster-cache で表示継続 */ }
+      try {
+        const { failed } = await fbFullSync(fbDataRef.current, (lsKey, merged) => {
+          const byTsDesc = (a, b) => (b.ts || 0) - (a.ts || 0);
+          if (lsKey === 'match-cards') setMatchCards(merged.slice().sort(byTsDesc).slice(0, 300));
+          else if (lsKey === 'gk_predictions') setGkPreds(merged.slice().sort(byTsDesc));
+          else if (lsKey === 'pv_records') setPvRecords(merged.slice().sort(byTsDesc));
+          else if (lsKey === 'tb-tasks') setTbTasks(merged); // 順序維持（ts降順の不変条件なし）
+        });
+        let queue = fbQueueRef.current;
+        for (const f of failed) queue = fbQueueAdd(queue, f.node, f.id);
+        const remaining = await fbFlushQueue(queue, resolveRecord);
+        if (cancelled) return;
+        setFbQueue(prev => {
+          const key = (e) => e.node + '|' + e.id;
+          const snapKeys = new Set(queue.map(key));
+          const newly = prev.filter(e => !snapKeys.has(key(e)));
+          return fbQueueAdd([...remaining, ...newly]);
+        });
+        setFbStatus('on');
+      } catch (e) {
+        if (!cancelled) setFbStatus('error'); // 例: /lab ルール未デプロイ → PERMISSION_DENIED。ローカルは無傷
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (rosterUnsubRef.current) { rosterUnsubRef.current(); rosterUnsubRef.current = null; }
+    };
+  }, [fbEnabled]);
+  // オンライン復帰 → 未送信キューを自動送信
+  useEffect(() => {
+    const onOnline = () => {
+      if (!fbLinkRef.current.enabled || !fbUid()) return;
+      flushQueueNow().then((remaining) => {
+        // 全件送信できたときだけ error → on に回復（送信失敗が続くなら error のまま）
+        if (remaining && remaining.length === 0 && fbStatusRef.current === 'error') setFbStatus('on');
+      }).catch(() => {});
+    };
+    window.addEventListener('online', onOnline);
+    return () => window.removeEventListener('online', onOnline);
+  }, []);
+  // 保存経路ごとの push（新規ID・参照変更のみ。削除は同期しない=リモート保持のデータ保全方針）
+  useFbPushOnChange('matchCards', matchCards, fbEnabled, fbStatusRef, addToQueue);
+  useFbPushOnChange('gkPredictions', gkPreds, fbEnabled, fbStatusRef, addToQueue);
+  useFbPushOnChange('pvRecords', pvRecords, fbEnabled, fbStatusRef, addToQueue);
+  useFbPushOnChange('tbTasks', tbTasks, fbEnabled, fbStatusRef, addToQueue);
+  // 名簿 → RecordModule 用選手リスト（手入力リストとの和集合。gk_players/pv_players 自体は書き換えない）
+  const effGkPlayers = useMemo(() => {
+    if (!fbEnabled || !fbRoster.length) return gkPlayers;
+    const rp = fbRosterToPlayers(fbRoster);
+    const u = (a, b) => [...new Set([...(a || []), ...b])];
+    return { keepers: u(gkPlayers.keepers, rp.keepers), shooters: u(gkPlayers.shooters, rp.shooters) };
+  }, [fbEnabled, fbRoster, gkPlayers]);
+  const effPvPlayers = useMemo(() => {
+    if (!fbEnabled || !fbRoster.length) return pvPlayers;
+    const rp = fbRosterToPlayers(fbRoster);
+    return { pivots: [...new Set([...(pvPlayers.pivots || []), ...rp.pivots])] };
+  }, [fbEnabled, fbRoster, pvPlayers]);
+  // 名寄せ対象の手入力名（ConnectPanel に渡す）
+  const fbManualNames = useMemo(
+    () => [...new Set([...(gkPlayers.keepers || []), ...(gkPlayers.shooters || []), ...(pvPlayers.pivots || [])])],
+    [gkPlayers, pvPlayers]);
+  // 名簿タップ: rosterId をローカル保存し /rosterToUid を【読むだけ】で連携状態を判定（書き込みはしない）
+  const handlePickRoster = async (r) => {
+    setFbLink(prev => ({ ...prev, rosterId: r.rosterId, rosterName: r.name }));
+    setFbNotice(null);
+    try {
+      const { linkedUid, mine } = await fbCheckRosterLink(r.rosterId);
+      if (linkedUid == null) setFbNotice('none');
+      else if (mine) { setFbLink(prev => ({ ...prev, mismatch: 0 })); setFbNotice('mine'); }
+      else { setFbLink(prev => ({ ...prev, mismatch: 1 })); setFbNotice('mismatch'); }
+    } catch (e) {
+      setFbNotice('checkfail');
+    }
   };
 
   // 用語集モーダル
@@ -1049,6 +1209,13 @@ function App() {
           <button
             className="help-btn"
             style={{marginTop: 8}}
+            onClick={() => setConnectOpen(true)}
+          >{fbLink.enabled
+            ? `🔗 接続中：${fbLink.rosterName || '名前未選択'}（記録は自動保存）`
+            : '🔗 チームと繋ぐ（記録をクラウドに保存）'}</button>
+          <button
+            className="help-btn"
+            style={{marginTop: 8}}
             onClick={() => setBackupOpen(true)}
           >💾 データの書き出し / 取り込み</button>
         </LoopHome>
@@ -1131,6 +1298,21 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* チームと繋ぐ（Phase 3）モーダル */}
+      {connectOpen && (
+        <React.Suspense fallback={null}>
+        <ConnectPanel
+          fbLink={fbLink} fbStatus={fbStatus} fbRoster={fbRoster} fbQueue={fbQueue}
+          notice={fbNotice} manualNames={fbManualNames} nameMap={fbNameMap}
+          onConnect={() => { setFbNotice(null); setFbLink(prev => ({ ...prev, enabled: 1 })); }}
+          onDisconnect={() => { setFbNotice(null); setFbLink(prev => ({ ...prev, enabled: 0 })); }}
+          onPickRoster={handlePickRoster}
+          onMapName={(name, val) => setFbNameMap(prev => ({ ...prev, [name]: val }))}
+          onClose={() => setConnectOpen(false)}
+        />
+        </React.Suspense>
       )}
 
       {/* 辞書ブラウザ（一覧・検索） */}
@@ -2386,7 +2568,7 @@ function App() {
             def={RECORD_MODULES[phase]}
             records={phase === 'gk' ? gkPreds : pvRecords}
             setRecords={phase === 'gk' ? setGkPreds : setPvRecords}
-            players={phase === 'gk' ? gkPlayers : pvPlayers}
+            players={phase === 'gk' ? effGkPlayers : effPvPlayers}
             setPlayers={phase === 'gk' ? setGkPlayers : setPvPlayers}
             view={phase === 'gk' ? gkView : pvView}
             setView={phase === 'gk' ? setGkView : setPvView}

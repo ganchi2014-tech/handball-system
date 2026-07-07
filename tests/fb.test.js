@@ -2,7 +2,7 @@
 // 接続系は Task 6 の実機検証で担保）。fb.js は firebase を dynamic import しかしないため、
 // この import 自体で firebase チャンクはロードされない＝ネットワーク接続なしで走ることの証明でもある。
 import { describe, it, expect } from 'vitest';
-import { FB_NODES, fbQueueAdd, fbRosterToPlayers, fbUid } from '../app/src/lib/fb.js';
+import { FB_NODES, fbNormalizeRoster, fbQueueAdd, fbRosterDisplayName, fbRosterToPlayers, fbUid } from '../app/src/lib/fb.js';
 
 describe('FB_NODES 対応表', () => {
   it('4ノードが揃っている', () => {
@@ -97,5 +97,47 @@ describe('fbRosterToPlayers（純関数・roster→選手チップ）', () => {
     expect(fbRosterToPlayers([])).toEqual({ keepers: [], shooters: [], pivots: [] });
     expect(fbRosterToPlayers(null)).toEqual({ keepers: [], shooters: [], pivots: [] });
     expect(fbRosterToPlayers(undefined)).toEqual({ keepers: [], shooters: [], pivots: [] });
+  });
+});
+
+describe('fbRosterDisplayName / fbNormalizeRoster（mental 実データ形の正規化）', () => {
+  // 2026-07-07 実測: /roster は {rosterId: {surname, enrollmentYear, isGK, ...}}。
+  // 表示名は mental の rosterDisplayName 互換（学年丸数字＋姓・4月1日始まり年度）。
+  const ref = new Date('2026-07-07'); // 年度=2026 → 入学2026=①, 2025=②, 2024=③
+
+  it('学年丸数字＋姓を生成する（4月始まり年度）', () => {
+    expect(fbRosterDisplayName({ surname: '赤塚', enrollmentYear: 2024 }, ref)).toBe('③赤塚');
+    expect(fbRosterDisplayName({ surname: '山田', enrollmentYear: 2026 }, ref)).toBe('①山田');
+    expect(fbRosterDisplayName({ surname: '田中', enrollmentYear: 2025 }, ref)).toBe('②田中');
+  });
+
+  it('1〜3月は前年が年度（学年が1つ進まない）', () => {
+    expect(fbRosterDisplayName({ surname: '赤塚', enrollmentYear: 2024 }, new Date('2027-02-01'))).toBe('③赤塚');
+  });
+
+  it('enrollmentYear なし → 丸数字なしの姓のみ／name フィールド優先', () => {
+    expect(fbRosterDisplayName({ surname: '無学年' }, ref)).toBe('無学年');
+    expect(fbRosterDisplayName({ name: '直接名', surname: '姓' }, ref)).toBe('直接名');
+  });
+
+  it('オブジェクト形（実データ）: キーが rosterId になり {name,isGK,rosterId} が揃う', () => {
+    const val = {
+      r1: { surname: '赤塚', enrollmentYear: 2024, isGK: true },
+      r2: { surname: '山田', enrollmentYear: 2026 },
+    };
+    expect(fbNormalizeRoster(val, ref)).toEqual([
+      { name: '③赤塚', isGK: true, rosterId: 'r1' },
+      { name: '①山田', isGK: false, rosterId: 'r2' },
+    ]);
+  });
+
+  it('配列形（設計書の想定形）も受ける', () => {
+    const val = [{ name: '山田', isGK: true, rosterId: 'a' }];
+    expect(fbNormalizeRoster(val, ref)).toEqual([{ name: '山田', isGK: true, rosterId: 'a' }]);
+  });
+
+  it('名前が作れないエントリ・null は落とす／null 入力は空配列', () => {
+    expect(fbNormalizeRoster({ r1: { enrollmentYear: 2026 }, r2: null }, ref)).toEqual([]);
+    expect(fbNormalizeRoster(null)).toEqual([]);
   });
 });

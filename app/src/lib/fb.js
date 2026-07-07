@@ -128,13 +128,14 @@ export async function fbFlushQueue(queue, resolveRecord) {
 }
 
 // /roster 購読。cb には {name, isGK, rosterId} の配列を渡す。返り値は解除関数。
+// ⚠ 実データ形（2026-07-07 実測）: mental の /roster は {rosterId: {surname, enrollmentYear, isGK, ...}} の
+//   オブジェクトで、name / rosterId フィールドは持たない（表示名は mental が学年丸数字＋姓で都度計算）。
+//   ここで mental の rosterDisplayName 互換の名前を生成し、キーを rosterId として補う。
 export async function fbSubscribeRoster(cb) {
   if (!uid || !db) throw new Error('fbSubscribeRoster: 未接続です（fbConnect を先に）');
   const { dbMod } = await importFirebase();
   return dbMod.onValue(dbMod.ref(db, 'roster'), (snap) => {
-    const val = snap.val();
-    const arr = Array.isArray(val) ? val : (val && typeof val === 'object' ? Object.values(val) : []);
-    cb(arr.filter(Boolean).map((r) => ({ name: r.name, isGK: !!r.isGK, rosterId: r.rosterId })));
+    cb(fbNormalizeRoster(snap.val()));
   });
 }
 
@@ -148,6 +149,36 @@ export async function fbCheckRosterLink(rosterId) {
 }
 
 // ─── 純関数（firebase 非依存・テスト対象） ───
+
+// mental の Roster Helpers 互換の表示名（学年丸数字①②③＋姓。年度は4月1日始まり）。
+// name フィールドを持つエントリ（将来形・テスト形）はそのまま name を使う。
+export function fbRosterDisplayName(entry, refDate) {
+  if (!entry || typeof entry !== 'object') return '';
+  if (entry.name) return String(entry.name);
+  const d = refDate || new Date();
+  const schoolYear = (d.getMonth() + 1) >= 4 ? d.getFullYear() : d.getFullYear() - 1;
+  const grade = entry.enrollmentYear ? (schoolYear - entry.enrollmentYear + 1) : 0;
+  const sym = ['', '①', '②', '③'][grade] || '';
+  const surname = String(entry.surname || '').trim();
+  return surname ? sym + surname : ''; // 姓が無ければ丸数字だけの空チップを作らない
+}
+
+// /roster スナップショット値 → {name, isGK, rosterId} 配列。
+// オブジェクト形（実データ: キー=rosterId）と配列形（設計書の想定形）の両方を受ける。
+export function fbNormalizeRoster(val, refDate) {
+  if (!val || typeof val !== 'object') return [];
+  const entries = Array.isArray(val)
+    ? val.map((r, i) => [r && r.rosterId != null ? r.rosterId : String(i), r])
+    : Object.entries(val);
+  return entries
+    .map(([rid, r]) => {
+      if (!r || typeof r !== 'object') return null;
+      const name = fbRosterDisplayName(r, refDate);
+      if (!name) return null;
+      return { name, isGK: !!r.isGK, rosterId: r.rosterId != null ? r.rosterId : rid };
+    })
+    .filter(Boolean);
+}
 
 // キューに {node,id} を追加した新配列を返す（node+id で重複除去・順序維持）。
 // 引数1つ（配列のみ）でも呼べる=既存キューの重複除去としても使える。
