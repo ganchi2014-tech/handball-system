@@ -1,0 +1,2340 @@
+{
+  "q1": {
+    "label": "Q1",
+    "mode": "of",
+    "text": "そのプレーでボールを引き出せたか？",
+    "hint": "「引き出す」= 隣が動き始めた瞬間から、隣がプレーし終わるまでの間に、自分がボールをもらえた状態",
+    "choices": [
+      {
+        "label": "もらえた",
+        "next": "q2"
+      },
+      {
+        "label": "もらえなかった",
+        "next": "q1b"
+      }
+    ]
+  },
+  "q1b": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "どのあたりで詰まった感じがある？",
+    "choices": [
+      {
+        "label": "隣がボールを触る前に、自分の動き出しが遅れた",
+        "next": "r_timing"
+      },
+      {
+        "label": "隣がプレーしている最中に、どこに動くか決まらなかった",
+        "next": "r_preset"
+      },
+      {
+        "label": "動いたけど、隣の視野に入れなかった",
+        "next": "r_visibility"
+      },
+      {
+        "label": "どこで止まったかわからない",
+        "next": "r_unknown"
+      }
+    ]
+  },
+  "q2": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "もらったとき、DFとの関係はどちらに近かった？",
+    "choices": [
+      {
+        "label": "クローズ　― DFが詰めていて体の向きが制限されていた",
+        "next": "q2_close"
+      },
+      {
+        "label": "ワイド　― DFとの間に空間があり、次の動作を選べる状態だった",
+        "next": "q2_wide"
+      }
+    ]
+  },
+  "q2_close": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "クローズの状況で、隣のDFはどう動いていた？",
+    "choices": [
+      {
+        "label": "寄せてきていた（守りに来た）",
+        "next": "r_close_pass"
+      },
+      {
+        "label": "パスを警戒して引いた",
+        "next": "r_close_cutin"
+      },
+      {
+        "label": "動きが読めなかった / 見ていなかった",
+        "next": "r_reaction_blind"
+      }
+    ]
+  },
+  "q2_wide": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ワイドの状況で、隣のDFはクロスアタックに来ていたか？",
+    "choices": [
+      {
+        "label": "来ていた",
+        "next": "q3_cross"
+      },
+      {
+        "label": "来ていなかった",
+        "next": "r_wide_normal"
+      },
+      {
+        "label": "わからなかった（見ていなかった）",
+        "next": "r_reaction_blind"
+      }
+    ]
+  },
+  "q3_cross": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "内側に割り込んだとき、自分のマークはどこにいた？",
+    "choices": [
+      {
+        "label": "内側にとどまっていた",
+        "next": "r_cross_pass"
+      },
+      {
+        "label": "クロスアタックDF側に動いていた",
+        "next": "r_cross_cutin"
+      },
+      {
+        "label": "確認できていなかった",
+        "next": "r_reaction_blind"
+      }
+    ]
+  },
+  "q3_reaction": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "アクションの後、何が起きた？",
+    "choices": [
+      {
+        "label": "相手が動いたのを見ていなかった",
+        "next": "r_reaction_blind"
+      },
+      {
+        "label": "見たが次に何をすればいいかわからなかった",
+        "next": "q3_reaction_b"
+      },
+      {
+        "label": "わかったが体が間に合わなかった",
+        "next": "r_kaoyoko"
+      }
+    ]
+  },
+  "q3_reaction_b": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "状況（クローズ/ワイド）は識別できていた？",
+    "choices": [
+      {
+        "label": "クローズかワイドかもわからなかった",
+        "next": "q2"
+      },
+      {
+        "label": "わかったが何を選べばいいかわからなかった",
+        "next": "r_decision"
+      }
+    ]
+  },
+  "qof_top": {
+    "label": "Q1",
+    "mode": "of",
+    "text": "OF振り返り：何について？",
+    "hint": "OFには「判断」だけでなくシュート・突破・フェイント・パス・ポスト連携・コンタクトなど多くの要素がある。今回振り返りたい場面を選ぶ。",
+    "choices": [
+      {
+        "label": "もらい出し・判断（クローズ/ワイドの読み）",
+        "next": "qof_start"
+      },
+      {
+        "label": "シュート結果（入った／止められた／外した）",
+        "next": "qof_shoot_result"
+      },
+      {
+        "label": "1on1・個人突破（ドリブル・カットイン）",
+        "next": "qof_1on1_result"
+      },
+      {
+        "label": "フェイント（DF/GKを動かせたか）",
+        "next": "qof_feint_type"
+      },
+      {
+        "label": "パス・コンビネーション",
+        "next": "qof_pass_result"
+      },
+      {
+        "label": "ポストとの連携",
+        "next": "qof_post_role"
+      },
+      {
+        "label": "コンタクト・勝ち位置（接触・体の使い方）",
+        "next": "qof_contact_result"
+      }
+    ]
+  },
+  "qof_start": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "もらいに動いたとき、DFとの関係は？",
+    "hint": "プレーが起きた瞬間のDFとの位置関係を思い出す。ボールを受けた瞬間（または受けようとした瞬間）のDFとの距離・体の向き。",
+    "choices": [
+      {
+        "label": "クローズ　― DFが詰めていて体の向きが制限されていた",
+        "next": "qof_close_react"
+      },
+      {
+        "label": "ワイド　― DFとの間に空間があり選択肢があった",
+        "next": "qof_wide_react"
+      },
+      {
+        "label": "ボールをもらえなかった",
+        "next": "qof_noball"
+      }
+    ]
+  },
+  "qof_shoot_result": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "シュート結果は？",
+    "choices": [
+      {
+        "label": "決まった（得点）",
+        "next": "qof_shoot_good_how"
+      },
+      {
+        "label": "GKに止められた",
+        "next": "qof_shoot_gk_how"
+      },
+      {
+        "label": "DFにブロックされた",
+        "next": "qof_shoot_block"
+      },
+      {
+        "label": "枠を外した／ポストに当たった",
+        "next": "r_of_shoot_off"
+      }
+    ]
+  },
+  "qof_shoot_good_how": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "決めた要因は？",
+    "choices": [
+      {
+        "label": "コースが完璧だった（GKが反応できない場所）",
+        "next": "r_of_shoot_good_course"
+      },
+      {
+        "label": "早打ち（GKが動く前に放った）",
+        "next": "r_of_shoot_good_early"
+      },
+      {
+        "label": "バックハンドフェイク／角度変化",
+        "next": "r_of_shoot_good_fake"
+      },
+      {
+        "label": "ジャンプの高さでGKを越えた",
+        "next": "r_of_shoot_good_jump"
+      },
+      {
+        "label": "ルーズボール／リバウンドを詰めた",
+        "next": "r_of_shoot_good_rebound"
+      },
+      {
+        "label": "🎯 シュートの種類で振り返る（10種から選択）",
+        "next": "qof_shoot_type"
+      }
+    ]
+  },
+  "qof_shoot_type": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "どのシュート種類で決めた？",
+    "choices": [
+      {
+        "label": "ループシュート（GKの上を山なり越え）",
+        "next": "r_of_shoot_good_loop"
+      },
+      {
+        "label": "フォールシュート（接触下で倒れ込み）",
+        "next": "r_of_shoot_good_fall"
+      },
+      {
+        "label": "ダイブシュート（6m内側へ体投げ）",
+        "next": "r_of_shoot_good_dive"
+      },
+      {
+        "label": "レグシュート（股抜き・奇襲）",
+        "next": "r_of_shoot_good_leg"
+      },
+      {
+        "label": "サイドシュート（極端角度から）",
+        "next": "r_of_shoot_good_side"
+      },
+      {
+        "label": "立ち打ち（ノーステップ・外角フリー）",
+        "next": "r_of_shoot_good_stand"
+      },
+      {
+        "label": "ドリブルシュート（近距離で加速）",
+        "next": "r_of_shoot_good_dribble"
+      }
+    ]
+  },
+  "qof_shoot_gk_how": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "GKに止められた状況は？",
+    "choices": [
+      {
+        "label": "先読み型GKに動かれて塞がれた",
+        "next": "r_of_shoot_gk_anticip"
+      },
+      {
+        "label": "コース絞り型GKが中央で止めた",
+        "next": "r_of_shoot_gk_position"
+      },
+      {
+        "label": "GKに前進されてアングル縮小",
+        "next": "r_of_shoot_gk_stepout"
+      },
+      {
+        "label": "自分のフォームが崩れた",
+        "next": "r_of_shoot_gk_form"
+      }
+    ]
+  },
+  "qof_shoot_block": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ブロックされた状況は？",
+    "choices": [
+      {
+        "label": "DFが正面でブロック（ヘラウスリュッケン（前飛び出し））",
+        "next": "r_of_shoot_block_front"
+      },
+      {
+        "label": "DFの腕が伸びてきた",
+        "next": "r_of_shoot_block_arm"
+      },
+      {
+        "label": "シュートコースを完全に塞がれた",
+        "next": "r_of_shoot_block_full"
+      }
+    ]
+  },
+  "qof_1on1_result": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "1on1の結果は？",
+    "choices": [
+      {
+        "label": "抜けてシュートまでいった",
+        "next": "qof_1on1_good_how"
+      },
+      {
+        "label": "抜けたが次の選択肢で詰まった",
+        "next": "r_of_1on1_partial"
+      },
+      {
+        "label": "DFに止められた",
+        "next": "qof_1on1_miss_why"
+      },
+      {
+        "label": "ファウルもらえた（フリースロー獲得）",
+        "next": "r_of_1on1_foul"
+      }
+    ]
+  },
+  "qof_1on1_good_how": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "抜けた決め手は？",
+    "choices": [
+      {
+        "label": "スピード勝負で抜いた",
+        "next": "r_of_1on1_good_speed"
+      },
+      {
+        "label": "フェイントで重心を崩した",
+        "next": "r_of_1on1_good_feint"
+      },
+      {
+        "label": "コンタクト（山側/谷側）で押し勝った",
+        "next": "r_of_1on1_good_contact"
+      },
+      {
+        "label": "スクリーンを使った",
+        "next": "r_of_1on1_good_screen"
+      }
+    ]
+  },
+  "qof_1on1_miss_why": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "止められた原因は？",
+    "choices": [
+      {
+        "label": "DFの方が速かった",
+        "next": "r_of_1on1_miss_speed"
+      },
+      {
+        "label": "フェイントが効かなかった",
+        "next": "r_of_1on1_miss_feint"
+      },
+      {
+        "label": "体勢を崩されて踏み込めなかった",
+        "next": "r_of_1on1_miss_contact"
+      },
+      {
+        "label": "事前の準備（勝ち位置）が取れていなかった",
+        "next": "r_of_1on1_miss_position"
+      }
+    ]
+  },
+  "qof_feint_type": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "どのフェイントを使った？（02_individual.md 7種）",
+    "choices": [
+      {
+        "label": "①廻旋フェイント（腕の回転でDFを外す）",
+        "next": "qof_feint_rotate_r"
+      },
+      {
+        "label": "②ターンフェイント（体の回転でDF背後へ）",
+        "next": "qof_feint_turn_r"
+      },
+      {
+        "label": "③シュートフェイント（GK・ブロッカーを動かす）",
+        "next": "qof_feint_shoot_r"
+      },
+      {
+        "label": "④パスフェイント（隣のDFを動かす）",
+        "next": "qof_feint_pass_r"
+      },
+      {
+        "label": "⑤ステップフェイント（足の方向を偽る）",
+        "next": "qof_feint_step_r"
+      },
+      {
+        "label": "⑥ボディフェイント（肩・上半身で偽る）",
+        "next": "qof_feint_body_r"
+      },
+      {
+        "label": "⑦スピードフェイント（緩急・急停止）",
+        "next": "qof_feint_speed_r"
+      },
+      {
+        "label": "⑧ダブルフェイント（2種を連続でかけた）",
+        "next": "qof_feint_double_r"
+      }
+    ]
+  },
+  "qof_feint_double_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ダブルフェイントの結果は？（コンビナツィヤ・ラジニャカ（ダブルフェイント組合せ））",
+    "choices": [
+      {
+        "label": "1種目耐えたDFを2種目で崩せた",
+        "next": "r_of_feint_double_good"
+      },
+      {
+        "label": "1種目で動かなかったDFが2種目で釣られた",
+        "next": "r_of_feint_double_late"
+      },
+      {
+        "label": "両方読まれた（DFが両方に対応した）",
+        "next": "r_of_feint_double_read"
+      },
+      {
+        "label": "自分が遅すぎてDFが構え直した",
+        "next": "r_of_feint_double_slow"
+      }
+    ]
+  },
+  "qof_feint_rotate_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "廻旋フェイントの結果は？",
+    "choices": [
+      {
+        "label": "DFの腕を外して差し込めた",
+        "next": "r_of_feint_rotate_good"
+      },
+      {
+        "label": "外せたが次が続かなかった",
+        "next": "r_of_feint_rotate_partial"
+      },
+      {
+        "label": "外せなかった（DFが緩めず）",
+        "next": "r_of_feint_rotate_fail"
+      },
+      {
+        "label": "反則を取られた（攻撃側ファウル）",
+        "next": "r_of_feint_rotate_foul"
+      }
+    ]
+  },
+  "qof_feint_turn_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ターンフェイントの結果は？",
+    "choices": [
+      {
+        "label": "ターンでDFを置き去りにできた",
+        "next": "r_of_feint_turn_good"
+      },
+      {
+        "label": "ターンしたが追いつかれた",
+        "next": "r_of_feint_turn_partial"
+      },
+      {
+        "label": "ターン方向を読まれた",
+        "next": "r_of_feint_turn_read"
+      },
+      {
+        "label": "自分のバランスが崩れた",
+        "next": "r_of_feint_turn_self"
+      }
+    ]
+  },
+  "qof_feint_shoot_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "シュートフェイクの結果は？",
+    "choices": [
+      {
+        "label": "GKが動いて逆コースが空いた",
+        "next": "r_of_feint_shoot_gk_good"
+      },
+      {
+        "label": "ブロックDFが手を伸ばして空いた",
+        "next": "r_of_feint_shoot_block"
+      },
+      {
+        "label": "動かなかった（読まれた／コース絞り型GK）",
+        "next": "r_of_feint_shoot_read"
+      },
+      {
+        "label": "フェイクが大きすぎて本シュートに移れなかった",
+        "next": "r_of_feint_shoot_self"
+      }
+    ]
+  },
+  "qof_feint_pass_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "パスフェイントの結果は？",
+    "choices": [
+      {
+        "label": "隣DFが動いてパスコースが空いた",
+        "next": "r_of_feint_pass_good"
+      },
+      {
+        "label": "動かなかった（インターセプト警戒）",
+        "next": "r_of_feint_pass_static"
+      },
+      {
+        "label": "動作が大きすぎて読まれた",
+        "next": "r_of_feint_pass_big"
+      }
+    ]
+  },
+  "qof_feint_step_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ステップフェイントの結果は？",
+    "choices": [
+      {
+        "label": "DFの重心が崩れて抜けた",
+        "next": "r_of_feint_step_good"
+      },
+      {
+        "label": "重心は崩したが間に合わなかった",
+        "next": "r_of_feint_step_partial"
+      },
+      {
+        "label": "DFが反応しなかった（読まれた）",
+        "next": "r_of_feint_step_read"
+      },
+      {
+        "label": "自分の踏み込みが甘かった",
+        "next": "r_of_feint_step_self"
+      }
+    ]
+  },
+  "qof_feint_body_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ボディフェイントの結果は？",
+    "choices": [
+      {
+        "label": "DFの視線・体が釣られた",
+        "next": "r_of_feint_body_good"
+      },
+      {
+        "label": "反応が薄かった（小動作すぎ）",
+        "next": "r_of_feint_body_weak"
+      },
+      {
+        "label": "完全に見破られた",
+        "next": "r_of_feint_body_read"
+      }
+    ]
+  },
+  "qof_feint_speed_r": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "スピードフェイントの結果は？",
+    "choices": [
+      {
+        "label": "急停止でDFが行き過ぎた",
+        "next": "r_of_feint_speed_good"
+      },
+      {
+        "label": "加速差で抜けた",
+        "next": "r_of_feint_speed_accel"
+      },
+      {
+        "label": "DFがリズムを合わせてきた",
+        "next": "r_of_feint_speed_read"
+      },
+      {
+        "label": "自分の体力切れで続かなかった",
+        "next": "r_of_feint_speed_self"
+      }
+    ]
+  },
+  "qof_pass_result": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "パス／コンビの結果は？",
+    "choices": [
+      {
+        "label": "通った→シュートまでつながった",
+        "next": "r_of_pass_good"
+      },
+      {
+        "label": "通ったが受け手がシュートできなかった",
+        "next": "r_of_pass_partial"
+      },
+      {
+        "label": "インターセプトされた",
+        "next": "qof_pass_intercept_why"
+      },
+      {
+        "label": "パスミス（味方に届かず）",
+        "next": "qof_pass_miss_why"
+      }
+    ]
+  },
+  "qof_pass_intercept_why": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "インターセプトの原因は？",
+    "choices": [
+      {
+        "label": "パスコースを読まれていた",
+        "next": "r_of_pass_int_read"
+      },
+      {
+        "label": "パスが遅かった",
+        "next": "r_of_pass_int_slow"
+      },
+      {
+        "label": "DFが先に動いて先取りした",
+        "next": "r_of_pass_int_anticip"
+      }
+    ]
+  },
+  "qof_pass_miss_why": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "パスミスの原因は？",
+    "choices": [
+      {
+        "label": "精度不足（受け手の手前／頭上）",
+        "next": "r_of_pass_miss_acc"
+      },
+      {
+        "label": "受け手のタイミングと合わなかった",
+        "next": "r_of_pass_miss_timing"
+      },
+      {
+        "label": "プレッシャーで力みすぎた",
+        "next": "r_of_pass_miss_pressure"
+      }
+    ]
+  },
+  "qof_post_role": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "あなたの役割は？",
+    "choices": [
+      {
+        "label": "バック（ピボットにパス出し側）",
+        "next": "qof_post_back"
+      },
+      {
+        "label": "ピボット本人（ポストプレー）",
+        "next": "qof_post_pivot"
+      }
+    ]
+  },
+  "qof_post_back": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ピボットへのパスは？",
+    "choices": [
+      {
+        "label": "通った→ピボット得点",
+        "next": "r_of_post_back_good"
+      },
+      {
+        "label": "通ったがピボットが詰まった",
+        "next": "r_of_post_back_pivot_stuck"
+      },
+      {
+        "label": "パスコースが見つからなかった",
+        "next": "r_of_post_back_no_lane"
+      },
+      {
+        "label": "インターセプトされた",
+        "next": "r_of_post_back_int"
+      }
+    ]
+  },
+  "qof_post_pivot": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ピボットとして何が起きた？",
+    "choices": [
+      {
+        "label": "V字位置取りでパスを受けてシュート",
+        "next": "r_of_post_pivot_good"
+      },
+      {
+        "label": "DFに先回りされてパスを受けられなかった",
+        "next": "r_of_post_pivot_blocked"
+      },
+      {
+        "label": "① 回転プレーで振り返る",
+        "next": "qof_post_rotate_r"
+      },
+      {
+        "label": "② フェイクプレーで振り返る",
+        "next": "qof_post_fake_r"
+      },
+      {
+        "label": "③ フラッシュプレーで振り返る",
+        "next": "qof_post_flash_r"
+      },
+      {
+        "label": "④ スクリーンプレーで振り返る",
+        "next": "qof_post_screen_r"
+      }
+    ]
+  },
+  "qof_post_rotate_r": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "回転プレーの結果は？",
+    "choices": [
+      {
+        "label": "利き手側の回転で振り切れた（成功）",
+        "next": "r_post_rotate_good"
+      },
+      {
+        "label": "逆回転で奇襲できた（成功）",
+        "next": "r_post_rotate_reverse"
+      },
+      {
+        "label": "DFに先読みされて止められた",
+        "next": "r_post_rotate_read"
+      },
+      {
+        "label": "遠心力が乗らずシュート甘くなった",
+        "next": "r_post_rotate_weak"
+      }
+    ]
+  },
+  "qof_post_fake_r": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "フェイクプレーの結果は？",
+    "choices": [
+      {
+        "label": "フェイクが効いてシュートまで持ち込めた",
+        "next": "r_post_fake_good"
+      },
+      {
+        "label": "フェイクの「ため」が長すぎてファウル取られた",
+        "next": "r_post_fake_foul"
+      },
+      {
+        "label": "DFが動かなかった（読まれた）",
+        "next": "r_post_fake_read"
+      },
+      {
+        "label": "フェイクから回転プレーへの連鎖で得点",
+        "next": "r_post_fake_rotate"
+      }
+    ]
+  },
+  "qof_post_flash_r": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "フラッシュプレーの結果は？",
+    "choices": [
+      {
+        "label": "静止→急動き出しでDFを置き去り（成功）",
+        "next": "r_post_flash_good"
+      },
+      {
+        "label": "静止状態から動き出しが遅れた",
+        "next": "r_post_flash_slow"
+      },
+      {
+        "label": "飛び込みのタイミングが早すぎた",
+        "next": "r_post_flash_early"
+      },
+      {
+        "label": "DFに事前察知されてスペースが消えた",
+        "next": "r_post_flash_read"
+      }
+    ]
+  },
+  "qof_post_screen_r": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "スクリーンプレーの結果は？",
+    "choices": [
+      {
+        "label": "合法スクリーン→ロールでシュート（成功）",
+        "next": "r_post_screen_roll_good"
+      },
+      {
+        "label": "スクリーン→ポップで外角シュート（成功）",
+        "next": "r_post_screen_pop_good"
+      },
+      {
+        "label": "動いてしまいスクリーン無効・ファウル",
+        "next": "r_post_screen_move_foul"
+      },
+      {
+        "label": "DFスイッチ対応で空振りに終わった",
+        "next": "r_post_screen_switch"
+      }
+    ]
+  },
+  "qof_contact_result": {
+    "label": "Q2",
+    "mode": "of",
+    "text": "コンタクト場面の結果は？",
+    "choices": [
+      {
+        "label": "勝ち位置を先に取れた",
+        "next": "r_of_contact_good"
+      },
+      {
+        "label": "接触で押し勝てた（山側/谷側を使えた）",
+        "next": "r_of_contact_win"
+      },
+      {
+        "label": "押し負けた／体勢崩された",
+        "next": "qof_contact_lose_why"
+      },
+      {
+        "label": "ファウル取られた",
+        "next": "r_of_contact_foul"
+      }
+    ]
+  },
+  "qof_contact_lose_why": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "押し負けた原因は？",
+    "choices": [
+      {
+        "label": "重心が高かった（前傾不足）",
+        "next": "r_of_contact_lose_center"
+      },
+      {
+        "label": "DFの先取り（勝ち位置を取られていた）",
+        "next": "r_of_contact_lose_first"
+      },
+      {
+        "label": "体重・パワー差",
+        "next": "r_of_contact_lose_power"
+      },
+      {
+        "label": "山側/谷側の判断ミス",
+        "next": "r_of_contact_lose_side"
+      }
+    ]
+  },
+  "qof_noball": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "どのあたりで詰まった感じがある？",
+    "choices": [
+      {
+        "label": "動き出しが遅れた（隣がボールを触る前に自分の動き出しが遅れた）",
+        "next": "r_timing"
+      },
+      {
+        "label": "どこに動くか決まらなかった（隣がプレーしている最中に迷った）",
+        "next": "r_preset"
+      },
+      {
+        "label": "動いたけど出し手の視野に入れなかった",
+        "next": "r_visibility"
+      },
+      {
+        "label": "どこで止まったかわからない",
+        "next": "r_unknown"
+      }
+    ]
+  },
+  "qof_close_react": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "クローズの状況で、自分がアクションしたとき、隣のDFはどう動いた？",
+    "choices": [
+      {
+        "label": "寄せてきていた（守りに来た）",
+        "next": "qof_close_press_self"
+      },
+      {
+        "label": "パスを警戒して引いた",
+        "next": "qof_close_pull_self"
+      },
+      {
+        "label": "動きが読めなかった / 見ていなかった",
+        "next": "r_reaction_blind"
+      }
+    ]
+  },
+  "qof_close_press_self": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "DFが寄ってきた。その瞬間、パスを出せた？",
+    "choices": [
+      {
+        "label": "出せた（タイミングよく判断できた）",
+        "next": "r_close_pass_good"
+      },
+      {
+        "label": "出せなかった（迷った / タイミングを逃した）",
+        "next": "r_close_pass"
+      }
+    ]
+  },
+  "qof_close_pull_self": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "DFが引いた。カットインできた？",
+    "choices": [
+      {
+        "label": "できた（切り込んで仕掛けた）",
+        "next": "r_close_cutin_good"
+      },
+      {
+        "label": "できなかった（見えたけど反応できなかった）",
+        "next": "r_close_cutin"
+      }
+    ]
+  },
+  "qof_wide_react": {
+    "label": "Q3",
+    "mode": "of",
+    "text": "ワイドの状況で、クロスアタックに来ていたか？",
+    "choices": [
+      {
+        "label": "来ていた",
+        "next": "qof_wide_cross_self"
+      },
+      {
+        "label": "来ていなかった",
+        "next": "qof_wide_normal_self"
+      },
+      {
+        "label": "わからなかった（見ていなかった）",
+        "next": "r_reaction_blind"
+      }
+    ]
+  },
+  "qof_wide_cross_self": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "内側に割り込んだとき、自分のマークはどこにいた？",
+    "choices": [
+      {
+        "label": "内側にとどまっていた（パスコースが空いた）",
+        "next": "r_cross_pass"
+      },
+      {
+        "label": "クロスアタックDF側に動いていた（前が空いた）",
+        "next": "r_cross_cutin"
+      },
+      {
+        "label": "確認できていなかった",
+        "next": "r_reaction_blind"
+      }
+    ]
+  },
+  "qof_wide_normal_self": {
+    "label": "Q4",
+    "mode": "of",
+    "text": "1対1で、有効なアクションができた？",
+    "choices": [
+      {
+        "label": "シュートかドライブを選べた（判断できた）",
+        "next": "r_wide_good"
+      },
+      {
+        "label": "有効なアクションが出せなかった（詰まった）",
+        "next": "r_wide_normal"
+      }
+    ]
+  },
+  "qd_top": {
+    "label": "Q1",
+    "mode": "df",
+    "text": "DF振り返り：何について？",
+    "choices": [
+      {
+        "label": "全体の感覚（守れた／崩された）",
+        "next": "qd1"
+      },
+      {
+        "label": "陣形連動（5-1/6-0/3-3/5+1の役割）",
+        "next": "qd_formation"
+      },
+      {
+        "label": "個人DF技術（1on1・山側谷側）",
+        "next": "qd_individual"
+      },
+      {
+        "label": "カバー判断・GK連携",
+        "next": "qd_cover_top"
+      },
+      {
+        "label": "声・コミュニケーション・約束プレー",
+        "next": "qd_voice_top"
+      },
+      {
+        "label": "コンタクト・体の使い方",
+        "next": "qd_contact_top"
+      },
+      {
+        "label": "速攻戻り・トランジション",
+        "next": "qd_transit_top"
+      }
+    ]
+  },
+  "qd1": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "そのプレーで守れた感覚があるか？",
+    "choices": [
+      {
+        "label": "守れた / 止められた",
+        "next": "qd_good"
+      },
+      {
+        "label": "崩された / 対応できなかった",
+        "next": "qd2"
+      }
+    ]
+  },
+  "qd_formation": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "どの陣形・どの場面？",
+    "choices": [
+      {
+        "label": "5-1で前1人（トップ）が抜かれた",
+        "next": "r_df_form_51_break"
+      },
+      {
+        "label": "6-0でラインが上下に崩れた",
+        "next": "r_df_form_60_line"
+      },
+      {
+        "label": "3-3で2列の連動が崩れた",
+        "next": "r_df_form_33_link"
+      },
+      {
+        "label": "5+1（マンマーク）で個別役割が果たせず",
+        "next": "r_df_form_51plus_role"
+      },
+      {
+        "label": "陣形変更の合図が共有できていなかった",
+        "next": "r_df_form_change"
+      }
+    ]
+  },
+  "qd_individual": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "個人DFのどこで負けた？",
+    "choices": [
+      {
+        "label": "1on1で重心を崩されて抜かれた",
+        "next": "r_df_ind_1on1_center"
+      },
+      {
+        "label": "1on1で足が遅れた（スピード負け）",
+        "next": "r_df_ind_1on1_foot"
+      },
+      {
+        "label": "山側／谷側を間違えた",
+        "next": "r_df_ind_side"
+      },
+      {
+        "label": "手の出し方が遅かった／早かった",
+        "next": "r_df_ind_arm"
+      },
+      {
+        "label": "体勢が高くて崩しやすい状態だった",
+        "next": "r_df_ind_posture"
+      }
+    ]
+  },
+  "qd_cover_top": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "カバー／GK連携のどこで詰まった？",
+    "choices": [
+      {
+        "label": "カバーに行くタイミングが遅れた",
+        "next": "r_df_cover_late"
+      },
+      {
+        "label": "カバーに行きすぎてマークが剥がれた",
+        "next": "r_df_cover_over"
+      },
+      {
+        "label": "カバーの優先順位を間違えた（誰を優先）",
+        "next": "r_df_cover_priority"
+      },
+      {
+        "label": "GKと自分のブロックが被って空いた",
+        "next": "r_df_gk_block_overlap"
+      },
+      {
+        "label": "GKが見える位置でブロックできなかった",
+        "next": "r_df_gk_block_blind"
+      },
+      {
+        "label": "GK＋自分の連携で止められた（成功）",
+        "next": "r_df_gk_block_good"
+      }
+    ]
+  },
+  "qd_voice_top": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "声・コミュニケーションのどこで？",
+    "choices": [
+      {
+        "label": "声が出せなかった（情報共有なし）",
+        "next": "r_df_voice_silent"
+      },
+      {
+        "label": "声を出したが届かなかった",
+        "next": "r_df_voice_unheard"
+      },
+      {
+        "label": "約束プレーを実行できた（成功）",
+        "next": "r_df_voice_plan_good"
+      },
+      {
+        "label": "約束と違う動きをしてしまった",
+        "next": "r_df_voice_off"
+      },
+      {
+        "label": "事前の確認・スカウト共有が不足",
+        "next": "r_df_voice_scout"
+      }
+    ]
+  },
+  "qd_contact_top": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "コンタクトのどこで？",
+    "choices": [
+      {
+        "label": "体当たりで止められた（成功）",
+        "next": "r_df_contact_win"
+      },
+      {
+        "label": "押し負けた（体重・パワー差）",
+        "next": "r_df_contact_lose"
+      },
+      {
+        "label": "ファウルを取られた（どの反則か）",
+        "next": "qd_contact_foul_type"
+      },
+      {
+        "label": "体勢が高くて崩された",
+        "next": "r_df_contact_high"
+      },
+      {
+        "label": "腕の使い方で警告／処分された",
+        "next": "r_df_contact_arm"
+      }
+    ]
+  },
+  "qd_contact_foul_type": {
+    "label": "Q3",
+    "mode": "df",
+    "text": "どの反則を取られた？",
+    "choices": [
+      {
+        "label": "ホールディング（OFを抱える／腕で抑える）",
+        "next": "r_df_foul_holding"
+      },
+      {
+        "label": "プッシング（体で押し倒す）→ 2分退場対象",
+        "next": "r_df_foul_pushing"
+      },
+      {
+        "label": "ハッキング（OFの腕・手を叩く）→ 2分退場対象",
+        "next": "r_df_foul_hacking"
+      },
+      {
+        "label": "トリッピング（足払い）→ 2分／危険なら赤",
+        "next": "r_df_foul_tripping"
+      },
+      {
+        "label": "背後からの接触 → 2分退場",
+        "next": "r_df_foul_backhit"
+      },
+      {
+        "label": "顔面・首への接触 → 即時2分 or 赤",
+        "next": "r_df_foul_face"
+      }
+    ]
+  },
+  "qd_transit_top": {
+    "label": "Q2",
+    "mode": "df",
+    "text": "戻り・トランジションのどこで？",
+    "choices": [
+      {
+        "label": "戻りが間に合って数的均衡を維持（成功）",
+        "next": "r_df_transit_good"
+      },
+      {
+        "label": "戻りが遅れて数的不利になった",
+        "next": "r_df_transit_slow"
+      },
+      {
+        "label": "走力差で戻りきれなかった",
+        "next": "r_df_transit_speed"
+      },
+      {
+        "label": "戻る判断が遅れた（OFを続けてしまった）",
+        "next": "r_df_transit_judge"
+      },
+      {
+        "label": "戻った後の陣形構築が遅れた",
+        "next": "r_df_transit_setup"
+      }
+    ]
+  },
+  "qd_good": {
+    "label": "Q3",
+    "mode": "df",
+    "text": "どこが良かった？",
+    "choices": [
+      {
+        "label": "相手の予備動作を先に読めた",
+        "next": "qd_good_read"
+      },
+      {
+        "label": "体勢・ポジションが正しかった",
+        "next": "qd_good_pos"
+      },
+      {
+        "label": "連動・カバーがうまくいった",
+        "next": "qd_good_team"
+      }
+    ]
+  },
+  "qd_good_read": {
+    "label": "Q4",
+    "mode": "df",
+    "text": "何を見て読めた？",
+    "choices": [
+      {
+        "label": "相手の重心・体の傾き",
+        "next": "r_good_read_body"
+      },
+      {
+        "label": "目線・視野の方向",
+        "next": "r_good_read_eye"
+      },
+      {
+        "label": "足の向き・踏み込みのタイミング",
+        "next": "r_good_read_foot"
+      },
+      {
+        "label": "なんとなくわかった（言語化できていない）",
+        "next": "r_good_read_unknown"
+      }
+    ]
+  },
+  "qd_good_pos": {
+    "label": "Q4",
+    "mode": "df",
+    "text": "正しかったポジションはどれ？",
+    "choices": [
+      {
+        "label": "体の向き（ゴールとOFの間に入れた）",
+        "next": "r_good_pos_angle"
+      },
+      {
+        "label": "距離感（離れすぎず・詰めすぎず）",
+        "next": "r_good_pos_dist"
+      },
+      {
+        "label": "先に有利な位置を取れていた（勝ち位置）",
+        "next": "r_good_pos_win"
+      }
+    ]
+  },
+  "qd_good_team": {
+    "label": "Q4",
+    "mode": "df",
+    "text": "連動のトリガーは何だった？",
+    "choices": [
+      {
+        "label": "隣のDFが動いたのを見た",
+        "next": "r_good_team_see"
+      },
+      {
+        "label": "声かけで動けた",
+        "next": "r_good_team_voice"
+      },
+      {
+        "label": "事前に約束していた動きを実行した",
+        "next": "r_good_team_plan"
+      }
+    ]
+  },
+  "qd2": {
+    "label": "Q3",
+    "mode": "df",
+    "text": "どこで崩された感覚がある？",
+    "choices": [
+      {
+        "label": "フェイントに反応してしまった（体が先に動いた）",
+        "next": "r_df_fake"
+      },
+      {
+        "label": "相手の動きを見る前に判断してしまった",
+        "next": "r_df_preset"
+      },
+      {
+        "label": "カバーのタイミングが合わなかった",
+        "next": "r_df_cover"
+      },
+      {
+        "label": "マークを手放した後、次のDF動作に移れなかった",
+        "next": "r_df_release"
+      }
+    ]
+  },
+  "qs1": {
+    "label": "Q1",
+    "mode": "skill",
+    "text": "どのスキルで詰まった感覚がある？",
+    "choices": [
+      {
+        "label": "パス（タイミング・精度）",
+        "next": "qs_pass"
+      },
+      {
+        "label": "シュート（判断・精度）",
+        "next": "qs_shoot"
+      },
+      {
+        "label": "ボールキャッチ・顔横ポジション",
+        "next": "r_kaoyoko"
+      },
+      {
+        "label": "1対1の仕掛け方",
+        "next": "qs_121"
+      }
+    ]
+  },
+  "qs_pass": {
+    "label": "Q2",
+    "mode": "skill",
+    "text": "パスで詰まったのはどこ？",
+    "choices": [
+      {
+        "label": "タイミング（早すぎ / 遅すぎ）",
+        "next": "r_pass_timing"
+      },
+      {
+        "label": "出す先の判断（どこに出せばいいか）",
+        "next": "r_reaction_blind"
+      },
+      {
+        "label": "ボールポジションが低くて読まれた",
+        "next": "r_kaoyoko"
+      }
+    ]
+  },
+  "qs_shoot": {
+    "label": "Q2",
+    "mode": "skill",
+    "text": "シュートで詰まったのはどこ？",
+    "choices": [
+      {
+        "label": "打つタイミングの判断",
+        "next": "r_shoot_timing"
+      },
+      {
+        "label": "フォーム・精度",
+        "next": "r_shoot_form"
+      },
+      {
+        "label": "シュートかパスかの選択",
+        "next": "r_decision"
+      }
+    ]
+  },
+  "qs_121": {
+    "label": "Q2",
+    "mode": "skill",
+    "text": "1対1で詰まったのはどこ？",
+    "choices": [
+      {
+        "label": "アクションしたが相手が動かなかった",
+        "next": "r_121_noreact"
+      },
+      {
+        "label": "アクション後のリアクションに対応できなかった",
+        "next": "q3_reaction"
+      },
+      {
+        "label": "そもそも仕掛けられなかった",
+        "next": "r_121_freeze"
+      }
+    ]
+  },
+  "qc1": {
+    "label": "Q1",
+    "mode": "context",
+    "text": "今の点差は？",
+    "hint": "今のゲーム状況を正確に確認する。点差と時間の組み合わせで戦術が変わる。",
+    "choices": [
+      {
+        "label": "大量リード（5点差以上）",
+        "next": "qc2_biglead"
+      },
+      {
+        "label": "小差リード（1〜4点差）",
+        "next": "qc2_lead"
+      },
+      {
+        "label": "同点",
+        "next": "r_ctx_even"
+      },
+      {
+        "label": "小差ビハインド（1〜4点差）",
+        "next": "qc2_behind"
+      },
+      {
+        "label": "大量ビハインド（5点差以上）",
+        "next": "qc2_bigbehind"
+      }
+    ]
+  },
+  "qc2_biglead": {
+    "label": "Q2",
+    "mode": "context",
+    "text": "残り時間は？",
+    "choices": [
+      {
+        "label": "10分以上",
+        "next": "r_ctx_biglead_early"
+      },
+      {
+        "label": "5分前後",
+        "next": "r_ctx_biglead_mid"
+      },
+      {
+        "label": "2分以内",
+        "next": "r_ctx_biglead_late"
+      }
+    ]
+  },
+  "qc2_lead": {
+    "label": "Q2",
+    "mode": "context",
+    "text": "残り時間は？",
+    "choices": [
+      {
+        "label": "10分以上",
+        "next": "r_ctx_lead_early"
+      },
+      {
+        "label": "5分前後",
+        "next": "r_ctx_lead_mid"
+      },
+      {
+        "label": "2分以内",
+        "next": "r_ctx_lead_late"
+      }
+    ]
+  },
+  "qc2_behind": {
+    "label": "Q2",
+    "mode": "context",
+    "text": "残り時間は？",
+    "choices": [
+      {
+        "label": "10分以上",
+        "next": "r_ctx_behind_early"
+      },
+      {
+        "label": "5分前後",
+        "next": "r_ctx_behind_mid"
+      },
+      {
+        "label": "2分以内",
+        "next": "r_ctx_behind_late"
+      }
+    ]
+  },
+  "qc2_bigbehind": {
+    "label": "Q2",
+    "mode": "context",
+    "text": "残り時間は？",
+    "choices": [
+      {
+        "label": "10分以上",
+        "next": "r_ctx_bigbehind_early"
+      },
+      {
+        "label": "5分前後",
+        "next": "r_ctx_bigbehind_mid"
+      },
+      {
+        "label": "2分以内",
+        "next": "r_ctx_bigbehind_late"
+      }
+    ]
+  },
+  "qj1": {
+    "label": "Q1",
+    "mode": "janken",
+    "text": "相手チームのDF陣形は？",
+    "hint": "相手全体のシステムを見る。わからなければ「今の自分とDFの関係」or「相手の戦術DNA」で判断する。",
+    "choices": [
+      {
+        "label": "0-6　― 全員がゴール前に下がっている",
+        "next": "qj2_06"
+      },
+      {
+        "label": "1-5　― 前衛1人が出てきている",
+        "next": "qj2_15"
+      },
+      {
+        "label": "マンツーマン　― 各選手に密着マーク",
+        "next": "qj2_man"
+      },
+      {
+        "label": "今の自分とDFの関係で判断したい",
+        "next": "qj_self"
+      },
+      {
+        "label": "相手の戦術DNA（国・学派）で逆引きしたい",
+        "next": "qj_school"
+      }
+    ]
+  },
+  "qj_school": {
+    "label": "Q2",
+    "mode": "janken",
+    "text": "相手の戦術スタイルはどれに近い？",
+    "hint": "相手チームのプレースタイルから学派を推測する。完全一致でなくても傾向で選べばOK。",
+    "choices": [
+      {
+        "label": "ソビエト型6-0（コンパクトで規律的・組織的）",
+        "next": "r_jk_soviet"
+      },
+      {
+        "label": "韓国型高プレッシャー（5-1や3-2-1で前線から取りに来る）",
+        "next": "r_jk_korea"
+      },
+      {
+        "label": "フランス型アグレッシブ6-0（前衛が出てきて受け渡しが速い）",
+        "next": "r_jk_france"
+      },
+      {
+        "label": "クロアチア/セルビア型ピボット中心（ユーゴ学派）",
+        "next": "r_jk_yugo"
+      },
+      {
+        "label": "デンマーク型コレクティブ（コード化サインプレー＆速い再開）",
+        "next": "r_jk_denmark"
+      },
+      {
+        "label": "ポルトガル型高強度プレス（積極的にボール奪取狙い）",
+        "next": "r_jk_portugal"
+      }
+    ]
+  },
+  "qj2_06": {
+    "label": "Q2",
+    "mode": "janken",
+    "text": "今、DFはどう動いている？",
+    "choices": [
+      {
+        "label": "ライン全体がボール側にシフトしてきた",
+        "next": "r_jk_verschieben"
+      },
+      {
+        "label": "一人が前に飛び出してきた",
+        "next": "r_jk_heraus"
+      },
+      {
+        "label": "マークが別のDFに渡った（受け渡し）",
+        "next": "r_jk_ubergeben"
+      },
+      {
+        "label": "固まって動かない",
+        "next": "r_jk_06_block"
+      }
+    ]
+  },
+  "qj2_15": {
+    "label": "Q2",
+    "mode": "janken",
+    "text": "前衛（1人）との関係は？",
+    "choices": [
+      {
+        "label": "前衛が自分に向かってきた（プレッシャー）",
+        "next": "r_jk_15_press"
+      },
+      {
+        "label": "前衛の裏（背後）にスペースが見える",
+        "next": "r_jk_15_back"
+      },
+      {
+        "label": "前衛が疲れていて戻りが遅い",
+        "next": "r_jk_15_tired"
+      }
+    ]
+  },
+  "qj2_man": {
+    "label": "Q2",
+    "mode": "janken",
+    "text": "自分のマーカーはどんな状態？",
+    "choices": [
+      {
+        "label": "密着マーク（外シュートが打ちにくい）",
+        "next": "r_jk_man_tight"
+      },
+      {
+        "label": "少し距離がある（スペースがある）",
+        "next": "r_jk_man_loose"
+      }
+    ]
+  },
+  "qj_self": {
+    "label": "Q1",
+    "mode": "janken",
+    "text": "今、自分とDFの関係はどちら？",
+    "choices": [
+      {
+        "label": "クローズ　― DFが密着して内側を切っている",
+        "next": "r_jk_close"
+      },
+      {
+        "label": "ワイド　― DFとの間にスペースがある",
+        "next": "r_jk_wide"
+      }
+    ]
+  },
+  "qg1": {
+    "label": "Q1",
+    "mode": "gk",
+    "text": "相手GKの動き方を観察した。どちらに近かった？",
+    "hint": "GKには2タイプある。「先読み型」= 打つ前に先に動く（予測型）。「コース絞り型」= 動かずコースを塞いで待つ（ポジション型）。",
+    "choices": [
+      {
+        "label": "先読み型　― 打つ前から動いている（コースを予測して先に取りにいく）",
+        "next": "qg2_wave"
+      },
+      {
+        "label": "コース絞り型　― 動かない / コースを塞いで待っている",
+        "next": "qg2_spot"
+      },
+      {
+        "label": "まだわからない / 観察できていない",
+        "next": "qg_unknown"
+      }
+    ]
+  },
+  "qg2_wave": {
+    "label": "Q2",
+    "mode": "gk",
+    "text": "先読み型GK確認。自分の最高点で打ったとき、GKは間に合っていたか？",
+    "hint": "先読み型GKは「シューターの最高到達点」を予測して先に動く。打つタイミングを早める（早打ち）とGKの動き出しより先に放てる。",
+    "choices": [
+      {
+        "label": "間に合っていた（最高点でGKがすでに塞いでいた）",
+        "next": "r_gk_wave_early"
+      },
+      {
+        "label": "間に合っていなかった / 最高点でも空いていた",
+        "next": "r_gk_wave_late"
+      }
+    ]
+  },
+  "qg2_spot": {
+    "label": "Q2",
+    "mode": "gk",
+    "text": "コース絞り型GK確認。空いているコースは見えているか？",
+    "hint": "コース絞り型GKは体で6エリア（左右×上下）のうち4エリアを塞いでいる。残り2エリアが「空き」。そこを見つけて正確に打つか、GKを動かして逆を狙う。",
+    "choices": [
+      {
+        "label": "空いているコースが見えている（狙えそう）",
+        "next": "r_gk_spot_aim"
+      },
+      {
+        "label": "どこも塞がれている感じがする",
+        "next": "r_gk_spot_blind"
+      }
+    ]
+  },
+  "qg_unknown": {
+    "label": "Q2",
+    "mode": "gk",
+    "text": "まだ観察できていない。どちらに近い？",
+    "choices": [
+      {
+        "label": "まだ数本しかシュートを打っていない",
+        "next": "r_gk_observe_few"
+      },
+      {
+        "label": "シュートは打ったが観察に集中できていなかった",
+        "next": "r_gk_observe_focus"
+      }
+    ]
+  },
+  "qgs_start": {
+    "label": "Q1",
+    "mode": "gk_self",
+    "text": "今回の場面は？",
+    "hint": "まずどの場面を振り返るか決める。最も印象に残ったシーン1つを選ぶ。",
+    "choices": [
+      {
+        "label": "シュートをセーブできた（or できなかった）",
+        "next": "qgs_shot_type"
+      },
+      {
+        "label": "速攻の起点（自分のスローイン）",
+        "next": "qgs_throw"
+      },
+      {
+        "label": "DFとの連携（声かけ・コース指示）",
+        "next": "qgs_link"
+      },
+      {
+        "label": "7m／フリースロー対応",
+        "next": "qgs_setplay"
+      }
+    ]
+  },
+  "qgs_shot_type": {
+    "label": "Q2",
+    "mode": "gk_self",
+    "text": "相手のシュートはどのタイプだった？",
+    "choices": [
+      {
+        "label": "早打ち（最高点に達する前に放たれた）",
+        "next": "qgs_react"
+      },
+      {
+        "label": "最高点ジャンプシュート",
+        "next": "qgs_react"
+      },
+      {
+        "label": "角度を変えたコース変化（手首返し含む）",
+        "next": "qgs_react"
+      },
+      {
+        "label": "ループ（頭上越え）or バウンス（手前）",
+        "next": "qgs_react"
+      },
+      {
+        "label": "至近距離（ポスト・カットイン）",
+        "next": "qgs_react"
+      },
+      {
+        "label": "タイプが読み取れなかった",
+        "next": "r_gk_self_observe"
+      }
+    ]
+  },
+  "qgs_react": {
+    "label": "Q3",
+    "mode": "gk_self",
+    "text": "自分の対応は？",
+    "choices": [
+      {
+        "label": "先読みで動いた → コースを塞げた",
+        "next": "r_gk_self_anticip_good"
+      },
+      {
+        "label": "先読みで動いた → 読みが外れた",
+        "next": "r_gk_self_anticip_miss"
+      },
+      {
+        "label": "動かず待った（コース絞り） → 止めた",
+        "next": "r_gk_self_position_good"
+      },
+      {
+        "label": "動かず待った → 抜かれた",
+        "next": "r_gk_self_position_miss"
+      },
+      {
+        "label": "反応が遅れた／体勢が崩れた",
+        "next": "r_gk_self_lag"
+      }
+    ]
+  },
+  "qgs_throw": {
+    "label": "Q2",
+    "mode": "gk_self",
+    "text": "スローインから速攻はつながった？",
+    "choices": [
+      {
+        "label": "つながった（フリー走者にロングorミドル）",
+        "next": "r_gk_self_throw_good"
+      },
+      {
+        "label": "クイックスローオフ（即時センター投擲）で速攻決まった",
+        "next": "r_gk_self_throw_schnelle"
+      },
+      {
+        "label": "止められた／パスミス",
+        "next": "r_gk_self_throw_miss"
+      },
+      {
+        "label": "スプリント走者がいなくて出せなかった",
+        "next": "r_gk_self_throw_noone"
+      },
+      {
+        "label": "判断遅れで速攻チャンスを逃した",
+        "next": "r_gk_self_throw_slow"
+      }
+    ]
+  },
+  "qgs_link": {
+    "label": "Q2",
+    "mode": "gk_self",
+    "text": "DFとの連携で何が起きた？",
+    "choices": [
+      {
+        "label": "声かけがDFを動かして守れた",
+        "next": "r_gk_self_voice_good"
+      },
+      {
+        "label": "声を出したがDFが反応しなかった",
+        "next": "r_gk_self_voice_miss"
+      },
+      {
+        "label": "声を出さなかった／タイミング遅れた",
+        "next": "r_gk_self_voice_late"
+      }
+    ]
+  },
+  "qgs_setplay": {
+    "label": "Q2",
+    "mode": "gk_self",
+    "text": "どの場面？",
+    "choices": [
+      {
+        "label": "7m PK（1対1で読み合い）",
+        "next": "r_gk_self_7m"
+      },
+      {
+        "label": "フリースロー攻撃（壁を作って）",
+        "next": "r_gk_self_fs"
+      },
+      {
+        "label": "タイムアウト直後のセットプレー",
+        "next": "r_gk_self_to"
+      }
+    ]
+  },
+  "qph_start": {
+    "label": "Q1",
+    "mode": "physical",
+    "text": "何を振り返る？",
+    "hint": "体力・身体・ケガ気味、自分の身体パフォーマンスについて",
+    "choices": [
+      {
+        "label": "試合中・練習後半の体力切れ",
+        "next": "qph_fatigue"
+      },
+      {
+        "label": "シュート力／投擲速度が落ちた",
+        "next": "qph_throw_when"
+      },
+      {
+        "label": "スプリント・速攻についていけない",
+        "next": "qph_sprint_when"
+      },
+      {
+        "label": "ジャンプ・跳躍力の低下",
+        "next": "qph_jump_when"
+      },
+      {
+        "label": "ケガ気味／違和感がある",
+        "next": "qph_pain"
+      },
+      {
+        "label": "コンディションが安定しない",
+        "next": "qph_cond_factor"
+      }
+    ]
+  },
+  "qph_throw_when": {
+    "label": "Q2",
+    "mode": "physical",
+    "text": "シュート速度の低下、いつ起きた？",
+    "choices": [
+      {
+        "label": "試合後半に落ちた（疲労）",
+        "next": "r_ph_throw_fatigue"
+      },
+      {
+        "label": "練習後半に毎回落ちる（持久力）",
+        "next": "r_ph_throw_endurance"
+      },
+      {
+        "label": "安定して遅い（筋力／フォーム）",
+        "next": "r_ph_throw_form"
+      },
+      {
+        "label": "肩・肘の違和感があってから",
+        "next": "r_ph_throw_pain"
+      }
+    ]
+  },
+  "qph_sprint_when": {
+    "label": "Q2",
+    "mode": "physical",
+    "text": "スプリントが追いつかない、どんな場面？",
+    "choices": [
+      {
+        "label": "最初の3歩で置いていかれる（加速）",
+        "next": "r_ph_sprint_accel"
+      },
+      {
+        "label": "中盤以降の伸びが足りない（最高速）",
+        "next": "r_ph_sprint_top"
+      },
+      {
+        "label": "速攻3-4本目から遅くなる（回復力）",
+        "next": "r_ph_sprint_repeat"
+      },
+      {
+        "label": "方向転換で遅れる（アジリティ）",
+        "next": "r_ph_sprint_agility"
+      }
+    ]
+  },
+  "qph_jump_when": {
+    "label": "Q2",
+    "mode": "physical",
+    "text": "ジャンプの低下、どの局面？",
+    "choices": [
+      {
+        "label": "試合終盤に落ちる（疲労）",
+        "next": "r_ph_jump_fatigue"
+      },
+      {
+        "label": "安定して低い（筋力／技術）",
+        "next": "r_ph_jump_strength"
+      },
+      {
+        "label": "着地が不安定（神経筋制御）",
+        "next": "r_ph_jump_landing"
+      },
+      {
+        "label": "シーズン累積で低下",
+        "next": "r_ph_jump_season"
+      }
+    ]
+  },
+  "qph_cond_factor": {
+    "label": "Q2",
+    "mode": "physical",
+    "text": "コンディション不安定、思い当たる要因は？",
+    "choices": [
+      {
+        "label": "睡眠が浅い・短い",
+        "next": "r_ph_cond_sleep"
+      },
+      {
+        "label": "食事のタイミング・量が不規則",
+        "next": "r_ph_cond_food"
+      },
+      {
+        "label": "練習負荷が高すぎる（疲労蓄積）",
+        "next": "r_ph_cond_load"
+      },
+      {
+        "label": "メンタル要因（不安・プレッシャー）",
+        "next": "r_ph_cond_mental"
+      },
+      {
+        "label": "原因がよく分からない",
+        "next": "r_ph_condition"
+      }
+    ]
+  },
+  "qph_fatigue": {
+    "label": "Q2",
+    "mode": "physical",
+    "text": "どのタイミングで体力切れを感じた？",
+    "choices": [
+      {
+        "label": "前半終盤（試合の20-30分頃）",
+        "next": "r_ph_fatigue_early"
+      },
+      {
+        "label": "後半（45分以降）",
+        "next": "r_ph_fatigue_late"
+      },
+      {
+        "label": "練習1時間以降",
+        "next": "r_ph_fatigue_practice"
+      },
+      {
+        "label": "速攻3〜4本目から急に",
+        "next": "r_ph_fatigue_burst"
+      }
+    ]
+  },
+  "qph_pain": {
+    "label": "Q2",
+    "mode": "physical",
+    "text": "どこに違和感／痛み？",
+    "choices": [
+      {
+        "label": "肩（投擲時の痛み）",
+        "next": "r_ph_pain_shoulder"
+      },
+      {
+        "label": "足関節・足首",
+        "next": "r_ph_pain_ankle"
+      },
+      {
+        "label": "膝",
+        "next": "r_ph_pain_knee"
+      },
+      {
+        "label": "指・手首",
+        "next": "r_ph_pain_finger"
+      },
+      {
+        "label": "腰・背中",
+        "next": "r_ph_pain_back"
+      }
+    ]
+  },
+  "qsm_start": {
+    "label": "Q1",
+    "mode": "shot_7m",
+    "text": "7mの結果は？",
+    "hint": "シューター視点で振り返る。GK視点はGK（自分）モードへ。",
+    "choices": [
+      {
+        "label": "決めた（成功）",
+        "next": "qsm_method_good"
+      },
+      {
+        "label": "止められた（GKがセーブ）",
+        "next": "qsm_method_miss"
+      },
+      {
+        "label": "枠を外した",
+        "next": "qsm_offframe_why"
+      },
+      {
+        "label": "ポストに当たった",
+        "next": "qsm_post_why"
+      }
+    ]
+  },
+  "qsm_offframe_why": {
+    "label": "Q2",
+    "mode": "shot_7m",
+    "text": "枠外の原因は？",
+    "choices": [
+      {
+        "label": "プレッシャーで力みすぎた",
+        "next": "r_sm_off_pressure"
+      },
+      {
+        "label": "ためすぎてフォームが崩れた",
+        "next": "r_sm_off_overthink"
+      },
+      {
+        "label": "助走から放つまでの一貫性がなかった",
+        "next": "r_sm_off_form"
+      },
+      {
+        "label": "GKを意識して避けようとして大きく外した",
+        "next": "r_sm_off_avoid"
+      }
+    ]
+  },
+  "qsm_post_why": {
+    "label": "Q2",
+    "mode": "shot_7m",
+    "text": "ポストに当たった瞬間どうだった？",
+    "choices": [
+      {
+        "label": "コースは合っていた、あと数センチで入った",
+        "next": "r_sm_post_close"
+      },
+      {
+        "label": "狙ったコースより少しズレた",
+        "next": "r_sm_post_off"
+      },
+      {
+        "label": "GKに反応されてコースを変えた途中",
+        "next": "r_sm_post_react"
+      }
+    ]
+  },
+  "qsm_method_good": {
+    "label": "Q2",
+    "mode": "shot_7m",
+    "text": "決めた手段は？",
+    "choices": [
+      {
+        "label": "シュタントヴルフ（立ち打ちシュート）（直球）でコースを狙った",
+        "next": "r_sm_good_standwurf"
+      },
+      {
+        "label": "ロブヴルフ（ループシュート）（ループ）でGKの頭上越し",
+        "next": "r_sm_good_lobwurf"
+      },
+      {
+        "label": "バックハンドフェイクで逆を突いた",
+        "next": "r_sm_good_fake"
+      },
+      {
+        "label": "視線で誘導してから逆コース",
+        "next": "r_sm_good_eye"
+      },
+      {
+        "label": "GKの動きを見て即決",
+        "next": "r_sm_good_react"
+      }
+    ]
+  },
+  "qsm_method_miss": {
+    "label": "Q2",
+    "mode": "shot_7m",
+    "text": "GKに何が起きた？",
+    "choices": [
+      {
+        "label": "GKが先読みで早く動き、コースを塞いだ",
+        "next": "r_sm_miss_anticip"
+      },
+      {
+        "label": "GKが動かず中央でコース絞り",
+        "next": "r_sm_miss_position"
+      },
+      {
+        "label": "GKが前に出てきてアングル縮小",
+        "next": "r_sm_miss_stepout"
+      },
+      {
+        "label": "自分のフェイクをGKが見破った",
+        "next": "r_sm_miss_seen"
+      },
+      {
+        "label": "ルーティンが崩れて急いで打った",
+        "next": "r_sm_miss_routine"
+      }
+    ]
+  },
+  "qsg_start": {
+    "label": "Q1",
+    "mode": "sign",
+    "text": "どのサインプレーを使った？",
+    "hint": "セットプレー・スクリーン・コードワード戦術の振り返り",
+    "choices": [
+      {
+        "label": "クロス系（アインファッヘス・クロイツェン（シンプルクロス） / ドライヤー・クロイツ（3人クロス））",
+        "next": "qsg_result"
+      },
+      {
+        "label": "スクリーン系（Pick&Roll / ダブルスクリーン）",
+        "next": "qsg_result"
+      },
+      {
+        "label": "ケンパ・トリック（空中受けシュート）",
+        "next": "qsg_result"
+      },
+      {
+        "label": "クイックフリースロー／クイックスローオフ（即時センター投擲）",
+        "next": "qsg_result"
+      },
+      {
+        "label": "中央展開系（ユーゴ / ポーレン（ポーランド式））",
+        "next": "qsg_result"
+      },
+      {
+        "label": "タイムアウト明けのセットプレー",
+        "next": "qsg_result"
+      }
+    ]
+  },
+  "qsg_result": {
+    "label": "Q2",
+    "mode": "sign",
+    "text": "結果は？",
+    "choices": [
+      {
+        "label": "シュートまでつながった（成功）",
+        "next": "qsg_why_good"
+      },
+      {
+        "label": "途中で崩れた（連携ミス）",
+        "next": "qsg_break_where"
+      },
+      {
+        "label": "DFに読まれていた",
+        "next": "qsg_read_what"
+      },
+      {
+        "label": "シュートまで行ったが入らなかった",
+        "next": "r_sg_shoot_miss"
+      },
+      {
+        "label": "ボールロスト・ターンオーバー",
+        "next": "qsg_turnover_why"
+      }
+    ]
+  },
+  "qsg_break_where": {
+    "label": "Q3",
+    "mode": "sign",
+    "text": "どこで崩れた？",
+    "choices": [
+      {
+        "label": "コールが伝わっていなかった（共有不足）",
+        "next": "r_sg_break_call"
+      },
+      {
+        "label": "タイミングが合わなかった",
+        "next": "r_sg_break_timing"
+      },
+      {
+        "label": "スクリーンが間に合わなかった",
+        "next": "r_sg_break_screen"
+      },
+      {
+        "label": "パス回しが詰まった",
+        "next": "r_sg_break_pass"
+      }
+    ]
+  },
+  "qsg_read_what": {
+    "label": "Q3",
+    "mode": "sign",
+    "text": "DFは何を読んだ？",
+    "choices": [
+      {
+        "label": "コールが大きすぎて聞こえた",
+        "next": "r_sg_read_call"
+      },
+      {
+        "label": "同じサインを繰り返していた（パターン読み）",
+        "next": "r_sg_read_pattern"
+      },
+      {
+        "label": "動き出しの定型化（フォーメーション読み）",
+        "next": "r_sg_read_motion"
+      },
+      {
+        "label": "事前のスカウティング情報を相手が持っていた",
+        "next": "r_sg_read_scout"
+      }
+    ]
+  },
+  "qsg_turnover_why": {
+    "label": "Q3",
+    "mode": "sign",
+    "text": "ロストの原因は？",
+    "choices": [
+      {
+        "label": "パスミス（精度不足）",
+        "next": "r_sg_to_pass"
+      },
+      {
+        "label": "キャッチミス（受け手の準備不足）",
+        "next": "r_sg_to_catch"
+      },
+      {
+        "label": "無理なパスを選んだ（判断ミス）",
+        "next": "r_sg_to_judge"
+      },
+      {
+        "label": "DFのインターセプト（読まれた）",
+        "next": "r_sg_to_intercept"
+      }
+    ]
+  },
+  "qsg_why_good": {
+    "label": "Q3",
+    "mode": "sign",
+    "text": "成功の要因は？",
+    "choices": [
+      {
+        "label": "事前のコールが明確だった",
+        "next": "r_sg_good_call"
+      },
+      {
+        "label": "タイミングが合った",
+        "next": "r_sg_good_timing"
+      },
+      {
+        "label": "スクリーンの質が高かった",
+        "next": "r_sg_good_screen"
+      },
+      {
+        "label": "DFの裏をかけた",
+        "next": "r_sg_good_surprise"
+      }
+    ]
+  }
+}

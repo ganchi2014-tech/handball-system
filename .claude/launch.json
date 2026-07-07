@@ -2,16 +2,16 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "handball-preview",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["C:\\dev\\handball-system\\.claude\\server.js"],
-      "port": 8765
+      "name": "vite-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
     },
     {
-      "name": "handball",
-      "runtimeExecutable": "C:\\Users\\togan1080\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
-      "runtimeArgs": ["-m", "http.server", "3000"],
-      "port": 3000
+      "name": "legacy-static",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [".claude\\server.js"],
+      "port": 8765
     }
   ]
 }
