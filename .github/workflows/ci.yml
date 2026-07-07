@@ -1,0 +1,71 @@
+name: CI & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: 依存インストール
+        run: npm ci
+
+      - name: Vitest（チャット回帰14問・新旧パリティ・GK/PV/TB集計・mergeBackup）
+        run: npm test
+
+      - name: 旧アプリ Babelスモーク（並走中の白画面デプロイ防止）
+        run: |
+          npm i --no-save @babel/standalone@7.26.4
+          node .scripts/smoke_babel.js
+
+      - name: 旧アプリ チャット回帰＋監査（並走中の凍結ガード）
+        run: |
+          node .scripts/chat_battery.js --check
+          node .scripts/audit_all.js
+          node .scripts/audit_completeness.js
+          node .scripts/audit_results.js
+
+      - name: Vite build（新アプリ）
+        run: npm run build
+
+      - name: サイト合成（root=旧アプリ／next/=新アプリ。本番URL不変）
+        run: |
+          mkdir -p _site
+          cp index.html sw.js manifest.json _site/
+          cp -r icons dictionary _site/
+          cp -r dist _site/next
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name == 'push'
+        with:
+          path: _site
+
+  deploy:
+    needs: test-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
