@@ -67,5 +67,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Pagesのソースを「ブランチ配信」→「GitHub Actions」へ自動切替（設定画面の手動操作を不要にする）
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - id: deployment
         uses: actions/deploy-pages@v4
