@@ -1,0 +1,23 @@
+{
+  "name": "handball-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "HANDBALL LAB — 高校ハンドボール部の自己組織化学習アプリ（辞書・振り返り・課題解決・練習プラン）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0",
+    "vite-plugin-pwa": "^0.21.0",
+    "vitest": "^2.1.8"
+  }
+}
