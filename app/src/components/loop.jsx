@@ -203,6 +203,10 @@ function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, on
             <div className="tb-card-k">✓ 振り返り済み</div>
             <div className="tb-card-v">{(live.reflect.crumbs || []).join(' › ')}</div>
             {live.next && <div className="tb-card-v">🎯 宣言：「{live.next}」</div>}
+            <button className="tb-ghost-btn" style={{ marginTop: 6 }}
+              onClick={() => save({ ...live, star: !live.star })}>
+              {live.star ? '⭐ 効いた技に登録済み（タップで外す）' : '☆ 効いた技に載せる（マイ・プレイブック）'}
+            </button>
           </div>
           <button className="tb-next-btn" style={{ marginTop: 10 }} onClick={() => onPickIssue(live)}>
             🎯 このカードから課題を1つ選ぶ →（課題解決へ）

@@ -14,6 +14,7 @@ import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
+import { Playbook } from './components/playbook.jsx';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
 import { RecordModule } from './components/record.jsx';
@@ -927,6 +928,7 @@ function App() {
               {phase === 'chat' && '質問する'}
               {phase === 'yomi' && '読みを宣言する'}
               {phase === 'card' && '5分振り返り'}
+              {phase === 'playbook' && 'マイ・プレイブック'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && '振り返る'}
             </div>
             <div className="header-brand-sub">
@@ -940,6 +942,7 @@ function App() {
               {phase === 'chat' && 'Dictionary Chat'}
               {phase === 'yomi' && 'Yomi Declaration'}
               {phase === 'card' && 'Match Card'}
+              {phase === 'playbook' && 'My Playbook'}
               {(phase === 'start' || phase === 'question' || phase === 'result') && 'Self Q&A'}
             </div>
           </div>
@@ -2391,6 +2394,11 @@ function App() {
             onBackHub={handleBackToHub}
           />
         </div>
+      )}
+
+      {phase === 'playbook' && (
+        <Playbook cards={matchCards} gkPreds={gkPreds} pvRecords={pvRecords}
+          gkPlayers={gkPlayers} pvPlayers={pvPlayers} onBack={handleBackToHub} />
       )}
 
       {/* ── Bottom Navigation ── */}
