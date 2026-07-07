@@ -12,6 +12,7 @@ import { TB_CONSTRAINTS, tbExportAllText } from './lib/tb.js';
 import { gkCalcTendencies, gkExportWeekText } from './lib/gk.js';
 import { pvExportWeekText, pvResultLabel } from './lib/pv.js';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
+import { migrateReflectToCards } from './lib/loop.js';
 import { GText } from './components/GText.jsx';
 import { TBHome, TBTaskDetail, TBWizard, tbCopy } from './components/tb.jsx';
 import { GKHome, GKRecordWizard } from './components/gk.jsx';
@@ -66,6 +67,27 @@ function App() {
     const dec = { ...declaration, done, answeredTs: Date.now() };
     setDeclaration(dec);
     lsSet('next-declaration', dec);
+  };
+
+  // ── Phase 2: 1試合=1カード＋ループ状態 ──
+  // match-cards は新規保存先。reflect-history は読み続ける（破棄禁止）が、初回起動時に
+  // 変換コピーする（migrateReflectToCards は冪等なので多重実行しても安全）。
+  const [matchCards, setMatchCards] = useState(() => lsGet('match-cards') || []);
+  const [loopState, setLoopState] = useState(() => lsGet('loop-state') || { nextMatch: null, migrated: 0 });
+  useEffect(() => { lsSet('match-cards', matchCards); }, [matchCards]);
+  useEffect(() => { lsSet('loop-state', loopState); }, [loopState]);
+  useEffect(() => {
+    if (loopState.migrated) return;
+    const { cards, added } = migrateReflectToCards(reflectHistory, matchCards);
+    if (added > 0) setMatchCards(cards);
+    setLoopState(prev => ({ ...prev, migrated: 1 }));
+  }, []);  // 初回マウント時のみ
+  const upsertCard = (card) => {
+    setMatchCards(prev => {
+      const i = prev.findIndex(c => c.id === card.id);
+      const next = i >= 0 ? prev.map(c => c.id === card.id ? card : c) : [card, ...prev];
+      return next.sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 300);
+    });
   };
 
   // 保存失敗（容量超過・プライベートブラウズ等）の可視化 — lsSet が発火するイベントを受ける
@@ -170,6 +192,8 @@ function App() {
         if (m.added > 0) { lsSet(key, m.val); if (apply) apply(m.val); extraAdded += m.added; }
       };
       applyExtra('reflect-history', reflectHistory, (v) => setReflectHistory(v.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 200)));
+      applyExtra('match-cards', matchCards, (v) => setMatchCards(v.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0)).slice(0, 300)));
+      applyExtra('loop-state', loopState, null);   // スカラー＝ローカル優先（端末設定なので上書きしない）
       applyExtra('solve-history', solveHistory, setSolveHistory);
       applyExtra('plan-saved', planSaved, setPlanSaved);
       applyExtra('dict-favs', dictFavs, setDictFavs);

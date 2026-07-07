@@ -82,3 +82,9 @@ describe('cardStats（プレイブック用集計）', () => {
   it('空配列は率null', () =>
     expect(cardStats([])).toEqual({ reflects: 0, declared: 0, done: 0, doneRate: null, yomiTotal: 0, yomiHit: 0, yomiRate: null }));
 });
+
+describe('cardStats（mode のみの reflect も振り返りに数える）', () => {
+  it('resultId=null でも mode があれば reflects に含む', () => {
+    expect(cardStats([{ reflect: { mode: 'of', resultId: null }, next: '', nextDone: null, yomi: [] }]).reflects).toBe(1);
+  });
+});

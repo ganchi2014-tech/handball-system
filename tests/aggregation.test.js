@@ -4,7 +4,8 @@ import { describe, it, expect } from 'vitest';
 import { gkCalcTendencies, gkStats, gkWeeklySeries, gkWeekStart, gkBaselineCompare } from '../app/src/lib/gk.js';
 import { pvCalcTypeDist, pvNonBlockRate, pvCrossTypeResult } from '../app/src/lib/pv.js';
 import { tbJudgeRow } from '../app/src/lib/tb.js';
-import { mergeBackup } from '../app/src/lib/backup.js';
+import { mergeBackup, mergeExtraKey } from '../app/src/lib/backup.js';
+import { migrateReflectToCards } from '../app/src/lib/loop.js';
 
 describe('gkWeekStart（週次集計の単位＝月曜起点）', () => {
   it('月曜はその日自身', () => expect(gkWeekStart('2026-07-06')).toBe('2026-07-06'));
@@ -131,5 +132,21 @@ describe('mergeBackup（記録合流の安全性）', () => {
   });
   it('壊れたテキストは拒否', () => {
     expect(() => mergeBackup(current, '{{{')).toThrow('JSONとして読めませんでした');
+  });
+});
+
+describe('match-cards のバックアップ取り込み（検収6：「全データ」を嘘に戻さない）', () => {
+  it('mergeExtraKey で id 単位の和集合になり重複はスキップ', () => {
+    const cur = [{ id: 'mc1', ts: 2 }];
+    const imp = [{ id: 'mc1', ts: 2 }, { id: 'mc2', ts: 1 }];
+    const m = mergeExtraKey(cur, imp);
+    expect(m.added).toBe(1);
+    expect(m.val.map(c => c.id).sort()).toEqual(['mc1', 'mc2']);
+  });
+  it('マイグレーション由来カード（mc-接頭）も別端末取り込みで重複しない', () => {
+    const hist = [{ id: 'rA', ts: 5, mode: 'of', resultId: 'r_x', crumbs: [], next: '' }];
+    const a = migrateReflectToCards(hist, []).cards;   // 端末A
+    const b = migrateReflectToCards(hist, []).cards;   // 端末B（同じ履歴を取り込み済み）
+    expect(mergeExtraKey(a, b).added).toBe(0);
   });
 });
