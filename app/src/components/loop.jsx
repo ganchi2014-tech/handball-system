@@ -143,7 +143,7 @@ function YomiWizard({ card, onSave, onExit }) {
 }
 
 // 検証位相：試合後5分。カード起点(1タップ)→読みの丸付け→4軸振り返り(既存フロー)→宣言。
-function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, onPickIssue, onExit }) {
+function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, onPickIssue, onExit, onShareYomi }) {
   // 再開対象: reflect 未接続の直近カード（読み宣言済みを優先）
   const pending = cards.find(c => !c.reflect && (c.yomi || []).length) || cards.find(c => !c.reflect);
   const initial = (resumeCardId && cards.find(c => c.id === resumeCardId)) || pending || null;
@@ -187,6 +187,13 @@ function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, on
                 <button className={`gk-result-btn miss ${y.hit === false ? 'selected' : ''}`}
                   onClick={() => save({ ...live, yomi: live.yomi.map((x, j) => j === i ? { ...x, hit: false } : x) })}>× 外れた</button>
               </div>
+              {/* 回覧は選手発意のみ（丸付け済み＋チーム接続中のときだけボタンが出る） */}
+              {onShareYomi && (y.hit === true || y.hit === false) && (
+                <button className="tb-ghost-btn" style={{ marginTop: 4 }}
+                  onClick={() => onShareYomi(live, y, i)}>
+                  {y.shared ? '✓ 回覧済み（タップで更新）' : '📣 この読みをチームに回覧'}
+                </button>
+              )}
             </div>
           ))}
           {unmarked.length > 0 && <div className="tb-q-hint">未丸付け {unmarked.length} 件（わからないものは飛ばしてOK）</div>}

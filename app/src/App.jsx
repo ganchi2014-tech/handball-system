@@ -13,7 +13,8 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbQueueAdd, fbRosterToPlayers } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
+import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
@@ -357,6 +358,27 @@ function App() {
     window.addEventListener('online', onOnline);
     return () => window.removeEventListener('online', onOnline);
   }, []);
+  // ── 読みの回覧板（Phase B-3・labShared）。共有は選手発意のみ・実名（接続時の名簿表示名）
+  const [sharedEntries, setSharedEntries] = useState(null); // null=読み込み中
+  const openSharedBoard = () => {
+    setSharedEntries(null);
+    setPhase('shared');
+    fbPullShared().then(setSharedEntries).catch(() => setSharedEntries([]));
+  };
+  const handleShareYomi = (card, y, i) => {
+    const rec = buildSharedYomi({ card, yomi: y, index: i, authorUid: fbUid(), authorName: fbLink.rosterName });
+    if (!rec) return;
+    fbShareYomi(rec)
+      .then(() => upsertCard({ ...card, yomi: card.yomi.map((x, j) => (j === i ? { ...x, shared: true } : x)) }))
+      .catch(() => {}); // 失敗は無害（ボタンが「回覧済み」にならないことが失敗の表示）
+  };
+  const handleRemoveShared = (id) => {
+    fbRemoveShared(id)
+      .then(() => setSharedEntries(prev => (Array.isArray(prev) ? prev.filter(e => e.id !== id) : prev)))
+      .catch(() => {});
+  };
+  const canShare = fbEnabled && fbStatus === 'on' && !!fbLink.rosterName;
+
   // ループ状態（次の試合日）を一方向 push（接続確立時＋変更時）。ローカル優先方針のため pull はしない。
   // mental のホーム位相カード（試合前/試合後の出し分け）がブリッジ経由でこれを読む。
   useEffect(() => {
@@ -1233,6 +1255,13 @@ function App() {
             style={{marginTop: 12}}
             onClick={handleOnboardOpen}
           >🌱 初めての方はこちら</button>
+          {fbLink.enabled && (
+            <button
+              className="help-btn"
+              style={{marginTop: 8}}
+              onClick={openSharedBoard}
+            >📣 チームの読み回覧板</button>
+          )}
           <button
             className="help-btn"
             style={{marginTop: 8}}
@@ -1257,10 +1286,15 @@ function App() {
           onSave={(c) => { upsertCard(c); setPhase('hub'); }} />;
       })()}
 
+      {phase === 'shared' && (
+        <SharedBoard entries={sharedEntries} onRemove={handleRemoveShared} onExit={handleBackToHub} />
+      )}
+
       {phase === 'card' && (
         <CardFlow cards={matchCards} nextMatch={loopState.nextMatch}
           resumeCardId={activeCardIdRef.current}
           onUpsert={upsertCard} onExit={handleBackToHub}
+          onShareYomi={canShare ? handleShareYomi : null}
           onStartReflect={(c) => { activeCardIdRef.current = c.id; setPhase('start'); }}
           onPickIssue={(c) => {
             const sym = c.reflect && RESULT_TO_SYMPTOM[c.reflect.resultId];

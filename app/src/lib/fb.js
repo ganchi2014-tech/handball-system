@@ -172,7 +172,64 @@ export async function fbCheckRosterLink(rosterId) {
   return { linkedUid, mine: linkedUid === uid };
 }
 
+// ─── 読みの回覧（Phase B-3・labShared） ───
+// 共有は選手発意のみ（丸付け済みの読みを本人がボタンで選ぶ）。ルールは author 固定
+// （本人のみ create/update/remove・auth 済み全員 read — verify-lab-rules.mjs 5〜11番で検証済み）。
+
+// 回覧レコードを set（id が card.id+index 由来で冪等 → 再共有は上書き＝重複しない）
+export async function fbShareYomi(record) {
+  if (!record || !record.id) throw new Error('fbShareYomi: record.id が必要です');
+  if (!uid || !db) throw new Error('fbShareYomi: 未接続です（fbConnect を先に）');
+  const { dbMod } = await importFirebase();
+  await dbMod.set(dbMod.ref(db, 'labShared/' + record.id), record);
+}
+
+// 回覧一覧を一回読み → fbNormalizeShared で整形して返す
+export async function fbPullShared() {
+  if (!uid || !db) throw new Error('fbPullShared: 未接続です（fbConnect を先に）');
+  const { dbMod } = await importFirebase();
+  const snap = await dbMod.get(dbMod.ref(db, 'labShared'));
+  return fbNormalizeShared(snap.val(), uid);
+}
+
+// 自分の回覧を削除（author 本人のみルールが許可）
+export async function fbRemoveShared(id) {
+  if (!id) throw new Error('fbRemoveShared: id が必要です');
+  if (!uid || !db) throw new Error('fbRemoveShared: 未接続です（fbConnect を先に）');
+  const { dbMod } = await importFirebase();
+  await dbMod.remove(dbMod.ref(db, 'labShared/' + id));
+}
+
 // ─── 純関数（firebase 非依存・テスト対象） ───
+
+// 丸付け済みの読み1件 → 回覧レコード。未丸付け（hit=null）や欠落は null（共有不可）。
+// id は 'sy-'+card.id+'-'+index で冪等（同じ読みの再共有は新規でなく上書きになる）。
+export function buildSharedYomi({ card, yomi, index, authorUid, authorName, ts }) {
+  if (!card || !card.id || !yomi || !(yomi.hit === true || yomi.hit === false)) return null;
+  if (!authorUid || !String(yomi.claim || '').trim()) return null;
+  return {
+    id: 'sy-' + card.id + '-' + index,
+    author: authorUid,
+    name: String(authorName || '').trim() || '?',
+    date: card.date || '',
+    kind: card.kind || 'match',
+    opponent: card.opponent || '',
+    target: yomi.target || null,
+    claim: String(yomi.claim).trim(),
+    hit: yomi.hit,
+    ts: ts || Date.now(),
+  };
+}
+
+// labShared スナップショット → 表示用配列（ts降順・不正除外・mine フラグ・最新50件）
+export function fbNormalizeShared(val, myUid) {
+  if (!val || typeof val !== 'object') return [];
+  return Object.values(val)
+    .filter(e => e && e.id && e.author && (e.hit === true || e.hit === false) && String(e.claim || '').trim())
+    .sort((a, b) => (b.ts || 0) - (a.ts || 0))
+    .slice(0, 50)
+    .map(e => ({ ...e, mine: e.author === myUid }));
+}
 
 // mental の Roster Helpers 互換の表示名（学年丸数字①②③＋姓。年度は4月1日始まり）。
 // name フィールドを持つエントリ（将来形・テスト形）はそのまま name を使う。
