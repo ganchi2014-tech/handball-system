@@ -13,7 +13,7 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbQueueAdd, fbRosterToPlayers } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbQueueAdd, fbRosterToPlayers } from './lib/fb.js';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
@@ -357,6 +357,12 @@ function App() {
     window.addEventListener('online', onOnline);
     return () => window.removeEventListener('online', onOnline);
   }, []);
+  // ループ状態（次の試合日）を一方向 push（接続確立時＋変更時）。ローカル優先方針のため pull はしない。
+  // mental のホーム位相カード（試合前/試合後の出し分け）がブリッジ経由でこれを読む。
+  useEffect(() => {
+    if (!fbEnabled || fbStatus !== 'on') return;
+    fbSetLoopState({ nextMatch: loopState.nextMatch || null, ts: Date.now() }).catch(() => {});
+  }, [fbEnabled, fbStatus, loopState.nextMatch]);
   // 保存経路ごとの push（新規ID・参照変更のみ。削除は同期しない=リモート保持のデータ保全方針）
   useFbPushOnChange('matchCards', matchCards, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
   useFbPushOnChange('gkPredictions', gkPreds, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
