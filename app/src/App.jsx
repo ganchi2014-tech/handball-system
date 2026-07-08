@@ -13,7 +13,7 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbQueueAdd, fbRosterToPlayers } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbQueueAdd, fbRosterToPlayers } from './lib/fb.js';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
@@ -378,7 +378,9 @@ function App() {
   const fbManualNames = useMemo(
     () => [...new Set([...(gkPlayers.keepers || []), ...(gkPlayers.shooters || []), ...(pvPlayers.pivots || [])])],
     [gkPlayers, pvPlayers]);
-  // 名簿タップ: rosterId をローカル保存し /rosterToUid を【読むだけ】で連携状態を判定（書き込みはしない）
+  // 名簿タップ: rosterId をローカル保存し /rosterToUid を【読むだけ】で連携状態を判定（書き込みはしない）。
+  // mental 連携済み（linkedUid あり・別uid）なら labLinks ブリッジを書き、mental のマイ統計に
+  // この端末の LAB 記録が出るようにする（選手が自分の名前をタップした操作＝連携の意思表示）。
   const handlePickRoster = async (r) => {
     setFbLink(prev => ({ ...prev, rosterId: r.rosterId, rosterName: r.name }));
     setFbNotice(null);
@@ -386,7 +388,17 @@ function App() {
       const { linkedUid, mine } = await fbCheckRosterLink(r.rosterId);
       if (linkedUid == null) setFbNotice('none');
       else if (mine) { setFbLink(prev => ({ ...prev, mismatch: 0 })); setFbNotice('mine'); }
-      else { setFbLink(prev => ({ ...prev, mismatch: 1 })); setFbNotice('mismatch'); }
+      else {
+        try {
+          await fbWriteLabLink(linkedUid, r.rosterId);
+          setFbLink(prev => ({ ...prev, mismatch: 0 }));
+          setFbNotice('bridged');
+        } catch (e2) {
+          // 先に別端末がブリッジ済み等で書けない場合。記録自体は安全に保存され続ける
+          setFbLink(prev => ({ ...prev, mismatch: 1 }));
+          setFbNotice('mismatch');
+        }
+      }
     } catch (e) {
       setFbNotice('checkfail');
     }

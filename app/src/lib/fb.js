@@ -139,6 +139,21 @@ export async function fbSubscribeRoster(cb) {
   });
 }
 
+// UIDブリッジ: labLinks/{mentalUid} = {labUid: 自uid, rosterId} を書く（選手発意）。
+// mental と LAB は別オリジンで匿名uidが必ず分裂するため、これが mental のマイ統計に
+// LAB 記録を表示する唯一の経路。/rosterToUid には一切書き込まない（絶対禁止・不変）。
+// ルール側で labUid === auth.uid と rosterToUid[rosterId] === mentalUid が強制される。
+export async function fbWriteLabLink(mentalUid, rosterId) {
+  if (!uid || !db) throw new Error('fbWriteLabLink: 未接続です（fbConnect を先に）');
+  if (!mentalUid || !rosterId) throw new Error('fbWriteLabLink: mentalUid と rosterId が必要です');
+  const { dbMod } = await importFirebase();
+  await dbMod.set(dbMod.ref(db, 'labLinks/' + mentalUid), {
+    labUid: uid,
+    rosterId: String(rosterId),
+    updatedAt: dbMod.serverTimestamp(),
+  });
+}
+
 // /rosterToUid/{rosterId} を【getで読むだけ】。書き込みAPIは存在しない（絶対追加禁止）。
 export async function fbCheckRosterLink(rosterId) {
   if (!uid || !db) throw new Error('fbCheckRosterLink: 未接続です（fbConnect を先に）');

@@ -73,6 +73,9 @@ function isAllowedWritePath(path) {
   if (FIXED_LABSHARED_TEST_IDS.has(path)) return true;
   for (const uid of knownUids) {
     if (path === `lab/${uid}` || path.startsWith(`lab/${uid}/`)) return true;
+    // labLinks はキーが「mental側uid」。テストでは既知uid（A/B）を mentalUid 役に使うため
+    // labLinks/{既知uid} のみ許可（実在選手の mentalUid には決して触れない）。
+    if (path === `labLinks/${uid}`) return true;
   }
   return false;
 }
@@ -225,6 +228,60 @@ async function main() {
     await expectAllow('A read /rosterToUid (read-only, no writes ever)', async () => {
       await get(ref(dbA, 'rosterToUid'));
     });
+
+    // ── labLinks UIDブリッジ（Phase B-1）。B を「mental側uid」、A を「LAB側uid」役として検証 ──
+    // 実在選手の mentalUid・rosterId には一切触れない（rosterId はダミー文字列。
+    // rosterToUid との突合は mental クライアント側の責務でありルールでは検証しない設計）。
+
+    // 15. ブリッジ未登録の時点で B が /lab/{A} を読む -> DENY（前提確認）
+    await expectDeny('B read /lab/{A} before bridge', async () => {
+      await get(ref(dbB, `lab/${uidA}`));
+    });
+
+    // 16. A(labUid) が labLinks/{B} = {labUid:A, rosterId:'vtest-rid'} を作成 -> ALLOW
+    await expectAllow('A create /labLinks/{B} (labUid=A)', async () => {
+      await set(guardedWriteRef(dbA, `labLinks/${uidB}`), { labUid: uidA, rosterId: 'vtest-rid', updatedAt: 1 });
+    });
+
+    // 17. B(mentalUid) が labLinks/{B} を読む -> ALLOW
+    await expectAllow('B read /labLinks/{B}', async () => {
+      await get(ref(dbB, `labLinks/${uidB}`));
+    });
+
+    // 18. B がブリッジ経由で /lab/{A} を読む -> ALLOW（ブリッジの本丸）
+    await expectAllow('B read /lab/{A} via bridge', async () => {
+      await get(ref(dbB, `lab/${uidA}`));
+    });
+
+    // 19. B が labLinks/{B} を {labUid:B} で上書き -> DENY（既存labUid=Aの乗っ取り防止）
+    await expectDeny('B overwrite /labLinks/{B} (takeover)', async () => {
+      await set(guardedWriteRef(dbB, `labLinks/${uidB}`), { labUid: uidB, rosterId: 'vtest-rid' });
+    });
+
+    // 20. B が labLinks/{A} = {labUid:A} を作成（labUidなりすまし） -> DENY
+    await expectDeny('B create /labLinks/{A} with labUid=A (spoof)', async () => {
+      await set(guardedWriteRef(dbB, `labLinks/${uidA}`), { labUid: uidA, rosterId: 'vtest-rid' });
+    });
+
+    // 21. B が存在しない labLinks/{A} を読む -> DENY（第三者read遮断）
+    await expectDeny('B read /labLinks/{A} (not owner)', async () => {
+      await get(ref(dbB, `labLinks/${uidA}`));
+    });
+
+    // 22. A が labLinks/{B} を rosterId 欠落で上書き -> DENY（validate）
+    await expectDeny('A update /labLinks/{B} without rosterId (validate)', async () => {
+      await set(guardedWriteRef(dbA, `labLinks/${uidB}`), { labUid: uidA });
+    });
+
+    // 23. B(mentalUid) が labLinks/{B} を削除 -> ALLOW（mental側からの連携解除）
+    await expectAllow('B remove /labLinks/{B} (mental-side unlink)', async () => {
+      await remove(guardedWriteRef(dbB, `labLinks/${uidB}`));
+    });
+
+    // 24. 削除後、B が /lab/{A} を読む -> DENY（解除が効く）
+    await expectDeny('B read /lab/{A} after unlink', async () => {
+      await get(ref(dbB, `lab/${uidA}`));
+    });
   } finally {
     // クリーンアップ: 失敗時も可能な限り実施する（すべて guardedWriteRef 経由）。
     try {
@@ -244,6 +301,22 @@ async function main() {
       // vtest2 はテスト8でBの書き込みがDENYされる想定＝存在しないはずだが、
       // 万一ルール不備で作成されてしまった場合の後始末として author=A なので A で削除を試みる。
       await remove(guardedWriteRef(dbA, 'labShared/vtest2')).catch(() => {});
+    } catch (_) {
+      // ignore
+    }
+    try {
+      // labLinks/{B} は23番でB自身が削除済みのはずだが、途中失敗に備え labUid=A でも削除を試みる。
+      if (uidB) {
+        await remove(guardedWriteRef(dbA, `labLinks/${uidB}`)).catch(() => {});
+      }
+    } catch (_) {
+      // ignore
+    }
+    try {
+      // labLinks/{A} は20番でDENYされる想定＝存在しないはずだが、万一に備え本人(A)で削除。
+      if (uidA) {
+        await remove(guardedWriteRef(dbA, `labLinks/${uidA}`)).catch(() => {});
+      }
     } catch (_) {
       // ignore
     }
