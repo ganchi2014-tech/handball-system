@@ -139,6 +139,15 @@ export async function fbSubscribeRoster(cb) {
   });
 }
 
+// ループ状態（次の試合日）を /lab/{uid}/loopState へ丸ごと set（単一値・push-onlyの一方向同期）。
+// ローカルの loop-state は端末設定としてローカル優先（fullSync でも pull しない方針）のため、
+// クラウド側は mental のホーム位相表示専用のミラー。失敗は呼び元で握りつぶしてよい（非致命）。
+export async function fbSetLoopState(value) {
+  if (!uid || !db) throw new Error('fbSetLoopState: 未接続です（fbConnect を先に）');
+  const { dbMod } = await importFirebase();
+  await dbMod.set(dbMod.ref(db, 'lab/' + uid + '/loopState'), value);
+}
+
 // UIDブリッジ: labLinks/{mentalUid} = {labUid: 自uid, rosterId} を書く（選手発意）。
 // mental と LAB は別オリジンで匿名uidが必ず分裂するため、これが mental のマイ統計に
 // LAB 記録を表示する唯一の経路。/rosterToUid には一切書き込まない（絶対禁止・不変）。
