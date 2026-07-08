@@ -12,8 +12,9 @@ const STATUS_LABEL = {
 
 const NOTICE_TEXT = {
   none: 'ℹ️ メンタルアプリで先に自分の名前を登録すると全部つながります（このアプリからは登録しません）',
-  mismatch: '⚠ メンタルアプリと同じブラウザ／同じ入れ方で開くと記録がつながります。このままでも記録は安全に保存されます',
+  mismatch: 'ℹ️ 別の端末がすでにメンタルアプリと繋がっています。この端末の記録もここに安全に保存されます',
   mine: '✓ メンタルアプリと連携済み',
+  bridged: '✓ 繋がりました — メンタルアプリの「マイ統計」にこの端末のLAB記録（読み・GK予測・PV認知）が表示されます',
   checkfail: 'ℹ️ 連携状態を確認できませんでした（記録はこのまま安全に保存されます）',
 };
 
@@ -35,7 +36,7 @@ function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames
               繋がなくても全機能そのまま使えます。繋ぐと：{'\n'}
               ・記録が端末故障で消えない{'\n'}
               ・複数端末で合流{'\n'}
-              ・メンタルアプリのマイ統計に読み的中率が出る
+              ・メンタルアプリのマイ統計にLABの記録（読み・GK予測・PV認知）が出る
             </div>
             <button className="tb-next-btn" onClick={onConnect}>🔗 チームと繋ぐ</button>
           </React.Fragment>
