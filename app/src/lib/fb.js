@@ -173,6 +173,7 @@ export function fbNormalizeRoster(val, refDate) {
   return entries
     .map(([rid, r]) => {
       if (!r || typeof r !== 'object') return null;
+      if (r.active === false) return null; // 引退（mental の引退フラグ）はチップに出さない
       const name = fbRosterDisplayName(r, refDate);
       if (!name) return null;
       return { name, isGK: !!r.isGK, rosterId: r.rosterId != null ? r.rosterId : rid };

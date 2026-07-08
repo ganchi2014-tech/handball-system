@@ -140,4 +140,16 @@ describe('fbRosterDisplayName / fbNormalizeRoster（mental 実データ形の正
     expect(fbNormalizeRoster({ r1: { enrollmentYear: 2026 }, r2: null }, ref)).toEqual([]);
     expect(fbNormalizeRoster(null)).toEqual([]);
   });
+
+  it('引退（active=false）は除外する。active 未指定・true は残す', () => {
+    const val = {
+      r1: { surname: '引退済', enrollmentYear: 2024, active: false },
+      r2: { surname: '現役A', enrollmentYear: 2025, active: true },
+      r3: { surname: '現役B', enrollmentYear: 2026 },
+    };
+    expect(fbNormalizeRoster(val, ref)).toEqual([
+      { name: '②現役A', isGK: false, rosterId: 'r2' },
+      { name: '①現役B', isGK: false, rosterId: 'r3' },
+    ]);
+  });
 });
