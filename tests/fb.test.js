@@ -2,7 +2,7 @@
 // 接続系は Task 6 の実機検証で担保）。fb.js は firebase を dynamic import しかしないため、
 // この import 自体で firebase チャンクはロードされない＝ネットワーク接続なしで走ることの証明でもある。
 import { describe, it, expect } from 'vitest';
-import { FB_NODES, fbNormalizeRoster, fbQueueAdd, fbRosterDisplayName, fbRosterToPlayers, fbUid } from '../app/src/lib/fb.js';
+import { FB_NODES, fbNormalizeRoster, fbQueueAdd, fbRosterDisplayName, fbRosterToPlayers, fbUid, buildSharedYomi, fbNormalizeShared } from '../app/src/lib/fb.js';
 
 describe('FB_NODES 対応表', () => {
   it('4ノードが揃っている', () => {
@@ -151,5 +151,54 @@ describe('fbRosterDisplayName / fbNormalizeRoster（mental 実データ形の正
       { name: '②現役A', isGK: false, rosterId: 'r2' },
       { name: '①現役B', isGK: false, rosterId: 'r3' },
     ]);
+  });
+});
+
+describe('buildSharedYomi / fbNormalizeShared（読みの回覧・Phase B-3）', () => {
+  const card = { id: 'mcABC', date: '2026-07-12', kind: 'match', opponent: '○○高校', yomi: [] };
+  const yomi = { target: 'ace', claim: '左45が起点', hit: true };
+
+  it('回覧レコードを組み立てる（id は card.id＋index で冪等）', () => {
+    const rec = buildSharedYomi({ card, yomi, index: 1, authorUid: 'u1', authorName: '②山田', ts: 1234 });
+    expect(rec).toEqual({
+      id: 'sy-mcABC-1',
+      author: 'u1',
+      name: '②山田',
+      date: '2026-07-12',
+      kind: 'match',
+      opponent: '○○高校',
+      target: 'ace',
+      claim: '左45が起点',
+      hit: true,
+      ts: 1234,
+    });
+  });
+
+  it('丸付けされていない読み（hit=null）は組み立てを拒否して null を返す', () => {
+    expect(buildSharedYomi({ card, yomi: { ...yomi, hit: null }, index: 0, authorUid: 'u1', authorName: 'n', ts: 1 })).toBe(null);
+    expect(buildSharedYomi({ card, yomi: null, index: 0, authorUid: 'u1', authorName: 'n', ts: 1 })).toBe(null);
+  });
+
+  it('一覧正規化: ts降順・不正エントリ除外・mine フラグ・50件上限', () => {
+    const val = {
+      a: { id: 'a', author: 'u1', name: 'A', claim: 'x', hit: true, ts: 10 },
+      b: { id: 'b', author: 'u2', name: 'B', claim: 'y', hit: false, ts: 30 },
+      c: null,
+      d: { id: 'd', author: 'u3', name: '', claim: '', hit: true, ts: 20 }, // claim空は除外
+    };
+    const out = fbNormalizeShared(val, 'u1');
+    expect(out.map((e) => e.id)).toEqual(['b', 'a']);
+    expect(out[0].mine).toBe(false);
+    expect(out[1].mine).toBe(true);
+  });
+
+  it('50件を超えたら新しい順に50件で切る／null 入力は空配列', () => {
+    const val = {};
+    for (let i = 0; i < 60; i++) val['k' + i] = { id: 'k' + i, author: 'u', name: 'N', claim: 'c', hit: true, ts: i };
+    const out = fbNormalizeShared(val, 'u');
+    expect(out).toHaveLength(50);
+    expect(out[0].ts).toBe(59);
+    expect(out[49].ts).toBe(10);
+    expect(fbNormalizeShared(null, 'u')).toEqual([]);
   });
 });
