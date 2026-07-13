@@ -76,6 +76,8 @@ function isAllowedWritePath(path) {
     // labLinks はキーが「mental側uid」。テストでは既知uid（A/B）を mentalUid 役に使うため
     // labLinks/{既知uid} のみ許可（実在選手の mentalUid には決して触れない）。
     if (path === `labLinks/${uid}`) return true;
+    // declShared はキーが「mental側uid」。テストでは既知uid（A/B）を mentalUid 役に使う。
+    if (path === `declShared/${uid}`) return true;
   }
   return false;
 }
@@ -282,6 +284,42 @@ async function main() {
     await expectDeny('B read /lab/{A} after unlink', async () => {
       await get(ref(dbB, `lab/${uidA}`));
     });
+
+    // ── declShared（Phase 1 宣言ミラー）。B を「mental側uid」、A を「LAB側uid」役として検証 ──
+
+    // 25. B(mental役) が declShared/{B} を書く -> ALLOW（本人write）
+    await expectAllow('B write /declShared/{B} (own mirror)', async () => {
+      await set(guardedWriteRef(dbB, `declShared/${uidB}`), {
+        declarations: [{ id: 'vd1', declaration: 'test', startDate: '2026-07-13', checkCount: 0, completed: false }],
+        updatedAt: 1,
+      });
+    });
+
+    // 26. B が declShared/{B} を読む -> ALLOW（本人read）
+    await expectAllow('B read /declShared/{B}', async () => {
+      await get(ref(dbB, `declShared/${uidB}`));
+    });
+
+    // 27. ブリッジ未登録の A が declShared/{B} を読む -> DENY（第三者read遮断）
+    await expectDeny('A read /declShared/{B} before bridge', async () => {
+      await get(ref(dbA, `declShared/${uidB}`));
+    });
+
+    // 28. A が labLinks/{B} を再作成（16番と同じ）後、declShared/{B} を読む -> ALLOW（ブリッジread）
+    await expectAllow('A read /declShared/{B} via bridge', async () => {
+      await set(guardedWriteRef(dbA, `labLinks/${uidB}`), { labUid: uidA, rosterId: 'vtest-rid', updatedAt: 1 });
+      await get(ref(dbA, `declShared/${uidB}`));
+    });
+
+    // 29. A が declShared/{B} を書く -> DENY（LAB側からは読むだけ・書けない）
+    await expectDeny('A write /declShared/{B} (read-only for LAB)', async () => {
+      await set(guardedWriteRef(dbA, `declShared/${uidB}`), { declarations: [], updatedAt: 2 });
+    });
+
+    // 30. B が declShared/{B} を削除 -> ALLOW（本人による撤去・クリーンアップ兼用）
+    await expectAllow('B remove /declShared/{B}', async () => {
+      await remove(guardedWriteRef(dbB, `declShared/${uidB}`));
+    });
   } finally {
     // クリーンアップ: 失敗時も可能な限り実施する（すべて guardedWriteRef 経由）。
     try {
@@ -301,6 +339,13 @@ async function main() {
       // vtest2 はテスト8でBの書き込みがDENYされる想定＝存在しないはずだが、
       // 万一ルール不備で作成されてしまった場合の後始末として author=A なので A で削除を試みる。
       await remove(guardedWriteRef(dbA, 'labShared/vtest2')).catch(() => {});
+    } catch (_) {
+      // ignore
+    }
+    try {
+      if (uidB) {
+        await remove(guardedWriteRef(dbB, `declShared/${uidB}`)).catch(() => {});
+      }
     } catch (_) {
       // ignore
     }
