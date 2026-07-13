@@ -148,6 +148,24 @@ export async function fbSetLoopState(value) {
   await dbMod.set(dbMod.ref(db, 'lab/' + uid + '/loopState'), value);
 }
 
+// LAB の行動宣言（next-declaration）を /lab/{uid}/declaration へ丸ごと set（単一値・一方向ミラー）。
+// mental の宣言画面が「⚡プレーの宣言」としてブリッジ経由で読む。失敗は呼び元で握りつぶしてよい（非致命）。
+export async function fbSetDeclaration(value) {
+  if (!uid || !db) throw new Error('fbSetDeclaration: 未接続です（fbConnect を先に）');
+  const { dbMod } = await importFirebase();
+  await dbMod.set(dbMod.ref(db, 'lab/' + uid + '/declaration'), value);
+}
+
+// mental の宣言ミラー /declShared/{mentalUid} を一回読み（読めるのはブリッジ済み時のみ・ルールが判定）。
+// 読めない/未設定なら null。書き込みAPIは存在しない（LAB側は閲覧専用・追加禁止）。
+export async function fbGetMentalDecls(mentalUid) {
+  if (!uid || !db) throw new Error('fbGetMentalDecls: 未接続です（fbConnect を先に）');
+  if (!mentalUid) return null;
+  const { dbMod } = await importFirebase();
+  const snap = await dbMod.get(dbMod.ref(db, 'declShared/' + mentalUid));
+  return fbNormalizeMentalDecls(snap.val());
+}
+
 // UIDブリッジ: labLinks/{mentalUid} = {labUid: 自uid, rosterId} を書く（選手発意）。
 // mental と LAB は別オリジンで匿名uidが必ず分裂するため、これが mental のマイ統計に
 // LAB 記録を表示する唯一の経路。/rosterToUid には一切書き込まない（絶対禁止・不変）。
@@ -201,6 +219,14 @@ export async function fbRemoveShared(id) {
 }
 
 // ─── 純関数（firebase 非依存・テスト対象） ───
+
+// declShared スナップショット → 表示モデル {active, completedCount, updatedAt}。不正形は null。
+export function fbNormalizeMentalDecls(val) {
+  if (!val || typeof val !== 'object' || !Array.isArray(val.declarations)) return null;
+  const list = val.declarations.filter(d => d && String(d.declaration || '').trim());
+  const active = list.filter(d => !d.completed);
+  return { active, completedCount: list.length - active.length, updatedAt: val.updatedAt || 0 };
+}
 
 // 丸付け済みの読み1件 → 回覧レコード。未丸付け（hit=null）や欠落は null（共有不可）。
 // id は 'sy-'+card.id+'-'+index で冪等（同じ読みの再共有は新規でなく上書きになる）。
