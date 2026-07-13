@@ -13,7 +13,7 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
 import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
@@ -385,6 +385,27 @@ function App() {
     if (!fbEnabled || fbStatus !== 'on') return;
     fbSetLoopState({ nextMatch: loopState.nextMatch || null, ts: Date.now() }).catch(() => {});
   }, [fbEnabled, fbStatus, loopState.nextMatch]);
+  // 行動宣言を一方向 push（接続確立時＋変更時）。loopState と同じ非致命ミラー方式。
+  // mental の宣言画面（⚡プレーの宣言）がブリッジ経由でこれを読む。
+  useEffect(() => {
+    if (!fbEnabled || fbStatus !== 'on' || !declaration) return;
+    fbSetDeclaration(declaration).catch(() => {});
+  }, [fbEnabled, fbStatus, declaration]);
+  // mental の宣言ミラー（🧠 メンタルの宣言）。接続確立後に一回読み。読めなければ非表示が正。
+  const [mentalDecls, setMentalDecls] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    if (!fbEnabled || fbStatus !== 'on' || !fbLink.rosterId) { setMentalDecls(null); return; }
+    (async () => {
+      try {
+        const { linkedUid, mine } = await fbCheckRosterLink(fbLink.rosterId);
+        if (!linkedUid || mine) return; // mental未連携（またはuid同一の異常系）は表示なし
+        const v = await fbGetMentalDecls(linkedUid);
+        if (alive) setMentalDecls(v);
+      } catch (e) { /* 非致命: カード非表示のまま */ }
+    })();
+    return () => { alive = false; };
+  }, [fbEnabled, fbStatus, fbLink.rosterId]);
   // 保存経路ごとの push（新規ID・参照変更のみ。削除は同期しない=リモート保持のデータ保全方針）
   useFbPushOnChange('matchCards', matchCards, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
   useFbPushOnChange('gkPredictions', gkPreds, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
@@ -1214,6 +1235,7 @@ function App() {
           loopState={loopState}
           onSetNextMatch={(nm) => setLoopState(prev => ({ ...prev, nextMatch: nm }))}
           declaration={declaration} decSnooze={decSnooze}
+          mentalDecls={mentalDecls}
           onAnswerDeclaration={answerDeclaration} onSnooze={() => setDecSnooze(true)}
           reflectCount={matchCards.length}
           onAction={(p) => {
