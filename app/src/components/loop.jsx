@@ -34,7 +34,7 @@ function MatchDateEditor({ nextMatch, onSave, onClose }) {
   );
 }
 
-function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, onAnswerDeclaration, onSnooze,
+function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDecls, onAnswerDeclaration, onSnooze,
                     reflectCount, onAction, children }) {
   const [editOpen, setEditOpen] = useState(false);
   const info = loopPhaseInfo(loopState.nextMatch);
@@ -84,6 +84,17 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, onAnswerD
         ) : (
           declaration.done !== true && <div className="loop-declare-mini">🎯 宣言中：「{declaration.text}」</div>
         )
+      )}
+
+      {mentalDecls && mentalDecls.active.length > 0 && (
+        <div className="hub-declare">
+          <div className="hub-declare-label">🧠 メンタルの宣言（mentalアプリから・こちらでは見るだけ）</div>
+          {mentalDecls.active.map(d => (
+            <div key={d.id} className="hub-declare-text">
+              「{d.declaration}」<span className="loop-declare-mini">（{d.startDate}〜・チェック{d.checkCount || 0}日）</span>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* 位相別の主ボタン1つ＋副2つ */}
