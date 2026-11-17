@@ -35,18 +35,17 @@
 | ドリブル・打点サイクル | `01_basics.md`（ドリブル6種・踏み切り4種） |
 | 7on6サイクル | `08_game_management.md`（3フォーメーション） |
 | コンビネーションサイクル | `16_of_combinations.md`（OFタイプ×DFタイプ） |
-| 国別戦術サイクル | `13_global_tactics.md`（10国＋クラブ）／`24_japan_asia_handball.md`（日本・アジア詳細） |
+| 国別戦術サイクル | `13_global_tactics.md`（国別の型）／`24_japan_asia_handball.md`（日本・アジア） |
 | バックDF個人技術サイクル | `23_back_df_individual.md`（グルントシュテルング（基本姿勢）・フットワーク・アンティシペーション） |
 | メンタルサイクル | `18_mental.md`（メストリング（達成感）/セルヴティリット（自信）/トリッゲレ（誘発する）） |
 | 振り返り・場面逆引き | `17_scene_index.md`（全場面→技術・チェックリスト） |
 | 練習設計 | `19_drills.md`（個人/ペア/チーム練習メニュー） |
-| フィジカルサイクル | `21_physical_training.md`（負荷データ・筋力3フェーズ・HIIT） |
+| フィジカルサイクル | `21_physical_training.md`（負荷データ・筋力・HIIT） |
 | ケガ予防サイクル | `25_injury_prevention.md`（M.A.P.S・OSTRC（オスロスポーツ外傷研究センター）・ニーコントロール（Knee Control＝膝のケガ予防プログラム）） |
 | **左利き右バック**（横断テーマ） | `09_individual_differences.md`（メイン）／`13_global_tactics.md`（グローバル視点）／`14_position_roles_international.md`（ポジション役割） |
 | **バックハンドフェイク**（横断テーマ） | `02_individual.md` の **③-B**（メイン）／`05_gk_df.md`（GK対策）・`17_scene_index.md`（GK状況別） |
 | **バックプレーヤー判断ツリー**（連鎖型） | `20_back_player_playbook.md`（状況→第1選択→DF対応→第2選択の連鎖辞書） |
-| **クラブチーム戦術** | `13_global_tactics.md`（バルセロナ/PSG/マグデブルク/キール/ヴェスプレーム） |
-| **世界トップ選手研究** | `13_global_tactics.md`（ギゼル研究・右バックロールモデル） |
+| **クラブで見られる型** | `13_global_tactics.md`（クラブで見られる守りと攻めの型） |
 
 ---
 
