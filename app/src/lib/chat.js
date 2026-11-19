@@ -224,6 +224,8 @@ function chatBestExcerpt(section, kws) {
       continue;
     }
     if (/^\*出典[:：]/.test(b) && !b.includes('\n')) continue;             // 出典だけの行は答えに選ばない
+    // 小見出しのすぐ下が図のときは、小見出しを図の次の段落に付ける（図は質問の画面では出さないため）
+    if (pendingHead && (b.match(/[━─│┃┌┐└┘├┤┬┴╋]/g) || []).length >= 6) { blocks.push(b); continue; }
     blocks.push(pendingHead ? pendingHead + '\n\n' + b : b);
     pendingHead = '';
   }
@@ -232,10 +234,15 @@ function chatBestExcerpt(section, kws) {
   const proseBlocks = blocks.filter(b => !isArtBlock(b));
   if (proseBlocks.length) blocks = proseBlocks;
   if (!blocks.length) return '';
+  // 章や節の題に入っている言葉（その節のどこにでも出てくる言葉）は、段落を選ぶ手がかりとしては弱く数える
+  const nSecTitle = chatNormalize(section.title + ' ' + (section.fileTitle || ''));
   const scoreBlock = (b) => {
     const nb = chatNormalize(b);
     let sc = 0;
-    for (const { raw, w } of kws) sc += chatCountTerm(nb, chatNormalize(raw), 5) * w;
+    for (const { raw, w } of kws) {
+      const k = chatNormalize(raw);
+      sc += chatCountTerm(nb, k, 5) * w * (chatHasTerm(nSecTitle, k) ? 0.25 : 1);
+    }
     // 横に長い表（5列以上）はスマホの質問画面では読めないので、ほかの段落を先に選ぶ
     const row = (b.match(/^\s*\|.*\|\s*$/m) || [''])[0];
     if (row && row.split('|').length - 2 >= 5) sc *= 0.35;
@@ -284,7 +291,7 @@ const CHAT_SAFETY_NOTE = '痛みや体の異変があるときは、無理に続
 const CHAT_RETURN_RE = /やっていい|やってもいい|していい|してもいい|出ていい|出たい|出られ|休むべき|休んだ方|休んだほう|復帰|いつから|戻れ/;
 
 // 「〜って何」「〜とは」のように、言葉の意味をたずねているか
-const CHAT_DEFINE_RE = /(って何|ってなに|って、何|とは|の意味|ってどういう|どういう意味|ってなんですか|って何ですか)/;
+const CHAT_DEFINE_RE = /(って何|ってなに|って、何|とは|の意味|ってどういう|どういう意味|ってなんですか|って何ですか|ってどうやる|ってどう動く|のやり方|ってどんな)/;
 
 // 用語集から、質問に出てくる言葉を探す（長い言葉を優先）。意味をたずねる質問のときだけ使う
 function chatGlossaryHit(question) {
@@ -312,6 +319,8 @@ const CHAT_POS_TAGS = [
 ];
 
 const CHAT_POS_TAG_SET = new Set(CHAT_POS_TAGS.map(([, tag]) => tag));
+// どの相談にも出てくる広い言葉。これだけが題に当たっても「近い相談」には出さない
+const CHAT_SOLVE_BROAD = new Set(['攻撃', '守備', '攻め', '守り', 'of', 'df', '試合', '練習', 'ハンドボール', '相手', '自分']);
 
 function chatSolveMatches(kws, question = '', synTags = []) {
   const qn = chatNormalize(question);
@@ -326,7 +335,7 @@ function chatSolveMatches(kws, question = '', synTags = []) {
       for (const { raw, w } of kws) {
         const k = chatNormalize(raw);
         let pts = 0;
-        if (chatHasTerm(nT, k)) { pts += 6 + Math.min(6, k.length); titleHit++; } // 長い言葉が題に当たるほど近い
+        if (chatHasTerm(nT, k)) { pts += 6 + Math.min(6, k.length); if (!CHAT_SOLVE_BROAD.has(k)) titleHit++; } // 長い言葉が題に当たるほど近い。広すぎる言葉だけでは「近い」としない
         if (chatHasTerm(nD, k)) pts += 2;
         pts += chatCountTerm(nA, k, 2);
         if (pts > 0) { cover++; score += pts * w; }

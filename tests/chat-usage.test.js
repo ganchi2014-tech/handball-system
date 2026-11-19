@@ -133,3 +133,23 @@ describe('答えの見た目', () => {
     });
   }
 });
+
+describe('顧問が確かめた言葉の説明・陣形の数字・肘', () => {
+  it('「前回りってどうやるの」に、用語の説明（動き）が先に出る', () => {
+    const html = reply('前回りってどうやるの').html;
+    expect(html).toContain('chat-gloss');
+    expect(html).toContain('ポストの前');
+  });
+  it('「0-6の攻め方」と前から数える言い方で聞いても、6-0の話が返る', () => {
+    const r = reply('0-6の攻め方');
+    expect(r.kind).toBe('answer');
+    expect(['26', '20', '16', '17']).toContain(r.head.id.split('-')[0]);
+    expect(r.html).toContain('6-0');
+    expect(r.solve, '「攻撃」のような広い言葉だけで相談を出さない').toEqual([]);
+  });
+  it('「シュートで肘下がるって言われる」→ 01章の「肘が下がる」の段落', () => {
+    const r = reply('シュートで肘下がるって言われる');
+    expect(r.head.id.startsWith('01-')).toBe(true);
+    expect(r.html).toContain('肘が下がる');
+  });
+});

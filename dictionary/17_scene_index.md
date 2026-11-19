@@ -33,9 +33,9 @@
 
 | 相手DF陣形 | 効きやすい手（例） | 詳細参照 |
 |---|---|---|
-| **0-6（コンパクトゾーン）** | 外シュートで引き出す → 引き出された後の内側突破 | `05_gk_df.md`, `26_tactical_formations.md` |
+| **6-0（コンパクトゾーン）** | 外シュートで引き出す → 引き出された後の内側突破 | `05_gk_df.md`, `26_tactical_formations.md` |
 | **5-1** | 前衛1人を左右に動かして疲弊させる / ピボットを背後に走らせる | `05_gk_df.md`, `26_tactical_formations.md` |
-| **2-4** | 横の素早い展開で前衛2人の間を使う | `05_gk_df.md`, `26_tactical_formations.md` |
+| **4-2** | 横の素早い展開で前衛2人の間を使う | `05_gk_df.md`, `26_tactical_formations.md` |
 | **3-2-1** | 縦のスペースを使う / ピボットで縦に切り込む | `05_gk_df.md`, `26_tactical_formations.md` |
 | **3-3** | 前後の分断スペースを狙う | `05_gk_df.md`, `26_tactical_formations.md` |
 | **マンツーマン** | スクリーンでマーク剥がし / 1on1勝負 | `12_set_plays.md`, `27_sign_plays.md` |
@@ -166,7 +166,7 @@
 |---|---|---|
 | **相手が外シュートを多用している** | DF：6-0 → 5-1（前衛でプレッシャー） | `26_tactical_formations.md` |
 | **相手ピボットに何度もやられる** | DF：5-1 → 6-0（コンパクト化してピボット封鎖） | `26_tactical_formations.md` |
-| **相手の速攻をよく食らう** | DF：3-2-1 or 2-4（縦の速さに対応） | `26_tactical_formations.md` |
+| **相手の速攻をよく食らう** | DF：3-2-1 or 4-2（縦の速さに対応） | `26_tactical_formations.md` |
 | **7on6発動（終盤ビハインド）** | 7on6陣形：標準3-3 / ピボット多め2-4 / 外野4人4-2 | `26_tactical_formations.md`, `08_game_management.md` |
 | **速攻後のセットOF移行** | OF：状況に応じて3-3（標準）or ダブルポスト（2-2-2・ダブルピボット） | `26_tactical_formations.md` |
 | **リードして時間を使いたい** | OF：クローズ形式（ボール保持・内側押し込み） | `26_tactical_formations.md`, `07_formations.md` |
