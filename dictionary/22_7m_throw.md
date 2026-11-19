@@ -24,7 +24,7 @@
 
 ---
 
-## 【A】IHF規則（第14条 / Rule 14 / Regel 14）
+## 【A】7mスローの規則（第14条）
 
 ### A-1. 与えられる条件
 
@@ -92,7 +92,7 @@
 
 ---
 
-## 【C】シューター技術（Wurfvarianten / Técnica de シュート）
+## 【C】シューターの技術
 
 ### C-1. 主要な4シュートタイプ
 
@@ -148,7 +148,7 @@ GKの手や足の下を通す目的
 
 ---
 
-## 【D】シューター戦略（Shooter Strategy）
+## 【D】シューターの戦略
 
 ### D-1. 2つの基本戦略
 
@@ -220,7 +220,7 @@ GKが静止している場合 → フェイントで誘ってから投じる
   → このジレンマが7メートルをハンドボール最大の心理戦場面にする
 ```
 
-### E-2. 基本ポジション（基本姿勢 / Versetzter Ausgangsposition）
+### E-2. 基本の立ち方
 
 ```
 膝を軽く曲げ、重心は前足部（拇指球）に
@@ -235,11 +235,11 @@ GKが静止している場合 → フェイントで誘ってから投じる
 
 ### E-3. タイミング戦略
 
-| タイプ | ドイツ語 | 内容 | リスク |
-|---|---|---|---|
-| 早期動作型 | 先読み | 身体キューを読んでボール離手前に動く | フェイントに弱い |
-| 反応型 | Reaktion | ボール離手後に方向確認してから動く | 物理的に間に合わない |
-| 混合型 | Kombiniert | キューを読みながら動作開始を微調整 | 高い経験と練習が必要 |
+| タイプ | 内容 | リスク |
+|---|---|---|
+| 早期動作型 | 身体キューを読んでボール離手前に動く | フェイントに弱い |
+| 反応型 | ボール離手後に方向確認してから動く | 物理的に間に合わない |
+| 混合型 | キューを読みながら動作開始を微調整 | 高い経験と練習が必要 |
 
 ### E-4. 視線戦略（科学的根拠）
 
@@ -259,7 +259,7 @@ GKが静止している場合 → フェイントで誘ってから投じる
 左利きへの対応：GKの予測精度が有意に低い（視覚パターン認識の問題）
 ```
 
-### E-5. 読み取る身体的キュー（Visual Cues）
+### E-5. 読み取る手がかり
 
 ```
 優先順位順：
@@ -290,7 +290,7 @@ GKが静止している場合 → フェイントで誘ってから投じる
 
 ---
 
-## 【F】心理的側面（Psychologische Aspekte）
+## 【F】心の面
 
 ### F-1. シューター側の心理管理
 
@@ -332,7 +332,7 @@ Yips（イップス）：
   → 専門的なメンタルサポートが必要
 ```
 
-### F-2. メンタルイメージ（Imagery / Mentale Vorstellung）
+### F-2. イメージ
 
 ```
 成功シュートの視覚化が集中力・自信に貢献（IHF/EHFコーチング教材より）
@@ -344,7 +344,7 @@ Yips（イップス）：
 
 ---
 
-## 【G】タクティカルファウル（Taktisches Foul）
+## 【G】タクティカルファウル（反則で止めること）
 
 ### G-1. 戦略的に7mを与えることの判断
 
@@ -412,25 +412,6 @@ Yips（イップス）：
 左利きシューターへの対応：
   左利き選手との反復練習で視覚パターン認識を向上させる
 ```
-
----
-
-## 【J】多言語用語対照表
-
-| 日本語 | ドイツ語 | 英語 | スペイン語 |
-|---|---|---|---|
-| 7メートルスロー | 7meter | 7-metre throw / penalty throw | lanzamiento de 7 metros |
-| GK制限ライン（4m） | Torwartgrenzlinie | goalkeeper restraint line | línea de restricción del portero |
-| 明確な得点機会 | klare Torchance | clear chance of scoring | clara oportunidad de gol |
-| 角度を狭める | Winkelverkleinerung | angle closing | reducción del ángulo |
-| フェイク動作 | Scheinbewegung | fake movement | finta |
-| 予測（早期読み） | 先読み | anticipation | anticipación |
-| 反応 | Reaktion | reaction | reacción |
-| タクティカルファウル | Taktisches Foul | tactical foul | falta táctica |
-| 成功率 | Erfolgsquote | conversion rate | efectividad |
-| ロブショット | ループシュート | lob shot | globo |
-| バウンスショット | バウンドシュート | bounce shot | bote |
-| プレショットルーティン | Vorbereitungsroutine | pre-shot routine | rutina previa al lanzamiento |
 
 ---
 

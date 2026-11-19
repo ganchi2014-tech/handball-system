@@ -355,20 +355,21 @@ Hintersperre（ヒンタースクリーン）：背後から塞ぐ
    「Martin, rausgehen, Rückraumspieler!」
 ```
 
-### H-2. 主要コマンド一覧（ドイツの例）
+### H-2. 守りの声の例（ドイツの教材から）
 
 ※ドイツで使われる声の例。自分たちのチームで使う声は、チームでそろえて決める。
 
-| ドイツ語 | 日本語 | 使う場面 |
-|---|---|---|
-| `Ich hab!` | 俺が持つ！ | 担当を引き受けるとき |
-| `Hilf!` | 助けてくれ！ | 抜かれそうなとき |
-| `Raus!` | 前に出ろ！ | インナーDFに飛び出しを促す |
-| `Zurück!` | 引け！ | 前に出すぎたDFを戻す |
-| `Übergabe!` | 渡すぞ！ | マーク受け渡し（スクリーン時） |
-| `Übernahme!` | 受けた！ | マーク引き受け（スクリーン時） |
-| `Kreis links/rechts!` | ピボット左/右！ | ピボットの位置を伝える |
-| `Ball(e)!` | ボール持ってるぞ！ | ボール保持者への注意を促す |
+| 声の例 | 使う場面 |
+|---|---|
+| 俺が持つ！ | 担当を引き受けるとき |
+| 助けてくれ！ | 抜かれそうなとき |
+| 前に出ろ！ | 内側のDFに飛び出しを促す |
+| 引け！ | 前に出すぎたDFを戻す |
+| 渡すぞ！ | マークを受け渡すとき |
+| 受けた！ | マークを引き受けたとき |
+| ピボット左／右！ | ピボットの位置を伝える |
+| ボール持ってるぞ！ | ボールを持った選手への注意を促す |
+
 
 ### H-3. ボールオリエンテーション（ボール側に寄る守り方）
 
@@ -382,29 +383,6 @@ Hintersperre（ヒンタースクリーン）：背後から塞ぐ
 バックプレーヤー同士の動き：
   → 3人が三角形を作って動き合う「三角形の協力」（独：Dreiecksbewegung）で互いをカバー
 ```
-
----
-
-## 【I】多言語用語対照表
-
-| 日本語 | ドイツ語 | 英語 | スペイン語 |
-|---|---|---|---|
-| 基本姿勢 | 基本姿勢 | defensive stance | postura defensiva básica |
-| 足のスタンス | 脚の位置 | stance | posición de piernas |
-| 追従ステップ | サイドステップ | shuffle step | paso lateral |
-| クロスオーバーステップ | クロスステップ | cross step | paso cruzado |
-| 1on1 | Zweikampf | 1v1 / one-on-one | uno contra uno |
-| ドライブ（突破） | Durchbruch | drive / penetration | penetración |
-| 合法的な身体接触 | erlaubter Körperkontakt | legal body contact | contacto corporal legal |
-| スクリーン | スクリーン | screen / pick | bloqueo |
-| マーク切り替え | Übergabe / パスを出す動き | switch | cambio de marca |
-| ヘッジ（援護） | Helfen | hedge / help defense | ayuda defensiva |
-| 攻守切り替え | Umschalten | transition | transición |
-| 帰還行動 | Rücklaufverhalten | defensive recovery | repliegue defensivo |
-| ボールオリエンテーション | ボール側に寄る守り方 | ball orientation | orientación al balón |
-| 先読み・予測 | 先読み | anticipation | anticipación |
-| ゲームを読む | Lesen des Spiels | reading the game | lectura del juego |
-| 中央ブロック | Mittelblock | middle block | bloque central |
 
 ---
 

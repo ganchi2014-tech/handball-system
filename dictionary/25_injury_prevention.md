@@ -486,28 +486,6 @@ Foam Rolling（フォームローリング）：
 
 ---
 
-## 【K】多言語用語対照表
-
-| 日本語 | ドイツ語 | ノルウェー語 | 英語 |
-|---|---|---|---|
-| 傷害予防 | Verletzungsprävention | Skadeforebygging | Injury prevention |
-| ウォームアップ | ウォームアップ | Oppvarming | Warm-up |
-| クールダウン | クールダウン | Nedkjøling | Cool-down |
-| 過負荷傷害 | Überlastungsverletzung | Overbelastningsskade | Overuse injury |
-| 肩甲骨 | Schulterblatt / Skapula | Skulderblad | Scapula |
-| 回旋筋腱板 | Rotatorenmanschette | Rotatormansjett | Rotator cuff |
-| 前十字靭帯 | Vorderes Kreuzband (VKB) | Fremre korsbånd | ACL |
-| 膝蓋腱炎 | Patellarsehnentendinopathie | Hopperkneet | Jumper's knee |
-| 神経筋トレーニング | Neuromuskuläres トレーニング | Nevromuskulær trening | NMT |
-| 着地技術 | Landetechnik | Landingsteknikk | Landing technique |
-| 下肢アライメント | バインアクセンコントロール（脚軸制御） | 脚の位置 | Leg axis control |
-| 体幹安定化 | Rumpfstabilisation | Kjernetrening | コア stabilization |
-| 筋不均衡 | Muskelimbalanz | Muskelimbalanse | Muscle imbalance |
-| 復帰プロトコル | リターン-to-Competition | Tilbake til konkurranse | リターン to play |
-| 主観的運動強度 | Subjektives Belastungsempfinden | Opplevd anstrengelse | RPE |
-
----
-
 ## じゃんけん構造（ケガ予防）
 
 ```
