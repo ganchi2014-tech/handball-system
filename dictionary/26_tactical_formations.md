@@ -583,6 +583,6 @@ DFの陣形を素早く判断するチェックポイント：
 | DHB Rahmentrainingskonzeption 2024 | 陣形体系・切り替えプロトコル |
 | handball-planet.com | 国際大会での採用事例 |
 | handball8.com（日本語） | 日本語戦術解説 |
-| dictionary/05_gk_df.md | GKと守備陣形の詳細（本ファイルと連携） |
-| dictionary/07_formations.md | クローズ/ワイドOF詳細（本ファイルと連携） |
+| dictionary/05_gk_df.md | GKと守備陣形の詳細（この章と連携） |
+| dictionary/07_formations.md | クローズ/ワイドOF詳細（この章と連携） |
 | dictionary/16_of_combinations.md | OFコンビネーション詳細 |

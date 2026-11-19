@@ -137,6 +137,9 @@ function chatIsStub(s) {
 
 // リダイレクト専用ファイル（「○○に統合済み」の道標）はチャット回答から除外する
 const CHAT_EXCLUDED_FILES = new Set(DICT_FILES.filter(f => f.redirect).map(f => f.id));
+// 参考の章（読み物。外国語の用語を元の形で残している）は、実用の章より後ろに出す。
+// 質問がその章を名指ししているとき（言いかえ表の file 指定）は下げない。
+const CHAT_REFERENCE_FILES = new Set(DICT_FILES.filter(f => (f.group || '').startsWith('参考')).map(f => f.id));
 
 // 全セクション採点 → 上位4件
 function chatSearch(question, sections) {
@@ -162,6 +165,7 @@ function chatSearch(question, sections) {
     if (score <= 0) continue;
     if (cover > 1) score *= 1 + 0.5 * (cover - 1);  // 複数キーワード網羅ボーナス
     if (fileBoosts.has(s.fileId)) score *= 1.6;      // 意図ファイルブースト
+    else if (CHAT_REFERENCE_FILES.has(s.fileId)) score *= 0.6; // 参考の章は控えめに
     scored.push({ s, score });
   }
   scored.sort((a, b) => b.score - a.score);
