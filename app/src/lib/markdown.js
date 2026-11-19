@@ -166,6 +166,12 @@ function renderMarkdown(md, query) {
       i++; continue;
     }
 
+    // 引用の中の空行（">" だけの行）は区切り。文字として出さない
+    if (/^>\s*$/.test(line)) {
+      html += flushPara(paraBuf); paraBuf = [];
+      i++; continue;
+    }
+
     // 引用
     if (line.startsWith('> ')) {
       html += flushPara(paraBuf); paraBuf = [];

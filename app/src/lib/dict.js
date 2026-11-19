@@ -8,7 +8,7 @@ const ALL_TAGS = Array.from(new Set(DICT_FILES.flatMap(f => f.tags))).sort();
 // 辞書の総セクション数（dictionary/*.md の #/## 見出し実測値）。
 // 読み込み完了後は dictSections.length（実数）を優先して表示し、これは読み込み前のフォールバック。
 // 辞書を増減したらこの値を更新する。
-const DICT_SECTION_COUNT = 390;
+const DICT_SECTION_COUNT = 395;
 
 // ─────────────────────────────────────────────
 // 用語集（知識浅めユーザー向け）
