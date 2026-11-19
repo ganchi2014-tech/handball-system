@@ -1485,10 +1485,13 @@ function App() {
                 {/* デフォルトビュー：ファイルカード一覧（検索・フィルターなし時） */}
                 {!dictQuery && !dictActiveFileId && !dictActiveTag && (
                   <div className="dict-file-grid">
-                    {DICT_FILES.map(f => {
+                    {DICT_FILES.map((f, fi) => {
                       const count = dictSections.filter(s => s.fileId === f.id && !isStubSection(s)).length;
+                      const showGroup = f.group && (fi === 0 || DICT_FILES[fi - 1].group !== f.group);
                       return (
-                        <div key={f.id} className="dict-file-card" onClick={() => setDictActiveFileId(f.id)}>
+                        <React.Fragment key={f.id}>
+                        {showGroup && <div className="dict-group-label">{f.group}</div>}
+                        <div className="dict-file-card" onClick={() => setDictActiveFileId(f.id)}>
                           <div className="dict-file-card-icon">{f.icon}</div>
                           <div className="dict-file-card-body">
                             <div className="dict-file-card-title">{f.title}</div>
@@ -1496,6 +1499,7 @@ function App() {
                           </div>
                           <div className="dict-file-card-arrow">›</div>
                         </div>
+                        </React.Fragment>
                       );
                     })}
                   </div>
@@ -1595,14 +1599,30 @@ function App() {
               </div>
             );
           })()}
+          {(() => {
+            // 小見出し（###）が3つ以上ある長い節は、頭に飛び先を出す
+            const subs = (dictDetail.body.replace(/```[\s\S]*?```/g, '').match(/^###\s+.*$/gm) || []).map(l => l.replace(/^###\s+/, '').replace(/[*`]/g, ''));
+            if (subs.length < 3) return null;
+            return (
+              <div className="dict-sub-nav">
+                <div className="dict-sub-nav-label">この節の中身（押すとそこへ飛ぶ）</div>
+                {subs.map((t, i) => (
+                  <button key={i} onClick={() => { const el = document.getElementById('sub-' + i); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>{t}</button>
+                ))}
+              </div>
+            );
+          })()}
           <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body, dictQuery)}} />
           {/* 同じファイルの他セクション */}
           {(() => {
-            const related = dictSections.filter(s => s.fileId === dictDetail.fileId && s.id !== dictDetail.id).slice(0, 8);
+            const sameFile = dictSections.filter(s => s.fileId === dictDetail.fileId && !isStubSection(s));
+            const at = sameFile.findIndex(s => s.id === dictDetail.id);
+            const from = Math.max(0, (at < 0 ? 0 : at) - 2);
+            const related = sameFile.slice(from, from + 9).filter(s => s.id !== dictDetail.id);
             if (!related.length) return null;
             return (
               <div className="dict-detail-related" style={{padding: '0 18px 24px'}}>
-                <div className="dict-detail-related-label">▶ 同じファイルの他セクション</div>
+                <div className="dict-detail-related-label">▶ 同じ章の前後の節</div>
                 {related.map(s => (
                   <div key={s.id} className="dict-related-item" onClick={() => handleDictSectionOpen(s)}>
                     {s.title}
@@ -2516,6 +2536,7 @@ function App() {
                   ))}
                 </div>
               )}
+              <div className="result-note">※ 書いてある回数・秒数は目安の例。部の計画と体の状態に合わせて決める。痛みがあるときは指導者に伝える。</div>
             </div>
           </div>
 
@@ -2541,7 +2562,7 @@ function App() {
               style={{ borderColor: '#06b6d4', color: '#06b6d4', marginBottom: 8 }}
               onClick={handleJumpToCountry}
             >
-              🌍 相手の戦術DNAで深掘りする →
+              🔍 相手の守り方の型から考える →
             </button>
           )}
 

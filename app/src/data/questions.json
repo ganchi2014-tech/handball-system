@@ -268,7 +268,7 @@
         "next": "r_of_shoot_good_fall"
       },
       {
-        "label": "ダイブシュート（6m内側へ体投げ）",
+        "label": "ダイブシュート（跳んで空中で放つ）",
         "next": "r_of_shoot_good_dive"
       },
       {
@@ -1207,23 +1207,23 @@
         "next": "r_df_foul_holding"
       },
       {
-        "label": "プッシング（体で押し倒す）→ 2分退場対象",
+        "label": "プッシング（押す・押し倒す）",
         "next": "r_df_foul_pushing"
       },
       {
-        "label": "ハッキング（OFの腕・手を叩く）→ 2分退場対象",
+        "label": "ハッキング（OFの腕・手を叩く）",
         "next": "r_df_foul_hacking"
       },
       {
-        "label": "トリッピング（足払い）→ 2分／危険なら赤",
+        "label": "トリッピング（足を引っかける）",
         "next": "r_df_foul_tripping"
       },
       {
-        "label": "背後からの接触 → 2分退場",
+        "label": "背後からの接触",
         "next": "r_df_foul_backhit"
       },
       {
-        "label": "顔面・首への接触 → 即時2分 or 赤",
+        "label": "顔・首への接触",
         "next": "r_df_foul_face"
       }
     ]
@@ -1714,7 +1714,7 @@
     "label": "Q2",
     "mode": "gk",
     "text": "コース絞り型GK確認。空いているコースは見えているか？",
-    "hint": "コース絞り型GKは体で6エリア（左右×上下）のうち4エリアを塞いでいる。残り2エリアが「空き」。そこを見つけて正確に打つか、GKを動かして逆を狙う。",
+    "hint": "コース絞り型GKは体でゴールの6エリア（左・中・右×上・下）のうち多くを塞いでいる。残りが「空き」。そこを見つけて正確に打つか、GKを動かして逆を狙う。",
     "choices": [
       {
         "label": "空いているコースが見えている（狙えそう）",
@@ -1752,7 +1752,7 @@
         "next": "qgs_shot_type"
       },
       {
-        "label": "速攻の起点（自分のスローイン）",
+        "label": "速攻の起点（セーブ後の自分のスロー）",
         "next": "qgs_throw"
       },
       {
@@ -1826,14 +1826,14 @@
   "qgs_throw": {
     "label": "Q2",
     "mode": "gk_self",
-    "text": "スローインから速攻はつながった？",
+    "text": "自分のスローから速攻はつながった？",
     "choices": [
       {
         "label": "つながった（フリー走者にロングorミドル）",
         "next": "r_gk_self_throw_good"
       },
       {
-        "label": "クイックスローオフで速攻決まった",
+        "label": "セーブ後すぐのスローで速攻が決まった",
         "next": "r_gk_self_throw_schnelle"
       },
       {
@@ -1875,7 +1875,7 @@
     "text": "どの場面？",
     "choices": [
       {
-        "label": "7m PK（1対1で読み合い）",
+        "label": "7mスロー（1対1の読み合い）",
         "next": "r_gk_self_7m"
       },
       {
@@ -2104,7 +2104,7 @@
         "next": "r_sm_off_overthink"
       },
       {
-        "label": "助走から放つまでの一貫性がなかった",
+        "label": "構えから放つまでの動きが毎回違った",
         "next": "r_sm_off_form"
       },
       {

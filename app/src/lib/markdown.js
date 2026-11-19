@@ -1,6 +1,11 @@
 // このファイルは index.html（Phase 0版）から Phase 1 S2 で機械分割された。
 // 由来行: 4963-5163
-import { GLOSSARY } from './dict.js';
+import { GLOSSARY, DICT_FILES } from './dict.js';
+
+// 章番号 → 短い章名（本文中の「18_mental.md」を「18章 メンタル」と表示するため）
+const FILE_SHORT = Object.fromEntries(DICT_FILES.map(f => [f.id, f.short || f.title]));
+// 罫線などで形を作っている枠（図）は折り返さない。文章だけの枠は折り返す。
+const ART_RE = /[━─│┃┌┐└┘├┤┬┴┼╋═║]/g;
 
 function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -68,6 +73,7 @@ function renderMarkdown(md, query) {
   let html = '';
   let i = 0;
   let inCode = false, inTable = false, tableHeader = false;
+  let subIdx = 0;
   let codeLang = '';
 
   const flushPara = (buf) => {
@@ -90,7 +96,7 @@ function renderMarkdown(md, query) {
     // [[ref]] 内部参照
     t = t.replace(/\[\[([^\]]+)\]\]/g, '<span style="color:#fbbf24">[[$1]]</span>');
     // 辞書ファイル名（XX_name.md 形式）→ クリック可能リンクに
-    t = t.replace(/(\d{2})_([a-z_]+)\.md/g, '<a class="dict-inline-link" data-file-id="$1" href="#" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent(\'dict-jump\', {detail: \'$1\'}));">$1_$2.md</a>');
+    t = t.replace(/(\d{2})_([a-z_]+)\.md/g, (m, id) => `<a class="dict-inline-link" data-file-id="${id}" href="#" onclick="event.preventDefault(); window.dispatchEvent(new CustomEvent('dict-jump', {detail: '${id}'}));">${id}章 ${FILE_SHORT[id] || ''}</a>`);
     return t;
   }
 
@@ -103,7 +109,10 @@ function renderMarkdown(md, query) {
       html += flushPara(paraBuf); paraBuf = [];
       if (!inCode) {
         inCode = true; codeLang = line.slice(3).trim();
-        html += '<pre><code>';
+        // 枠の中身を先読みして、図か文章かを見分ける
+        let j = i + 1, box = 0;
+        while (j < lines.length && !lines[j].startsWith('```')) { box += (lines[j].match(ART_RE) || []).length; j++; }
+        html += box >= 6 ? '<pre class="art"><code>' : '<pre><code>';
       } else {
         inCode = false; codeLang = '';
         html += '</code></pre>';
@@ -144,7 +153,9 @@ function renderMarkdown(md, query) {
     if (h) {
       html += flushPara(paraBuf); paraBuf = [];
       const level = h[1].length;
-      html += `<h${level}>${inlineMd(h[2])}</h${level}>`;
+      // ### の小見出しには連番のidを付ける（節の頭の「この節の中身」から飛べるように）
+      const idAttr = level === 3 ? ` id="sub-${subIdx++}"` : '';
+      html += `<h${level}${idAttr}>${inlineMd(h[2])}</h${level}>`;
       i++; continue;
     }
 
