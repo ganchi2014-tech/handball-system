@@ -147,9 +147,13 @@ const CHAT_EXCLUDED_FILES = new Set(DICT_FILES.filter(f => f.redirect).map(f => 
 // 質問がその章を名指ししているとき（言いかえ表の file 指定）は下げない。
 const CHAT_REFERENCE_FILES = new Set(DICT_FILES.filter(f => (f.group || '').startsWith('参考')).map(f => f.id));
 
-// 全セクション採点 → 上位4件
-function chatSearch(question, sections) {
-  const { kws, fileBoosts, tags } = chatExtractKeywords(question);
+// 切り直しで拾っても手がかりにならない言葉
+const CHAT_WEAK_RUNS = new Set(['相手', '自分', '無理', '場合', '全然', '全部', '最近', '練習', '試合', '時間', '方法', '理由', '本当', '絶対']);
+
+function chatSearchOnce(question, sections, extraTokens = []) {
+  const ex = chatExtractKeywords(question);
+  const { fileBoosts, tags } = ex;
+  const kws = [...ex.kws, ...extraTokens.map(raw => ({ raw, w: 1 }))];
   if (!kws.length) return { kws, hits: [], tags };
   const scored = [];
   for (const s of sections) {
@@ -176,6 +180,18 @@ function chatSearch(question, sections) {
   }
   scored.sort((a, b) => b.score - a.score);
   return { kws, hits: scored.slice(0, 4).map(x => x.s), tags };
+}
+
+// 全セクション採点 → 上位4件
+// 何も当たらなかったときだけ、質問をカタカナ・漢字のかたまりに切り直してもう一度探す
+// （「相手サイド速すぎて無理」のように、切れ目のない言い方でも何か返せるように）。
+function chatSearch(question, sections) {
+  const first = chatSearchOnce(question, sections);
+  if (first.hits.length) return first;
+  const runs = chatNormalize(question).match(/[ァ-ヶー]{2,}|[一-龠々]{2,}/g) || [];
+  const extra = [...new Set(runs)].filter(t => !CHAT_STOPWORDS.has(t) && !CHAT_WEAK_RUNS.has(t));
+  if (!extra.length) return first;
+  return chatSearchOnce(question, sections, extra);
 }
 
 // 最良セクションからキーワード密度の高いブロックを抜粋（表は行単位で安全に切る）
