@@ -1,7 +1,7 @@
 # フィジカルトレーニング辞書（ハンドボール特化）
 
 > バックプレーヤーに特化した体力強化の全体像。技術練習（19_drills.md）と並行して行う。
-> 出典：EHF公式資料・DHB アスレティクコンツェプト（運動能力育成構想） 2024・IHF・PMC査読論文・アスペター・スポーツ医学誌
+> 出典：EHF公式資料・DHB 運動能力づくりの考え方 2024・IHF・PMC査読論文・アスペター・スポーツ医学誌
 
 ---
 
@@ -50,7 +50,7 @@
 
 ---
 
-## 【B】筋力トレーニング（シュネルクラフト（爆発力）training / Maximalkrafttraining）
+## 【B】筋力トレーニング（爆発力training / Maximalkrafttraining）
 
 > **読み方**：ここにあるのはドイツ協会などの資料にある方法と数字の紹介で、部の計画ではない。
 > やるか・どの方法で・どの強さと回数でやるかは自分で決める。目安として使う。
@@ -65,7 +65,7 @@
 
 教材に載っている強度の目安（高重量は正しいフォームを身につけてから、指導者のいる所で行う。部の計画ではない）：
   最大筋力期（Maximalkraft） → 85〜95% 1RM
-  爆発力期（シュネルクラフト（爆発力））   → 60〜80% 1RM（最大重量の6〜8割。軽めにして最大速度で素早く挙げ、速さを鍛える）
+  爆発力期（爆発力）   → 60〜80% 1RM（最大重量の6〜8割。軽めにして最大速度で素早く挙げ、速さを鍛える）
 ```
 
 ### ハンドボール特化種目（ハンドボール-specific exercises）
@@ -165,7 +165,7 @@ PMC 2023（ユース女子ハンドボール・10週間・週2回）：
 
 ---
 
-## 【E】持久力トレーニング（アウスダウアー（持久力） / Endurance）
+## 【E】持久力トレーニング（持久力 / Endurance）
 
 ### ハンドボールの持久力特性
 
@@ -218,7 +218,7 @@ PMC 2023（ユース女子ハンドボール・10週間・週2回）：
 
 ---
 
-## 【F】年齢別指針（DHB アスレティクコンツェプト（運動能力育成構想） 2024 / Rahmentrainingskonzeption）
+## 【F】年齢別指針（DHB 運動能力づくりの考え方 2024 / Rahmentrainingskonzeption）
 
 ### DHBの長期育成5段階（Langfristiger Leistungsaufbau）
 
@@ -236,7 +236,7 @@ PMC 2023（ユース女子ハンドボール・10週間・週2回）：
 ドイツの教材の目安：週2〜3回、1回30〜45分（部の計画ではない。回数や時間は部の予定に合わせる）
 毎練習前にアスレチックウォームアップ（15分）
 バーベル筋力トレーニングの本格導入
-シュネルクラフト（爆発力）とMaximalkraft（最大筋力）の両方を系統的に訓練
+爆発力とMaximalkraft（最大筋力）の両方を系統的に訓練
 固有受容感覚トレーニング（バランスボード等）の導入
 
 ノルウェー研究（PMC 2021・15〜18歳・205名）による警告：
@@ -257,7 +257,7 @@ PMC 2023（ユース女子ハンドボール・10週間・週2回）：
 |---|---|---|---|
 | プレシーズン（6〜8週） | Vorbereitungsphase | 体力基盤構築 | 高volume筋力・有酸素基盤 |
 | インシーズン（競技期） | Wettkampfphase | 試合パフォーマンス維持 | 週2回の維持筋力・SSG型有酸素 |
-| オフシーズン（移行期） | ユーバーガング（切替）sphase | 回復と再構築 | アクティブリカバリー・有酸素ベース |
+| オフシーズン（移行期） | 切り替えsphase | 回復と再構築 | アクティブリカバリー・有酸素ベース |
 
 ### 週間サイクル例（試合1回/週）
 
@@ -329,16 +329,16 @@ Yレイズ（Y Raise）
 
 | ドイツ語 | 日本語 | 英語 |
 |---|---|---|
-| アスレティクコンツェプト（運動能力育成構想） (ATK) | アスレチックコンセプト | アスレティクコンセプト（運動能力育成構想） |
-| シュネルクラフト（爆発力） | 爆発的パワー | エクスプロシブパワー（爆発力） |
+| 運動能力づくりの考え方 (ATK) | アスレチックコンセプト | 運動能力づくりの考え方 |
+| 爆発力 | 爆発的パワー | 爆発力 |
 | Schnelligkeit | スピード | スピード |
-| Maximalkraft | 最大筋力 | Maximal ストレングス（筋力） |
-| Kraftausdauer | 筋持久力 | ストレングス（筋力） Endurance |
-| ヴルフクラフト（投擲力） | 投擲パワー | 投擲パワー |
-| アプシュプルングクラフト（跳躍力） | 踏み切り力 | 踏み切りパワー |
-| アウスダウアー（持久力） | 持久力 | Endurance |
+| Maximalkraft | 最大筋力 | Maximal 筋力 |
+| Kraftausdauer | 筋持久力 | 筋力 Endurance |
+| 投げる力 | 投擲パワー | 投擲パワー |
+| 跳躍力 | 踏み切り力 | 踏み切りパワー |
+| 持久力 | 持久力 | Endurance |
 | Koordination | 協調性 | Coordination |
-| ベヴェークリヒカイト（柔軟性） | 柔軟性・可動域 | Mobility |
+| 柔軟性 | 柔軟性・可動域 | Mobility |
 | Rumpfstabilität | 体幹安定性 | コア Stability |
 | Propriozeption | 固有受容感覚 | Proprioception |
 
@@ -354,11 +354,11 @@ Yレイズ（Y Raise）
 
 ## 参考文献
 
-- DHB アスレティクコンツェプト（運動能力育成構想） 2024: https://www.dhb-trainercenter.de/dhb-rahmentrainingskonzeption/
-- EHF: "パワー and ストレングス（筋力） トレーニング in Team ハンドボール" (アクシンテ, 2015)
+- DHB 運動能力づくりの考え方 2024: https://www.dhb-trainercenter.de/dhb-rahmentrainingskonzeption/
+- EHF: "パワー and 筋力 トレーニング in Team ハンドボール" (アクシンテ, 2015)
 - PMC: Physical Demands during Competitions (2023) https://pmc.ncbi.nlm.nih.gov/articles/PMC9965087/
 - PMC: プライオメトリクス meta-analysis (2024) https://pmc.ncbi.nlm.nih.gov/articles/PMC10915623/
 - PMC: Norwegian ユース Elite Study (2021) https://pmc.ncbi.nlm.nih.gov/articles/PMC7982662/
 - PMC: In-season weightlifting & shot speed (2019) https://pmc.ncbi.nlm.nih.gov/articles/PMC6888376/
-- アスペター・スポーツ医学誌: ストレングス（筋力） トレーニング in ハンドボール https://journal.aspetar.com/
+- アスペター・スポーツ医学誌: 筋力 トレーニング in ハンドボール https://journal.aspetar.com/
 - ノルディック・ハムストリング Exercise (2022) https://pmc.ncbi.nlm.nih.gov/articles/PMC8926956/

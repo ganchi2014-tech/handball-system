@@ -188,21 +188,21 @@ J-STARプログラム
 
 | 日本語 | 英語 | ドイツ語 | ノルウェー語 |
 |---|---|---|---|
-| 速攻（そっこう） | ファスト（速い） break / Counter-attack | ゲーゲンシュトス（速攻） | Kontring |
-| 一次速攻 | First-wave fast break | Erster ゲーゲンシュトス（速攻） | Første kontring |
-| 二次速攻 | Second-wave fast break | ツヴァイ（独：2）ter ゲーゲンシュトス（速攻） | アンドレ・コントリング（第二速攻） |
-| 遅攻（ちこう） | Set offense (slow build-up) | アングリフ・アウフバウエン（攻撃構築） | Posisjonsspill |
+| 速攻（そっこう） | ファスト（速い） break / Counter-attack | 速攻（ゲーゲンシュトス） | Kontring |
+| 一次速攻 | First-wave fast break | Erster 速攻（ゲーゲンシュトス） | Første kontring |
+| 二次速攻 | Second-wave fast break | 2（ツヴァイ）ter 速攻（ゲーゲンシュトス） | 二次速攻（アンドレ・コントリング） |
+| 遅攻（ちこう） | Set offense (slow build-up) | 攻撃の組み立て（アングリフ・アウフバウエン） | Posisjonsspill |
 | 数的優位 | Numerical advantage | Überzahl | Tallmessig overlegenhet |
-| マークチェンジ | ディフェンシブ switch | ユーバーゲーベン（引き渡し） | Bytting |
+| マークチェンジ | ディフェンシブ switch | マークの受け渡し（ユーバーゲーベン） | Bytting |
 | 観察力と判断力 | Perception & decision-making | Wahrnehmung & Entscheidung | Persepsjon & beslutningstaking |
 | フリー（の選手） | Unmarked player | Freispieler | Fri spiller |
 | スピード変化 | スピード variation | Tempowechsel | Temposkifte |
 | 7mスロー | 7-meter throw | 7m-Wurf | 7m-kast |
-| タイムアウト | Time-out | アウスツァイト（タイムアウト） | Timeout |
-| ディフェンス | Defense | アプヴェーア（守備） | Forsvar |
+| タイムアウト | Time-out | タイムアウト（アウスツァイト） | Timeout |
+| ディフェンス | Defense | 守備（アプヴェーア） | Forsvar |
 | ウィング | Wing player | Flügelspieler | Kantspiller |
-| ポスト（ピボット） | Pivot | Kreisspieler | ストレーク（ポスト/ピボット）spiller |
-| センターバック | Centre back | ミッテ（中央） / シュピールマッハー（ゲームメーカー） | Midtback |
+| ポスト（ピボット） | Pivot | Kreisspieler | ピボット（ストレーク）spiller |
+| センターバック | Centre back | 中央（ミッテ） / 司令塔（シュピールマッハー） | Midtback |
 
 ---
 

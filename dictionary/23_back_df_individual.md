@@ -1,7 +1,7 @@
 # バックプレーヤーの個人DF技術辞書
 
 > フォーメーション守備（05_gk_df.md）とは異なり、「バックプレーヤーが1on1で守るとき」の個人技術。
-> 出典：IHF ルール 2025・EHF教材・DHB アスレティクコンツェプト（運動能力育成構想）・ハンドボール エボリューション（進化）・KNSU・VIBSS・PubMed査読論文
+> 出典：IHF ルール 2025・EHF教材・DHB 運動能力づくりの考え方・ハンドボール エボリューション（進化）・KNSU・VIBSS・PubMed査読論文
 
 ---
 
@@ -20,17 +20,17 @@
 
 ---
 
-## 【A】基本姿勢（グルントシュテルング（基本姿勢） / ディフェンシブ Stance / Postura defensiva básica）
+## 【A】基本姿勢（基本姿勢 / ディフェンシブ Stance / Postura defensiva básica）
 
 ### A-1. 足・重心・腕
 
 **ドイツ語圏の標準記述（DHB / KNSU / VIBSS）：**
 
 ```
-足の位置（バインシュテルング（脚位置））：
+足の位置（脚の位置）：
   軽く開いた状態（leichte Grätschstellung）
   両足に均等に体重をかける
-  斜め足配置（diagonale バインシュテルング（脚位置））も使用
+  斜め足配置（diagonale 脚の位置）も使用
 
 膝（Knie）：
   軽く曲げる（leicht gebeugt）
@@ -83,7 +83,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 
 ### B-2. ステップ技術3種（ドイツ語圏用語）
 
-**ナハシュテルシュリット（サイドステップ）**
+**サイドステップ**
 ```
 横方向移動の基本
 前の足を出してから後の足を引き寄せる
@@ -91,7 +91,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 → 小さい移動・密着マーキングに使う
 ```
 
-**クロイツシュリット（クロスステップ）**
+**クロスステップ**
 ```
 大きな横移動が必要な場面に使用
 足を交差させて大きく素早くカバー
@@ -99,7 +99,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 → ただし姿勢と方向を保つこと（体が流れないよう注意）
 ```
 
-**アウスファルシュリット（踏み込みステップ）**
+**踏み込みステップ**
 ```
 前方・斜め方向への急接近時に使用
 相手がドライブを仕掛けてきたとき、一歩踏み込んで道を塞ぐ
@@ -189,7 +189,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 → 重心が動いた方向が「本当に行きたい方向」
 ```
 
-**④ アンザウゲン（引き寄せ）**
+**④ 引きつけ**
 ```
 わざと相手に進めそうなスペースを見せて誘い込むようなポジションを取り、
 相手がドライブを仕掛けてきたところで体で詰める技術
@@ -207,7 +207,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 
 ---
 
-## 【E】先読み・アンティシペーション（アンティツィパツィオン（先読み） / アンティシペーション（先読み））
+## 【E】先読み・先読み（先読み / 先読み）
 
 ### E-1. 科学的根拠
 
@@ -218,7 +218,7 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
   エキスパートと初心者では「読む動作シーケンスの種類」が異なる
 ```
 
-### E-2. 読み取るべき手がかり（アンティシペーション（先読み） Cues）
+### E-2. 読み取るべき手がかり（先読み Cues）
 
 ```
 ① 腰・重心の移動（最重要）
@@ -243,19 +243,19 @@ small, fast steps（小さく素早いステップを踏める状態で待つ）
 **ヴァニャ・ラディッチ（フィンランドハンドボールGKコーチ）：**
 ```
 「良いポジションがあってこそ、相手の動きを予測し反応できる」
-→ アンティシペーションはポジション取りと密接に連動する
+→ 先読みはポジション取りと密接に連動する
 ```
 
 ---
 
-## 【F】スクリーン（シュペレ（妨害））への対応
+## 【F】スクリーンへの対応
 
-### F-1. スクリーンの種類（シュペレン（妨害）arten）
+### F-1. スクリーンの種類（スクリーンarten）
 
 ```
-Vordersperre（フォルダーシュペレ）：前方から塞ぐ
-Seitensperre（ザイテンシュペレ）：横から塞ぐ
-Hintersperre（ヒンターシュペレ）：背後から塞ぐ
+Vordersperre（フォルダースクリーン）：前方から塞ぐ
+Seitensperre（ザイテンスクリーン）：横から塞ぐ
+Hintersperre（ヒンタースクリーン）：背後から塞ぐ
 ```
 
 ### F-2. 対応技術4つ
@@ -273,7 +273,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 → シュートラインが遠い場合に有効
 ```
 
-**③ スイッチ（アプガーベ（パス放出） / Switch）**
+**③ スイッチ（パスを出す動き / Switch）**
 ```
 担当を隣の味方と入れ替える
 バックDF同士、またはバックDFとセンターDFのスイッチ
@@ -292,7 +292,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 ```
 「取り次ぎ（Übergabe）と引き受け（Übernahme）の手順を全員が身につけておく」
 「誰かが常に担当している状態を維持する」
-「クライスレーファー（ピボット）には常にマーカーを付けておく」
+「ピボットには常にマーカーを付けておく」
 ```
 
 ---
@@ -328,7 +328,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 3. ウィングの速攻はGKと残ったDFが対応することが多い
 ```
 
-**④ 事前の守備準備（アンティツィパツィオン（先読み） des Ballverlustes）**
+**④ 事前の守備準備（先読み des Ballverlustes）**
 ```
 攻撃中から相手のカウンターを予想し、
 常に「今ボールを失ったら」を意識した立ち位置を取る
@@ -370,7 +370,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 | `Kreis links/rechts!` | ピボット左/右！ | ピボットの位置を伝える |
 | `Ball(e)!` | ボール持ってるぞ！ | ボール保持者への注意を促す |
 
-### H-3. ボールオリエンテーション（バルオリエンティールング（ボール指向））
+### H-3. ボールオリエンテーション（ボール側に寄る守り方）
 
 ```
 ボールに近い側（独：ballnah＝ボール近・英：ball-side）のDF：
@@ -389,20 +389,20 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 
 | 日本語 | ドイツ語 | 英語 | スペイン語 |
 |---|---|---|---|
-| 基本姿勢 | グルントシュテルング（基本姿勢） | defensive stance | postura defensiva básica |
-| 足のスタンス | バインシュテルング（脚位置） | stance | posición de piernas |
-| 追従ステップ | ナハシュテルシュリット（サイドステップ） | shuffle step | paso lateral |
-| クロスオーバーステップ | クロイツシュリット（クロスステップ） | cross step | paso cruzado |
+| 基本姿勢 | 基本姿勢 | defensive stance | postura defensiva básica |
+| 足のスタンス | 脚の位置 | stance | posición de piernas |
+| 追従ステップ | サイドステップ | shuffle step | paso lateral |
+| クロスオーバーステップ | クロスステップ | cross step | paso cruzado |
 | 1on1 | Zweikampf | 1v1 / one-on-one | uno contra uno |
 | ドライブ（突破） | Durchbruch | drive / penetration | penetración |
 | 合法的な身体接触 | erlaubter Körperkontakt | legal body contact | contacto corporal legal |
-| スクリーン | シュペレ（妨害） | screen / pick | bloqueo |
-| マーク切り替え | Übergabe / アプガーベ（パス放出） | switch | cambio de marca |
+| スクリーン | スクリーン | screen / pick | bloqueo |
+| マーク切り替え | Übergabe / パスを出す動き | switch | cambio de marca |
 | ヘッジ（援護） | Helfen | hedge / help defense | ayuda defensiva |
 | 攻守切り替え | Umschalten | transition | transición |
 | 帰還行動 | Rücklaufverhalten | defensive recovery | repliegue defensivo |
-| ボールオリエンテーション | バルオリエンティールング（ボール指向） | ball orientation | orientación al balón |
-| 先読み・予測 | アンティツィパツィオン（先読み） | anticipation | anticipación |
+| ボールオリエンテーション | ボール側に寄る守り方 | ball orientation | orientación al balón |
+| 先読み・予測 | 先読み | anticipation | anticipación |
 | ゲームを読む | Lesen des Spiels | reading the game | lectura del juego |
 | 中央ブロック | Mittelblock | middle block | bloque central |
 
@@ -411,7 +411,7 @@ Hintersperre（ヒンターシュペレ）：背後から塞ぐ
 ## じゃんけん構造（個人DF）
 
 ```
-DF前に出る（ヘラウスリュッケン（前飛び出し））
+DF前に出る（前への飛び出し）
   → OF：フェイントで抜く → DF：読んでいれば対応できる
   → OF：パスを出す    → DF：次のOFがオープンになる
 
@@ -434,11 +434,11 @@ DF側面から接近（斜め）
 - IHF Teaching ハンドボール: https://www.ihf.info/sites/default/files/2020-03/H@S_booklet_0.pdf
 - EHF ハンドボール 用語集 2025: https://www.eurohandball.com/media/xwspa50s/
 - KNSU: https://www.knsu.de/spielsportarten/handball/taktik/individuelles-abwehrverhalten-im-handball
-- VIBSS アプヴェーア（守備）techniken: https://www.vibss.de/fileadmin/Medienablage/Sportpraxis/PH_Handball/
+- VIBSS 守備techniken: https://www.vibss.de/fileadmin/Medienablage/Sportpraxis/PH_Handball/
 - ハンドボール エボリューション（進化） Individual Defence: https://handballevolution.com/individual-defence/
 - DHB Trainer Center: https://www.dhb-trainercenter.de/dhb-rahmentrainingskonzeption/
 - Mulcスポーツ: https://mulcsports.com/blog/handball-back-guide/
-- PubMed アンティシペーション（先読み） Study (Seidel 2020): https://pubmed.ncbi.nlm.nih.gov/32746741/
+- PubMed 先読み Study (Seidel 2020): https://pubmed.ncbi.nlm.nih.gov/32746741/
 
 ---
 
@@ -474,7 +474,7 @@ DF側面から接近（斜め）
 
 【マーキング中（密着）】
   相手に正対しているとき、後方からの第3の選手の動きは死角
-  → 「クライス（ピボット）が右に動いた！」という情報は
+  → 「ピボットが右に動いた！」という情報は
     見ていない選手からしか届かない
 
 【前出し（Herausgehen）時】
@@ -659,11 +659,11 @@ TMS研究の知見（Olabisi & Lewis, 2018 Sage Journals）：
 
 | 役割 | 何を言うか | いつ言うか |
 |---|---|---|
-| スクリーナーを見ているDF | 「シュペレ（スクリーン）来るぞ！右から！」 | スクリーンが始まる0.5〜1秒前 |
-| ポスト担当DF | 「クライス（ピボット）右！」 | ピボットが動き始めた瞬間 |
+| スクリーナーを見ているDF | 「スクリーン来るぞ！右から！」 | スクリーンが始まる0.5〜1秒前 |
+| ポスト担当DF | 「ピボット右！」 | ピボットが動き始めた瞬間 |
 | 後方のDF（カバー役） | 「出るな！」or「行け！」 | 前DFが前出しを判断する前 |
-| マーク交換する側 | 「ウェルゲーベ（渡すぞ）！」 | スクリーンが完成する直前 |
-| マーク交換受ける側 | 「イッヒ・ハブ（俺が持つ）！」 | 渡しの声を受けた直後・即座に |
+| マーク交換する側 | 「渡すぞ！」 | スクリーンが完成する直前 |
+| マーク交換受ける側 | 「俺が持つ！」 | 渡しの声を受けた直後・即座に |
 
 ```
 → 遅い声は情報でなく「事後報告」になる

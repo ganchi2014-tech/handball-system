@@ -92,26 +92,26 @@
 
 ---
 
-## 【C】シューター技術（Wurfvarianten / Técnica de ランサミエント（シュート））
+## 【C】シューター技術（Wurfvarianten / Técnica de シュート）
 
 ### C-1. 主要な4シュートタイプ
 
-**① スタンディングスロー（シュタントヴルフ（立ち打ちシュート） / Standing Shot）**
+**① スタンディングスロー（立ち打ち / Standing Shot）**
 ```
 両足を地面につけたまま投じる基本形
 安定性が高く、コントロール重視
 7メートルスローで最も一般的な選択肢
-フェイント（フィンテ（フェイント））との組み合わせが有効
+フェイントとの組み合わせが有効
 ```
 
-**② ロブショット（ロブヴルフ（ループシュート） / Lob Shot）**
+**② ロブショット（ループシュート / Lob Shot）**
 ```
 ボールに比較的急な放物線軌道をつける
 GKが前傾姿勢・前方に出てきた場合に効果的
 心理戦：GKを前に引き出してからロブを使う高度な判断が必要
 ```
 
-**③ バウンスショット（アウフゼッツァー（バウンドシュート） / Bounce Shot）**
+**③ バウンスショット（バウンドシュート / Bounce Shot）**
 ```
 フロアにバウンドさせてからゴールに入れる
 GKの手や足の下を通す目的
@@ -119,7 +119,7 @@ GKの手や足の下を通す目的
 ドイツ・スペインコーチ教材で重要技法として位置付けられる
 ```
 
-**④ スピンショット（ドレーヴルフ（回転シュート） / Spin Shot / Screwshot）**
+**④ スピンショット（回転シュート / Spin Shot / Screwshot）**
 ```
 ボールに横回転（sidespin）をかけてバウンド後に方向を変える高度技法
 ウィングシュートで多用される技法のペナルティ応用版
@@ -189,7 +189,7 @@ GKが静止している場合 → フェイントで誘ってから投じる
 ### D-3. GKタイプ別の対応
 
 ```
-早期動作型（アンティツィパツィオン（先読み）型 / アンティシペーター（先読み型））：
+早期動作型（先読み型 / 先読み型）：
   ボール離手前から動く → フェイントに弱い
   → 対応：スタンディングスローで引き付けてから逆サイドへ
          ロブで動いた方向の上を越す
@@ -220,7 +220,7 @@ GKが静止している場合 → フェイントで誘ってから投じる
   → このジレンマが7メートルをハンドボール最大の心理戦場面にする
 ```
 
-### E-2. 基本ポジション（グルントシュテルング（基本姿勢） / Versetzter Ausgangsposition）
+### E-2. 基本ポジション（基本姿勢 / Versetzter Ausgangsposition）
 
 ```
 膝を軽く曲げ、重心は前足部（拇指球）に
@@ -237,7 +237,7 @@ GKが静止している場合 → フェイントで誘ってから投じる
 
 | タイプ | ドイツ語 | 内容 | リスク |
 |---|---|---|---|
-| 早期動作型 | アンティツィパツィオン（先読み） | 身体キューを読んでボール離手前に動く | フェイントに弱い |
+| 早期動作型 | 先読み | 身体キューを読んでボール離手前に動く | フェイントに弱い |
 | 反応型 | Reaktion | ボール離手後に方向確認してから動く | 物理的に間に合わない |
 | 混合型 | Kombiniert | キューを読みながら動作開始を微調整 | 高い経験と練習が必要 |
 
@@ -380,7 +380,7 @@ Yips（イップス）：
 
 連続7mシュート：
   成功・失敗に関わらず次のシュートへの心理的リセットを習慣化
-  → 「次の1本だけ」の意識（18_mental.mdのインドレ・ディアログ（内的対話）参照）
+  → 「次の1本だけ」の意識（18_mental.mdの自分への声かけ参照）
 
 プレッシャー環境の設定：
   チームメイトの観衆の前で打つ
@@ -419,17 +419,17 @@ Yips（イップス）：
 
 | 日本語 | ドイツ語 | 英語 | スペイン語 |
 |---|---|---|---|
-| 7メートルスロー | ジーベン（独：7）meter | 7-metre throw / penalty throw | lanzamiento de 7 metros |
+| 7メートルスロー | 7meter | 7-metre throw / penalty throw | lanzamiento de 7 metros |
 | GK制限ライン（4m） | Torwartgrenzlinie | goalkeeper restraint line | línea de restricción del portero |
 | 明確な得点機会 | klare Torchance | clear chance of scoring | clara oportunidad de gol |
 | 角度を狭める | Winkelverkleinerung | angle closing | reducción del ángulo |
 | フェイク動作 | Scheinbewegung | fake movement | finta |
-| 予測（早期読み） | アンティツィパツィオン（先読み） | anticipation | anticipación |
+| 予測（早期読み） | 先読み | anticipation | anticipación |
 | 反応 | Reaktion | reaction | reacción |
 | タクティカルファウル | Taktisches Foul | tactical foul | falta táctica |
 | 成功率 | Erfolgsquote | conversion rate | efectividad |
-| ロブショット | ロブヴルフ（ループシュート） | lob shot | globo |
-| バウンスショット | アウフゼッツァー（バウンドシュート） | bounce shot | bote |
+| ロブショット | ループシュート | lob shot | globo |
+| バウンスショット | バウンドシュート | bounce shot | bote |
 | プレショットルーティン | Vorbereitungsroutine | pre-shot routine | rutina previa al lanzamiento |
 
 ---
