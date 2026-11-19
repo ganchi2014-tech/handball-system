@@ -199,7 +199,21 @@ function chatBestExcerpt(section, kws) {
   const body = section.body.replace(/\r\n?/g, '\n');
   // 小見出し（###）だけの段落は、次の段落の頭に付ける。
   // 小見出しの言葉でその段落を選べるようにし、答えにも「何の話か」が出るようにするため。
-  const rawBlocks = body.split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
+  // 空行で段落に分ける。``` で囲んだ図の中の空行では分けない
+  // （図の途中で切ると、閉じの ``` が開きに化けて、後ろの表が文字のまま出てしまう）。
+  const rawBlocks = [];
+  {
+    let cur = [], inFence = false;
+    for (const line of body.split('\n')) {
+      if (/^\s*```/.test(line)) inFence = !inFence;
+      if (!inFence && line.trim() === '') {
+        if (cur.length) { rawBlocks.push(cur.join('\n').trim()); cur = []; }
+        continue;
+      }
+      cur.push(line);
+    }
+    if (cur.length) rawBlocks.push(cur.join('\n').trim());
+  }
   let blocks = [];
   let pendingHead = '';
   for (const b of rawBlocks) {
@@ -247,6 +261,7 @@ function chatBestExcerpt(section, kws) {
       if (cut < 100) cut = LIMIT;
       out = out.slice(0, cut + 1);
     }
+    if ((out.match(/^\s*```/gm) || []).length % 2 === 1) out += '\n```'; // 図の途中で切れたら閉じる
     out += '\n\n…（続きは「全文を読む」へ）';
   }
   return out;
