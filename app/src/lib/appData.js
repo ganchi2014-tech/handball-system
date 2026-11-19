@@ -128,7 +128,7 @@ const HUB_MODULES = [
   {
     id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
     title: '振り返る',
-    desc: '試合・練習のプレーを10モードで自己問答 → 良かった点／課題／改善案',
+    desc: '試合・練習の1プレーを選んで、自分に問いかける → 良かった点／課題／改善案',
     enabled: true,
   },
   {
@@ -141,6 +141,12 @@ const HUB_MODULES = [
     id: 'dictionary', cls: 'dict', icon: '📖', target: '選手・指導者',
     title: '辞書を読む',
     desc: `${DICT_FILES.length}章${DICT_SECTION_COUNT}節の辞書を、言葉やタグで探す`,
+    enabled: true,
+  },
+  {
+    id: 'solve', cls: 'solve', icon: '🎯', target: '選手・指導者',
+    title: '課題解決',
+    desc: '「○○できない」から選ぶ → まず試すことと、辞書の読む所',
     enabled: true,
   },
   {
@@ -162,7 +168,7 @@ const HUB_MODULES = [
     enabled: true,
   },
   {
-    id: 'playbook', cls: 'dict', icon: '🗂', target: '選手',
+    id: 'playbook', cls: 'playbook', icon: '🗂', target: '選手',
     title: 'マイ・プレイブック',
     desc: '振り返り回数・宣言達成率・読み的中率・効いた技 — 自分の記録が1枚で見える',
     enabled: true,

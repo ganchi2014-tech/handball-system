@@ -294,6 +294,16 @@ const CHAT_RETURN_RE = /やっていい|やってもいい|していい|して�
 const CHAT_DEFINE_RE = /(って何|ってなに|って、何|とは|の意味|ってどういう|どういう意味|ってなんですか|って何ですか|ってどうやる|ってどう動く|のやり方|ってどんな)/;
 
 // 用語集から、質問に出てくる言葉を探す（長い言葉を優先）。意味をたずねる質問のときだけ使う
+const CHAT_WHOLE_WORD = new Set(['アウト', 'フォロー']);
+function chatHasWholeKatakana(text, k) {
+  let idx = 0;
+  while ((idx = text.indexOf(k, idx)) !== -1) {
+    if (!/[ァ-ヶー]/.test(text[idx - 1] || '') && !/[ァ-ヶー]/.test(text[idx + k.length] || '')) return true;
+    idx += 1;
+  }
+  return false;
+}
+
 function chatGlossaryHit(question) {
   if (!CHAT_DEFINE_RE.test(question)) return null;
   const qn = chatNormalize(question);
@@ -302,6 +312,8 @@ function chatGlossaryHit(question) {
     for (const it of g.items || []) {
       const base = chatNormalize(String(it.term).split(/[（(／/]/)[0].trim());
       if (base.length < 2 || !chatHasTerm(qn, base)) continue;
+      // 「パスアウト」の中の「アウト」のように、長いカタカナの言葉の一部として入っているだけなら当てない
+      if (CHAT_WHOLE_WORD.has(base) && !chatHasWholeKatakana(qn, base)) continue;
       if (!best || base.length > best.len) best = { term: it.term, desc: it.desc, len: base.length };
     }
   }

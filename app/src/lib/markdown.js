@@ -22,6 +22,10 @@ function highlightInHtml(html, q) {
   });
 }
 
+// ほかの言葉の一部になりやすい短いカタカナの用語。前後がカタカナのときは別の言葉として扱う。
+const GLOSSARY_WHOLE_WORD = new Set(['アウト', 'フォロー']);
+const KATAKANA_RE = /[ァ-ヶー＆&・]/;
+
 // GLOSSARY の用語自動装飾（lazy init: GLOSSARY const 定義の後で動的構築）
 let __glossaryRegex = null;
 let __glossaryMap = null;
@@ -57,8 +61,11 @@ function decorateGlossary(html) {
   const used = new Set();
   return html.replace(/(<[^>]+>)|([^<]+)/g, (m, tag, text) => {
     if (tag) return tag;
-    return text.replace(dec.regex, (_, term) => {
+    return text.replace(dec.regex, (_, term, offset, whole) => {
       if (used.has(term)) return term;
+      // 短いカタカナの言葉は、もっと長いカタカナの言葉の一部のときは飾らない（「パスアウト」の中の「アウト」など）
+      if (GLOSSARY_WHOLE_WORD.has(term) &&
+          (KATAKANA_RE.test(whole[offset - 1] || '') || KATAKANA_RE.test(whole[offset + term.length] || ''))) return term;
       used.add(term);
       return `<span class="gl-term" data-term="${term.replace(/"/g, '&quot;')}">${term}</span>`;
     });
@@ -221,4 +228,4 @@ function renderMarkdown(md, query) {
 // 辞書テキストをセクションに分割（## 見出しで区切る）
 // ─────────────────────────────────────────────
 
-export { escapeHtml, highlightInHtml, getGlossaryDecorator, decorateGlossary, renderMarkdown };
+export { escapeHtml, highlightInHtml, getGlossaryDecorator, decorateGlossary, renderMarkdown, GLOSSARY_WHOLE_WORD, KATAKANA_RE };

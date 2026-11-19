@@ -143,7 +143,7 @@ function TBWizard({ baseTask, onSave, onCancel }) {
       </div>)}
 
       {step === 4 && (<div>
-        <div className="tb-q-text">第0問：この課題は、DFの何を変えさせる？</div>
+        <div className="tb-q-text">はじめの問い：この課題は、DFの何を変えさせる？</div>
         <div className="tb-q-hint">答えられなければ、それはDFのいない「動作の練習」になっている疑いが強い</div>
         <div className="tb-choices" style={{ marginTop: 12 }}>
           {TB_Q0_TARGETS.map(t => (

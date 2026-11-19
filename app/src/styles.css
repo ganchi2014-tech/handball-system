@@ -370,6 +370,7 @@
     .hub-card.reflect,
     .hub-card.plan,
     .hub-card.chat,
+    .hub-card.playbook,
     .hub-card.resume {
       grid-column: 1 / -1;
       flex-direction: row;
@@ -416,6 +417,16 @@
     .hub-card.dict .hub-card-title { color: #67e8f9; }
     .hub-card.dict:active { border-color: rgba(34,211,238,0.45); box-shadow: 0 0 20px rgba(6,182,212,0.15); }
 
+    .hub-card.playbook {
+      border-color: rgba(34,211,238,0.22);
+      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(6,182,212,0.03));
+    }
+    .hub-card.playbook .hub-card-title { color: #67e8f9; }
+    .glossary-pinned {
+      margin: 0 16px 10px; padding: 12px 14px; border-radius: 12px;
+      background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.45);
+    }
+    .glossary-pinned .glossary-term { font-size: 16px; }
     .hub-card.solve {
       border-color: rgba(192,132,252,0.22);
       background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(168,85,247,0.03));

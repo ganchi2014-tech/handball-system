@@ -482,7 +482,7 @@ function App() {
     if (!glossaryOpen || !glossaryHighlight) return;
     setTimeout(() => {
       const target = document.querySelector(`[data-glossary-key="${CSS.escape(glossaryHighlight)}"]`);
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (target) target.scrollIntoView({ behavior: 'auto', block: 'center' });
     }, 100);
   }, [glossaryOpen, glossaryHighlight]);
 
@@ -855,7 +855,11 @@ function App() {
 
   // 検索結果から抜粋ハイライト用テキストを取得
   const getExcerpt = (section, q) => {
-    if (!q) return cleanExcerpt(section.body.slice(0, 280));
+    // 何も探していないとき：題（カードの上に出ている）と区切り線は抜粋に入れない
+    if (!q) {
+      const body = section.body.replace(/^\s*#{1,6}\s+[^\n]*\n/, '').replace(/^\s*-{3,}\s*$/gm, '');
+      return cleanExcerpt(body.slice(0, 280));
+    }
     const lower = section.body.toLowerCase();
     const idx = lower.indexOf(q.toLowerCase());
     if (idx === -1) return cleanExcerpt(section.body.slice(0, 240));
@@ -1270,6 +1274,7 @@ function App() {
           mentalDecls={mentalDecls}
           onAnswerDeclaration={answerDeclaration} onSnooze={() => setDecSnooze(true)}
           reflectCount={matchCards.length}
+          pendingYomi={matchCards.filter(c => !c.reflect).reduce((n, c) => n + (c.yomi || []).filter(y => y.target && y.claim && y.hit == null).length, 0)}
           onAction={(p) => {
             if (p === 'predict') setPhase('yomi');
             else if (p === 'verify') setPhase('card');
@@ -1309,7 +1314,7 @@ function App() {
             style={{marginTop: 12}}
             onClick={handleOnboardOpen}
           >🌱 初めての方はこちら</button>
-          {fbLink.enabled && (
+          {fbEnabled && (
             <button
               className="help-btn"
               style={{marginTop: 8}}
@@ -2439,6 +2444,18 @@ function App() {
                 aria-label="用語集内を検索"
               />
             </div>
+            {glossaryHighlight && !glossaryQuery.trim() && (() => {
+              // 本文の語を押して開いたとき：その語の説明をいちばん上に出す（一覧を探さなくてよいように）
+              let hit = null;
+              for (const g of GLOSSARY) for (const it of g.items) if (!hit && it.term.replace(/[（(].*$/, '').trim() === glossaryHighlight) hit = it;
+              if (!hit) return null;
+              return (
+                <div className="glossary-pinned">
+                  <div className="glossary-term">{hit.term}</div>
+                  <div className="glossary-desc">{hit.desc}</div>
+                </div>
+              );
+            })()}
             <div className="glossary-body">
               {(() => {
                 const q = glossaryQuery.trim().toLowerCase();
@@ -2610,7 +2627,7 @@ function App() {
               style={{ borderColor: '#06b6d4', color: '#06b6d4', marginBottom: 8 }}
               onClick={handleJumpToCountry}
             >
-              🔍 相手の守り方の型から考える →
+              🔍 相手の型（守り方・攻め方）から考える →
             </button>
           )}
 

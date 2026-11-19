@@ -2,6 +2,7 @@
 // 落ちたら：app/src/data/chatSynonyms.json（言いかえ）、用語集、課題解決の題、辞書の見出しのどれかが変わっていないかを見る。
 import { describe, it, expect } from 'vitest';
 import { DICT_FILES, splitSections } from '../app/src/lib/dict.js';
+import { renderMarkdown } from '../app/src/lib/markdown.js';
 import { buildChatReply, chatSolveMatches, chatGlossaryHit, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
 import { buildSections } from './helpers/sections.js';
 import QUESTIONS from '../app/src/data/questions.json';
@@ -151,5 +152,23 @@ describe('顧問が確かめた言葉の説明・陣形の数字・肘', () => {
     const r = reply('シュートで肘下がるって言われる');
     expect(r.head.id.startsWith('01-')).toBe(true);
     expect(r.html).toContain('肘が下がる');
+  });
+});
+
+describe('用語集「アウト」「3枚目」（顧問が確かめた説明）', () => {
+  it('「アウトって何」「3枚目って何」に説明が出る', () => {
+    expect(chatGlossaryHit('アウトって何').desc).toContain('サイドライン側');
+    expect(chatGlossaryHit('3枚目って何').desc).toContain('中央寄り');
+  });
+  it('長いカタカナの言葉の一部の「アウト」には当てない', () => {
+    const g = chatGlossaryHit('パスアウトって何');
+    expect(g === null || !String(g.term).startsWith('アウト')).toBe(true);
+    expect(chatGlossaryHit('タイムアウトって何').term).toContain('タイムアウト');
+  });
+  it('本文でも、別の言葉の中の「アウト」「フォロー」は飾らない', () => {
+    expect(renderMarkdown('45がアウトを取る')).toContain('data-term="アウト"');
+    expect(renderMarkdown('プレッシャーアウトする')).not.toContain('data-term="アウト"');
+    expect(renderMarkdown('フォローアップの確認')).not.toContain('data-term="フォロー"');
+    expect(renderMarkdown('フォロー中心で寄る')).toContain('data-term="フォロー"');
   });
 });
