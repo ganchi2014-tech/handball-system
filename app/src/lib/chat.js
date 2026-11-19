@@ -224,6 +224,9 @@ const CHAT_SUGGESTIONS = [
 ];
 
 // 質問 → ボット返信メッセージを構築
+const CHAT_SAFETY_RE = /痛|けが|ケガ|怪我|腫れ|はれて|しびれ|捻挫|ねんざ|ひねっ|脱臼|骨折|肉離れ|めまい|頭を打|吐き気|熱中症|息が苦し/;
+const CHAT_SAFETY_NOTE = '痛みや体の異変があるときは、無理に続けず、まず指導者に伝える。強い痛み・続く痛み・頭を打ったときは医療機関で診てもらう。下は辞書の説明（予防や一般の話）。';
+
 function buildChatReply(question, sections) {
   const { kws, hits } = chatSearch(question, sections);
   if (!kws.length) {
@@ -242,10 +245,13 @@ function buildChatReply(question, sections) {
   }
   const best = hits[0];
   const excerpt = chatBestExcerpt(best, kws);
+  // 痛み・ケガ・体の異変の質問には、辞書の抜粋の前に「まず伝える・診てもらう」を必ず出す
+  // （抜粋は予防や一般の話のことが多く、それだけ読んで自分で判断させないため）
+  const safety = CHAT_SAFETY_RE.test(question) ? `<p class="chat-safety">${CHAT_SAFETY_NOTE}</p>` : '';
   return {
     role: 'bot', kind: 'answer',
     head: { id: best.id, icon: best.fileIcon, fileTitle: best.fileTitle, title: best.title },
-    html: renderMarkdown(excerpt),
+    html: safety + renderMarkdown(excerpt),
     srcs: hits.slice(1).map(s => ({ id: s.id, icon: s.fileIcon, fileTitle: s.fileTitle, title: s.title })),
     ts: Date.now(),
   };
@@ -255,4 +261,4 @@ function buildChatReply(question, sections) {
 // 問いの定義
 // ─────────────────────────────────────────────
 
-export { chatNormalize, chatIsAsciiKey, chatHasTerm, chatCountTerm, CHAT_SYNONYMS, CHAT_STOPWORDS, CHAT_NOISE_RE, chatLexicon, CHAT_BODY_CHARS, chatExtractKeywords, chatNBody, chatIsStub, CHAT_EXCLUDED_FILES, chatSearch, chatBestExcerpt, CHAT_SUGGESTIONS, buildChatReply };
+export { CHAT_SAFETY_NOTE, chatNormalize, chatIsAsciiKey, chatHasTerm, chatCountTerm, CHAT_SYNONYMS, CHAT_STOPWORDS, CHAT_NOISE_RE, chatLexicon, CHAT_BODY_CHARS, chatExtractKeywords, chatNBody, chatIsStub, CHAT_EXCLUDED_FILES, chatSearch, chatBestExcerpt, CHAT_SUGGESTIONS, buildChatReply };

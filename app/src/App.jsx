@@ -1486,8 +1486,8 @@ function App() {
             )}
             {dictLoaded && (
               <>
-                {/* お気に入りセクション（フィルタに関わらず常時表示。検索中のみ非表示） */}
-                {dictFavs.length > 0 && !dictQuery && (() => {
+                {/* お気に入り（章の一覧のときだけ出す。章やタグでしぼっている間は、その章の節を上に見せる） */}
+                {dictFavs.length > 0 && !dictQuery && !dictActiveFileId && !dictActiveTag && (() => {
                   const favSections = dictFavs.map(k => dictSections.find(s => favKey(s) === k)).filter(Boolean);
                   if (favSections.length === 0) return null;
                   return (

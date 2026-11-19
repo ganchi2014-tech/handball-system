@@ -2,7 +2,7 @@
 // 2026-07-06レビューで外れた質問＋守るべき代表質問。top1 が期待ファイル（とtitle部分一致）を外したら失敗。
 import { describe, it, expect } from 'vitest';
 import { DICT_FILES, splitSections } from '../app/src/lib/dict.js';
-import { chatSearch } from '../app/src/lib/chat.js';
+import { chatSearch, buildChatReply, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
 import { buildSections } from './helpers/sections.js';
 
 const sections = buildSections(splitSections, DICT_FILES);
@@ -41,4 +41,17 @@ describe('チャット回帰（14問）', () => {
       if (ex.title) expect(top.title).toContain(ex.title);
     });
   }
+});
+
+describe('痛み・ケガの質問には、まず伝える・診てもらうを先に出す', () => {
+  for (const q of ['肩が痛い', '足首をひねった', '肩が痛いけど明日の試合に出たい', '頭を打った']) {
+    it(`「${q}」`, () => {
+      const r = buildChatReply(q, sections);
+      if (r.kind === 'answer') expect(r.html.startsWith('<p class="chat-safety">' + CHAT_SAFETY_NOTE)).toBe(true);
+    });
+  }
+  it('関係のない質問には出さない', () => {
+    const r = buildChatReply('5-1はどう攻略する？', sections);
+    expect(r.html.includes('chat-safety')).toBe(false);
+  });
 });
