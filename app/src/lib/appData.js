@@ -128,7 +128,7 @@ const HUB_MODULES = [
   {
     id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
     title: '振り返る',
-    desc: '試合・練習の1プレーを選んで、自分に問いかける → 良かった点／課題／改善案',
+    desc: '試合・練習の1プレーを選んで自己問答 → 良かった点／課題／改善案',
     enabled: true,
   },
   {

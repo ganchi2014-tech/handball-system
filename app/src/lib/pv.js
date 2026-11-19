@@ -3,11 +3,11 @@
 import { gkDateStr, gkExportWeekText, gkFmtDate, gkWeekStart } from './gk.js';
 
 const PV_TYPES = [
-  { id: '1a', label: '①a ブロック・表', desc: 'DFとボールの間に入り、背中でブロックする' },
-  { id: '1b', label: '①b ブロック・裏', desc: 'DFの背中側にブロックする（次のパスや、味方のドライブ・カットインを通す）' },
-  { id: '2a', label: '②a スライド・同期', desc: '隣のDFの裏のスペースへ、パサーが出せるタイミングで動く' },
-  { id: '2b', label: '②b スライド・拡張', desc: 'ボールを持つ味方が仕掛ける前に動き、DFをついて来させてスペースを広げる' },
-  { id: '3', label: '③ はなれる', desc: '自分のスペースに味方が攻めてきたら、ボールの方向に体を向けたまま隣のスペースへ離れる' },
+  { id: '1a', label: '①a ブロック・表', desc: 'DFとボールの間に背中で壁を作る（触覚主導：接触圧とDF重心）／体の当たりとDFの体重の乗り方を手がかりにする' },
+  { id: '1b', label: '①b ブロック・裏', desc: 'DFの背中側に壁＝ドライブ導線を開ける（触覚主導：接触圧とDF重心）／味方がドライブで抜ける道を空ける' },
+  { id: '2a', label: '②a スライド・同期', desc: '隣DFの裏へパスと同期して滑り込む（保持者の状態認知が主導）／ボールを持つ味方が出せるタイミングに合わせる' },
+  { id: '2b', label: '②b スライド・拡張', desc: '2:2仕掛けの前にDFを引き連れて空間を広げる（保持者の状態認知が主導）／ボールを持つ味方を見て先に動く' },
+  { id: '3', label: '③ はなれる', desc: '保持者に自スペースを譲り、体はボール方向のまま＝受け直し即時性（保持者の状態認知が主導）／すぐ受け直せる向きで隣へ離れる' },
 ];
 const PV_AXIS1 = [
   { id: 'ball', label: 'ボール側' },
@@ -18,13 +18,13 @@ const PV_AXIS2 = [
   { id: 'space', label: '空間に反応' },
 ];
 const PV_CUES = [
-  { id: 'df-weight', label: 'DFの体重が乗っている足' },
+  { id: 'df-weight', label: 'DF重心の足' },
   { id: 'passer', label: 'パサーの目と腕' },
-  { id: 'holder', label: 'ボールを持つ味方の進む向きと声' },
+  { id: 'holder', label: '保持者の進行方向と声' },
 ];
 const PV_RESULTS = [
   { id: 'break', label: '突破', cls: 'break' },
-  { id: 'stopped', label: '止められた', cls: 'stopped' },
+  { id: 'stopped', label: '被停止（止められた）', cls: 'stopped' },
   { id: 'rereceive', label: '受け直し', cls: 'rereceive' },
 ];
 const pvTypeLabel = (id) => (PV_TYPES.find(t => t.id === id) || {}).label || id;
@@ -72,7 +72,7 @@ function pvExportWeekText(records, weekStartStr) {
   const lines = [];
   lines.push(`🧲 ピヴォット認知 週次レポート（${gkFmtDate(ws)}〜${gkFmtDate(gkDateStr(end))}）`);
   lines.push('━━━━━━━━━━━━━━');
-  lines.push('■ 選んだ動きの型（今週）※①ばかりになっていないか');
+  lines.push('■ 類型選択分布（今週）※①偏重チェック');
   const pivots = [...new Set(weekRecs.map(r => r.pivot))];
   if (!pivots.length) lines.push('  記録なし');
   pivots.forEach(pv => {
@@ -83,7 +83,7 @@ function pvExportWeekText(records, weekStartStr) {
     const cross = pvCrossTypeResult(mine);
     PV_TYPES.forEach(t => {
       const c = cross[t.id];
-      if (c) lines.push(`    ${t.label.slice(0, 2)}：突破${c.break || 0}／止められた${c.stopped || 0}／受け直し${c.rereceive || 0}`);
+      if (c) lines.push(`    ${t.label.slice(0, 2)}：突破${c.break || 0}／被停止${c.stopped || 0}／受け直し${c.rereceive || 0}`);
     });
   });
   lines.push('');

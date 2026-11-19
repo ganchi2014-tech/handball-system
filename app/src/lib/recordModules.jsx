@@ -82,7 +82,7 @@ function PVDistCard({ records, players }) {
   const weekRecs = records.filter(r => gkWeekStart(r.date) === thisWeek);
   return (
     <div className="tb-card" style={{marginTop: 16}}>
-      <div className="tb-card-k">選んだ動きの型（今週 / 累計）※①ばかりになっていないかを見る</div>
+      <div className="tb-card-k">類型選択分布（今週 / 累計）※①に安住していないかを見る</div>
       {players.pivots.map(pv => {
         const mineW = weekRecs.filter(r => r.pivot === pv);
         const mineAll = records.filter(r => r.pivot === pv);
@@ -109,7 +109,7 @@ function PVCrossCard({ records }) {
   const cross = pvCrossTypeResult(records);
   return (
     <div className="tb-card" style={{marginTop: 12}}>
-      <div className="tb-card-k">動きの型ごとの結果（累計・チーム全体）</div>
+      <div className="tb-card-k">類型×結果（累計・チーム全体）</div>
       {PV_TYPES.filter(t => cross[t.id]).map(t => {
         const c = cross[t.id];
         return (
@@ -203,8 +203,8 @@ const PV_DEF = {
   ],
   home: {
     title: 'ピヴォット認知 ─ 選んで、照合する',
-    lead: 'DFの見え方を2つの点で見て、動きの型を選び、起きたことと照らす',
-    hint: '流れ：①はじめの問い（DFはどちら側にいる？何に反応している？）→ ②動きの型を選んで予想を書く → プレー → ③実際に確かめられた事実と結果を記録。 入力はバックの選手が行う。結果は事実だけ（うまい下手の話ではない）。どの型を選ぶかは自由（正解かどうかは見ない）。',
+    lead: '2軸で見て、類型を選び、事実で照合',
+    hint: '流れ：①第0問（DFはどちら側？何に反応？）→ ②類型（①a/①b/②a/②b/③）＋予測 → プレー → ③確認できた事実＋結果。 入力はユニット内のバック陣が兼任。結果は事実のみ（うまい下手の話ではない）。どの類型を選ぶかは自由＝正解チェックはしない。 ※言葉の意味：第0問＝はじめの問い／類型＝ポストの動きの型／2軸＝DFの位置と、DFが何に反応しているか。',
     startLabel: '▶ 記録をはじめる',
     notReadyWarn: '先に下の「選手リスト」でピヴォットを登録してください。',
     sections: [PVDistCard, PVCrossCard],
@@ -213,19 +213,19 @@ const PV_DEF = {
   steps: {
     setup: {
       label: 'STEP 1 / 3 ─ プレーの前に記入',
-      text: 'はじめの問い：いまのDFはどう見えている？',
-      hint: '入力はバックの選手が行う（ポスト本人に口で確かめる）。',
+      text: '第0問：いまのDFはどう見えている？',
+      hint: '入力はユニット内のバック陣が行う（ピヴォット本人に口頭で確認）。',
       fields: [
         { type: 'actor', field: 'pivot', label: 'ピヴォット', playersKey: 'pivots', emptyHint: 'ピヴォットが未登録です。ホームの「選手リスト」で登録してください。' },
         { type: 'chips', field: 'axis1', label: 'DFはどちら側？', options: PV_AXIS1 },
         { type: 'chips', field: 'axis2', label: 'DFは何に反応している？', options: PV_AXIS2 },
       ],
-      next: '次へ：動きの型を選ぶ →',
+      next: '次へ：類型を選ぶ →',
     },
     predict: {
-      backLabel: '← はじめの問いに戻る',
+      backLabel: '← 第0問に戻る',
       label: 'STEP 2 / 3 ─ プレーの前に記入',
-      text: d => `${d.pivot} の選択：どの動きでいく？`,
+      text: d => `${d.pivot} の選択：どの類型でいく？`,
       hint: 'どれを選ぶかは自由（正解チェックはしない）。選んだら「この選択でDFはどうなる？」を短く。',
       fields: [
         { type: 'choices', field: 'type', options: PV_TYPES },
@@ -237,7 +237,7 @@ const PV_DEF = {
       label: 'STEP 3 / 3 ─ プレーの後に記入',
       text: '確認できた事実と結果は？（事実のみ・良し悪しの判定はしない）',
       hint: d => <React.Fragment>選択：{d.pivot} → {pvTypeLabel(d.type)}（{pvAxisLabel(d)}）{d.predict ? `｜予測:${d.predict}` : ''}</React.Fragment>,
-      backLabel: '← 動きの型・予想をやり直す',
+      backLabel: '← 類型・予測をやり直す',
       fields: [
         { type: 'multichips', field: 'cues', label: '実際に確認できた事実（複数可・0個でも可）', options: PV_CUES },
       ],

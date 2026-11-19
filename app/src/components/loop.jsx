@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { loopPhaseInfo, newMatchCard, YOMI_TARGETS, CARD_KINDS, kindLabel } from '../lib/loop.js';
 
 const PHASE_META = {
-  predict:  { icon: '🔮', label: 'いまは試合前（読みを立てる時期）',  main: '🔮 読みを宣言する',   sub: '試合の前に、相手の守りやGKをどう読むかを書いておく' },
-  verify:   { icon: '📝', label: 'いまは試合後（振り返る時期）',  main: '📝 5分振り返り',      sub: '試合を1枚にまとめる（読みの答え合わせ＋良かった点・課題・改善案・次の一手）' },
-  practice: { icon: '🎯', label: 'いまは練習の時期',  main: '🎯 今週の課題 → 練習', sub: 'できなかった場面から課題を1つ作って、練習の形にする' },
+  predict:  { icon: '🔮', label: '予測位相（試合前：読みを立てる）',  main: '🔮 読みを宣言する',   sub: '試合前に相手DF/GKの読みを3タップで宣言' },
+  verify:   { icon: '📝', label: '検証位相（試合後：振り返る）',  main: '📝 5分振り返り',      sub: '試合を1枚のカードにする（読みの丸付け＋4軸：良かった点・課題・改善案・次の一手）' },
+  practice: { icon: '🎯', label: '練習位相（練習の時期）',  main: '🎯 今週の課題 → 練習', sub: 'できなかった場面から課題を1つ作って、練習に落とす（課題ビルダー）' },
 };
 
 function MatchDateEditor({ nextMatch, onSave, onClose }) {
@@ -17,7 +17,7 @@ function MatchDateEditor({ nextMatch, onSave, onClose }) {
       <div className="onboard-card">
         <div className="onboard-title">📅 次の試合日</div>
         <div className="onboard-desc" style={{ textAlign: 'left' }}>
-          設定すると、ホームが「試合前に読む → 試合 → 振り返る → 練習」の順で、いまやることを案内します。設定しなくても全部の機能が使えます。
+          設定すると、ホームが「予測（試合前に読む）→試合→検証（振り返る）→練習」のループで、いまやることを案内します。未設定でも全機能は使えます。
         </div>
         <div className="tb-field"><div className="tb-field-label">試合日</div>
           <input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
@@ -55,7 +55,7 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
             {loopState.nextMatch?.opponent ? <span className="loop-head-opp"> vs {loopState.nextMatch.opponent}</span> : null}
           </div>
         ) : (
-          <div className="loop-head-days">練習の週<span className="loop-head-opp">（紅白戦や課題ゲームで、読む→試す→振り返るを1周する）</span></div>
+          <div className="loop-head-days">練習週モード<span className="loop-head-opp">（紅白戦・課題ゲームで、予測→検証→練習を1周する）</span></div>
         )}
         <div className="loop-head-phase">{meta.icon} {meta.label}　<span className="loop-head-edit">📅 試合日を設定</span></div>
       </div>
