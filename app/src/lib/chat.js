@@ -153,7 +153,8 @@ const CHAT_WEAK_RUNS = new Set(['相手', '自分', '無理', '場合', '全然'
 function chatSearchOnce(question, sections, extraTokens = []) {
   const ex = chatExtractKeywords(question);
   const { fileBoosts, tags } = ex;
-  const kws = [...ex.kws, ...extraTokens.map(raw => ({ raw, w: 1 }))];
+  const have = new Set(ex.kws.map(k => chatNormalize(k.raw)));
+  const kws = [...ex.kws, ...extraTokens.filter(t => !have.has(chatNormalize(t))).map(raw => ({ raw, w: 1 }))];
   if (!kws.length) return { kws, hits: [], tags };
   const scored = [];
   for (const s of sections) {
