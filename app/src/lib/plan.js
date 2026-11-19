@@ -24,10 +24,10 @@ import POSITION_DRILL_VARIANTS from '../data/positionDrillVariants.json';
 const POSITIONS = [
   { id: 'all',   icon: '👥', label: 'チーム全体',    desc: 'ポジション問わず全員で取り組む' },
   { id: 'gk',    icon: '🧤', label: 'GK',             desc: 'ゴールキーパー専用' },
-  { id: 'cb',    icon: '🎯', label: 'CB（センター）', desc: 'センターバック特化' },
-  { id: 'back',  icon: '💪', label: 'LB・RB',         desc: 'サイドバック特化' },
-  { id: 'wing',  icon: '🚀', label: 'LW・RW',         desc: 'ウィング特化' },
-  { id: 'pivot', icon: '🔄', label: 'Pivot',          desc: 'ポスト・ピボット特化' },
+  { id: 'cb',    icon: '🎯', label: 'センター', desc: 'センター向け' },
+  { id: 'back',  icon: '💪', label: 'バック（左・右）', desc: 'バック（45度）向け' },
+  { id: 'wing',  icon: '🚀', label: 'サイド（左・右）', desc: 'サイド（ウィング）向け' },
+  { id: 'pivot', icon: '🔄', label: 'ポスト', desc: 'ポスト（ピボット）向け' },
 ];
 
 // ポジション別推奨テーマ

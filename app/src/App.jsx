@@ -163,6 +163,8 @@ function App() {
   useEffect(() => { phaseRef.current = phase; }, [phase]);
   // 辞書詳細を開いた元画面（'dictionary' | 'chat'）— 戻り先の判定に使う
   const dictOriginRef = useRef('dictionary');
+  // 辞書の節を開いたあと、戻るボタンで戻れる画面
+  const DICT_RETURNABLE = ['chat', 'result', 'solve', 'plan'];
   // チャット履歴の復元・保存
   useEffect(() => {
     const stored = lsGet('chat-history');
@@ -493,7 +495,7 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '7つの使い方', desc: `🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}ファイル${DICT_SECTION_COUNT}セクションを検索\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）\n🧤 GK予測 — シュートコースの読みを記録・照合\n🧲 ピヴォット認知 — DFの見え方→予測→照合` },
+    { icon: '🧭',   title: '7つの使い方', desc: `🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}章${DICT_SECTION_COUNT}節から探す\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）\n🧤 GK予測 — シュートコースの読みを記録・照合\n🧲 ピヴォット認知 — DFの見え方→予測→照合` },
     { icon: '📲',   title: 'ホーム画面に追加しよう', desc: 'アプリとして入れておくと体育館（オフライン）でも開けて、記録も消えにくくなります。\n\niPhone：共有ボタン →「ホーム画面に追加」\nAndroid：ブラウザのメニュー →「アプリをインストール」' },
     { icon: '✨',   title: '始めましょう', desc: 'まずは「🤾 振り返る」で最近の1プレーを1つだけ。\n困ったら右下の 📘 用語 をタップ。ヘルプはホームから何度でも開けます。' },
   ];
@@ -679,12 +681,17 @@ function App() {
     const handler = (e) => {
       const fileId = e.detail;
       const target = dictSections.find(s => s.fileId === fileId);
+      // 質問・振り返りの結果・課題解決・練習の画面から来たときは、戻るボタンでそこへ戻す
+      dictOriginRef.current = DICT_RETURNABLE.includes(phaseRef.current) ? phaseRef.current : 'dictionary';
       if (target) {
-        // チャット回答内のリンクから来た場合は戻り先をチャットにする
-        dictOriginRef.current = phaseRef.current === 'chat' ? 'chat' : 'dictionary';
         setDictDetail(target);
         setPhase('dictionary-detail');
         setTimeout(() => window.scrollTo(0, 0), 0);
+      } else {
+        // 辞書をまだ読み込めていないときは、その章の一覧を開く
+        dictOriginRef.current = 'dictionary';
+        setDictDetail(null); setDictQuery(''); setDictActiveTag(null); setDictActiveFileId(fileId);
+        setPhase('dictionary');
       }
     };
     window.addEventListener('dict-jump', handler);
@@ -969,6 +976,8 @@ function App() {
   const handleOpenRelated = (related) => {
     const target = findRelatedSection(related);
     if (target) {
+      // 戻るボタンで、開く前の画面（課題解決・振り返りの結果・練習）へ戻す
+      dictOriginRef.current = DICT_RETURNABLE.includes(phaseRef.current) ? phaseRef.current : 'dictionary';
       setDictDetail(target);
       setPhase('dictionary-detail');
       setTimeout(() => window.scrollTo(0, 0), 0);
@@ -1019,6 +1028,7 @@ function App() {
     'r_gk_self_throw_noone':     { role: 'player', category: 'critical', symptom: 'cgk7' },
     // OFシュート不調 → 批判的思考のシュート診断
     'r_of_shoot_off':            { role: 'player', category: 'critical', symptom: 'cof2' },
+    'r_of_shoot_gk_same':        { role: 'player', category: 'critical', symptom: 'cof2' },
     'r_of_shoot_gk_anticip':     { role: 'player', category: 'critical', symptom: 'cgk1' },
     'r_of_shoot_gk_position':    { role: 'player', category: 'critical', symptom: 'cgk1' },
     // OFフェイント関連 → 批判的思考の「フェイント7種使えない」
@@ -1089,12 +1099,13 @@ function App() {
 
   const handleDictBack = () => {
     setDictDetail(null);
-    // チャットから開いた詳細はチャットへ戻す
-    if (dictOriginRef.current === 'chat') {
+    // 質問・振り返りの結果・課題解決・練習から開いた節は、元の画面へ戻す
+    const origin = dictOriginRef.current;
+    if (DICT_RETURNABLE.includes(origin)) {
       dictOriginRef.current = 'dictionary';
-      setPhase('chat');
+      setPhase(origin);
       setTimeout(() => {
-        if (chatEndRef.current) chatEndRef.current.scrollIntoView({ block: 'end' });
+        if (origin === 'chat' && chatEndRef.current) chatEndRef.current.scrollIntoView({ block: 'end' });
       }, 0);
       return;
     }
@@ -1583,7 +1594,7 @@ function App() {
       {phase === 'dictionary-detail' && dictDetail && (
         <div className="dict-screen">
           <div className="dict-detail-header">
-            <button className="dict-back" onClick={handleDictBack}>{dictOriginRef.current === 'chat' ? '← 戻る（質問チャット）' : '← 戻る（辞書一覧）'}</button>
+            <button className="dict-back" onClick={handleDictBack}>{({ chat: '← 戻る（質問チャット）', result: '← 戻る（振り返りの結果）', solve: '← 戻る（課題解決）', plan: '← 戻る（練習を組む）' })[dictOriginRef.current] || '← 戻る（辞書一覧）'}</button>
             <div className="dict-detail-file">{dictDetail.fileIcon} {dictDetail.fileTitle}（{dictDetail.fileId}）</div>
             <div className="dict-detail-title">{dictDetail.title}</div>
             <div className="dict-detail-tags" style={{justifyContent: 'space-between', alignItems: 'center'}}>
@@ -1700,6 +1711,21 @@ function App() {
                         <span className="chat-src-head-file">{m.head.icon} {m.head.fileTitle}（{m.head.id.split('-')[0]}）</span>
                         <span className="chat-src-head-title">{m.head.title}</span>
                       </button>
+                      {m.solve && m.solve.length > 0 && (
+                        <div className="chat-solve">
+                          <div className="chat-solve-label">🎯 近い相談（課題解決）</div>
+                          {m.solve.map(s => (
+                            <button key={s.category + s.symptom} className="chat-solve-card" onClick={() => {
+                              setSolveRole(s.role); setSolveCategory(s.category); setSolveSymptom(s.symptom);
+                              addSolveHistory(s.role, s.category, s.symptom);
+                              setPhase('solve'); setTimeout(() => window.scrollTo(0, 0), 0);
+                            }}>
+                              <div className="chat-solve-title">{s.title}</div>
+                              {s.action && <div className="chat-solve-act">まず試すこと：{s.action}</div>}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                       <div className="chat-md" dangerouslySetInnerHTML={{ __html: m.html }} />
                       <button className="chat-readmore" onClick={() => handleChatOpenSection(m.head.id, m.head.title)}>📖 全文を読む</button>
                       {m.srcs && m.srcs.length > 0 && (
@@ -1914,7 +1940,7 @@ function App() {
               <div className="solve-sub">{catData.icon} {catData.title}</div>
               {catData.id === 'critical' && (
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', margin: '8px 0 4px' }}>
-                  {['すべて', 'SB', 'WB', 'CB', 'PV', 'GK', 'DF'].map(lbl => {
+                  {['すべて', 'センター', 'バック', 'サイド', 'ポスト', 'GK', '守り', '攻め'].map(lbl => {
                     const val = lbl === 'すべて' ? null : lbl;
                     const active = criticalPosFilter === val;
                     return (
@@ -1934,7 +1960,7 @@ function App() {
               )}
               <div className="solve-sym-list">
                 {catData.symptoms
-                  .filter(s => catData.id !== 'critical' || !criticalPosFilter || s.title.startsWith('[' + criticalPosFilter + ']'))
+                  .filter(s => catData.id !== 'critical' || !criticalPosFilter || s.title.startsWith('【' + criticalPosFilter + '】'))
                   .map(s => (
                     <button key={s.id} className="solve-sym-btn" onClick={() => {
                       setSolveSymptom(s.id);
@@ -2587,6 +2613,24 @@ function App() {
               🔍 相手の守り方の型から考える →
             </button>
           )}
+
+          {/* 部でそろえること（33章）へ：シュートの結果からは「シュートのねらい」、守りの結果からは「守りの立ち方」 */}
+          {(() => {
+            const id = resultId || '';
+            const link = /^r_(of_)?shoot|^r_sm_|feint_shoot|sg_shoot/.test(id) ? { match: 'シュートのねらい', label: 'シュートのねらい' }
+              : /^r_df/.test(id) ? { match: '守りの立ち方', label: '守りの立ち方・1枚目の対応' }
+              : null;
+            if (!link) return null;
+            return (
+              <button
+                className="reset-btn"
+                style={{ borderColor: '#fbbf24', color: '#fde68a', marginBottom: 8 }}
+                onClick={() => handleOpenRelated({ fileId: '33', match: link.match })}
+              >
+                🤝 部でそろえること：{link.label} →
+              </button>
+            );
+          })()}
 
           {/* 課題解決モジュールへの連携（振り返りモードからカテゴリ直通） */}
           {/* 連動ボタン：結果ID に対応する症状があれば直接ジャンプ、なければカテゴリ */}

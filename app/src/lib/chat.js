@@ -2,6 +2,7 @@
 // 由来行: 5223-5258, 5335-5543
 import CHAT_SYNONYMS from '../data/chatSynonyms.json';
 import { ALL_TAGS, DICT_FILES, GLOSSARY } from './dict.js';
+import SOLVE_DATA from '../data/solve.json';
 import { renderMarkdown } from './markdown.js';
 
 function chatNormalize(s) {
@@ -101,11 +102,16 @@ function chatExtractKeywords(question) {
     const cur = kws.get(n);
     if (!cur || cur.w < w) kws.set(n, { raw, w });
   };
-  for (const syn of CHAT_SYNONYMS) {
-    if (syn.m.some(m => chatHasTerm(qn, chatNormalize(m)))) {
-      syn.kw.forEach(k => addKw(k, 2));
-      if (syn.file) fileBoosts.add(syn.file);
-    }
+  // 言いかえ表。場面がはっきりした言いかえ（only: true）が当たったら、広い言いかえ（「どこを見る」など）は使わない。
+  // with があるときは、m のどれか と with のどれか の両方が質問に入っているときだけ当てる（例：「どこを見る」＋GKの場面）。
+  let matched = CHAT_SYNONYMS.filter(syn => syn.m.some(m => chatHasTerm(qn, chatNormalize(m)))
+    && (!syn.with || syn.with.some(m => chatHasTerm(qn, chatNormalize(m)))));
+  if (matched.some(syn => syn.only)) matched = matched.filter(syn => syn.only);
+  const tags = new Set(); // 言いかえが教えてくれるポジション（例：「9mから打ってくる」はGKの場面）
+  for (const syn of matched) {
+    syn.kw.forEach(k => addKw(k, 2));
+    if (syn.file) fileBoosts.add(syn.file);
+    if (syn.tag) tags.add(syn.tag);
   }
   for (const t of chatLexicon()) {
     if (chatHasTerm(qn, t.n)) addKw(t.raw, 2);
@@ -120,7 +126,7 @@ function chatExtractKeywords(question) {
   const sorted = [...kws.values()]
     .sort((a, b) => b.w - a.w || b.raw.length - a.raw.length)
     .slice(0, 10);
-  return { kws: sorted, fileBoosts };
+  return { kws: sorted, fileBoosts, tags: [...tags] };
 }
 
 // セクション本文の正規化キャッシュ
@@ -143,8 +149,8 @@ const CHAT_REFERENCE_FILES = new Set(DICT_FILES.filter(f => (f.group || '').star
 
 // 全セクション採点 → 上位4件
 function chatSearch(question, sections) {
-  const { kws, fileBoosts } = chatExtractKeywords(question);
-  if (!kws.length) return { kws, hits: [] };
+  const { kws, fileBoosts, tags } = chatExtractKeywords(question);
+  if (!kws.length) return { kws, hits: [], tags };
   const scored = [];
   for (const s of sections) {
     // 冒頭/ファイル見出し(H1=ファイル名)/スタブ/リダイレクト専用ファイルは回答にしない
@@ -169,19 +175,27 @@ function chatSearch(question, sections) {
     scored.push({ s, score });
   }
   scored.sort((a, b) => b.score - a.score);
-  return { kws, hits: scored.slice(0, 4).map(x => x.s) };
+  return { kws, hits: scored.slice(0, 4).map(x => x.s), tags };
 }
 
 // 最良セクションからキーワード密度の高いブロックを抜粋（表は行単位で安全に切る）
 function chatBestExcerpt(section, kws) {
   const body = section.body.replace(/\r\n?/g, '\n');
-  let blocks = body.split(/\n{2,}/).map(b => b.trim()).filter(b => {
-    if (!b) return false;
-    const lines = b.split('\n');
-    if (lines.length === 1 && /^#{1,6}\s/.test(b)) return false; // 見出しのみ
-    if (/^[-=*]{3,}$/.test(b)) return false;                      // 区切り線のみ
-    return true;
-  });
+  // 小見出し（###）だけの段落は、次の段落の頭に付ける。
+  // 小見出しの言葉でその段落を選べるようにし、答えにも「何の話か」が出るようにするため。
+  const rawBlocks = body.split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
+  let blocks = [];
+  let pendingHead = '';
+  for (const b of rawBlocks) {
+    if (/^[-=*]{3,}$/.test(b)) { pendingHead = ''; continue; }            // 区切り線のみ
+    if (!b.includes('\n') && /^#{1,6}\s/.test(b)) {                      // 見出しのみ
+      pendingHead = /^#{3,6}\s/.test(b) ? b : '';
+      continue;
+    }
+    if (/^\*出典[:：]/.test(b) && !b.includes('\n')) continue;             // 出典だけの行は答えに選ばない
+    blocks.push(pendingHead ? pendingHead + '\n\n' + b : b);
+    pendingHead = '';
+  }
   // ASCII図（罫線アート）はチャット内で崩れるため、散文ブロックを優先
   const isArtBlock = (b) => (b.match(/[━─│┃┌┐└┘├┤┬┴╋]/g) || []).length >= 6;
   const proseBlocks = blocks.filter(b => !isArtBlock(b));
@@ -191,12 +205,20 @@ function chatBestExcerpt(section, kws) {
     const nb = chatNormalize(b);
     let sc = 0;
     for (const { raw, w } of kws) sc += chatCountTerm(nb, chatNormalize(raw), 5) * w;
+    // 横に長い表（5列以上）はスマホの質問画面では読めないので、ほかの段落を先に選ぶ
+    const row = (b.match(/^\s*\|.*\|\s*$/m) || [''])[0];
+    if (row && row.split('|').length - 2 >= 5) sc *= 0.35;
     return sc;
   };
   const ranked = blocks.map((b, i) => ({ b, i, sc: scoreBlock(b) }))
     .sort((x, y) => y.sc - x.sc || x.i - y.i);
   const picked = [ranked[0]];
   if (ranked[0].b.length < 220 && ranked[1] && ranked[1].sc > 0) picked.push(ranked[1]);
+  // 「〜：」で終わる段落は前置きなので、続きの表や箇条書きも一緒に出す
+  for (const pk of [...picked]) {
+    const next = blocks[pk.i + 1];
+    if (/[：:]\s*$/.test(pk.b) && next && !picked.some(x => x.i === pk.i + 1)) picked.push({ b: next, i: pk.i + 1, sc: 0 });
+  }
   picked.sort((x, y) => x.i - y.i);
   let out = picked.map(p => p.b).join('\n\n');
   const LIMIT = 900;
@@ -225,10 +247,78 @@ const CHAT_SUGGESTIONS = [
 
 // 質問 → ボット返信メッセージを構築
 const CHAT_SAFETY_RE = /痛|けが|ケガ|怪我|腫れ|はれて|しびれ|捻挫|ねんざ|ひねっ|脱臼|骨折|肉離れ|めまい|頭を打|吐き気|熱中症|息が苦し/;
-const CHAT_SAFETY_NOTE = '痛みや体の異変があるときは、無理に続けず、まず指導者に伝える。強い痛み・続く痛み・頭を打ったときは医療機関で診てもらう。下は辞書の説明（予防や一般の話）。';
+const CHAT_SAFETY_NOTE = '痛みや体の異変があるときは、無理に続けず、まず指導者に伝える。強い痛み・続く痛み・頭を打ったときは医療機関で診てもらう。下の章には予防の運動も載っているが、痛みがある間は自分の判断で始めない。';
+// 「練習していいか」「試合に出たい」「いつ戻れるか」のように、続けてよいかをたずねているか
+const CHAT_RETURN_RE = /やっていい|やってもいい|していい|してもいい|出ていい|出たい|出られ|休むべき|休んだ方|休んだほう|復帰|いつから|戻れ/;
+
+// 「〜って何」「〜とは」のように、言葉の意味をたずねているか
+const CHAT_DEFINE_RE = /(って何|ってなに|って、何|とは|の意味|ってどういう|どういう意味|ってなんですか|って何ですか)/;
+
+// 用語集から、質問に出てくる言葉を探す（長い言葉を優先）。意味をたずねる質問のときだけ使う
+function chatGlossaryHit(question) {
+  if (!CHAT_DEFINE_RE.test(question)) return null;
+  const qn = chatNormalize(question);
+  let best = null;
+  for (const g of GLOSSARY) {
+    for (const it of g.items || []) {
+      const base = chatNormalize(String(it.term).split(/[（(／/]/)[0].trim());
+      if (base.length < 2 || !chatHasTerm(qn, base)) continue;
+      if (!best || base.length > best.len) best = { term: it.term, desc: it.desc, len: base.length };
+    }
+  }
+  return best;
+}
+
+// 課題解決（選手の相談）の中から、質問に近いものを探す。
+// 「入らない」「来ない」のような困りごとは、辞書の抜粋より相談の項目のほうが答えになることが多い。
+// 質問に出てくるポジションの言葉 → 相談の題の頭に付いている札
+const CHAT_POS_TAGS = [
+  [/ポスト|ピボット|ピヴォット/, '【ポスト】'], [/サイド|ウィング|ウイング/, '【サイド】'], [/センター/, '【センター】'],
+  [/バック|45|よんご/, '【バック】'],
+  // GKは、打つ側の質問にもよく出てくる言葉なので、「GKとして」聞いていると分かる言い方のときだけ
+  [/(gk|キーパー)(だけど|です|として|をやって|やってて|なんだけど)/, '【GK】'],
+];
+
+const CHAT_POS_TAG_SET = new Set(CHAT_POS_TAGS.map(([, tag]) => tag));
+
+function chatSolveMatches(kws, question = '', synTags = []) {
+  const qn = chatNormalize(question);
+  const wantTags = [...new Set([...CHAT_POS_TAGS.filter(([re]) => re.test(qn)).map(([, tag]) => tag), ...synTags])];
+  const out = [];
+  for (const c of SOLVE_DATA.player.categories) {
+    for (const s of c.symptoms) {
+      const nT = chatNormalize(s.title.replace(/^【[^】]+】/, '')); // 札（【GK】など）の文字では当てない
+      const nD = chatNormalize(s.desc || '');
+      const nA = chatNormalize((s.actions || []).join(' '));
+      let score = 0, cover = 0, titleHit = 0;
+      for (const { raw, w } of kws) {
+        const k = chatNormalize(raw);
+        let pts = 0;
+        if (chatHasTerm(nT, k)) { pts += 6 + Math.min(6, k.length); titleHit++; } // 長い言葉が題に当たるほど近い
+        if (chatHasTerm(nD, k)) pts += 2;
+        pts += chatCountTerm(nA, k, 2);
+        if (pts > 0) { cover++; score += pts * w; }
+      }
+      // 題に質問の言葉が無いもの、当たった言葉が1つだけのもの（質問の言葉が1つのときは別）は出さない
+      if (!titleHit || (cover < 2 && kws.length > 1)) continue;
+      score *= 1 + 0.5 * (cover - 1);
+      // 質問がポジションを言っているときは、そのポジションの相談を先に出し、別のポジションの相談は出さない
+      const tag = (s.title.match(/^【[^】]+】/) || [''])[0];
+      if (wantTags.length && CHAT_POS_TAG_SET.has(tag)) {
+        if (!wantTags.includes(tag)) continue;
+        score *= 1.8;
+      }
+      const action = String((s.actions || [])[0] || '').replace(/\*\*/g, '');
+      out.push({ score, role: 'player', category: c.id, symptom: s.id, title: s.title, action });
+    }
+  }
+  out.sort((a, b) => b.score - a.score);
+  // 2つ目は、1つ目と同じくらい近いときだけ出す
+  return out.filter((x, i) => i === 0 || (i === 1 && x.score >= out[0].score * 0.6)).map(({ score, ...rest }) => rest);
+}
 
 function buildChatReply(question, sections) {
-  const { kws, hits } = chatSearch(question, sections);
+  const { kws, hits, tags } = chatSearch(question, sections);
   if (!kws.length) {
     return {
       role: 'bot', kind: 'nokw',
@@ -243,16 +333,27 @@ function buildChatReply(question, sections) {
       chips: CHAT_SUGGESTIONS, ts: Date.now(),
     };
   }
-  const best = hits[0];
-  const excerpt = chatBestExcerpt(best, kws);
-  // 痛み・ケガ・体の異変の質問には、辞書の抜粋の前に「まず伝える・診てもらう」を必ず出す
-  // （抜粋は予防や一般の話のことが多く、それだけ読んで自分で判断させないため）
-  const safety = CHAT_SAFETY_RE.test(question) ? `<p class="chat-safety">${CHAT_SAFETY_NOTE}</p>` : '';
+  let best = hits[0];
+  let rest = hits.slice(1);
+  // 痛み・ケガ・体の異変の質問には「まず伝える・診てもらう」を必ず先に出す。
+  // 予防の運動のやり方は抜粋で見せない（痛みがある人が、それだけ読んで自分の判断で始めないように）。
+  const isSafety = CHAT_SAFETY_RE.test(question);
+  if (isSafety && CHAT_RETURN_RE.test(question)) {
+    const ret = sections.find(s => s.fileId === '25' && s.title.includes('復帰の進め方'));
+    if (ret && ret !== best) { rest = [best, ...rest.filter(s => s !== ret)].slice(0, 3); best = ret; }
+  }
+  const excerpt = isSafety ? '' : chatBestExcerpt(best, kws);
+  const safety = isSafety ? `<p class="chat-safety">${CHAT_SAFETY_NOTE}</p>` : '';
+  // 言葉の意味をたずねる質問には、用語集の説明を先に出す
+  const gl = chatGlossaryHit(question);
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const gloss = gl ? `<p class="chat-gloss"><b>${esc(gl.term)}</b>：${esc(gl.desc)}</p>` : '';
   return {
     role: 'bot', kind: 'answer',
     head: { id: best.id, icon: best.fileIcon, fileTitle: best.fileTitle, title: best.title },
-    html: safety + renderMarkdown(excerpt),
-    srcs: hits.slice(1).map(s => ({ id: s.id, icon: s.fileIcon, fileTitle: s.fileTitle, title: s.title })),
+    solve: isSafety ? [] : chatSolveMatches(kws, question, tags),
+    html: safety + gloss + renderMarkdown(excerpt),
+    srcs: rest.map(s => ({ id: s.id, icon: s.fileIcon, fileTitle: s.fileTitle, title: s.title })),
     ts: Date.now(),
   };
 }
@@ -261,4 +362,4 @@ function buildChatReply(question, sections) {
 // 問いの定義
 // ─────────────────────────────────────────────
 
-export { CHAT_SAFETY_NOTE, chatNormalize, chatIsAsciiKey, chatHasTerm, chatCountTerm, CHAT_SYNONYMS, CHAT_STOPWORDS, CHAT_NOISE_RE, chatLexicon, CHAT_BODY_CHARS, chatExtractKeywords, chatNBody, chatIsStub, CHAT_EXCLUDED_FILES, chatSearch, chatBestExcerpt, CHAT_SUGGESTIONS, buildChatReply };
+export { CHAT_SAFETY_NOTE, chatGlossaryHit, chatSolveMatches, chatNormalize, chatIsAsciiKey, chatHasTerm, chatCountTerm, CHAT_SYNONYMS, CHAT_STOPWORDS, CHAT_NOISE_RE, chatLexicon, CHAT_BODY_CHARS, chatExtractKeywords, chatNBody, chatIsStub, CHAT_EXCLUDED_FILES, chatSearch, chatBestExcerpt, CHAT_SUGGESTIONS, buildChatReply };

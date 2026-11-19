@@ -105,7 +105,7 @@ const MODES = {
   df:       { label: 'DF',           color: '#ef4444', firstQ: 'qd_top',      icon: '🛡️', desc: 'DF全要素：全体感覚/陣形/個人/カバー/声/コンタクト/戻り' },
   gk_self:  { label: 'GK（自分）',   color: '#10b981', firstQ: 'qgs_start',   icon: '🧤', desc: 'GK視点で自分のセーブ・先読みを振り返る' },
   physical: { label: 'フィジカル',   color: '#84cc16', firstQ: 'qph_start',   icon: '💪', desc: '体力・スプリント・投擲・ケガ気味を振り返る' },
-  shot_7m:  { label: '7mシュート',   color: '#ec4899', firstQ: 'qsm_start',   icon: '🎯', desc: 'シューター視点で7mペナルティを振り返る' },
+  shot_7m:  { label: '7mシュート',   color: '#ec4899', firstQ: 'qsm_start',   icon: '🎯', desc: 'シューターの目線で7mスローを振り返る' },
   sign:     { label: 'サインプレー', color: '#fb7185', firstQ: 'qsg_start',   icon: '🎬', desc: 'セットプレー・サイン・スクリーンの成否を振り返る' },
   skill:    { label: 'スキル',       color: '#a78bfa', firstQ: 'qs1',         icon: '🎯', desc: 'パス・シュート・1対1' },
   context:  { label: '試合状況',     color: '#f59e0b', firstQ: 'qc1',         icon: '⏱️', desc: '点差×残り時間 → 今取るべき戦術' },
@@ -158,7 +158,7 @@ const HUB_MODULES = [
   {
     id: 'pv', cls: 'pv', icon: '🧲', target: 'ピヴォット・バック陣',
     title: 'ピヴォット認知',
-    desc: '第0問（2軸）→ 類型選択 → 予測 → プレー → 事実と結果を照合（バック陣が入力）',
+    desc: 'ポストと合わせる前にDFの見え方を選んで予想 → プレー → 実際に起きたことと照らす（バックが入力）',
     enabled: true,
   },
   {

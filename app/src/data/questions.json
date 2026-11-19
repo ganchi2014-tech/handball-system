@@ -295,6 +295,10 @@
     "text": "GKに止められた状況は？",
     "choices": [
       {
+        "label": "同じコース・同じタイミングで打っていた",
+        "next": "r_of_shoot_gk_same"
+      },
+      {
         "label": "先読み型GKに動かれて塞がれた",
         "next": "r_of_shoot_gk_anticip"
       },
