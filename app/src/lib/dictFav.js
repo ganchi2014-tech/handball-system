@@ -24,10 +24,28 @@ const legacyOldTitle = (id) => {
   return v === undefined ? undefined : (typeof v === 'string' ? v : v[0]);
 };
 
+// 切り替えのときに見出しが変わった節：旧い見出しのキー → 今の見出しのキー（消えた節は null）。
+// 更新直後の1回だけ、端末に残っている古い辞書の本文が出ることがある（辞書は「まず手元の写しを出し、裏で新しくする」ため）。
+// そのとき付けたお気に入りは旧い見出しで保存されるので、ここでたどれるようにしておく。
+const LEGACY_TITLE_MOVES = (() => {
+  const m = {};
+  for (const [id, v] of Object.entries(LEGACY)) {
+    if (!Array.isArray(v) || v[0] === v[1]) continue;
+    const fileId = String(id).split('-')[0];
+    const k = fileId + SEP + v[0];
+    if (!(k in m)) m[k] = v[1] ? fileId + SEP + v[1] : null;
+  }
+  return m;
+})();
+
 // 見出しの付け替えをたどる（付け替えが重なっても追えるよう、回数に上限を付けて繰り返す）
 function followRenames(key) {
   let k = key;
-  for (let i = 0; i < 10 && k && Object.prototype.hasOwnProperty.call(RENAMES, k); i++) k = RENAMES[k];
+  for (let i = 0; i < 10 && k; i++) {
+    if (Object.prototype.hasOwnProperty.call(RENAMES, k)) k = RENAMES[k];
+    else if (Object.prototype.hasOwnProperty.call(LEGACY_TITLE_MOVES, k)) k = LEGACY_TITLE_MOVES[k];
+    else break;
+  }
   return k;
 }
 
@@ -64,4 +82,4 @@ function resolveSection(sections, id, title) {
   return title ? null : (byId || null);
 }
 
-export { favKey, normalizeFavs, resolveSection, legacyToKey };
+export { favKey, normalizeFavs, resolveSection, legacyToKey, LEGACY_TITLE_MOVES };

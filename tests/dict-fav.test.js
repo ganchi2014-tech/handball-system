@@ -10,7 +10,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { DICT_FILES, DICT_SECTION_COUNT, splitSections } from '../app/src/lib/dict.js';
-import { favKey, normalizeFavs, resolveSection, legacyToKey } from '../app/src/lib/dictFav.js';
+import { favKey, normalizeFavs, resolveSection, legacyToKey, LEGACY_TITLE_MOVES } from '../app/src/lib/dictFav.js';
 import LEGACY from '../app/src/data/dictLegacyIds.json';
 import RENAMES from '../app/src/data/dictTitleRenames.json';
 import { buildSections, ROOT } from './helpers/sections.js';
@@ -38,6 +38,17 @@ describe('お気に入り：切り替え前の番号からの引き継ぎ', () =
     const kept = Object.keys(LEGACY).find(id => legacyToKey(id));
     const out = normalizeFavs([kept, removed, kept, legacyToKey(kept), '99-99', 42]);
     expect(out).toEqual([legacyToKey(kept)]);
+  });
+  it('旧い見出しで保存されたお気に入り（更新直後に古い本文が出たとき）も、今の見出しへたどれる', () => {
+    const [oldKey, newKey] = Object.entries(LEGACY_TITLE_MOVES).find(([, v]) => v);
+    expect(normalizeFavs([oldKey])).toEqual([newKey]);
+    expect(keys.has(newKey)).toBe(true);
+    const goneKey = Object.entries(LEGACY_TITLE_MOVES).find(([, v]) => v === null)[0];
+    expect(normalizeFavs([goneKey])).toEqual([]);
+  });
+  it('旧い見出しと同じ見出しの節が、今の辞書に無い（今の節のお気に入りを取り違えない）', () => {
+    const clash = Object.keys(LEGACY_TITLE_MOVES).filter(k => keys.has(k));
+    expect(clash).toEqual([]);
   });
   it('新しい形のお気に入りはそのまま残る', () => {
     const k = favKey(sections[10]);
