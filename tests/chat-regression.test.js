@@ -28,7 +28,7 @@ const EXPECTED = [
 ];
 
 describe('チャット回帰（14問）', () => {
-  it('辞書33ファイルからセクションが構築される', () => {
+  it('辞書の全ファイルから節が組み立てられる', () => {
     expect(sections.length).toBeGreaterThan(300);
   });
 

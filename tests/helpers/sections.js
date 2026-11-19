@@ -1,4 +1,4 @@
-// 辞書33ファイルを読み込んで sections を構築する共通ヘルパー（splitSectionsは呼び出し側の実装を渡す）
+// 辞書の全ファイルを読み込んで sections を構築する共通ヘルパー（splitSectionsは呼び出し側の実装を渡す）
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
