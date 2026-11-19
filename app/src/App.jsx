@@ -8,6 +8,7 @@ import { QUESTIONS, RESULTS, SOLVE_DATA } from './lib/content.js';
 import { DRILL_THEMES, DURATIONS, LEVELS, POSITIONS, POSITION_RECOMMENDED, buildPlan } from './lib/plan.js';
 import { CHAT_SUGGESTIONS, buildChatReply } from './lib/chat.js';
 import { lsGet, lsSet } from './lib/storage.js';
+import { favKey, normalizeFavs, resolveSection } from './lib/dictFav.js';
 import { TB_CONSTRAINTS, tbExportAllText } from './lib/tb.js';
 import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
@@ -238,7 +239,7 @@ function App() {
       applyExtra('loop-state', loopState, null);   // スカラー＝ローカル優先（端末設定なので上書きしない）
       applyExtra('solve-history', solveHistory, setSolveHistory);
       applyExtra('plan-saved', planSaved, setPlanSaved);
-      applyExtra('dict-favs', dictFavs, setDictFavs);
+      applyExtra('dict-favs', dictFavs, (v) => { const n = normalizeFavs(v); lsSet('dict-favs', n); setDictFavs(n); });
       applyExtra('chat-history', chatMessages, (v) => setChatMessages(v.slice(-60)));
       if (!declaration && d['next-declaration']) { setDeclaration(d['next-declaration']); lsSet('next-declaration', d['next-declaration']); }
       setBackupText('');
@@ -522,11 +523,13 @@ function App() {
     setResumeData(r);
   };
   const [pendingResumeDictId, setPendingResumeDictId] = useState(null);
+  const pendingResumeTitleRef = useRef(null);
   const handleResume = () => {
     if (!resumeData) return;
     if (resumeData.kind === 'dict' && resumeData.payload?.sectionId) {
       // 辞書セクション復元: 辞書ロード完了後に useEffect で解決
       setPhase('dictionary');
+      pendingResumeTitleRef.current = resumeData.payload.title || null;
       setPendingResumeDictId(resumeData.payload.sectionId);
     } else if (resumeData.kind === 'solve' && resumeData.payload) {
       setSolveRole(resumeData.payload.role);
@@ -544,14 +547,20 @@ function App() {
   };
 
   // 辞書お気に入り
-  const [dictFavs, setDictFavs] = useState([]); // [section.id, ...]
+  // 「章番号::節の見出し」で覚える（節の並びが変わっても指す先がずれない）。旧形式の番号は読み込み時に変換。
+  const [dictFavs, setDictFavs] = useState([]); // [favKey(section), ...]
   useEffect(() => {
     const stored = lsGet('dict-favs');
-    if (Array.isArray(stored)) setDictFavs(stored);
+    if (Array.isArray(stored)) {
+      const norm = normalizeFavs(stored);
+      if (JSON.stringify(norm) !== JSON.stringify(stored)) lsSet('dict-favs', norm);
+      setDictFavs(norm);
+    }
   }, []);
-  const toggleFav = (sectionId) => {
+  const toggleFav = (section) => {
+    const key = favKey(section);
     setDictFavs(prev => {
-      const next = prev.includes(sectionId) ? prev.filter(x => x !== sectionId) : [sectionId, ...prev];
+      const next = prev.includes(key) ? prev.filter(x => x !== key) : [key, ...prev];
       lsSet('dict-favs', next);
       return next;
     });
@@ -759,7 +768,7 @@ function App() {
   // pendingResumeDictId が立っており、辞書が読み込まれたら詳細遷移
   useEffect(() => {
     if (!pendingResumeDictId || !dictLoaded) return;
-    const target = dictSections.find(s => s.id === pendingResumeDictId);
+    const target = resolveSection(dictSections, pendingResumeDictId, pendingResumeTitleRef.current);
     if (target) {
       dictOriginRef.current = 'dictionary';
       setDictDetail(target);
@@ -771,6 +780,17 @@ function App() {
 
   // 検索＋フィルタ結果（ランキング付き：完全一致 > 前方一致 > 部分一致 > body一致 / 同位は新ファイル優先）
   // セクションが「実質的に空（ファイルタイトル+区切り線だけ）」かを判定
+  // 章ごとの「この章を開く場面」（各章の先頭に書いてある1文）。章の一覧のカードに出す。
+  const dictLeads = useMemo(() => {
+    const out = {};
+    for (const sec of dictSections) {
+      if (out[sec.fileId] !== undefined) continue;
+      const m = sec.body.match(/この章を開く場面\*\*：(.+)/);
+      out[sec.fileId] = m ? m[1].replace(/[`*]/g, '').replace(/\d{2}_[a-z_]+\.md/g, '').trim() : '';
+    }
+    return out;
+  }, [dictSections]);
+
   const isStubSection = (s) => {
     const txt = s.body
       .replace(/^#.*$/gm, '')      // 見出し行
@@ -1109,8 +1129,9 @@ function App() {
   };
 
   // チャットの出典カード → 辞書詳細（戻るとチャットに復帰）
-  const handleChatOpenSection = (sectionId) => {
-    const target = dictSections.find(s => s.id === sectionId);
+  const handleChatOpenSection = (sectionId, title) => {
+    // 履歴に残っている番号は、辞書の更新でずれていることがある。見出しで確かめてから開く。
+    const target = resolveSection(dictSections, sectionId, title);
     if (!target) return;
     dictOriginRef.current = 'chat';
     setDictDetail(target);
@@ -1433,7 +1454,7 @@ function App() {
                 width: '100%',
               }}
             >
-              <option value="">📁 ファイル絞り込み：すべて表示</option>
+              <option value="">📁 章でしぼる：すべて表示</option>
               {DICT_FILES.map(f => (
                 <option key={f.id} value={f.id}>{f.icon} {f.id} / {f.title}</option>
               ))}
@@ -1467,7 +1488,7 @@ function App() {
               <>
                 {/* お気に入りセクション（フィルタに関わらず常時表示。検索中のみ非表示） */}
                 {dictFavs.length > 0 && !dictQuery && (() => {
-                  const favSections = dictFavs.map(fid => dictSections.find(s => s.id === fid)).filter(Boolean);
+                  const favSections = dictFavs.map(k => dictSections.find(s => favKey(s) === k)).filter(Boolean);
                   if (favSections.length === 0) return null;
                   return (
                     <div style={{marginBottom: 12}}>
@@ -1495,7 +1516,8 @@ function App() {
                           <div className="dict-file-card-icon">{f.icon}</div>
                           <div className="dict-file-card-body">
                             <div className="dict-file-card-title">{f.title}</div>
-                            <div className="dict-file-card-meta">{f.id} · {count} セクション</div>
+                            {dictLeads[f.id] && <div className="dict-file-card-lead">{dictLeads[f.id]}</div>}
+                            <div className="dict-file-card-meta">{f.id}章 · {count}節</div>
                           </div>
                           <div className="dict-file-card-arrow">›</div>
                         </div>
@@ -1515,18 +1537,18 @@ function App() {
                         <div className="dict-file-header-bar">
                           <span className="dict-file-header-icon">{f.icon}</span>
                           <span className="dict-file-header-title">{f.title}</span>
-                          <button className="dict-file-back-btn" onClick={() => setDictActiveFileId(null)}>← ファイル一覧</button>
+                          <button className="dict-file-back-btn" onClick={() => setDictActiveFileId(null)}>← 章の一覧</button>
                         </div>
                       ) : null;
                     })()}
                     <div className="dict-meta-line">
-                      {filteredSections.length} 件のセクション
+                      {filteredSections.length} 件
                       {dictQuery && ` ／ 検索: "${dictQuery}"`}
                       {dictActiveTag && ` ／ タグ: ${dictActiveTag}`}
                     </div>
                     {filteredSections.length === 0 && (
                       <div className="dict-empty">
-                        該当するセクションがありません。<br />キーワードやタグを変えてみてください。
+                        当てはまる節がありません。<br />キーワードやタグを変えてみてください。
                         {(dictQuery || dictActiveTag || dictActiveFileId) && (
                           <div style={{marginTop: 12}}>
                             <button
@@ -1571,10 +1593,10 @@ function App() {
                 ))}
               </div>
               <button
-                className={`fav-btn ${dictFavs.includes(dictDetail.id) ? 'active' : ''}`}
-                onClick={() => toggleFav(dictDetail.id)}
+                className={`fav-btn ${dictFavs.includes(favKey(dictDetail)) ? 'active' : ''}`}
+                onClick={() => toggleFav(dictDetail)}
               >
-                {dictFavs.includes(dictDetail.id) ? '★ お気に入り済み' : '☆ お気に入り'}
+                {dictFavs.includes(favKey(dictDetail)) ? '★ お気に入り済み' : '☆ お気に入り'}
               </button>
             </div>
           </div>
@@ -1643,7 +1665,7 @@ function App() {
               <button className="chat-clear" onClick={handleChatClear}>🗑 履歴クリア</button>
             )}
           </div>
-          <div className="chat-note">📖 辞書{DICT_FILES.length}ファイル・{dictLoaded ? dictSections.length : DICT_SECTION_COUNT}セクションから探して回答します（検索は端末内。一度開けば2回目以降はオフラインでも使えます）</div>
+          <div className="chat-note">📖 辞書{DICT_FILES.length}章・{dictLoaded ? dictSections.length : DICT_SECTION_COUNT}節から探して回答します（検索は端末内。一度開けば2回目以降はオフラインでも使えます）</div>
           {!dictLoaded && !dictError && (
             <div className="dict-loading">📖 辞書を読み込み中… ({dictLoadedCount} / {DICT_FILES.length})</div>
           )}
@@ -1674,17 +1696,17 @@ function App() {
                 <div className="chat-bubble bot">
                   {m.kind === 'answer' ? (
                     <React.Fragment>
-                      <button className="chat-src-head" onClick={() => handleChatOpenSection(m.head.id)}>
+                      <button className="chat-src-head" onClick={() => handleChatOpenSection(m.head.id, m.head.title)}>
                         <span className="chat-src-head-file">{m.head.icon} {m.head.fileTitle}（{m.head.id.split('-')[0]}）</span>
                         <span className="chat-src-head-title">{m.head.title}</span>
                       </button>
                       <div className="chat-md" dangerouslySetInnerHTML={{ __html: m.html }} />
-                      <button className="chat-readmore" onClick={() => handleChatOpenSection(m.head.id)}>📖 全文を読む</button>
+                      <button className="chat-readmore" onClick={() => handleChatOpenSection(m.head.id, m.head.title)}>📖 全文を読む</button>
                       {m.srcs && m.srcs.length > 0 && (
                         <div className="chat-srcs">
-                          <div className="chat-srcs-label">関連セクション</div>
+                          <div className="chat-srcs-label">関連する節</div>
                           {m.srcs.map(s => (
-                            <button key={s.id} className="chat-src-card" onClick={() => handleChatOpenSection(s.id)}>
+                            <button key={s.id} className="chat-src-card" onClick={() => handleChatOpenSection(s.id, s.title)}>
                               <span aria-hidden="true">{s.icon}</span>
                               <span className="chat-src-card-text">
                                 <span className="chat-src-card-file">{s.fileTitle}</span>
@@ -1988,7 +2010,7 @@ function App() {
               </div>
               {/* 関連辞書 */}
               <div className="solve-rx-card">
-                <div className="solve-rx-label">📖 関連する辞書セクション</div>
+                <div className="solve-rx-label">📖 関連する辞書の節</div>
                 {dictLoaded ? (
                   <div className="solve-rx-related-list">
                     {symData.related.map((r, i) => {

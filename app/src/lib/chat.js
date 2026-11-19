@@ -232,7 +232,7 @@ function buildChatReply(question, sections) {
   if (!hits.length) {
     return {
       role: 'bot', kind: 'nohit',
-      text: `「${kws.slice(0, 3).map(k => k.raw).join('・')}」に当てはまるセクションが見つかりませんでした。別の言い方で試すか、下の例から選んでみてください。`,
+      text: `「${kws.slice(0, 3).map(k => k.raw).join('・')}」に当てはまる節が見つかりませんでした。別の言い方で試すか、下の例から選んでみてください。`,
       chips: CHAT_SUGGESTIONS, ts: Date.now(),
     };
   }

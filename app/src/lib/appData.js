@@ -134,13 +134,13 @@ const HUB_MODULES = [
   {
     id: 'chat', cls: 'chat', icon: '💬', target: '選手・指導者',
     title: '質問する',
-    desc: `チャットで質問 → 辞書${DICT_SECTION_COUNT}セクションから該当箇所を探してその場で回答`,
+    desc: `チャットで質問 → 辞書${DICT_SECTION_COUNT}節から当てはまる所を探してその場で回答`,
     enabled: true,
   },
   {
     id: 'dictionary', cls: 'dict', icon: '📖', target: '選手・指導者',
     title: '辞書を読む',
-    desc: `${DICT_FILES.length}ファイル${DICT_SECTION_COUNT}セクションの戦術辞書を横断検索・タグでフィルタ`,
+    desc: `${DICT_FILES.length}章${DICT_SECTION_COUNT}節の辞書を、言葉やタグで探す`,
     enabled: true,
   },
   {

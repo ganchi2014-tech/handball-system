@@ -1,5 +1,8 @@
 # ノルウェーGK・DFスクール（NHF公式メソッド）
 
+> **この章を開く場面**：ノルウェー協会のGK・DFの教え方を知りたいとき。
+> ※この章は読み物。外国語の用語を元の形のまま残している。GKの実用は05章、守りの実用は23章へ。
+>
 > **調査元**：ノルウェーハンドボール連盟（NHF）公式サイト群
 > - [Målvaktskolen（GKスクール）](https://www.handball.no/regioner/nhf-sentralt/utvikling/ht/malvaktskolen/) ※本体サイトは再構築中
 > - [Forsvarsskolen（DFスクール）](https://www.forsvarsskolen.no/)
@@ -9,7 +12,7 @@
 
 ---
 
-## 【GK（モールヴァクト）skolen：ノルウェーGKスクール】
+## 【ノルウェーのGKスクール（モールヴァクトスコーレン）】
 
 > 「ノルウェー代表の優れたGKたちからインスパイアされて作られたGK育成システム」
 > GKのトレーニングを「物理（フィジカル）→技術（テクニック）→戦術（タクティクス）」の順に構造化
@@ -76,7 +79,7 @@ Initieringsfasen（速攻起点）重視 → GKのスローアウトで速攻が
 
 ---
 
-## 【Forsvarsskolen：ノルウェーDFスクール】
+## 【ノルウェーのDFスクール（フォルスヴァールスコーレン）】
 
 > 「守備は燃えるような意欲（brennende ønske om å få tak i ballen ＝ ボールを奪いたいという強い願望）から始まる」
 > 5章構成：方法論 → 前提条件 → 技術・戦術 → 基礎戦術 → 練習
@@ -146,7 +149,7 @@ brennende ønske om å få tak i ballen（ボールを奪いたい燃えるよ�
 
 ---
 
-## 【攻撃技術（アングレープステクニック）er：ノルウェー攻撃技術メソッド】
+## 【ノルウェーの攻撃技術メソッド（アングレープステクニック）】
 
 > 「個人スキルへの要求は年々高まっている（Det stilles større og større krav til individuelle ferdigheter）」
 
