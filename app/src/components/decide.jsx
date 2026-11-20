@@ -6,18 +6,22 @@ import React, { useState } from 'react';
 
 // 宣言がどこに出るかを、書いた本人に見せる（info は lib/declWhere.js の declWhere の結果）。
 // full … 出る所を1行ずつ全部。そうでなければ1行にまとめる。
-function DeclWhere({ info, full = false, done = false }) {
+function DeclWhere({ info, full = false, done = false, onHowTo }) {
   if (!info) return null;
-  if (!full) return <div className="decl-where short">📍 宣言が出る所：{info.short}</div>;
+  const how = info.howto && onHowTo
+    ? <button type="button" className="decl-where-how" onClick={onHowTo}>メンタルアプリとのつなぎ方を見る →</button>
+    : null;
+  if (!full) return <div className="decl-where short">📍 宣言が出る所：{info.short}{how}</div>;
   return (
     <div className="decl-where">
       <div className="decl-where-label">📍 {done ? 'この宣言が出ている所' : 'この宣言が出る所'}</div>
       {info.lines.map((l, i) => <div key={i} className="decl-where-line">・{l}</div>)}
+      {how}
     </div>
   );
 }
 
-function DecideOne({ declaration, onDecide, where }) {
+function DecideOne({ declaration, onDecide, where, onHowTo }) {
   const [text, setText] = useState('');
   const [justSet, setJustSet] = useState(false);
   const pending = declaration && declaration.done !== true ? declaration.text : '';
@@ -37,7 +41,7 @@ function DecideOne({ declaration, onDecide, where }) {
           <div className="decide-done">✓ 宣言した：「{pending}」
             <button className="decide-redo" onClick={() => setJustSet(false)}>書き直す</button>
           </div>
-          <DeclWhere info={where} full done />
+          <DeclWhere info={where} full done onHowTo={onHowTo} />
         </React.Fragment>
       ) : (
         <React.Fragment>
@@ -49,7 +53,7 @@ function DecideOne({ declaration, onDecide, where }) {
               onKeyDown={e => { if (e.key === 'Enter') decide(); }} />
             <button className="decide-btn" disabled={!text.trim()} onClick={decide}>宣言する</button>
           </div>
-          <DeclWhere info={where} />
+          <DeclWhere info={where} onHowTo={onHowTo} />
         </React.Fragment>
       )}
     </div>

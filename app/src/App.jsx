@@ -14,11 +14,12 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbCheckLabLink, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbCheckLabLink, fbHasPinRules, fbLinkWithPin, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
 import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 import { DecideOne, DeclWhere } from './components/decide.jsx';
 import { declWhere } from './lib/declWhere.js';
+import { linkPinHash, isPin4, LINK_TRY_SLOTS } from './lib/linkPin.js';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
 import { Playbook } from './components/playbook.jsx';
@@ -69,6 +70,8 @@ function App() {
   const [reflectHistory, setReflectHistory] = useState(() => lsGet('reflect-history') || []);
   const [declaration, setDeclaration] = useState(() => lsGet('next-declaration') || null);
   const [decSnooze, setDecSnooze] = useState(false); // 「まだこれから」＝このセッション中だけボタンを畳む
+  // ホームの「メンタルアプリとのつなぎ方」の1行を消したか（つなぐかどうかは選手が決めるので、消せる）
+  const [linkHintOff, setLinkHintOff] = useState(() => !!lsGet('link-hint-off'));
   const reflectIdRef = useRef(null);
   const activeCardIdRef = useRef(null);
   const recordReflectStart = (rid, hist) => {
@@ -456,26 +459,62 @@ function App() {
   // 名簿タップ: rosterId をローカル保存し /rosterToUid を【読むだけ】で連携状態を判定（書き込みはしない）。
   // mental 連携済み（linkedUid あり・別uid）なら labLinks ブリッジを書き、mental のマイ統計に
   // この端末の LAB 記録が出るようにする（選手が自分の名前をタップした操作＝連携の意思表示）。
+  // PINの確かめ（オーナー指示 2026-11-20「名前を押したらPIN入力させて同じなら許可して」）:
+  // 名前の持ち主がメンタルアプリに登録していて、データベースにPINの決まりが入っているときは、
+  // 名前を選ぶ前にPINを聞く。合っているかはデータベースの決まりが比べる。合うまで名前は選ばれない。
+  // 決まりがまだ入っていない間は、今までどおり（比べる相手がデータベースに無いため）。
+  const [pinAsk, setPinAsk] = useState(null); // { r, linkedUid, msg, left, busy }
   const handlePickRoster = async (r) => {
-    setFbLink(prev => ({ ...prev, rosterId: r.rosterId, rosterName: r.name }));
     setFbNotice(null);
+    setPinAsk(null);
+    const pick = (extra) => setFbLink(prev => ({ ...prev, rosterId: r.rosterId, rosterName: r.name, ...(extra || {}) }));
     try {
       const { linkedUid, mine } = await fbCheckRosterLink(r.rosterId);
-      if (linkedUid == null) setFbNotice('none');
-      else if (mine) { setFbLink(prev => ({ ...prev, mismatch: 0 })); setFbNotice('mine'); }
-      else {
-        try {
-          await fbWriteLabLink(linkedUid, r.rosterId);
-          setFbLink(prev => ({ ...prev, mismatch: 0 }));
-          setFbNotice('bridged');
-        } catch (e2) {
-          // 先に別端末がブリッジ済み等で書けない場合。記録自体は安全に保存され続ける
-          setFbLink(prev => ({ ...prev, mismatch: 1 }));
-          setFbNotice('mismatch');
-        }
+      if (linkedUid == null) { pick(); setFbNotice('none'); setMentalLink('noreg'); return; }
+      if (mine) { pick({ mismatch: 0 }); setFbNotice('mine'); setMentalLink('yes'); return; }
+      let pinRules = false;
+      try { pinRules = await fbHasPinRules(); } catch (e0) { pinRules = false; }
+      if (pinRules) {
+        // もうこの端末がつながっているなら、PINは聞かない（書き直さない）
+        let linked = false;
+        try { linked = await fbCheckLabLink(linkedUid); } catch (e1) { linked = false; }
+        if (linked) { pick({ mismatch: 0 }); setFbNotice('bridged'); setMentalLink('yes'); return; }
+        setPinAsk({ r, linkedUid, msg: null, left: null, busy: false });
+        return;
+      }
+      pick();
+      try {
+        await fbWriteLabLink(linkedUid, r.rosterId);
+        setFbLink(prev => ({ ...prev, mismatch: 0 }));
+        setFbNotice('bridged');
+        setMentalLink('yes');
+      } catch (e2) {
+        // 先に別端末がブリッジ済み等で書けない場合。記録自体は安全に保存され続ける
+        setFbLink(prev => ({ ...prev, mismatch: 1 }));
+        setFbNotice('mismatch');
       }
     } catch (e) {
+      pick();
       setFbNotice('checkfail');
+    }
+  };
+  const handleSubmitPin = async (pin) => {
+    const ask = pinAsk;
+    if (!ask || ask.busy || !isPin4(pin)) return;
+    setPinAsk({ ...ask, busy: true, msg: null });
+    try {
+      const hash = await linkPinHash(ask.linkedUid, pin);
+      const res = await fbLinkWithPin(ask.linkedUid, ask.r.rosterId, hash, LINK_TRY_SLOTS);
+      if (res.result === 'ok') {
+        setFbLink(prev => ({ ...prev, rosterId: ask.r.rosterId, rosterName: ask.r.name, mismatch: 0 }));
+        setFbNotice('bridged');
+        setMentalLink('yes');
+        setPinAsk(null);
+      } else {
+        setPinAsk({ ...ask, busy: false, msg: res.result === 'full' ? 'full' : 'denied', left: res.left });
+      }
+    } catch (e) {
+      setPinAsk({ ...ask, busy: false, msg: 'error' });
     }
   };
 
@@ -1417,6 +1456,15 @@ function App() {
             );
             return (
               <div className="home-focus">
+                {declWhereInfo.howto && !linkHintOff && (
+                  <div className="home-link-hint">
+                    <button type="button" className="home-link-hint-main" onClick={() => setConnectOpen(true)}>
+                      🔗 メンタルアプリとまだつながっていません。つなぎ方を見る →
+                    </button>
+                    <button type="button" className="home-link-hint-x" aria-label="この知らせを消す"
+                      onClick={() => { lsSet('link-hint-off', 1); setLinkHintOff(true); }}>×</button>
+                  </div>
+                )}
                 <div className="home-sec-label">場面から選ぶ<span>誰の困りごと？（ポジション）</span></div>
                 <div className="home-pos-row">
                   {HOME_POSITIONS.map(pos => (
@@ -1580,8 +1628,10 @@ function App() {
           onConnect={() => { setFbNotice(null); setFbLink(prev => ({ ...prev, enabled: 1 })); }}
           onDisconnect={() => { setFbNotice(null); setFbLink(prev => ({ ...prev, enabled: 0 })); }}
           onPickRoster={handlePickRoster}
+          mentalLinked={mentalLink === 'yes'} pinAsk={pinAsk}
+          onSubmitPin={handleSubmitPin} onCancelPin={() => setPinAsk(null)}
           onMapName={(name, val) => setFbNameMap(prev => ({ ...prev, [name]: val }))}
-          onClose={() => setConnectOpen(false)}
+          onClose={() => { setPinAsk(null); setConnectOpen(false); }}
         />
         </React.Suspense>
       )}
@@ -1803,7 +1853,7 @@ function App() {
           })()}
           <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body, dictQuery)}} />
           <div style={{padding: '0 18px'}}>
-            <DecideOne key={dictDetail.id} declaration={declaration} where={declWhereInfo} onDecide={(t) => decideNext(t, 'dict')} />
+            <DecideOne key={dictDetail.id} declaration={declaration} where={declWhereInfo} onHowTo={() => setConnectOpen(true)} onDecide={(t) => decideNext(t, 'dict')} />
             <button className="link-copy-btn" onClick={() => copySectionLink(dictDetail)}>
               {linkCopied ? '✓ コピーした。LINEなどに貼って送れる' : '🔗 この節のリンクをコピー（「ここ読んで」と送る）'}
             </button>
@@ -2196,7 +2246,7 @@ function App() {
                   </div>
                 )}
               </div>
-              <DecideOne key={solveSymptom} declaration={declaration} where={declWhereInfo} onDecide={(t) => decideNext(t, 'solve')} />
+              <DecideOne key={solveSymptom} declaration={declaration} where={declWhereInfo} onHowTo={() => setConnectOpen(true)} onDecide={(t) => decideNext(t, 'solve')} />
               {/* 関連辞書 */}
               <div className="solve-rx-card">
                 <div className="solve-rx-label">📖 関連する辞書の節</div>
@@ -2775,7 +2825,7 @@ function App() {
                 onChange={e => setNextStep(e.target.value)}
                 onBlur={e => commitNextStep(e.target.value)}
               />
-              <DeclWhere info={declWhereInfo} />
+              <DeclWhere info={declWhereInfo} onHowTo={() => setConnectOpen(true)} />
             </div>
           )}
 

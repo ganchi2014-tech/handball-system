@@ -450,6 +450,15 @@
     .decl-where.short { background: none; padding: 0; margin-top: 8px; color: var(--tx-muted); }
     .decl-where-label { font-weight: 700; color: var(--tx-primary); margin-bottom: 2px; }
     .decl-where-line { padding-left: 2px; }
+    .decl-where-how { display: inline-block; margin-top: 4px; margin-left: 6px; padding: 0; background: none; border: none; color: #67e8f9; font-size: 12px; text-decoration: underline; cursor: pointer; }
+    .decl-where:not(.short) .decl-where-how { display: block; margin-left: 0; margin-top: 6px; }
+    .home-link-hint { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; padding: 6px 6px 6px 12px; border-radius: 12px; border: 1px solid rgba(103,232,249,0.25); background: rgba(103,232,249,0.06); }
+    .home-link-hint-main { flex: 1; text-align: left; background: none; border: none; color: var(--tx-secondary); font-size: 12.5px; line-height: 1.5; padding: 4px 0; cursor: pointer; }
+    .home-link-hint-x { flex: none; width: 34px; height: 34px; border-radius: 10px; background: none; border: none; color: var(--tx-muted); font-size: 18px; cursor: pointer; }
+    .link-steps-list { margin: 6px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.7; color: var(--tx-secondary); }
+    .pin-ask-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+    .pin-ask-input { max-width: 96px; text-align: center; letter-spacing: 4px; font-size: 18px; }
+    .pin-ask-msg { margin-top: 8px; font-size: 12.5px; line-height: 1.6; color: #fca5a5; }
     .home-search { display: flex; gap: 8px; }
     .home-search-input {
       flex: 1; min-width: 0; padding: 12px 14px; border-radius: 12px; font-size: 15px;

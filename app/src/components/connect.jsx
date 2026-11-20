@@ -1,7 +1,9 @@
 // Phase 3: 「チームと繋ぐ」パネル（onboard-overlay モーダル流用）。
 // このファイルは firebase も lib/fb.js も import しない — 接続処理はすべて App.jsx 側。
 // 二層原則: 未接続なら firebase チャンクは一切ロードされない。
-import React from 'react';
+import React, { useState } from 'react';
+import { LINK_STEPS, LINK_STEPS_NOTE } from '../lib/declWhere.js';
+import { isPin4, linkDeniedText, LINK_FULL_TEXT } from '../lib/linkPin.js';
 
 const STATUS_LABEL = {
   off: '未接続',
@@ -18,8 +20,44 @@ const NOTICE_TEXT = {
   checkfail: 'ℹ️ 連携状態を確認できませんでした（記録はこのまま安全に保存されます）',
 };
 
-function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames, nameMap,
-                        onConnect, onDisconnect, onPickRoster, onMapName, onClose }) {
+// メンタルアプリとつなぐ手順（つながっていない人に見せる）
+function LinkSteps() {
+  return (
+    <div className="tb-card link-steps" style={{ textAlign: 'left', marginTop: 12 }}>
+      <div className="tb-card-k">🧠 メンタルアプリとつなぐ手順</div>
+      <ol className="link-steps-list">
+        {LINK_STEPS.map((t, i) => <li key={i}>{t}</li>)}
+      </ol>
+      <div className="tb-q-hint" style={{ marginTop: 6 }}>{LINK_STEPS_NOTE}</div>
+    </div>
+  );
+}
+
+// 名前を押したあと、本人かどうかをPINで確かめる欄
+function PinAsk({ ask, onSubmit, onCancel }) {
+  const [pin, setPin] = useState('');
+  const ok = isPin4(pin) && !ask.busy;
+  return (
+    <div className="tb-card pin-ask" style={{ textAlign: 'left', marginTop: 12 }}>
+      <div className="tb-card-k">🔑 「{ask.r.name}」のPINを入れる</div>
+      <div className="tb-q-hint">この名前はメンタルアプリに登録されています。本人かどうかを確かめるため、メンタルアプリのPIN（4桁）を入れてください。PINは、メンタルアプリの「マイ統計」の「LABとつなぐ」で見られます。</div>
+      <div className="pin-ask-row">
+        <input className="decide-input pin-ask-input" type="tel" inputMode="numeric" autoComplete="off" maxLength={4}
+          placeholder="4桁" value={pin}
+          onChange={e => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
+          onKeyDown={e => { if (e.key === 'Enter' && ok) onSubmit(pin); }} />
+        <button type="button" className="decide-btn" disabled={!ok} onClick={() => onSubmit(pin)}>{ask.busy ? '確かめ中…' : 'つなぐ'}</button>
+        <button type="button" className="tb-ghost-btn" onClick={onCancel}>やめる</button>
+      </div>
+      {ask.msg === 'denied' && <div className="pin-ask-msg">{linkDeniedText(ask.left)}</div>}
+      {ask.msg === 'full' && <div className="pin-ask-msg">{LINK_FULL_TEXT}</div>}
+      {ask.msg === 'error' && <div className="pin-ask-msg">通信できませんでした。電波のよい所でもう一度押してください。</div>}
+    </div>
+  );
+}
+
+function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames, nameMap, mentalLinked, pinAsk,
+                        onConnect, onDisconnect, onPickRoster, onSubmitPin, onCancelPin, onMapName, onClose }) {
   const connected = !!fbLink.enabled;
   // 名寄せ対象: 手入力名のうち roster に完全一致せず・fb-name-map 未登録のもの
   const unmapped = (connected && fbRoster.length > 0)
@@ -39,6 +77,7 @@ function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames
               ・メンタルアプリのマイ統計にLABの記録（読み・GK予測・ポスト認知）が出る
             </div>
             <button className="tb-next-btn" onClick={onConnect}>🔗 チームと繋ぐ</button>
+            <LinkSteps />
           </React.Fragment>
         ) : (
           <React.Fragment>
@@ -74,6 +113,9 @@ function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames
             {notice && NOTICE_TEXT[notice] && (
               <div className="tb-q-hint" style={{ marginTop: 8, textAlign: 'left' }}>{NOTICE_TEXT[notice]}</div>
             )}
+            {pinAsk && <PinAsk key={pinAsk.r.rosterId} ask={pinAsk} onSubmit={onSubmitPin} onCancel={onCancelPin} />}
+            {/* メンタルアプリとまだつながっていない人には、手順を出す */}
+            {!mentalLinked && !pinAsk && <LinkSteps />}
 
             {/* 名寄せ（最小）: 手入力名 → rosterId or 'legacy:名前'。既存キーの名前は書き換えない */}
             {unmapped.length > 0 && (

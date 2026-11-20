@@ -49,15 +49,25 @@ describe('宣言が出る所の文', () => {
   it('宣言を書く3か所（辞書の節・課題解決の結果・振り返り）とホームに、出る所の表示がある', () => {
     const app = fs.readFileSync(path.join(ROOT, 'app/src/App.jsx'), 'utf8');
     expect((app.match(/<DecideOne [^>]*where=\{declWhereInfo\}/g) || []).length).toBe(2);
-    expect(app).toMatch(/onBlur=\{e => commitNextStep\(e\.target\.value\)\}\s*\/>\s*<DeclWhere info=\{declWhereInfo\} \/>/);
+    expect(app).toMatch(/onBlur=\{e => commitNextStep\(e\.target\.value\)\}\s*\/>\s*<DeclWhere info=\{declWhereInfo\}/);
     const loop = fs.readFileSync(path.join(ROOT, 'app/src/components/loop.jsx'), 'utf8');
     expect(loop).toContain('<DeclWhere info={declWhere} />');
   });
+  it('つなぎ方の案内は、本人が自分でつなげる状態のときだけ出す', () => {
+    expect(declWhere({ enabled: false }).howto).toBe(true);
+    expect(declWhere({ enabled: true, status: 'error', hasRoster: true, mental: 'nolink' }).howto).toBe(false);
+    for (const m of ['noreg', 'nolink']) expect(declWhere({ enabled: true, status: 'on', hasRoster: true, mental: m }).howto, m).toBe(true);
+    expect(declWhere({ enabled: true, status: 'on', hasRoster: false, mental: 'unknown' }).howto).toBe(true);
+    for (const m of ['yes', 'other', 'unknown']) expect(declWhere({ enabled: true, status: 'on', hasRoster: true, mental: m }).howto, m).toBe(false);
+  });
   it('fb.js に /rosterToUid へ書く所が無いまま（足したのは読むだけの確かめ）', () => {
     const fb = fs.readFileSync(path.join(ROOT, 'app/src/lib/fb.js'), 'utf8');
-    const body = fb.slice(fb.indexOf('export async function fbCheckLabLink'), fb.indexOf('// /rosterToUid/{rosterId} を【getで読むだけ】'));
-    expect(body).toContain("dbMod.get(");
-    expect(body).not.toMatch(/dbMod\.(set|update|push|remove)\(/);
+    for (const name of ['fbCheckLabLink', 'fbHasPinRules']) {
+      const from = fb.indexOf('export async function ' + name);
+      const body = fb.slice(from, fb.indexOf('\n}\n', from));
+      expect(body, name).toContain('dbMod.get(');
+      expect(body, name).not.toMatch(/dbMod\.(set|update|push|remove)\(/);
+    }
     expect(fb).not.toMatch(/(set|update|push|remove)\([^)]*rosterToUid/);
   });
 });

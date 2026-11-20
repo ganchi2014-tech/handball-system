@@ -193,7 +193,62 @@ export async function fbCheckLabLink(mentalUid) {
     const v = snap.val();
     return !!(v && v.labUid === uid);
   } catch (e) {
-    if (/permission/i.test(String((e && (e.code || e.message)) || ''))) return false;
+    if (isPermissionError(e)) return false;
+    throw e;
+  }
+}
+
+// データベースの決まりで断られたのか（通信の失敗ではないのか）
+function isPermissionError(e) {
+  return /permission/i.test(String((e && (e.code || e.message)) || ''));
+}
+
+// PINの決まり（linkPins / linkTries）がデータベースに入っているかを確かめる【getで読むだけ】。
+// 自分の置き場所 linkPins/{自uid} は、決まりが入っていれば読める（中身は空）。入っていなければ断られる。
+// 入っていない間は、今までどおりPINなしでつなぐ（照らし合わせる相手がデータベースに無いため）。
+export async function fbHasPinRules() {
+  if (!uid || !db) throw new Error('fbHasPinRules: 未接続です（fbConnect を先に）');
+  const { dbMod } = await importFirebase();
+  try {
+    await dbMod.get(dbMod.ref(db, 'linkPins/' + uid));
+    return true;
+  } catch (e) {
+    if (isPermissionError(e)) return false;
+    throw e;
+  }
+}
+
+// PINを付けてつなぐ（選手発意）。pinHash は lib/linkPin.js の linkPinHash で作った64文字。
+// ① 相手の「試しの席」linkTries/{mentalUid}/{0..9} の空いている所に {labUid, pinHash} を書く（1回書いたら書き直せない）
+// ② labLinks/{mentalUid} に、その席を指して書く。決まりが「席の形＝本人の照合用の形」のときだけ通す。
+// 返り値: { result: 'ok' | 'denied' | 'full', left }   left=このあと試せる回数
+// /rosterToUid には一切書き込まない（絶対禁止・不変）。
+export async function fbLinkWithPin(mentalUid, rosterId, pinHash, slots = 10) {
+  if (!uid || !db) throw new Error('fbLinkWithPin: 未接続です（fbConnect を先に）');
+  if (!mentalUid || !rosterId || !pinHash) throw new Error('fbLinkWithPin: mentalUid・rosterId・pinHash が必要です');
+  const { dbMod } = await importFirebase();
+  let slot = -1;
+  for (let i = 0; i < slots; i++) {
+    try {
+      await dbMod.set(dbMod.ref(db, 'linkTries/' + mentalUid + '/' + i), { labUid: uid, pinHash, ts: dbMod.serverTimestamp() });
+      slot = i;
+      break;
+    } catch (e) {
+      if (!isPermissionError(e)) throw e; // 席がうまっているときは断られる。通信の失敗は投げる
+    }
+  }
+  if (slot < 0) return { result: 'full', left: 0 };
+  const left = slots - 1 - slot;
+  try {
+    await dbMod.set(dbMod.ref(db, 'labLinks/' + mentalUid), {
+      labUid: uid,
+      rosterId: String(rosterId),
+      try: String(slot),
+      updatedAt: dbMod.serverTimestamp(),
+    });
+    return { result: 'ok', left };
+  } catch (e) {
+    if (isPermissionError(e)) return { result: 'denied', left };
     throw e;
   }
 }
