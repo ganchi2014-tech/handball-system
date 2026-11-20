@@ -3,6 +3,8 @@
 import { describe, it, expect } from 'vitest';
 import { DICT_FILES, splitSections } from '../app/src/lib/dict.js';
 import { renderMarkdown } from '../app/src/lib/markdown.js';
+import { normalizeFavs } from '../app/src/lib/dictFav.js';
+import { HUB_MODULES, FEATURE_PLAN } from '../app/src/lib/appData.js';
 import { buildChatReply, chatSolveMatches, chatGlossaryHit, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
 import { buildSections } from './helpers/sections.js';
 import QUESTIONS from '../app/src/data/questions.json';
@@ -170,5 +172,35 @@ describe('用語集「アウト」「3枚目」（顧問が確かめた説明）
     expect(renderMarkdown('プレッシャーアウトする')).not.toContain('data-term="アウト"');
     expect(renderMarkdown('フォローアップの確認')).not.toContain('data-term="フォロー"');
     expect(renderMarkdown('フォロー中心で寄る')).toContain('data-term="フォロー"');
+  });
+});
+
+describe('呼び方を「ポスト」にそろえた後（2026-11-20）', () => {
+  it('「ピボット」「ピヴォット」と打って質問しても、ポストの話が返る', () => {
+    for (const q of ['ピボットにパスが入らない', 'ピヴォットの動き方']) {
+      const r = reply(q);
+      expect(r.kind, q).toBe('answer');
+      expect(r.head.id.startsWith('06-'), q + ' → ' + r.head.id).toBe(true);
+    }
+  });
+  it('「ピボットにパスが入らない」の近い相談は、ポストの相談', () => {
+    const r = reply('ピボットにパスが入らない');
+    expect(r.solve.length).toBeGreaterThan(0);
+    expect(r.solve[0].title.startsWith('【ポスト】'), r.solve[0].title).toBe(true);
+  });
+  it('「ピボットって何」に、用語集の説明（ポストの別の呼び方）が出る', () => {
+    expect(chatGlossaryHit('ピボットって何').desc).toContain('ポスト');
+  });
+  it('見出しを変えた節のお気に入りは、新しい見出しに付いていく', () => {
+    expect(normalizeFavs(['06::トピックK：重心移動の物理（小柄ピボットが大柄DFを動かせる理由）']))
+      .toEqual(['06::トピックK：重心移動の物理（小柄ポストが大柄DFを動かせる理由）']);
+  });
+});
+
+describe('「練習を組む」を一旦消した（2026-11-20）', () => {
+  it('旗が下りている間は、ホームのカードに出ない', () => {
+    expect(FEATURE_PLAN).toBe(false);
+    expect(HUB_MODULES.some(m => m.id === 'plan')).toBe(false);
+    expect(HUB_MODULES.some(m => m.id === 'dictionary')).toBe(true);
   });
 });

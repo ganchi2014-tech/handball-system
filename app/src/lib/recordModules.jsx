@@ -1,4 +1,4 @@
-// 記録モジュール（GK予測・ピヴォット認知）の宣言的スキーマ。
+// 記録モジュール（GK予測・ポスト認知）の宣言的スキーマ。
 // Phase 2 Task 6 で components/gk.jsx と components/pv.jsx の複製実装を統合した。
 // エンジン本体は components/record.jsx。文言・挙動は統合前と同一（変更禁止）。
 import React from 'react';
@@ -199,24 +199,24 @@ const PV_DEF = {
   id: 'pv',
   idPrefix: 'v',
   actors: [
-    { key: 'pivots', field: 'pivot', listLabel: 'ピヴォット', addPlaceholder: 'ピヴォット名を追加' },
+    { key: 'pivots', field: 'pivot', listLabel: 'ポスト', addPlaceholder: 'ポスト名を追加' },
   ],
   home: {
-    title: 'ピヴォット認知 ─ 選んで、照合する',
+    title: 'ポスト認知 ─ 選んで、照合する',
     lead: '2軸で見て、類型を選び、事実で照合',
     hint: '流れ：①第0問（DFはどちら側？何に反応？）→ ②類型（①a/①b/②a/②b/③）＋予測 → プレー → ③確認できた事実＋結果。 入力はユニット内のバック陣が兼任。結果は事実のみ（うまい下手の話ではない）。どの類型を選ぶかは自由＝正解チェックはしない。 ※言葉の意味：第0問＝はじめの問い／類型＝ポストの動きの型／2軸＝DFの位置と、DFが何に反応しているか。',
     startLabel: '▶ 記録をはじめる',
-    notReadyWarn: '先に下の「選手リスト」でピヴォットを登録してください。',
+    notReadyWarn: '先に下の「選手リスト」でポストを登録してください。',
     sections: [PVDistCard, PVCrossCard],
   },
-  exitLabel: '← ピヴォット認知ホームへ',
+  exitLabel: '← ポスト認知ホームへ',
   steps: {
     setup: {
       label: 'STEP 1 / 3 ─ プレーの前に記入',
       text: '第0問：いまのDFはどう見えている？',
-      hint: '入力はユニット内のバック陣が行う（ピヴォット本人に口頭で確認）。',
+      hint: '入力はユニット内のバック陣が行う（ポスト本人に口頭で確認）。',
       fields: [
-        { type: 'actor', field: 'pivot', label: 'ピヴォット', playersKey: 'pivots', emptyHint: 'ピヴォットが未登録です。ホームの「選手リスト」で登録してください。' },
+        { type: 'actor', field: 'pivot', label: 'ポスト', playersKey: 'pivots', emptyHint: 'ポストが未登録です。ホームの「選手リスト」で登録してください。' },
         { type: 'chips', field: 'axis1', label: 'DFはどちら側？', options: PV_AXIS1 },
         { type: 'chips', field: 'axis2', label: 'DFは何に反応している？', options: PV_AXIS2 },
       ],
@@ -248,7 +248,7 @@ const PV_DEF = {
       results: PV_RESULTS.map(r => ({ value: r.id, cls: r.cls, label: r.label })),
     },
   },
-  // 連続入力：ピヴォットは維持し、2軸・類型・予測・事実はリセット（毎プレー変わるため）
+  // 連続入力：ポストは維持し、2軸・類型・予測・事実はリセット（毎プレー変わるため）
   sticky: ['pivot'],
   afterSaveStage: 'setup',
   undoStage: 'setup',

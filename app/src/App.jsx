@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ALL_TAGS, DICT_FILES, DICT_SECTION_COUNT, GLOSSARY, splitSections } from './lib/dict.js';
 import { renderMarkdown } from './lib/markdown.js';
-import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, REFERENCE_MODES, axisStyle, getProgress } from './lib/appData.js';
+import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, REFERENCE_MODES, axisStyle, getProgress, FEATURE_PLAN } from './lib/appData.js';
 import { QUESTIONS, RESULTS, SOLVE_DATA } from './lib/content.js';
 import { DRILL_THEMES, DURATIONS, LEVELS, POSITIONS, POSITION_RECOMMENDED, buildPlan } from './lib/plan.js';
 import { CHAT_SUGGESTIONS, buildChatReply } from './lib/chat.js';
@@ -208,11 +208,11 @@ function App() {
     lsSet('shooter_tendencies', gkCalcTendencies(gkPreds)); // 仕様キー：常に予測記録から再計算
   }, [gkPreds]);
   useEffect(() => { lsSet('gk_players', gkPlayers); }, [gkPlayers]);
-  // ピヴォット認知（GKサイクル後続）
+  // ポスト認知（GKサイクル後続）
   const [pvRecords, setPvRecords] = useState(() => lsGet('pv_records') || []);
   const [pvPlayers, setPvPlayers] = useState(() => lsGet('pv_players') || { pivots: [] });
   const [pvView, setPvView] = useState({ name: 'home' }); // home | record
-  const pvLastSetup = useRef({}); // 連続入力用に直前のピヴォットを保持
+  const pvLastSetup = useRef({}); // 連続入力用に直前のポストを保持
   useEffect(() => { lsSet('pv_records', pvRecords); }, [pvRecords]);
   useEffect(() => { lsSet('pv_players', pvPlayers); }, [pvPlayers]);
   // データバックアップ（書き出し/取り込み）
@@ -245,7 +245,7 @@ function App() {
       applyExtra('chat-history', chatMessages, (v) => setChatMessages(v.slice(-60)));
       if (!declaration && d['next-declaration']) { setDeclaration(d['next-declaration']); lsSet('next-declaration', d['next-declaration']); }
       setBackupText('');
-      setBackupMsg(`取り込み完了：GK記録+${r.added.gk}・PV記録+${r.added.pv}・自作課題+${r.added.tb}・選手+${r.added.players}・その他+${extraAdded}（重複はスキップ）`);
+      setBackupMsg(`取り込み完了：GK記録+${r.added.gk}・ポスト認知の記録+${r.added.pv}・自作課題+${r.added.tb}・選手+${r.added.players}・その他+${extraAdded}（重複はスキップ）`);
     } catch (e) {
       setBackupMsg('取り込み失敗：' + e.message);
     }
@@ -495,7 +495,7 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '7つの使い方', desc: `🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}章${DICT_SECTION_COUNT}節から探す\n🎯 課題解決 — ○○できないを3ステップで\n📋 練習 — プラン作成＋課題の自作（🛠ビルダー）\n🧤 GK予測 — シュートコースの読みを記録・照合\n🧲 ピヴォット認知 — DFの見え方→予測→照合` },
+    { icon: '🧭',   title: '7つの使い方', desc: `🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}章${DICT_SECTION_COUNT}節から探す\n🎯 課題解決 — ○○できないを3ステップで\n🛠 今週の課題 — できなかった場面から課題を自作（課題ビルダー）\n🧤 GK予測 — シュートコースの読みを記録・照合\n🧲 ポスト認知 — DFの見え方→予測→照合` },
     { icon: '📲',   title: 'ホーム画面に追加しよう', desc: 'アプリとして入れておくと体育館（オフライン）でも開けて、記録も消えにくくなります。\n\niPhone：共有ボタン →「ホーム画面に追加」\nAndroid：ブラウザのメニュー →「アプリをインストール」' },
     { icon: '✨',   title: '始めましょう', desc: 'まずは「🤾 振り返る」で最近の1プレーを1つだけ。\n困ったら右下の 📘 用語 をタップ。ヘルプはホームから何度でも開けます。' },
   ];
@@ -538,7 +538,7 @@ function App() {
       setSolveCategory(resumeData.payload.category);
       setSolveSymptom(resumeData.payload.symptom);
       setPhase('solve');
-    } else if (resumeData.kind === 'plan' && resumeData.payload) {
+    } else if (FEATURE_PLAN && resumeData.kind === 'plan' && resumeData.payload) {
       setPlanThemes(resumeData.payload.themes || []);
       setPlanLevel(resumeData.payload.level || 'mid');
       setPlanDuration(resumeData.payload.duration || 60);
@@ -1039,7 +1039,7 @@ function App() {
     'r_of_feint_df_read':        { role: 'player', category: 'critical', symptom: 'csb2' },
     'r_of_feint_df_self':        { role: 'player', category: 'critical', symptom: 'csb2' },
     'r_of_feint_gk_seen':        { role: 'player', category: 'critical', symptom: 'csb2' },
-    // OFピボット失敗 → 批判的思考の「ピボットコンビ失敗」
+    // OFポスト失敗 → 批判的思考の「ポストコンビ失敗」
     'r_of_post_pivot_blocked':   { role: 'player', category: 'critical', symptom: 'csb3' },
     'r_of_post_pivot_choice':    { role: 'player', category: 'critical', symptom: 'cpv1' },
     // DF コンタクト失敗 → 批判的思考のフェイント反応
@@ -1074,7 +1074,7 @@ function App() {
       handleSolveReset();
       setPhase('solve');
     }
-    else if (modId === 'plan') {
+    else if (modId === 'plan' && FEATURE_PLAN) {
       setPlanResult(null);
       setPhase('plan');
     }
@@ -1190,7 +1190,7 @@ function App() {
               {phase === 'plan' && '練習を組む'}
               {phase === 'build' && '課題を自作する'}
               {phase === 'gk' && 'GK予測'}
-              {phase === 'pv' && 'ピヴォット認知'}
+              {phase === 'pv' && 'ポスト認知'}
               {phase === 'chat' && '質問する'}
               {phase === 'yomi' && '読みを宣言する'}
               {phase === 'card' && '5分振り返り'}
@@ -1204,7 +1204,7 @@ function App() {
               {phase === 'plan' && 'Practice Planner'}
               {phase === 'build' && 'Task Builder'}
               {phase === 'gk' && 'GK Prediction'}
-              {phase === 'pv' && 'Pivot Cognition'}
+              {phase === 'pv' && 'Post Cognition'}
               {phase === 'chat' && 'Dictionary Chat'}
               {phase === 'yomi' && 'Yomi Declaration'}
               {phase === 'card' && 'Match Card'}
@@ -1402,7 +1402,7 @@ function App() {
           <div className="onboard-card">
             <div className="onboard-title">💾 データの書き出し / 取り込み</div>
             <div className="onboard-desc" style={{textAlign: 'left', whiteSpace: 'pre-line'}}>
-              アプリ内の全記録（GK予測・ピヴォット認知・自作課題・振り返り・保存プラン・お気に入り等）をテキスト1つで持ち運べます。{'\n'}
+              アプリ内の全記録（GK予測・ポスト認知・自作課題・振り返り・保存プラン・お気に入り等）をテキスト1つで持ち運べます。{'\n'}
               書き出し → LINEのKeep等に保管（端末故障へのバックアップ）。{'\n'}
               取り込み → 別端末で記録したテキストを貼り付けて合流（記録ID単位で追加・重複はスキップ）。
             </div>
@@ -2705,7 +2705,7 @@ function App() {
         <div className="plan-screen">
           {tbView.name === 'home' && (
             <TBHome tasks={tbTasks}
-              onBackPlan={() => { setPlanResult(null); setPhase('plan'); }}
+              onBackPlan={FEATURE_PLAN ? () => { setPlanResult(null); setPhase('plan'); } : handleBackToHub} backLabel={FEATURE_PLAN ? '← 練習を組むへ' : '← 戻る（ホーム）'}
               onNew={() => setTbView({ name: 'wizard' })}
               onOpen={(id) => setTbView({ name: 'detail', id })}
               onExport={() => tbCopy(tbExportAllText(tbTasks), setTbToast)} />
@@ -2735,7 +2735,7 @@ function App() {
           )}
           {tbView.name === 'detail' && (() => {
             const cur = tbTasks.find(t => t.id === tbView.id);
-            if (!cur) return <TBHome tasks={tbTasks} onBackPlan={() => { setPlanResult(null); setPhase('plan'); }} onNew={() => setTbView({ name: 'wizard' })} onOpen={(id) => setTbView({ name: 'detail', id })} onExport={() => tbCopy(tbExportAllText(tbTasks), setTbToast)} />;
+            if (!cur) return <TBHome tasks={tbTasks} onBackPlan={FEATURE_PLAN ? () => { setPlanResult(null); setPhase('plan'); } : handleBackToHub} backLabel={FEATURE_PLAN ? '← 練習を組むへ' : '← 戻る（ホーム）'} onNew={() => setTbView({ name: 'wizard' })} onOpen={(id) => setTbView({ name: 'detail', id })} onExport={() => tbCopy(tbExportAllText(tbTasks), setTbToast)} />;
             return (
               <TBTaskDetail task={cur} setToast={setTbToast}
                 onUpdate={tbUpsert}
@@ -2747,7 +2747,7 @@ function App() {
         </div>
       )}
 
-      {/* GK予測・ピヴォット認知画面（共通エンジン） */}
+      {/* GK予測・ポスト認知画面（共通エンジン） */}
       {(phase === 'gk' || phase === 'pv') && (
         <div className="plan-screen">
           <RecordModule
@@ -2783,7 +2783,7 @@ function App() {
           else if (target === 'reflect') { if (phase === 'result') commitNextStep(); activeCardIdRef.current = null; setPhase('start'); setMode(null); setHistory([]); setResultId(null); setCurrentQ(null); setSelected(null); }
           else if (target === 'dict')  { setDictDetail(null); setPhase('dictionary'); }
           else if (target === 'solve') { handleSolveReset(); setPhase('solve'); }
-          else if (target === 'plan')  { setPlanResult(null); setPhase('plan'); }
+          else if (target === 'plan' && FEATURE_PLAN)  { setPlanResult(null); setPhase('plan'); }
           else if (target === 'chat')  { setPhase('chat'); }
         };
         return (
@@ -2813,11 +2813,13 @@ function App() {
               <span className="bn-label">課題解決</span>
               <span className="bn-dot" aria-hidden="true"/>
             </button>
+            {FEATURE_PLAN && (
             <button className={`bn-item ${isPlan ? 'active-plan' : ''}`} onClick={() => go('plan')} aria-label="練習プラン作成画面へ" aria-current={isPlan ? 'page' : undefined}>
               <span className="bn-icon" aria-hidden="true">📋</span>
               <span className="bn-label">練習</span>
               <span className="bn-dot" aria-hidden="true"/>
             </button>
+            )}
           </nav>
         );
       })()}

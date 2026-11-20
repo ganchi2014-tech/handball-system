@@ -27,7 +27,7 @@ const POSITIONS = [
   { id: 'cb',    icon: '🎯', label: 'センター', desc: 'センター向け' },
   { id: 'back',  icon: '💪', label: 'バック（左・右）', desc: 'バック（45度）向け' },
   { id: 'wing',  icon: '🚀', label: 'サイド（左・右）', desc: 'サイド（ウィング）向け' },
-  { id: 'pivot', icon: '🔄', label: 'ポスト', desc: 'ポスト（ピボット）向け' },
+  { id: 'pivot', icon: '🔄', label: 'ポスト', desc: 'ポスト向け' },
 ];
 
 // ポジション別推奨テーマ

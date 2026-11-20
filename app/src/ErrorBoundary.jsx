@@ -24,7 +24,7 @@ class ErrorBoundary extends React.Component {
         <div style={{ fontSize: '40px' }}>⚠️</div>
         <div style={{ fontSize: '18px', fontWeight: 700 }}>画面の表示中にエラーが起きました</div>
         <div style={{ fontSize: '13px', lineHeight: 1.8, opacity: 0.8, maxWidth: '340px' }}>
-          記録データ（振り返り・GK予測・ピヴォット認知・自作課題）は端末に保存されているので消えていません。
+          記録データ（振り返り・GK予測・ポスト認知・自作課題）は端末に保存されているので消えていません。
           再読み込みで直ることがほとんどです。直らない場合はこの画面を顧問に見せてください。
         </div>
         <button

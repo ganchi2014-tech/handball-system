@@ -1,4 +1,4 @@
-// GK予測・ピヴォット認知の共通エンジン（Phase 2 Task 6）。
+// GK予測・ポスト認知の共通エンジン（Phase 2 Task 6）。
 // スキーマは lib/recordModules.jsx。旧 gk.jsx / pv.jsx と文言・挙動同一。
 import React, { useState } from 'react';
 import { gkDateStr } from '../lib/gk.js';

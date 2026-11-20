@@ -121,6 +121,6 @@ function gkBaselineCompare(preds, gkName) {
   return { baseRate, recentRate: recent.rate, recentWeek: recent.week, delta: recent.rate - baseRate };
 }
 
-// ピヴォット認知：記録ウィザード（①第0問2軸＋類型＋予測 → プレー → ②事実チェック＋結果）
+// ポスト認知：記録ウィザード（①第0問2軸＋類型＋予測 → プレー → ②事実チェック＋結果）
 
 export { GK_SITUATIONS, GK_COURSES, gkSituationLabel, gkCourseLabel, gkDateStr, gkWeekStart, gkFmtDate, gkCalcTendencies, gkStats, gkWeeklySeries, gkExportWeekText, gkBaselineCompare };

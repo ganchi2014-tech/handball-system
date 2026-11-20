@@ -54,7 +54,7 @@ function Playbook({ cards, gkPreds, pvRecords, gkPlayers, pvPlayers, onBack }) {
       )}
       {pvRecords.length > 0 && pvPlayers.pivots.length > 0 && (
         <div className="tb-card" style={{ marginTop: 12 }}>
-          <div className="tb-card-k">🧲 ピヴォット ②③選択率の推移（自分を選ぶ）</div>
+          <div className="tb-card-k">🧲 ポスト ②③選択率の推移（自分を選ぶ）</div>
           <div className="plan-themes">
             {pvPlayers.pivots.map(n => (
               <button key={n} className={`plan-theme-chip ${pvName === n ? 'active' : ''}`} onClick={() => setPvName(n)}>{n}</button>

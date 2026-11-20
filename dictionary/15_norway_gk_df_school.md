@@ -175,7 +175,7 @@ brennende ønske om å få tak i ballen（ボールを奪いたい燃えるよ�
 **3つの結果カテゴリ：**
 1. 自分で得点（Skåre）
 2. 仲間へのパス（Viderespill = 継続パス）
-3. ピボットorウィングへのパス（Innspill/Utspill）
+3. ポストorウィングへのパス（Innspill/Utspill）
 
 **フェイントの核心要素：**
 - リズムとテンポの変化
@@ -301,11 +301,11 @@ Flerposisjonsspillere（マルチポジション選手）を育てる
 | Sirkelskudd | サークルシュート | OF・シュート |
 | スクリーン（シュペレ） | スクリーン | OF |
 | Viderespill | 継続パス | OF |
-| Innspill / Utspill | ピボット/ウィングへのパス | OF |
+| Innspill / Utspill | ポスト/ウィングへのパス | OF |
 | Gjennombrudd | 突破（ブレークスルー） | OF |
 | Undertall | 数的不利 | 状況 |
 | Overtall | 数的優位 | 状況 |
-| Linjespiller | ライン選手（ピボット） | ポジション |
+| Linjespiller | ライン選手（ポスト） | ポジション |
 | バックプレーヤー（バクスピレル） | バックプレーヤー | ポジション |
 | Flerposisjonsspillere | マルチポジション選手 | 育成 |
 | できた実感（メストリング） | 習得・達成感 | メンタル |

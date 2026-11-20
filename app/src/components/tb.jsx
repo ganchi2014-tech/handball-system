@@ -16,10 +16,10 @@ function tbCopy(text, setToast) {
   } else fallback();
 }
 
-function TBHome({ tasks, onNew, onOpen, onExport, onBackPlan }) {
+function TBHome({ tasks, onNew, onOpen, onExport, onBackPlan, backLabel }) {
   return (
     <React.Fragment>
-      <button className="dict-back" onClick={onBackPlan}>← 練習を組むへ</button>
+      <button className="dict-back" onClick={onBackPlan}>{backLabel || '← 練習を組むへ'}</button>
       <div>
         <div className="tb-q-label">自分の課題は自分で作る</div>
         <div className="tb-q-text">課題を作る行為が、課題と向き合う練習になる</div>

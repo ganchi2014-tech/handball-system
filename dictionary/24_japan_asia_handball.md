@@ -204,7 +204,7 @@ J-STARプログラム
 | タイムアウト | Time-out | タイムアウト（アウスツァイト） | Timeout |
 | ディフェンス | Defense | 守備（アプヴェーア） | Forsvar |
 | ウィング | Wing player | Flügelspieler | Kantspiller |
-| ポスト（ピボット） | Pivot | Kreisspieler | ピボット（ストレーク）spiller |
+| ポスト | Pivot | Kreisspieler | ポスト（ストレーク）spiller |
 | センターバック | Centre back | 中央（ミッテ） / 司令塔（シュピールマッハー） | Midtback |
 
 ---

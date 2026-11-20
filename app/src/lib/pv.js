@@ -70,7 +70,7 @@ function pvExportWeekText(records, weekStartStr) {
   const end = new Date(ws + 'T00:00:00');
   end.setDate(end.getDate() + 6);
   const lines = [];
-  lines.push(`🧲 ピヴォット認知 週次レポート（${gkFmtDate(ws)}〜${gkFmtDate(gkDateStr(end))}）`);
+  lines.push(`🧲 ポスト認知 週次レポート（${gkFmtDate(ws)}〜${gkFmtDate(gkDateStr(end))}）`);
   lines.push('━━━━━━━━━━━━━━');
   lines.push('■ 類型選択分布（今週）※①偏重チェック');
   const pivots = [...new Set(weekRecs.map(r => r.pivot))];

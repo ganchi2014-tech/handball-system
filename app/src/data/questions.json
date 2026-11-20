@@ -686,11 +686,11 @@
     "text": "あなたの役割は？",
     "choices": [
       {
-        "label": "バック（ピボットにパス出し側）",
+        "label": "バック（ポストにパス出し側）",
         "next": "qof_post_back"
       },
       {
-        "label": "ピボット本人（ポストプレー）",
+        "label": "ポスト本人（ポストプレー）",
         "next": "qof_post_pivot"
       }
     ]
@@ -698,14 +698,14 @@
   "qof_post_back": {
     "label": "Q3",
     "mode": "of",
-    "text": "ピボットへのパスは？",
+    "text": "ポストへのパスは？",
     "choices": [
       {
-        "label": "通った→ピボット得点",
+        "label": "通った→ポスト得点",
         "next": "r_of_post_back_good"
       },
       {
-        "label": "通ったがピボットが詰まった",
+        "label": "通ったがポストが詰まった",
         "next": "r_of_post_back_pivot_stuck"
       },
       {
@@ -721,7 +721,7 @@
   "qof_post_pivot": {
     "label": "Q3",
     "mode": "of",
-    "text": "ピボットとして何が起きた？",
+    "text": "ポストとして何が起きた？",
     "choices": [
       {
         "label": "V字位置取りでパスを受けてシュート",

@@ -124,7 +124,12 @@ function getProgress(phase, histLen) {
 // ─────────────────────────────────────────────
 // ハブのモジュール定義
 // ─────────────────────────────────────────────
-const HUB_MODULES = [
+// 「練習を組む」（テーマ×レベル×時間でプランを作る画面）を出すかどうか。
+// 2026-11-20 オーナー指示で一旦消した（辞書に寄せる）。戻すときは true にするだけでよい。
+// 画面・データ（drillThemes.json など）・保存済みのプランは消していない。
+const FEATURE_PLAN = false;
+
+const HUB_MODULES_ALL = [
   {
     id: 'reflect', cls: 'reflect', icon: '🤾', target: '選手',
     title: '振り返る',
@@ -162,8 +167,8 @@ const HUB_MODULES = [
     enabled: true,
   },
   {
-    id: 'pv', cls: 'pv', icon: '🧲', target: 'ピヴォット・バック陣',
-    title: 'ピヴォット認知',
+    id: 'pv', cls: 'pv', icon: '🧲', target: 'ポスト・バック陣',
+    title: 'ポスト認知',
     desc: 'ポストと合わせる前にDFの見え方を選んで予想 → プレー → 実際に起きたことと照らす（バックが入力）',
     enabled: true,
   },
@@ -174,6 +179,7 @@ const HUB_MODULES = [
     enabled: true,
   },
 ];
+const HUB_MODULES = HUB_MODULES_ALL.filter(m => FEATURE_PLAN || m.id !== 'plan');
 
 // 振り返り10モードから「逆引きリファレンス」へ降格した3モード（設計書1-5）
 const REFERENCE_MODES = ['janken', 'context', 'gk'];
@@ -184,4 +190,4 @@ const REFERENCE_MODES = ['janken', 'context', 'gk'];
 //   データ構造を変える時は上げるのではなく、lsGet 側に旧形式→新形式のマイグレーションを実装すること（破棄禁止）。
 // ─────────────────────────────────────────────
 
-export { FEINT_LEGEND, AXIS_MAP, axisStyle, MODES, getProgress, HUB_MODULES, REFERENCE_MODES };
+export { FEINT_LEGEND, AXIS_MAP, axisStyle, MODES, getProgress, HUB_MODULES, REFERENCE_MODES, FEATURE_PLAN };
