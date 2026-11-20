@@ -14,11 +14,13 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbCheckLabLink, fbHasPinRules, fbLinkWithPin, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbCheckLabLink, fbHasPinRules, fbLinkWithPin, fbRemoveLabLink, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
 import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 import { DecideOne, DeclWhere } from './components/decide.jsx';
-import { declWhere, MENTAL_APP_URL, isFromMental } from './lib/declWhere.js';
+import { declWhere, isFromMental } from './lib/declWhere.js';
+import { readHomeLocal, placeNotice } from './lib/place.js';
+import { HomeAppLink } from './components/homeLink.jsx';
 import { linkPinHash, isPin4, LINK_TRY_SLOTS } from './lib/linkPin.js';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
@@ -70,18 +72,20 @@ function App() {
   const [reflectHistory, setReflectHistory] = useState(() => lsGet('reflect-history') || []);
   const [declaration, setDeclaration] = useState(() => lsGet('next-declaration') || null);
   const [decSnooze, setDecSnooze] = useState(false); // 「まだこれから」＝このセッション中だけボタンを畳む
-  // ホームの「メンタルアプリとのつなぎ方」の1行を消したか（つなぐかどうかは選手が決めるので、消せる）
+  // ホームの「兄弟社ホームとのつなぎ方」の1行を消したか（つなぐかどうかは選手が決めるので、消せる）
   const [linkHintOff, setLinkHintOff] = useState(() => !!lsGet('link-hint-off'));
-  // メンタルアプリから飛んできて、ここに何の記録も無い＝いつものLABとは別の場所（ブラウザ）で開いている。
-  // この場所で「チームと繋ぐ」をすると、いつものLABがつなげなくなるので、知らせを出す。
-  const [fromMentalFresh, setFromMentalFresh] = useState(() => {
+  // 場所の知らせ（lib/place.js）。LAB は2つの住所で動く：前からの住所と、兄弟社ホームの住所の下。
+  //   homeFresh … 兄弟社ホームの中のLABで、ここに記録がまだ無い人へ（前のLABからの移し方）
+  //   oldIos    … 前の住所を iPhone のホーム画面のアイコンから開いている人へ（これからの入口と、移し方）
+  //   old       … 前の住所をブラウザや Android で開いている人へ（入口が変わった知らせだけ。記録は同じ保存場所）
+  const [placeNote, setPlaceNote] = useState(() => {
     try {
-      if (!isFromMental(window.location.hash)) return false;
-      const fresh = !lsGet('onboarded') && !(lsGet('reflect-history') || []).length && !lsGet('next-declaration') && !(lsGet('fb-link') || {}).enabled;
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
-      return fresh;
-    } catch (e) { return false; }
+      if (isFromMental(window.location.hash)) window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      const hasData = !!lsGet('onboarded') || (lsGet('reflect-history') || []).length > 0 || !!lsGet('next-declaration') || !!(lsGet('fb-link') || {}).enabled;
+      return placeNotice({ pathname: window.location.pathname, standalone: window.navigator.standalone === true, hasData, dismissed: !!lsGet('place-note-off') });
+    } catch (e) { return null; }
   });
+  const closePlaceNote = (keep) => { if (keep) lsSet('place-note-off', 1); setPlaceNote(null); };
   const reflectIdRef = useRef(null);
   const activeCardIdRef = useRef(null);
   const recordReflectStart = (rid, hist) => {
@@ -420,7 +424,7 @@ function App() {
   }, [fbEnabled, fbStatus, declaration]);
   // mental の宣言ミラー（🧠 メンタルの宣言）。接続確立後に一回読み。読めなければ非表示が正。
   const [mentalDecls, setMentalDecls] = useState(null);
-  // 自分の宣言がメンタルアプリに出るかどうか（書いた本人に「どこに出るか」を見せるため。lib/declWhere.js）
+  // 自分の宣言が兄弟社ホームに出るかどうか（書いた本人に「どこに出るか」を見せるため。lib/declWhere.js）
   const [mentalLink, setMentalLink] = useState('unknown');
   useEffect(() => {
     let alive = true;
@@ -428,9 +432,9 @@ function App() {
     (async () => {
       try {
         const { linkedUid, mine } = await fbCheckRosterLink(fbLink.rosterId);
-        if (!linkedUid) { if (alive) setMentalLink('noreg'); return; } // メンタルアプリで名前を登録していない
+        if (!linkedUid) { if (alive) setMentalLink('noreg'); return; } // 兄弟社ホームで名前を登録していない
         if (mine) { if (alive) setMentalLink('yes'); return; }          // uid同一の異常系（メンタルの宣言カードは出さない）
-        // この端末がメンタルアプリと繋がっているか（読むだけ）
+        // この端末が兄弟社ホームと繋がっているか（読むだけ）
         let linked = null;
         try { linked = await fbCheckLabLink(linkedUid); } catch (e) { linked = null; }
         if (alive) setMentalLink(linked === true ? 'yes' : linked === false ? (fbLink.mismatch ? 'other' : 'nolink') : 'unknown');
@@ -470,7 +474,7 @@ function App() {
   // mental 連携済み（linkedUid あり・別uid）なら labLinks ブリッジを書き、mental のマイ統計に
   // この端末の LAB 記録が出るようにする（選手が自分の名前をタップした操作＝連携の意思表示）。
   // PINの確かめ（オーナー指示 2026-11-20「名前を押したらPIN入力させて同じなら許可して」）:
-  // 名前の持ち主がメンタルアプリに登録していて、データベースにPINの決まりが入っているときは、
+  // 名前の持ち主が兄弟社ホームに登録していて、データベースにPINの決まりが入っているときは、
   // 名前を選ぶ前にPINを聞く。合っているかはデータベースの決まりが比べる。合うまで名前は選ばれない。
   // 決まりがまだ入っていない間は、今までどおり（比べる相手がデータベースに無いため）。
   const [pinAsk, setPinAsk] = useState(null); // { r, linkedUid, msg, left, busy }
@@ -489,7 +493,9 @@ function App() {
         let linked = false;
         try { linked = await fbCheckLabLink(linkedUid); } catch (e1) { linked = false; }
         if (linked) { pick({ mismatch: 0 }); setFbNotice('bridged'); setMentalLink('yes'); return; }
-        setPinAsk({ r, linkedUid, msg: null, left: null, busy: false });
+        // この保存場所の兄弟社ホームが、その名前で登録していれば、控えの照合用の形を使える（PINを打たずに済む）
+        const home = readHomeLocal(window.localStorage);
+        setPinAsk({ r, linkedUid, msg: null, left: null, busy: false, localHash: (home && home.uid === linkedUid) ? home.hash : null });
         return;
       }
       pick();
@@ -508,12 +514,23 @@ function App() {
       setFbNotice('checkfail');
     }
   };
+  // つなぎを外す（選手発意）。兄弟社ホームの側でも外せる。外しても記録は消えない
+  const handleUnlink = async () => {
+    setFbNotice(null);
+    try {
+      const { linkedUid, mine } = await fbCheckRosterLink(fbLink.rosterId);
+      if (linkedUid && !mine) await fbRemoveLabLink(linkedUid);
+      setMentalLink('nolink');
+      setFbNotice('unlinked');
+    } catch (e) { setFbNotice('checkfail'); }
+  };
   const handleSubmitPin = async (pin) => {
     const ask = pinAsk;
-    if (!ask || ask.busy || !isPin4(pin)) return;
+    const useLocal = !!ask && !!ask.localHash && pin == null;
+    if (!ask || ask.busy || (!useLocal && !isPin4(pin))) return;
     setPinAsk({ ...ask, busy: true, msg: null });
     try {
-      const hash = await linkPinHash(ask.linkedUid, pin);
+      const hash = useLocal ? ask.localHash : await linkPinHash(ask.linkedUid, pin);
       const res = await fbLinkWithPin(ask.linkedUid, ask.r.rosterId, hash, LINK_TRY_SLOTS);
       if (res.result === 'ok') {
         setFbLink(prev => ({ ...prev, rosterId: ask.r.rosterId, rosterName: ask.r.name, mismatch: 0 }));
@@ -521,7 +538,8 @@ function App() {
         setMentalLink('yes');
         setPinAsk(null);
       } else {
-        setPinAsk({ ...ask, busy: false, msg: res.result === 'full' ? 'full' : 'denied', left: res.left });
+        // 控えでつなげなかったときは、PINを打つ欄に切りかえる
+        setPinAsk({ ...ask, localHash: null, busy: false, msg: res.result === 'full' ? 'full' : 'denied', left: res.left });
       }
     } catch (e) {
       setPinAsk({ ...ask, busy: false, msg: 'error' });
@@ -563,7 +581,7 @@ function App() {
   const [onboardStep, setOnboardStep] = useState(0);
   useEffect(() => {
     const seen = lsGet('onboarded');
-    if (!seen && !/^#s=/.test(window.location.hash || '') && !isFromMental(window.location.hash)) setOnboardOpen(true);
+    if (!seen && !/^#s=/.test(window.location.hash || '') && placeNote !== 'homeFresh') setOnboardOpen(true);
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
@@ -1466,17 +1484,30 @@ function App() {
             );
             return (
               <div className="home-focus">
-                {fromMentalFresh && (
+                {placeNote === 'homeFresh' && (
                   <div className="home-from-notice">
-                    <div className="home-from-notice-title">⚠ メンタルアプリから開きました</div>
-                    <div>ここに今までの記録が無いときは、いつも使っているLABとは別の場所（ブラウザ）で開いています。「チームと繋ぐ」は、いつも使っているLAB（ホーム画面のアイコン）で行ってください。</div>
-                    <button type="button" className="home-from-notice-x" onClick={() => setFromMentalFresh(false)}>分かった</button>
+                    <div className="home-from-notice-title">ここは、兄弟社ホームの中のLABです</div>
+                    <div>これからは、兄弟社ホームの「辞書・振り返り（LAB）」からここを開いてください。前のLAB（別のアイコンやブックマーク）に記録がある人は、前のLABのホームの下の「💾 データの書き出し / 取り込み」で書き出し、ここで取り込むと移せます。移したら、前のアイコンは消してください。</div>
+                    <button type="button" className="home-from-notice-x" onClick={() => closePlaceNote(false)}>分かった</button>
                   </div>
                 )}
-                {declWhereInfo.howto && !linkHintOff && !fromMentalFresh && (
+                {placeNote === 'oldIos' && (
+                  <div className="home-from-notice">
+                    <div className="home-from-notice-title">入口が「兄弟社ホーム」に変わりました</div>
+                    <div>これからは、兄弟社ホーム（前のメンタルアプリ）の「辞書・振り返り（LAB）」から開いてください。ここの記録は、ホームの下の「💾 データの書き出し / 取り込み」で書き出し、兄弟社ホームの中のLABで取り込むと移せます。移したら、このアイコンは消してください。</div>
+                    <button type="button" className="home-from-notice-x" onClick={() => closePlaceNote(true)}>分かった</button>
+                  </div>
+                )}
+                {placeNote === 'old' && (
+                  <div className="home-link-hint">
+                    <HomeAppLink className="home-link-hint-main">🏠 入口が「兄弟社ホーム」（前のメンタルアプリ）に変わりました。記録はそのままで、そこの「辞書・振り返り（LAB）」から開けます →</HomeAppLink>
+                    <button type="button" className="home-link-hint-x" aria-label="この知らせを消す" onClick={() => closePlaceNote(true)}>×</button>
+                  </div>
+                )}
+                {declWhereInfo.howto && !linkHintOff && !placeNote && (
                   <div className="home-link-hint">
                     <button type="button" className="home-link-hint-main" onClick={() => setConnectOpen(true)}>
-                      🔗 メンタルアプリとまだつながっていません。つなぎ方を見る →
+                      🔗 兄弟社ホーム（前のメンタルアプリ）とまだつながっていません。つなぎ方を見る →
                     </button>
                     <button type="button" className="home-link-hint-x" aria-label="この知らせを消す"
                       onClick={() => { lsSet('link-hint-off', 1); setLinkHintOff(true); }}>×</button>
@@ -1529,7 +1560,7 @@ function App() {
             style={{marginTop: 12}}
             onClick={handleOnboardOpen}
           >🌱 初めての方はこちら</button>
-          <a className="help-btn open-app-btn" style={{marginTop: 8}} href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開く</a>
+          <HomeAppLink className="help-btn open-app-btn" style={{marginTop: 8}}>🏠 兄弟社ホームを開く</HomeAppLink>
           {fbEnabled && FEATURES.loop && (
             <button
               className="help-btn"
@@ -1647,7 +1678,7 @@ function App() {
           onDisconnect={() => { setFbNotice(null); setFbLink(prev => ({ ...prev, enabled: 0 })); }}
           onPickRoster={handlePickRoster}
           mentalLinked={mentalLink === 'yes'} pinAsk={pinAsk}
-          onSubmitPin={handleSubmitPin} onCancelPin={() => setPinAsk(null)}
+          onSubmitPin={handleSubmitPin} onCancelPin={() => setPinAsk(null)} onUnlink={handleUnlink}
           onMapName={(name, val) => setFbNameMap(prev => ({ ...prev, [name]: val }))}
           onClose={() => { setPinAsk(null); setConnectOpen(false); }}
         />

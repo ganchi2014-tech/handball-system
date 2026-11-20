@@ -3,16 +3,16 @@
 // 宣言した1つは、振り返りの最後で書く「次に試すこと」と同じ入れ物（next-declaration）に入り、
 // ホームに出て「できた／まだ」を押せる。
 import React, { useState } from 'react';
-import { MENTAL_APP_URL } from '../lib/declWhere.js';
+import { HomeAppLink } from './homeLink.jsx';
 
 // 宣言がどこに出るかを、書いた本人に見せる（info は lib/declWhere.js の declWhere の結果）。
 // full … 出る所を1行ずつ全部。そうでなければ1行にまとめる。
 function DeclWhere({ info, full = false, done = false, onHowTo }) {
   if (!info) return null;
   const how = info.howto && onHowTo
-    ? <button type="button" className="decl-where-how" onClick={onHowTo}>メンタルアプリとのつなぎ方を見る →</button>
+    ? <button type="button" className="decl-where-how" onClick={onHowTo}>兄弟社ホームとのつなぎ方を見る →</button>
     : info.mental
-      ? <a className="decl-where-how" href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">メンタルアプリを開く →</a>
+      ? <HomeAppLink className="decl-where-how">兄弟社ホームを開く →</HomeAppLink>
       : null;
   if (!full) return <div className="decl-where short">📍 宣言が出る所：{info.short}{how}</div>;
   return (

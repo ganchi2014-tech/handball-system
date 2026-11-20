@@ -2,7 +2,8 @@
 // このファイルは firebase も lib/fb.js も import しない — 接続処理はすべて App.jsx 側。
 // 二層原則: 未接続なら firebase チャンクは一切ロードされない。
 import React, { useState } from 'react';
-import { LINK_STEPS, LINK_STEPS_NOTE, MENTAL_APP_URL } from '../lib/declWhere.js';
+import { LINK_STEPS, LINK_STEPS_NOTE } from '../lib/declWhere.js';
+import { HomeAppLink } from './homeLink.jsx';
 import { isPin4, linkDeniedText, LINK_FULL_TEXT } from '../lib/linkPin.js';
 
 const STATUS_LABEL = {
@@ -13,44 +14,61 @@ const STATUS_LABEL = {
 };
 
 const NOTICE_TEXT = {
-  none: 'ℹ️ メンタルアプリで先に自分の名前を登録すると全部つながります（このアプリからは登録しません）',
-  mismatch: 'ℹ️ 別の端末がすでにメンタルアプリと繋がっています。この端末の記録もここに安全に保存されます',
-  mine: '✓ メンタルアプリと連携済み',
-  bridged: '✓ 繋がりました — メンタルアプリの「マイ統計」にこの端末のLAB記録（読み・GK予測・ポスト認知）が表示されます',
+  none: 'ℹ️ 兄弟社ホームで先に自分の名前を登録すると全部つながります（このアプリからは登録しません）',
+  mismatch: 'ℹ️ 別の端末がすでに兄弟社ホームと繋がっています。この端末の記録もここに安全に保存されます',
+  mine: '✓ 兄弟社ホームと連携済み',
+  bridged: '✓ 繋がりました — 兄弟社ホームの「マイ統計」にこの端末のLAB記録（読み・GK予測・ポスト認知）が表示されます',
   checkfail: 'ℹ️ 連携状態を確認できませんでした（記録はこのまま安全に保存されます）',
+  unlinked: '✓ 兄弟社ホームとのつなぎを外しました。もう一度つなぐときは、自分の名前を押してください',
 };
 
-// メンタルアプリとつなぐ手順（つながっていない人に見せる）
+// 兄弟社ホームとつなぐ手順（つながっていない人に見せる）
 function LinkSteps() {
   return (
     <div className="tb-card link-steps" style={{ textAlign: 'left', marginTop: 12 }}>
-      <div className="tb-card-k">🧠 メンタルアプリとつなぐ手順</div>
+      <div className="tb-card-k">🧠 兄弟社ホームとつなぐ手順</div>
       <ol className="link-steps-list">
         {LINK_STEPS.map((t, i) => <li key={i}>{t}</li>)}
       </ol>
       <div className="tb-q-hint" style={{ marginTop: 6 }}>{LINK_STEPS_NOTE}</div>
-      <a className="open-app-link" href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開く →</a>
+      <HomeAppLink className="open-app-link">🏠 兄弟社ホームを開く →</HomeAppLink>
     </div>
   );
 }
 
-// 名前を押したあと、本人かどうかをPINで確かめる欄
+// 名前を押したあと、本人かどうかを確かめる欄。
+// ask.localHash があるとき（この保存場所の兄弟社ホームに、その名前で登録がある）は、PINを打たずに「つなぐ」1回。
+// それ以外は、4桁のPINを入れてもらう。どちらも、押すまではつながない（つなぐかどうかは選手が決める）。
 function PinAsk({ ask, onSubmit, onCancel }) {
   const [pin, setPin] = useState('');
-  const ok = isPin4(pin) && !ask.busy;
+  const local = !!ask.localHash;
+  const ok = (local || isPin4(pin)) && !ask.busy;
   return (
     <div className="tb-card pin-ask" style={{ textAlign: 'left', marginTop: 12 }}>
-      <div className="tb-card-k">🔑 「{ask.r.name}」のPINを入れる</div>
-      <div className="tb-q-hint">この名前はメンタルアプリに登録されています。本人かどうかを確かめるため、メンタルアプリのPIN（4桁）を入れてください。PINは、メンタルアプリの「マイ統計」の「LABとつなぐ」で見られます。</div>
-      <div className="pin-ask-row">
-        <input className="decide-input pin-ask-input" type="tel" inputMode="numeric" autoComplete="off" maxLength={4}
-          placeholder="4桁" value={pin}
-          onChange={e => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
-          onKeyDown={e => { if (e.key === 'Enter' && ok) onSubmit(pin); }} />
-        <button type="button" className="decide-btn" disabled={!ok} onClick={() => onSubmit(pin)}>{ask.busy ? '確かめ中…' : 'つなぐ'}</button>
-        <button type="button" className="tb-ghost-btn" onClick={onCancel}>やめる</button>
-      </div>
-      <a className="open-app-link" href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開いてPINを見る →</a>
+      {local ? (
+        <React.Fragment>
+          <div className="tb-card-k">🔗 「{ask.r.name}」でつなぐ</div>
+          <div className="tb-q-hint">この端末の兄弟社ホームに、この名前で登録があります。PINを打たずにつなげます。つなぐと、ここで書いた宣言が兄弟社ホームの「行動宣言」にも出ます。あとで外せます。</div>
+          <div className="pin-ask-row">
+            <button type="button" className="decide-btn" disabled={!ok} onClick={() => onSubmit(null)}>{ask.busy ? '確かめ中…' : 'つなぐ'}</button>
+            <button type="button" className="tb-ghost-btn" onClick={onCancel}>やめる</button>
+          </div>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <div className="tb-card-k">🔑 「{ask.r.name}」のPINを入れる</div>
+          <div className="tb-q-hint">この名前は兄弟社ホームに登録されています。本人かどうかを確かめるため、兄弟社ホームのPIN（4桁）を入れてください。PINは、兄弟社ホームの「マイ統計」の「LABとつなぐ」で見られます。</div>
+          <div className="pin-ask-row">
+            <input className="decide-input pin-ask-input" type="tel" inputMode="numeric" autoComplete="off" maxLength={4}
+              placeholder="4桁" value={pin}
+              onChange={e => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
+              onKeyDown={e => { if (e.key === 'Enter' && ok) onSubmit(pin); }} />
+            <button type="button" className="decide-btn" disabled={!ok} onClick={() => onSubmit(pin)}>{ask.busy ? '確かめ中…' : 'つなぐ'}</button>
+            <button type="button" className="tb-ghost-btn" onClick={onCancel}>やめる</button>
+          </div>
+          <HomeAppLink className="open-app-link">🏠 兄弟社ホームを開いてPINを見る →</HomeAppLink>
+        </React.Fragment>
+      )}
       {ask.msg === 'denied' && <div className="pin-ask-msg">{linkDeniedText(ask.left)}</div>}
       {ask.msg === 'full' && <div className="pin-ask-msg">{LINK_FULL_TEXT}</div>}
       {ask.msg === 'error' && <div className="pin-ask-msg">通信できませんでした。電波のよい所でもう一度押してください。</div>}
@@ -59,7 +77,7 @@ function PinAsk({ ask, onSubmit, onCancel }) {
 }
 
 function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames, nameMap, mentalLinked, pinAsk,
-                        onConnect, onDisconnect, onPickRoster, onSubmitPin, onCancelPin, onMapName, onClose }) {
+                        onConnect, onDisconnect, onPickRoster, onSubmitPin, onCancelPin, onUnlink, onMapName, onClose }) {
   const connected = !!fbLink.enabled;
   // 名寄せ対象: 手入力名のうち roster に完全一致せず・fb-name-map 未登録のもの
   const unmapped = (connected && fbRoster.length > 0)
@@ -76,7 +94,7 @@ function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames
               繋がなくても全機能そのまま使えます。繋ぐと：{'\n'}
               ・記録が端末故障で消えない{'\n'}
               ・複数端末で合流{'\n'}
-              ・メンタルアプリのマイ統計にLABの記録（読み・GK予測・ポスト認知）が出る
+              ・兄弟社ホームのマイ統計にLABの記録（読み・GK予測・ポスト認知）が出る
             </div>
             <button className="tb-next-btn" onClick={onConnect}>🔗 チームと繋ぐ</button>
             <LinkSteps />
@@ -116,7 +134,16 @@ function ConnectPanel({ fbLink, fbStatus, fbRoster, fbQueue, notice, manualNames
               <div className="tb-q-hint" style={{ marginTop: 8, textAlign: 'left' }}>{NOTICE_TEXT[notice]}</div>
             )}
             {pinAsk && <PinAsk key={pinAsk.r.rosterId} ask={pinAsk} onSubmit={onSubmitPin} onCancel={onCancelPin} />}
-            {/* メンタルアプリとまだつながっていない人には、手順を出す */}
+            {/* つながっている人には、その事実と、外す手段を同じ所に出す */}
+            {mentalLinked && !pinAsk && (
+              <div className="tb-card" style={{ textAlign: 'left', marginTop: 12 }}>
+                <div className="tb-card-k">🏠 兄弟社ホームとつながっています</div>
+                <div className="tb-q-hint">ここで書いた宣言が、兄弟社ホームの「行動宣言」にも出ます。</div>
+                <HomeAppLink className="open-app-link">🏠 兄弟社ホームを開く →</HomeAppLink>
+                {onUnlink && <button type="button" className="tb-ghost-btn" style={{ marginTop: 8, display: 'block' }} onClick={onUnlink}>兄弟社ホームとのつなぎを外す</button>}
+              </div>
+            )}
+            {/* 兄弟社ホームとまだつながっていない人には、手順を出す */}
             {!mentalLinked && !pinAsk && <LinkSteps />}
 
             {/* 名寄せ（最小）: 手入力名 → rosterId or 'legacy:名前'。既存キーの名前は書き換えない */}

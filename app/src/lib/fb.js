@@ -181,8 +181,8 @@ export async function fbWriteLabLink(mentalUid, rosterId) {
   });
 }
 
-// labLinks/{mentalUid} を【getで読むだけ】。この端末がメンタルアプリと繋がっているか（labUid が自分か）を返す。
-// 宣言を書いた本人に「メンタルアプリに出るかどうか」を見せるために使う。
+// labLinks/{mentalUid} を【getで読むだけ】。この端末が兄弟社ホームと繋がっているか（labUid が自分か）を返す。
+// 宣言を書いた本人に「兄弟社ホームに出るかどうか」を見せるために使う。
 // リンクが無い・別の端末のものなら、ルールで読めないので false。通信の失敗はそのまま投げる。
 export async function fbCheckLabLink(mentalUid) {
   if (!uid || !db) throw new Error('fbCheckLabLink: 未接続です（fbConnect を先に）');
@@ -251,6 +251,15 @@ export async function fbLinkWithPin(mentalUid, rosterId, pinHash, slots = 10) {
     if (isPermissionError(e)) return { result: 'denied', left };
     throw e;
   }
+}
+
+// この端末のつなぎ（labLinks/{mentalUid}）を外す（選手発意）。決まりで、つないだ端末の本人に許されている。
+// /rosterToUid には一切触れない。
+export async function fbRemoveLabLink(mentalUid) {
+  if (!uid || !db) throw new Error('fbRemoveLabLink: 未接続です（fbConnect を先に）');
+  if (!mentalUid) throw new Error('fbRemoveLabLink: mentalUid が必要です');
+  const { dbMod } = await importFirebase();
+  await dbMod.remove(dbMod.ref(db, 'labLinks/' + mentalUid));
 }
 
 // /rosterToUid/{rosterId} を【getで読むだけ】。書き込みAPIは存在しない（絶対追加禁止）。

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { loopPhaseInfo, newMatchCard, YOMI_TARGETS, CARD_KINDS, kindLabel } from '../lib/loop.js';
 import { FEATURES } from '../lib/appData.js';
 import { DeclWhere } from './decide.jsx';
-import { MENTAL_APP_URL } from '../lib/declWhere.js';
+import { HomeAppLink } from './homeLink.jsx';
 
 const PHASE_META = {
   predict:  { icon: '🔮', label: '予測位相（試合前：読みを立てる）',  main: '🔮 読みを宣言する',   sub: '試合前に相手DF/GKの読みを3タップで宣言' },
@@ -107,7 +107,7 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, declWhere
               「{d.declaration}」<span className="loop-declare-mini">（{d.startDate}〜・チェック{d.checkCount || 0}日）</span>
             </div>
           ))}
-          <a className="open-app-link" href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開く →</a>
+          <HomeAppLink className="open-app-link">🏠 兄弟社ホームを開く →</HomeAppLink>
         </div>
       )}
 

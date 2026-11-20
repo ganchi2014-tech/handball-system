@@ -15,26 +15,26 @@ describe('宣言が出る所の文', () => {
     const r = declWhere({ enabled: false, status: 'off' });
     expect(r.short).toBe('この端末の中だけ');
     expect(r.lines.join('')).toContain('ほかの場所には出ない');
-    expect(r.lines.join('')).not.toContain('メンタルアプリ');
+    expect(r.lines.join('')).not.toContain('兄弟社ホーム');
   });
   it('押しているが接続できていない：クラウドに出ていると言わない', () => {
     for (const status of ['connecting', 'error', 'off']) {
       const r = declWhere({ enabled: true, status, hasRoster: true, mental: 'yes' });
       expect(r.lines.join(''), status).toContain('クラウドにはまだ出ていない');
-      expect(r.lines.join(''), status).not.toContain('メンタルアプリ');
+      expect(r.lines.join(''), status).not.toContain('兄弟社ホーム');
     }
   });
-  it('接続ずみでメンタルアプリと繋がっている：行動宣言の画面に出ると言う', () => {
+  it('接続ずみで兄弟社ホームと繋がっている：行動宣言の画面に出ると言う', () => {
     const r = declWhere({ enabled: true, status: 'on', hasRoster: true, mental: 'yes' });
     expect(r.lines.join('')).toContain('クラウド');
-    expect(r.lines.join('')).toContain('メンタルアプリの「行動宣言」の画面');
-    expect(r.short).toContain('メンタルアプリ');
+    expect(r.lines.join('')).toContain('兄弟社ホームの「行動宣言」の画面');
+    expect(r.short).toContain('兄弟社ホーム');
   });
-  it('接続ずみでもメンタルアプリと繋がっていない：出ると言わない（理由を添える）', () => {
+  it('接続ずみでも兄弟社ホームと繋がっていない：出ると言わない（理由を添える）', () => {
     const cases = { noreg: '登録すると出る', other: '別の端末', nolink: '選び直すと出る' };
     for (const [mental, word] of Object.entries(cases)) {
       const r = declWhere({ enabled: true, status: 'on', hasRoster: true, mental });
-      expect(r.lines.join(''), mental).toContain('メンタルアプリには出ない');
+      expect(r.lines.join(''), mental).toContain('兄弟社ホームには出ない');
       expect(r.lines.join(''), mental).toContain(word);
       expect(r.short, mental).toContain('出ない');
     }

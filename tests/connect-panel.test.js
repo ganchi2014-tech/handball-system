@@ -12,32 +12,44 @@ const html = (props) => renderToStaticMarkup(React.createElement(ConnectPanel, {
 describe('チームと繋ぐの画面', () => {
   it('繋いでいない人：手順が出る', () => {
     const h = html({ fbLink: { enabled: 0 }, fbStatus: 'off', mentalLinked: false, pinAsk: null });
-    expect(h).toContain('メンタルアプリとつなぐ手順');
+    expect(h).toContain('兄弟社ホームとつなぐ手順');
     expect(h).toContain('名簿から自分の名前を押す');
   });
-  it('繋いでいるがメンタルアプリとはまだの人：手順が出る', () => {
+  it('繋いでいるが兄弟社ホームとはまだの人：手順が出る', () => {
     const h = html({ fbLink: { enabled: 1, rosterId: null }, mentalLinked: false, pinAsk: null });
-    expect(h).toContain('メンタルアプリとつなぐ手順');
+    expect(h).toContain('兄弟社ホームとつなぐ手順');
   });
-  it('メンタルアプリとつながっている人：手順は出ない', () => {
+  it('兄弟社ホームとつながっている人：手順は出ない', () => {
     const h = html({ fbLink: { enabled: 1, rosterId: 'r1', rosterName: '東 太郎' }, mentalLinked: true, pinAsk: null });
-    expect(h).not.toContain('メンタルアプリとつなぐ手順');
+    expect(h).not.toContain('兄弟社ホームとつなぐ手順');
   });
   it('名前を押してPINを聞かれているとき：その名前と入力欄が出て、手順は引っこむ', () => {
     const h = html({ fbLink: { enabled: 1, rosterId: null }, mentalLinked: false, pinAsk: { r: { rosterId: 'r2', name: '西 次郎' }, linkedUid: 'm2', msg: null, left: null, busy: false } });
     expect(h).toContain('「西 次郎」のPINを入れる');
     expect(h).toContain('maxLength="4"');
     expect(h).toContain('つなぐ');
-    expect(h).not.toContain('メンタルアプリとつなぐ手順');
+    expect(h).not.toContain('兄弟社ホームとつなぐ手順');
   });
   it('PINが合わなかったとき：理由を並べて、残りの回数を言う', () => {
     const h = html({ fbLink: { enabled: 1 }, mentalLinked: false, pinAsk: { r: { rosterId: 'r2', name: '西 次郎' }, linkedUid: 'm2', msg: 'denied', left: 7, busy: false } });
     expect(h).toContain('①PINが違う');
     expect(h).toContain('あと7回');
   });
-  it('10回使い切ったとき：メンタルアプリで「PINを表示」を押すと言う', () => {
+  it('10回使い切ったとき：兄弟社ホームで「PINを表示」を押すと言う', () => {
     const h = html({ fbLink: { enabled: 1 }, mentalLinked: false, pinAsk: { r: { rosterId: 'r2', name: '西 次郎' }, linkedUid: 'm2', msg: 'full', left: 0, busy: false } });
     expect(h).toContain('使い切っています');
     expect(h).toContain('PINを表示');
+  });
+  it('この端末の兄弟社ホームに同じ名前の登録があるとき：PINの欄は出さず、「つなぐ」1回', () => {
+    const h = html({ fbLink: { enabled: 1 }, mentalLinked: false, pinAsk: { r: { rosterId: 'r2', name: '西 次郎' }, linkedUid: 'm2', msg: null, left: null, busy: false, localHash: 'a'.repeat(64) } });
+    expect(h).toContain('「西 次郎」でつなぐ');
+    expect(h).toContain('PINを打たずにつなげます');
+    expect(h).not.toContain('maxLength="4"');
+    expect(h).toContain('あとで外せます');
+  });
+  it('つながっている人：その事実と「つなぎを外す」が同じ所に出る', () => {
+    const h = html({ fbLink: { enabled: 1, rosterId: 'r1', rosterName: '東 太郎' }, mentalLinked: true, pinAsk: null, onUnlink: noop });
+    expect(h).toContain('兄弟社ホームとつながっています');
+    expect(h).toContain('兄弟社ホームとのつなぎを外す');
   });
 });
