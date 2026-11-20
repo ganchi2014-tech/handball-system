@@ -182,7 +182,7 @@ npm run preview   # ビルド産物の確認
 - **回数の壁**：1人につき10回（`linkTries/{mentalUid}/{0..9}` の席。1回書いたら書き直せない）。うまると誰も試せない。本人がメンタルアプリで「PINを表示」を押すと空く。
 - `fb.js` に足した書き込みは `linkTries/*` と `labLinks/*` だけ。**`/rosterToUid` は読むだけのまま**（絶対禁止は不変）。
 - つなげなかった理由（PINが違う・相手がまだ「PINを表示」を押していない・別の端末が先につながっている）は、このアプリからは見分けられない。文で決めつけない。
-- 本物のデータベースでの確かめはしていない（決まりを入れるのはオーナー。入れたあとにオーナーの端末で確かめる）。手元では、決まりだけを動かす道具で確かめてある（handball-mental の `tests/link-pin-rules.test.js`）。設計の書きものは handball-mental の `docs/superpowers/specs/2026-11-20-link-pin-design.md`。
+- **PINの決まりは 2026-11-20 に本物のデータベースへ入った**（オーナーがコンソールで公開。公開後の中身が handball-mental の `database.rules.json` と同じことを確かめた）。だから今は、メンタルアプリに登録している人の名前を押すとPINを聞く。本物のデータベースで実際につなぐ確かめは、まだしていない（選手の端末で行う）。手元では、決まりだけを動かす道具で確かめてある（handball-mental の `tests/link-pin-rules.test.js`）。設計の書きものは handball-mental の `docs/superpowers/specs/2026-11-20-link-pin-design.md`。
 
 ### 2つのアプリを行き来する（2026-11-20・オーナー指示「メンタルアプリからもLABアプリからも相互に飛べるように」）
 
