@@ -17,6 +17,7 @@ import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
 import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
 import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
+import { DecideOne } from './components/decide.jsx';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
 import { Playbook } from './components/playbook.jsx';
@@ -106,6 +107,15 @@ function App() {
         setMatchCards(prev => prev.map(c => c.id === cid ? { ...c, next: t } : c));
       }
     }
+  };
+  // 辞書の節・課題解決の結果から「次に試すこと」を1つ決める（振り返りの最後で決めるのと同じ入れ物）
+  const decideNext = (text, from) => {
+    const t = String(text || '').trim();
+    if (!t) return;
+    const dec = { text: t, ts: Date.now(), mode: from, done: null };
+    setDeclaration(dec);
+    lsSet('next-declaration', dec);
+    setDecSnooze(false);
   };
   const answerDeclaration = (done) => {
     if (!declaration) return;
@@ -491,7 +501,7 @@ function App() {
   const [onboardStep, setOnboardStep] = useState(0);
   useEffect(() => {
     const seen = lsGet('onboarded');
-    if (!seen) setOnboardOpen(true);
+    if (!seen && !/^#s=/.test(window.location.hash || '')) setOnboardOpen(true);
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
@@ -785,6 +795,43 @@ function App() {
     })();
   }, [phase, dictLoaded, dictError]);
 
+  // ── 節へのリンク（…#s=章番号::見出し）──
+  // 先生や先輩が「ここ読んどいて」と節を送れるようにする。開いたら、その節をそのまま出す。
+  const linkKeyFromHash = () => { try { const m = (window.location.hash || '').match(/^#s=(.+)$/); return m ? decodeURIComponent(m[1]) : null; } catch (e) { return null; } };
+  const pendingLinkRef = useRef(linkKeyFromHash());
+  const [linkTick, setLinkTick] = useState(0);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const sectionLink = (s) => `${window.location.origin}${window.location.pathname}#s=${encodeURIComponent(favKey(s))}`;
+  const copySectionLink = (s) => {
+    const url = `${s.fileTitle}「${s.title}」\n${sectionLink(s)}`;
+    const done = () => { setLinkCopied(true); setTimeout(() => setLinkCopied(false), 2500); };
+    const fallback = () => {
+      try {
+        const ta = document.createElement('textarea'); ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done();
+      } catch (e) { window.prompt('このリンクをコピーしてください', url); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done).catch(fallback);
+    else fallback();
+  };
+  useEffect(() => {
+    const onHash = () => { const k = linkKeyFromHash(); if (k) { pendingLinkRef.current = k; setLinkTick(t => t + 1); } };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+  useEffect(() => {
+    if (!dictLoaded || !pendingLinkRef.current) return;
+    const key = normalizeFavs([pendingLinkRef.current])[0];
+    pendingLinkRef.current = null;
+    try { window.history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) {}
+    const target = key && dictSections.find(x => favKey(x) === key);
+    if (!target) return;
+    dictOriginRef.current = 'dictionary';
+    setDictDetail(target);
+    setPhase('dictionary-detail');
+    setTimeout(() => window.scrollTo(0, 0), 0);
+  }, [dictLoaded, dictSections, linkTick]);
+
   // pendingResumeDictId が立っており、辞書が読み込まれたら詳細遷移
   useEffect(() => {
     if (!pendingResumeDictId || !dictLoaded) return;
@@ -1011,6 +1058,33 @@ function App() {
 
   const handleSolveReset = () => {
     setSolveRole(null); setSolveCategory(null); setSolveSymptom(null); setCriticalPosFilter(null);
+  };
+
+  // ホームのポジションの札：1回押せば、そのポジションの困りごと一覧（課題解決の「ポジション別の迷い」）が出る
+  const HOME_POSITIONS = ['センター', 'バック', 'サイド', 'ポスト', 'GK', '守り'];
+  const openSolveByPos = (pos) => {
+    setSolveRole('player'); setSolveCategory('critical'); setSolveSymptom(null); setCriticalPosFilter(pos);
+    setPhase('solve'); setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+  // ホームの種類の札：ポジションに分かれていない困りごと（体・心・ルールなど）も1回で開く
+  const HOME_KINDS = [
+    { label: '体・ケガ', category: 'condition' }, { label: '心', chapter: '18' }, { label: 'ルール', category: 'rules' },
+    { label: '装備', category: 'equipment' }, { label: '試合当日', category: 'matchday' }, { label: '試合運び', category: 'game' },
+  ];
+  const openKind = (k) => {
+    if (k.chapter) { openChapter(k.chapter); return; }
+    setSolveRole('player'); setSolveCategory(k.category); setSolveSymptom(null); setCriticalPosFilter(null);
+    setPhase('solve'); setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+  const openChapter = (fileId) => {
+    setDictDetail(null); setDictQuery(''); setDictActiveTag(null); setDictActiveFileId(fileId);
+    setPhase('dictionary'); setTimeout(() => window.scrollTo(0, 0), 0);
+  };
+  const [homeQuery, setHomeQuery] = useState('');
+  const submitHomeQuery = () => {
+    const t = homeQuery.trim();
+    if (!t) return;
+    setHomeQuery(''); setPhase('chat'); handleChatSend(t);
   };
 
   // 振り返りモード → 課題解決カテゴリへの直通マッピング
@@ -1294,26 +1368,76 @@ function App() {
             else if (FEATURES.builder) { setTbView({ name: 'home' }); setPhase('build'); }
           }}
         >
+          {FEATURES.loop ? (
           <div className="hub-cards">
-            {HUB_MODULES.map(mod => (
-              <button
-                key={mod.id}
-                className={`hub-card ${mod.cls} ${mod.enabled ? '' : 'disabled'}`}
-                onClick={() => handleHubSelect(mod.id)}
-                disabled={!mod.enabled}
-                aria-label={`${mod.title}（${mod.target}）：${mod.desc}`}
-              >
-                <div className="hub-card-icon" aria-hidden="true">{mod.icon}</div>
+              {HUB_MODULES.map(mod => (
+                <button
+                  key={mod.id}
+                  className={`hub-card ${mod.cls} ${mod.enabled ? '' : 'disabled'}`}
+                  onClick={() => handleHubSelect(mod.id)}
+                  disabled={!mod.enabled}
+                  aria-label={`${mod.title}（${mod.target}）：${mod.desc}`}
+                >
+                  <div className="hub-card-icon" aria-hidden="true">{mod.icon}</div>
+                  <div className="hub-card-body">
+                    <div className="hub-card-target">{mod.target}</div>
+                    <div className="hub-card-title">{mod.title}</div>
+                    <div className="hub-card-desc">{mod.desc}</div>
+                  </div>
+                  {mod.enabled && <div className="hub-card-arrow" aria-hidden="true">›</div>}
+                  {!mod.enabled && <div className="hub-card-soon">Soon</div>}
+                </button>
+              ))}
+            </div>
+          ) : (() => {
+            // 辞書に特化したホーム。軸は2つ：（選ぶ）場面から手を探して1つ決める／（揃える）部の言葉を同じ文で確かめる。
+            const mod = (id) => HUB_MODULES.find(m => m.id === id);
+            const card = (m, onClick, extraCls = '') => (
+              <button key={m.id} className={`hub-card ${m.cls} ${extraCls}`} onClick={onClick} aria-label={`${m.title}：${m.desc}`}>
+                <div className="hub-card-icon" aria-hidden="true">{m.icon}</div>
                 <div className="hub-card-body">
-                  <div className="hub-card-target">{mod.target}</div>
-                  <div className="hub-card-title">{mod.title}</div>
-                  <div className="hub-card-desc">{mod.desc}</div>
+                  <div className="hub-card-title">{m.title}</div>
+                  <div className="hub-card-desc">{m.desc}</div>
                 </div>
-                {mod.enabled && <div className="hub-card-arrow" aria-hidden="true">›</div>}
-                {!mod.enabled && <div className="hub-card-soon">Soon</div>}
+                <div className="hub-card-arrow" aria-hidden="true">›</div>
               </button>
-            ))}
-          </div>
+            );
+            return (
+              <div className="home-focus">
+                <div className="home-sec-label">場面から選ぶ<span>誰の困りごと？（ポジション）</span></div>
+                <div className="home-pos-row">
+                  {HOME_POSITIONS.map(pos => (
+                    <button key={pos} className="home-pos-chip" onClick={() => openSolveByPos(pos)}>{pos}</button>
+                  ))}
+                </div>
+                <div className="home-sec-sub">何の困りごと？（種類）</div>
+                <div className="home-pos-row">
+                  {HOME_KINDS.map(k => (
+                    <button key={k.label} className="home-pos-chip kind" onClick={() => openKind(k)}>{k.label}</button>
+                  ))}
+                </div>
+                <div className="hub-cards">
+                  {card(mod('reflect'), () => handleHubSelect('reflect'))}
+                  {card({ id: 'card5', cls: 'dict', icon: '📝', title: '5分振り返り', desc: '試合や練習を1枚のカードにする（4軸：良かった点・課題・改善案・次の一手）' }, () => setPhase('card'))}
+                  {card(mod('solve'), () => handleHubSelect('solve'))}
+                </div>
+                <div className="home-sec-label">部でそろえる<span>同じ場面を、同じ言葉で見る</span></div>
+                <div className="hub-cards">
+                  {card({ id: 'team', cls: 'team', icon: '🤝', title: '部でそろえること（顧問の言葉）', desc: dictLeads['33'] || '守りの立ち方・1枚目の対応・シュートのねらい' }, () => openChapter('33'))}
+                </div>
+                <div className="home-sec-label">調べる<span>言葉・ルール・章から</span></div>
+                <form className="home-search" onSubmit={(e) => { e.preventDefault(); submitHomeQuery(); }}>
+                  <input className="home-search-input" type="text" value={homeQuery} maxLength={80}
+                    placeholder="言葉で探す（例：牽制って何／手が上がった 何回）"
+                    onChange={e => setHomeQuery(e.target.value)} aria-label="言葉で探す" />
+                  <button className="home-search-btn" type="submit" disabled={!homeQuery.trim()}>探す</button>
+                </form>
+                <div className="hub-cards">
+                  {card(mod('dictionary'), () => handleHubSelect('dictionary'), 'wide')}
+                </div>
+              </div>
+            );
+          })()}
           <div className="loop-ref-row">
             <div className="loop-ref-label">📖 リファレンス（逆引き）</div>
             {REFERENCE_MODES.map(key => (
@@ -1665,6 +1789,12 @@ function App() {
             );
           })()}
           <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body, dictQuery)}} />
+          <div style={{padding: '0 18px'}}>
+            <DecideOne key={dictDetail.id} declaration={declaration} onDecide={(t) => decideNext(t, 'dict')} />
+            <button className="link-copy-btn" onClick={() => copySectionLink(dictDetail)}>
+              {linkCopied ? '✓ コピーした。LINEなどに貼って送れる' : '🔗 この節のリンクをコピー（「ここ読んで」と送る）'}
+            </button>
+          </div>
           {/* 同じファイルの他セクション */}
           {(() => {
             const sameFile = dictSections.filter(s => s.fileId === dictDetail.fileId && !isStubSection(s));
@@ -2053,6 +2183,7 @@ function App() {
                   </div>
                 )}
               </div>
+              <DecideOne key={solveSymptom} declaration={declaration} onDecide={(t) => decideNext(t, 'solve')} />
               {/* 関連辞書 */}
               <div className="solve-rx-card">
                 <div className="solve-rx-label">📖 関連する辞書の節</div>

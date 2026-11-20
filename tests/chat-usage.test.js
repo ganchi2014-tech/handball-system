@@ -3,7 +3,8 @@
 import { describe, it, expect } from 'vitest';
 import { DICT_FILES, splitSections } from '../app/src/lib/dict.js';
 import { renderMarkdown } from '../app/src/lib/markdown.js';
-import { normalizeFavs } from '../app/src/lib/dictFav.js';
+import { normalizeFavs, favKey } from '../app/src/lib/dictFav.js';
+import SOLVE from '../app/src/data/solve.json';
 import { HUB_MODULES, HUB_MODULES_ALL, FEATURE_PLAN, FEATURES } from '../app/src/lib/appData.js';
 import { buildChatReply, chatSolveMatches, chatGlossaryHit, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
 import { buildSections } from './helpers/sections.js';
@@ -213,5 +214,24 @@ describe('辞書に特化：記録の道具と課題ビルダーを一旦隠し�
     const all = HUB_MODULES_ALL.map(m => m.id);
     for (const id of ['plan', 'gk', 'pv', 'playbook']) expect(all, id).toContain(id);
     expect(Object.keys(FEATURES).sort()).toEqual(['builder', 'gk', 'loop', 'plan', 'playbook', 'pv']);
+  });
+});
+
+describe('作り直したホームの入口（2026-11-20）', () => {
+  it('ポジションの札の行き先に、困りごとが1件以上ある', () => {
+    const crit = SOLVE.player.categories.find(c => c.id === 'critical');
+    for (const pos of ['センター', 'バック', 'サイド', 'ポスト', 'GK', '守り']) {
+      expect(crit.symptoms.filter(s => s.title.startsWith('【' + pos + '】')).length, pos).toBeGreaterThan(0);
+    }
+  });
+  it('種類の札の行き先（課題解決の種類・18章）がある', () => {
+    const ids = SOLVE.player.categories.map(c => c.id);
+    for (const id of ['condition', 'rules', 'equipment', 'matchday', 'game']) expect(ids, id).toContain(id);
+    expect(sections.some(s => s.fileId === '18')).toBe(true);
+    expect(sections.some(s => s.fileId === '33')).toBe(true);
+  });
+  it('節のリンクの鍵（章番号::見出し）は、節ごとに違う', () => {
+    const keys = sections.map(favKey);
+    expect(new Set(keys).size).toBe(keys.length);
   });
 });

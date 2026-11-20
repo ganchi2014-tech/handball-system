@@ -108,7 +108,7 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
       )}
 
       {/* 位相別の主ボタン1つ＋副2つ（いまの位相の道具を隠しているときは、5分振り返りを主ボタンにする） */}
-      {(() => {
+      {FEATURES.loop && (() => {
         const mainPhase = phaseOn(info.phase) ? info.phase : 'verify';
         const m = PHASE_META[mainPhase];
         const subs = others.filter(p => p !== mainPhase);
