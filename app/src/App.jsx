@@ -18,7 +18,7 @@ import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscri
 import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
 import { DecideOne, DeclWhere } from './components/decide.jsx';
-import { declWhere } from './lib/declWhere.js';
+import { declWhere, MENTAL_APP_URL, isFromMental } from './lib/declWhere.js';
 import { linkPinHash, isPin4, LINK_TRY_SLOTS } from './lib/linkPin.js';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
@@ -72,6 +72,16 @@ function App() {
   const [decSnooze, setDecSnooze] = useState(false); // 「まだこれから」＝このセッション中だけボタンを畳む
   // ホームの「メンタルアプリとのつなぎ方」の1行を消したか（つなぐかどうかは選手が決めるので、消せる）
   const [linkHintOff, setLinkHintOff] = useState(() => !!lsGet('link-hint-off'));
+  // メンタルアプリから飛んできて、ここに何の記録も無い＝いつものLABとは別の場所（ブラウザ）で開いている。
+  // この場所で「チームと繋ぐ」をすると、いつものLABがつなげなくなるので、知らせを出す。
+  const [fromMentalFresh, setFromMentalFresh] = useState(() => {
+    try {
+      if (!isFromMental(window.location.hash)) return false;
+      const fresh = !lsGet('onboarded') && !(lsGet('reflect-history') || []).length && !lsGet('next-declaration') && !(lsGet('fb-link') || {}).enabled;
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      return fresh;
+    } catch (e) { return false; }
+  });
   const reflectIdRef = useRef(null);
   const activeCardIdRef = useRef(null);
   const recordReflectStart = (rid, hist) => {
@@ -553,7 +563,7 @@ function App() {
   const [onboardStep, setOnboardStep] = useState(0);
   useEffect(() => {
     const seen = lsGet('onboarded');
-    if (!seen && !/^#s=/.test(window.location.hash || '')) setOnboardOpen(true);
+    if (!seen && !/^#s=/.test(window.location.hash || '') && !isFromMental(window.location.hash)) setOnboardOpen(true);
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
@@ -1456,7 +1466,14 @@ function App() {
             );
             return (
               <div className="home-focus">
-                {declWhereInfo.howto && !linkHintOff && (
+                {fromMentalFresh && (
+                  <div className="home-from-notice">
+                    <div className="home-from-notice-title">⚠ メンタルアプリから開きました</div>
+                    <div>ここに今までの記録が無いときは、いつも使っているLABとは別の場所（ブラウザ）で開いています。「チームと繋ぐ」は、いつも使っているLAB（ホーム画面のアイコン）で行ってください。</div>
+                    <button type="button" className="home-from-notice-x" onClick={() => setFromMentalFresh(false)}>分かった</button>
+                  </div>
+                )}
+                {declWhereInfo.howto && !linkHintOff && !fromMentalFresh && (
                   <div className="home-link-hint">
                     <button type="button" className="home-link-hint-main" onClick={() => setConnectOpen(true)}>
                       🔗 メンタルアプリとまだつながっていません。つなぎ方を見る →
@@ -1512,6 +1529,7 @@ function App() {
             style={{marginTop: 12}}
             onClick={handleOnboardOpen}
           >🌱 初めての方はこちら</button>
+          <a className="help-btn open-app-btn" style={{marginTop: 8}} href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開く</a>
           {fbEnabled && FEATURES.loop && (
             <button
               className="help-btn"

@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { linkPinHash, isPin4, linkDeniedText, LINK_FULL_TEXT, LINK_TRY_SLOTS } from '../app/src/lib/linkPin.js';
-import { LINK_STEPS } from '../app/src/lib/declWhere.js';
+import { LINK_STEPS, MENTAL_APP_URL, isFromMental, declWhere } from '../app/src/lib/declWhere.js';
 import { ROOT } from './helpers/sections.js';
 
 describe('つなぐときのPIN', () => {
@@ -51,5 +51,26 @@ describe('つなぐときのPIN', () => {
     const before = body.slice(0, ask).split('\n').filter(l => l.includes('pick(') && !l.includes('const pick'));
     for (const l of before) expect(l, l.trim()).toContain('return;');
     expect(body.slice(ask, ask + 80)).toContain('return;');
+  });
+});
+
+describe('2つのアプリを行き来する（オーナー指示 2026-11-20）', () => {
+  it('メンタルアプリを開く行き先は1か所で決めてあり、LABから来た目印が付いている', () => {
+    expect(MENTAL_APP_URL).toBe('https://ganchi2014-tech.github.io/handball-mental/#from=lab');
+    const src = ['app/src/App.jsx', 'app/src/components/connect.jsx', 'app/src/components/loop.jsx', 'app/src/components/decide.jsx']
+      .map(f => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n');
+    expect(src).not.toContain('github.io/handball-mental');           // 画面の側に行き先を直に書かない
+    expect((src.match(/href=\{MENTAL_APP_URL\}/g) || []).length).toBeGreaterThanOrEqual(5); // ホーム・手順・PINの欄・メンタルの宣言・宣言の下
+    expect((src.match(/href=\{MENTAL_APP_URL\}(?! target="_blank" rel="noopener noreferrer")/g) || []).length).toBe(0);
+  });
+  it('メンタルアプリから来た目印を見分ける', () => {
+    for (const h of ['#from=mental', '#x=1&from=mental', '#from=mental&y=2']) expect(isFromMental(h), h).toBe(true);
+    for (const h of ['', '#s=33%3A%3A%E3%82%AB', '#from=mentalx', '#notfrom=mental', '#from=lab', null]) expect(isFromMental(h), String(h)).toBe(false);
+  });
+  it('宣言がメンタルアプリに出ている人にだけ、宣言の下に「メンタルアプリを開く」を出す', () => {
+    expect(declWhere({ enabled: true, status: 'on', hasRoster: true, mental: 'yes' }).mental).toBe(true);
+    for (const st of [{ enabled: false }, { enabled: true, status: 'on', hasRoster: true, mental: 'nolink' }, { enabled: true, status: 'error', hasRoster: true, mental: 'yes' }]) {
+      expect(!!declWhere(st).mental).toBe(false);
+    }
   });
 });

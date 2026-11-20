@@ -459,6 +459,12 @@
     .pin-ask-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
     .pin-ask-input { max-width: 96px; text-align: center; letter-spacing: 4px; font-size: 18px; }
     .pin-ask-msg { margin-top: 8px; font-size: 12.5px; line-height: 1.6; color: #fca5a5; }
+    a.decl-where-how { text-decoration: underline; }
+    .open-app-link { display: inline-block; margin-top: 8px; color: #67e8f9; font-size: 13px; text-decoration: underline; }
+    a.help-btn.open-app-btn { text-decoration: none; }
+    .home-from-notice { margin-bottom: 10px; padding: 12px; border-radius: 12px; border: 1px solid rgba(245,158,11,0.5); background: rgba(245,158,11,0.08); font-size: 13px; line-height: 1.7; color: var(--tx-secondary); }
+    .home-from-notice-title { font-weight: 700; color: var(--tx-primary); margin-bottom: 4px; }
+    .home-from-notice-x { margin-top: 8px; padding: 6px 14px; border-radius: 10px; border: 1px solid var(--border); background: none; color: var(--tx-secondary); font-size: 13px; cursor: pointer; }
     .home-search { display: flex; gap: 8px; }
     .home-search-input {
       flex: 1; min-width: 0; padding: 12px 14px; border-radius: 12px; font-size: 15px;

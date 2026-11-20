@@ -36,8 +36,14 @@ function declWhere({ enabled, status, hasRoster, mental } = {}) {
   // つなぎ方の案内を出すのは、本人が自分でつなげる状態のときだけ
   // （もうつながっている・別の端末がつながっている・確かめられなかった、のときは出さない）
   const howto = m === 'noname' || m === 'noreg' || m === 'nolink';
-  return { lines, short, howto };
+  return { lines, short, howto, mental: m === 'yes' };
 }
+
+// メンタルアプリを開く行き先（オーナー指示 2026-11-20「相互に飛べるように」）。行き先はここ1か所で決める。
+// 末尾の #from=lab は、メンタルアプリ側が「LABから来た」と分かるための目印（通信には乗らない）。
+const MENTAL_APP_URL = 'https://ganchi2014-tech.github.io/handball-mental/#from=lab';
+// メンタルアプリから来たか（メンタルアプリ側のリンクが #from=mental を付ける）
+function isFromMental(hash) { return /(^|[#&])from=mental(&|$)/.test(String(hash || '')); }
 
 // メンタルアプリとつなぐ手順（つながっていない人に見せる。オーナー指示 2026-11-20）
 const LINK_STEPS = [
@@ -48,4 +54,4 @@ const LINK_STEPS = [
 ];
 const LINK_STEPS_NOTE = 'つながると、宣言がメンタルアプリの「行動宣言」の画面に出て、このアプリの記録がメンタルアプリの「マイ統計」に出る。つながなくても、このアプリは全部使える。';
 
-export { declWhere, LINK_STEPS, LINK_STEPS_NOTE };
+export { declWhere, LINK_STEPS, LINK_STEPS_NOTE, MENTAL_APP_URL, isFromMental };

@@ -2,7 +2,7 @@
 // このファイルは firebase も lib/fb.js も import しない — 接続処理はすべて App.jsx 側。
 // 二層原則: 未接続なら firebase チャンクは一切ロードされない。
 import React, { useState } from 'react';
-import { LINK_STEPS, LINK_STEPS_NOTE } from '../lib/declWhere.js';
+import { LINK_STEPS, LINK_STEPS_NOTE, MENTAL_APP_URL } from '../lib/declWhere.js';
 import { isPin4, linkDeniedText, LINK_FULL_TEXT } from '../lib/linkPin.js';
 
 const STATUS_LABEL = {
@@ -29,6 +29,7 @@ function LinkSteps() {
         {LINK_STEPS.map((t, i) => <li key={i}>{t}</li>)}
       </ol>
       <div className="tb-q-hint" style={{ marginTop: 6 }}>{LINK_STEPS_NOTE}</div>
+      <a className="open-app-link" href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開く →</a>
     </div>
   );
 }
@@ -49,6 +50,7 @@ function PinAsk({ ask, onSubmit, onCancel }) {
         <button type="button" className="decide-btn" disabled={!ok} onClick={() => onSubmit(pin)}>{ask.busy ? '確かめ中…' : 'つなぐ'}</button>
         <button type="button" className="tb-ghost-btn" onClick={onCancel}>やめる</button>
       </div>
+      <a className="open-app-link" href={MENTAL_APP_URL} target="_blank" rel="noopener noreferrer">🧠 メンタルアプリを開いてPINを見る →</a>
       {ask.msg === 'denied' && <div className="pin-ask-msg">{linkDeniedText(ask.left)}</div>}
       {ask.msg === 'full' && <div className="pin-ask-msg">{LINK_FULL_TEXT}</div>}
       {ask.msg === 'error' && <div className="pin-ask-msg">通信できませんでした。電波のよい所でもう一度押してください。</div>}
