@@ -14,10 +14,11 @@ import { gkCalcTendencies } from './lib/gk.js';
 import { RECORD_MODULES } from './lib/recordModules.jsx';
 import { buildBackupText, collectAllData, mergeBackup, mergeExtraKey } from './lib/backup.js';
 import { migrateReflectToCards, newMatchCard } from './lib/loop.js';
-import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
+import { FB_NODES, fbConnect, fbUid, fbPush, fbFullSync, fbFlushQueue, fbSubscribeRoster, fbCheckRosterLink, fbWriteLabLink, fbSetLoopState, fbSetDeclaration, fbGetMentalDecls, fbCheckLabLink, fbQueueAdd, fbRosterToPlayers, fbShareYomi, fbPullShared, fbRemoveShared, buildSharedYomi } from './lib/fb.js';
 import { SharedBoard } from './components/shared.jsx';
 import { LoopHome, YomiWizard, CardFlow } from './components/loop.jsx';
-import { DecideOne } from './components/decide.jsx';
+import { DecideOne, DeclWhere } from './components/decide.jsx';
+import { declWhere } from './lib/declWhere.js';
 // パネルはモーダルを開いたときだけロード（メインチャンク肥大防止。firebase とは無関係の小チャンク）
 const ConnectPanel = React.lazy(() => import('./components/connect.jsx').then(m => ({ default: m.ConnectPanel })));
 import { Playbook } from './components/playbook.jsx';
@@ -406,19 +407,31 @@ function App() {
   }, [fbEnabled, fbStatus, declaration]);
   // mental の宣言ミラー（🧠 メンタルの宣言）。接続確立後に一回読み。読めなければ非表示が正。
   const [mentalDecls, setMentalDecls] = useState(null);
+  // 自分の宣言がメンタルアプリに出るかどうか（書いた本人に「どこに出るか」を見せるため。lib/declWhere.js）
+  const [mentalLink, setMentalLink] = useState('unknown');
   useEffect(() => {
     let alive = true;
-    if (!fbEnabled || fbStatus !== 'on' || !fbLink.rosterId) { setMentalDecls(null); return; }
+    if (!fbEnabled || fbStatus !== 'on' || !fbLink.rosterId) { setMentalDecls(null); setMentalLink('unknown'); return; }
     (async () => {
       try {
         const { linkedUid, mine } = await fbCheckRosterLink(fbLink.rosterId);
-        if (!linkedUid || mine) return; // mental未連携（またはuid同一の異常系）は表示なし
-        const v = await fbGetMentalDecls(linkedUid);
-        if (alive) setMentalDecls(v);
-      } catch (e) { /* 非致命: カード非表示のまま */ }
+        if (!linkedUid) { if (alive) setMentalLink('noreg'); return; } // メンタルアプリで名前を登録していない
+        if (mine) { if (alive) setMentalLink('yes'); return; }          // uid同一の異常系（メンタルの宣言カードは出さない）
+        // この端末がメンタルアプリと繋がっているか（読むだけ）
+        let linked = null;
+        try { linked = await fbCheckLabLink(linkedUid); } catch (e) { linked = null; }
+        if (alive) setMentalLink(linked === true ? 'yes' : linked === false ? (fbLink.mismatch ? 'other' : 'nolink') : 'unknown');
+        try {
+          const v = await fbGetMentalDecls(linkedUid);
+          if (alive) setMentalDecls(v);
+        } catch (e) { /* 非致命: カード非表示のまま */ }
+      } catch (e) { if (alive) setMentalLink('unknown'); }
     })();
     return () => { alive = false; };
-  }, [fbEnabled, fbStatus, fbLink.rosterId]);
+  }, [fbEnabled, fbStatus, fbLink.rosterId, fbLink.mismatch]);
+  const declWhereInfo = useMemo(
+    () => declWhere({ enabled: fbEnabled, status: fbStatus, hasRoster: !!fbLink.rosterId, mental: mentalLink }),
+    [fbEnabled, fbStatus, fbLink.rosterId, mentalLink]);
   // 保存経路ごとの push（新規ID・参照変更のみ。削除は同期しない=リモート保持のデータ保全方針）
   useFbPushOnChange('matchCards', matchCards, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
   useFbPushOnChange('gkPredictions', gkPreds, fbEnabled, fbStatusRef, addToQueue, fbSkipPushRef);
@@ -1357,7 +1370,7 @@ function App() {
         <LoopHome
           loopState={loopState}
           onSetNextMatch={(nm) => setLoopState(prev => ({ ...prev, nextMatch: nm }))}
-          declaration={declaration} decSnooze={decSnooze}
+          declaration={declaration} decSnooze={decSnooze} declWhere={declWhereInfo}
           mentalDecls={mentalDecls}
           onAnswerDeclaration={answerDeclaration} onSnooze={() => setDecSnooze(true)}
           reflectCount={matchCards.length}
@@ -1790,7 +1803,7 @@ function App() {
           })()}
           <div className="dict-detail-body" dangerouslySetInnerHTML={{__html: renderMarkdown(dictDetail.body, dictQuery)}} />
           <div style={{padding: '0 18px'}}>
-            <DecideOne key={dictDetail.id} declaration={declaration} onDecide={(t) => decideNext(t, 'dict')} />
+            <DecideOne key={dictDetail.id} declaration={declaration} where={declWhereInfo} onDecide={(t) => decideNext(t, 'dict')} />
             <button className="link-copy-btn" onClick={() => copySectionLink(dictDetail)}>
               {linkCopied ? '✓ コピーした。LINEなどに貼って送れる' : '🔗 この節のリンクをコピー（「ここ読んで」と送る）'}
             </button>
@@ -2183,7 +2196,7 @@ function App() {
                   </div>
                 )}
               </div>
-              <DecideOne key={solveSymptom} declaration={declaration} onDecide={(t) => decideNext(t, 'solve')} />
+              <DecideOne key={solveSymptom} declaration={declaration} where={declWhereInfo} onDecide={(t) => decideNext(t, 'solve')} />
               {/* 関連辞書 */}
               <div className="solve-rx-card">
                 <div className="solve-rx-label">📖 関連する辞書の節</div>
@@ -2762,6 +2775,7 @@ function App() {
                 onChange={e => setNextStep(e.target.value)}
                 onBlur={e => commitNextStep(e.target.value)}
               />
+              <DeclWhere info={declWhereInfo} />
             </div>
           )}
 

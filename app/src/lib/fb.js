@@ -181,6 +181,23 @@ export async function fbWriteLabLink(mentalUid, rosterId) {
   });
 }
 
+// labLinks/{mentalUid} を【getで読むだけ】。この端末がメンタルアプリと繋がっているか（labUid が自分か）を返す。
+// 宣言を書いた本人に「メンタルアプリに出るかどうか」を見せるために使う。
+// リンクが無い・別の端末のものなら、ルールで読めないので false。通信の失敗はそのまま投げる。
+export async function fbCheckLabLink(mentalUid) {
+  if (!uid || !db) throw new Error('fbCheckLabLink: 未接続です（fbConnect を先に）');
+  if (!mentalUid) return false;
+  const { dbMod } = await importFirebase();
+  try {
+    const snap = await dbMod.get(dbMod.ref(db, 'labLinks/' + mentalUid));
+    const v = snap.val();
+    return !!(v && v.labUid === uid);
+  } catch (e) {
+    if (/permission/i.test(String((e && (e.code || e.message)) || ''))) return false;
+    throw e;
+  }
+}
+
 // /rosterToUid/{rosterId} を【getで読むだけ】。書き込みAPIは存在しない（絶対追加禁止）。
 export async function fbCheckRosterLink(rosterId) {
   if (!uid || !db) throw new Error('fbCheckRosterLink: 未接続です（fbConnect を先に）');

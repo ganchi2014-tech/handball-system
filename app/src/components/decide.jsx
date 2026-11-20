@@ -4,7 +4,20 @@
 // ホームに出て「できた／まだ」を押せる。
 import React, { useState } from 'react';
 
-function DecideOne({ declaration, onDecide }) {
+// 宣言がどこに出るかを、書いた本人に見せる（info は lib/declWhere.js の declWhere の結果）。
+// full … 出る所を1行ずつ全部。そうでなければ1行にまとめる。
+function DeclWhere({ info, full = false, done = false }) {
+  if (!info) return null;
+  if (!full) return <div className="decl-where short">📍 宣言が出る所：{info.short}</div>;
+  return (
+    <div className="decl-where">
+      <div className="decl-where-label">📍 {done ? 'この宣言が出ている所' : 'この宣言が出る所'}</div>
+      {info.lines.map((l, i) => <div key={i} className="decl-where-line">・{l}</div>)}
+    </div>
+  );
+}
+
+function DecideOne({ declaration, onDecide, where }) {
   const [text, setText] = useState('');
   const [justSet, setJustSet] = useState(false);
   const pending = declaration && declaration.done !== true ? declaration.text : '';
@@ -20,9 +33,12 @@ function DecideOne({ declaration, onDecide }) {
       <div className="decide-label">🎯 ここから、次に試すことを1つ宣言する</div>
       <div className="decide-hint">選ぶのは自分。正解はない。宣言した1つは「前回の宣言」としてホームに出て、後で「できた／まだ」を押せる。</div>
       {justSet ? (
-        <div className="decide-done">✓ 宣言した：「{pending}」
-          <button className="decide-redo" onClick={() => setJustSet(false)}>書き直す</button>
-        </div>
+        <React.Fragment>
+          <div className="decide-done">✓ 宣言した：「{pending}」
+            <button className="decide-redo" onClick={() => setJustSet(false)}>書き直す</button>
+          </div>
+          <DeclWhere info={where} full done />
+        </React.Fragment>
       ) : (
         <React.Fragment>
           {pending && <div className="decide-current">いまの宣言：「{pending}」（新しく書くと入れかわる）</div>}
@@ -33,10 +49,11 @@ function DecideOne({ declaration, onDecide }) {
               onKeyDown={e => { if (e.key === 'Enter') decide(); }} />
             <button className="decide-btn" disabled={!text.trim()} onClick={decide}>宣言する</button>
           </div>
+          <DeclWhere info={where} />
         </React.Fragment>
       )}
     </div>
   );
 }
 
-export { DecideOne };
+export { DecideOne, DeclWhere };

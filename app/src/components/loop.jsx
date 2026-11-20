@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { loopPhaseInfo, newMatchCard, YOMI_TARGETS, CARD_KINDS, kindLabel } from '../lib/loop.js';
 import { FEATURES } from '../lib/appData.js';
+import { DeclWhere } from './decide.jsx';
 
 const PHASE_META = {
   predict:  { icon: '🔮', label: '予測位相（試合前：読みを立てる）',  main: '🔮 読みを宣言する',   sub: '試合前に相手DF/GKの読みを3タップで宣言' },
@@ -35,7 +36,7 @@ function MatchDateEditor({ nextMatch, onSave, onClose }) {
   );
 }
 
-function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDecls, onAnswerDeclaration, onSnooze,
+function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, declWhere, mentalDecls, onAnswerDeclaration, onSnooze,
                     reflectCount, pendingYomi, onAction, children }) {
   const [editOpen, setEditOpen] = useState(false);
   const info = loopPhaseInfo(loopState.nextMatch);
@@ -84,6 +85,7 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
                 )}
               </React.Fragment>
             )}
+            <DeclWhere info={declWhere} />
             {reflectCount > 0 && <div className="hub-declare-count">これまでの振り返り：{reflectCount}回</div>}
           </div>
         ) : (
