@@ -6,7 +6,7 @@ import { renderMarkdown } from '../app/src/lib/markdown.js';
 import { normalizeFavs, favKey } from '../app/src/lib/dictFav.js';
 import SOLVE from '../app/src/data/solve.json';
 import { HUB_MODULES, HUB_MODULES_ALL, FEATURE_PLAN, FEATURES } from '../app/src/lib/appData.js';
-import { buildChatReply, chatSolveMatches, chatGlossaryHit, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
+import { buildChatReply, chatSearch, chatSolveMatches, chatGlossaryHit, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
 import { buildSections } from './helpers/sections.js';
 import QUESTIONS from '../app/src/data/questions.json';
 import OF_EXTRA from '../app/src/data/ofExtraResults.json';
@@ -233,5 +233,37 @@ describe('作り直したホームの入口（2026-11-20）', () => {
   it('節のリンクの鍵（章番号::見出し）は、節ごとに違う', () => {
     const keys = sections.map(favKey);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+});
+
+describe('33章に足した部の言葉（2026-11-20）', () => {
+  const sec33 = sections.filter(s => s.fileId === '33').map(s => s.title);
+  it('足した6つの節がある', () => {
+    for (const t of ['勝負の順番', '準備の向き', '受ける前後の順番', 'どこまでをねらいとするか', 'カード', '判断ができていないときの例']) {
+      expect(sec33.some(x => x.startsWith(t + '（顧問の言葉')), t).toBe(true);
+    }
+  });
+  it('33章の答えは節をまるごと出す（一部だけ切り取らない）', () => {
+    const a = buildChatReply('仕掛けたあとどうする', sections);
+    expect(a.head.title).toContain('勝負の順番');
+    expect(a.html).toContain('仕掛ける');
+    expect(a.html).toContain('①で止まらず③まで行く');
+    const b = buildChatReply('カードが足りない', sections);
+    expect(b.head.title).toContain('判断ができていないときの例');
+    expect(b.html).toContain('手札の2つの状態');
+    expect(b.html).toContain('人ではなく場面で違う');
+  });
+  it('部の言葉の「カード」の質問で、警告のカードの章を出さない', () => {
+    for (const q of ['カードが足りない', '手札が足りない', 'カードのセットができない', 'カードを増やしたい']) {
+      const { hits } = chatSearch(q, sections);
+      expect(hits[0].fileId, q).toBe('33');
+      expect(hits.some(h => h.fileId === '30'), q).toBe(false);
+    }
+  });
+  it('警告のカードの質問は、部の言葉のほうへ行かない', () => {
+    for (const q of ['イエローカードは何枚まで', 'イエローカードって何', 'カードをもらったらどうなる', 'カード3枚目はどうなる']) {
+      const { hits } = chatSearch(q, sections);
+      expect(hits[0].fileId, q).toBe('30');
+    }
   });
 });

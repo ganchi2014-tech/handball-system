@@ -104,14 +104,18 @@ function chatExtractKeywords(question) {
   };
   // 言いかえ表。場面がはっきりした言いかえ（only: true）が当たったら、広い言いかえ（「どこを見る」など）は使わない。
   // with があるときは、m のどれか と with のどれか の両方が質問に入っているときだけ当てる（例：「どこを見る」＋GKの場面）。
+  // not があるときは、そのどれかが質問に入っていたら当てない（例：部の言葉の「カード」と、警告の「イエローカード」を分ける）。
   let matched = CHAT_SYNONYMS.filter(syn => syn.m.some(m => chatHasTerm(qn, chatNormalize(m)))
-    && (!syn.with || syn.with.some(m => chatHasTerm(qn, chatNormalize(m)))));
+    && (!syn.with || syn.with.some(m => chatHasTerm(qn, chatNormalize(m))))
+    && (!syn.not || !syn.not.some(m => chatHasTerm(qn, chatNormalize(m)))));
   if (matched.some(syn => syn.only)) matched = matched.filter(syn => syn.only);
   const tags = new Set(); // 言いかえが教えてくれるポジション（例：「9mから打ってくる」はGKの場面）
+  const drop = new Set(); // その言いかえのときは答えに出さない章（例：部の言葉の「カード」で、警告のカードの章を出さない）
   for (const syn of matched) {
     syn.kw.forEach(k => addKw(k, 2));
     if (syn.file) fileBoosts.add(syn.file);
     if (syn.tag) tags.add(syn.tag);
+    if (syn.drop) syn.drop.forEach(f => drop.add(f));
   }
   for (const t of chatLexicon()) {
     if (chatHasTerm(qn, t.n)) addKw(t.raw, 2);
@@ -126,7 +130,7 @@ function chatExtractKeywords(question) {
   const sorted = [...kws.values()]
     .sort((a, b) => b.w - a.w || b.raw.length - a.raw.length)
     .slice(0, 10);
-  return { kws: sorted, fileBoosts, tags: [...tags] };
+  return { kws: sorted, fileBoosts, tags: [...tags], drop };
 }
 
 // セクション本文の正規化キャッシュ
@@ -153,6 +157,7 @@ const CHAT_WEAK_RUNS = new Set(['相手', '自分', '無理', '場合', '全然'
 function chatSearchOnce(question, sections, extraTokens = []) {
   const ex = chatExtractKeywords(question);
   const { fileBoosts, tags } = ex;
+  const drop = ex.drop || new Set();
   const have = new Set(ex.kws.map(k => chatNormalize(k.raw)));
   const kws = [...ex.kws, ...extraTokens.filter(t => !have.has(chatNormalize(t))).map(raw => ({ raw, w: 1 }))];
   if (!kws.length) return { kws, hits: [], tags };
@@ -160,7 +165,7 @@ function chatSearchOnce(question, sections, extraTokens = []) {
   for (const s of sections) {
     // 冒頭/ファイル見出し(H1=ファイル名)/スタブ/リダイレクト専用ファイルは回答にしない
     // （H1タイトルはファイル名で広いKWを含み、具体的な節より誤って上位化するため除外）
-    if (s.title === '冒頭' || s.level === 1 || chatIsStub(s) || CHAT_EXCLUDED_FILES.has(s.fileId)) continue;
+    if (s.title === '冒頭' || s.level === 1 || chatIsStub(s) || CHAT_EXCLUDED_FILES.has(s.fileId) || drop.has(s.fileId)) continue;
     const nTitle = chatNormalize(s.title);
     const nMeta = chatNormalize(s.fileTitle + ' ' + s.fileTags.join(' '));
     const nBody = chatNBody(s);
@@ -196,6 +201,8 @@ function chatSearch(question, sections) {
 }
 
 // 最良セクションからキーワード密度の高いブロックを抜粋（表は行単位で安全に切る）
+// 節をまるごと答えに出す章（部でそろえること＝顧問の言葉）
+const CHAT_WHOLE_SECTION_FILE = '33';
 function chatBestExcerpt(section, kws) {
   const body = section.body.replace(/\r\n?/g, '\n');
   // 小見出し（###）だけの段落は、次の段落の頭に付ける。
@@ -234,6 +241,9 @@ function chatBestExcerpt(section, kws) {
   const proseBlocks = blocks.filter(b => !isArtBlock(b));
   if (proseBlocks.length) blocks = proseBlocks;
   if (!blocks.length) return '';
+  // 33章（顧問の言葉）は切り取らず、節をまるごと出す。
+  // 一部だけ出すと、全員が同じ文を見ることにならないため（例：「①で止まらず③まで行く」が落ちる）。
+  if (section.fileId === CHAT_WHOLE_SECTION_FILE) return blocks.join('\n\n');
   // 章や節の題に入っている言葉（その節のどこにでも出てくる言葉）は、段落を選ぶ手がかりとしては弱く数える
   const nSecTitle = chatNormalize(section.title + ' ' + (section.fileTitle || ''));
   const scoreBlock = (b) => {
