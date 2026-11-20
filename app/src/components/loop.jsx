@@ -2,6 +2,7 @@
 // 他モジュールは下段に格納（設計書1-2）。試合日は選手自身が設定・未設定でも全機能が動く。
 import React, { useState } from 'react';
 import { loopPhaseInfo, newMatchCard, YOMI_TARGETS, CARD_KINDS, kindLabel } from '../lib/loop.js';
+import { FEATURES } from '../lib/appData.js';
 
 const PHASE_META = {
   predict:  { icon: '🔮', label: '予測位相（試合前：読みを立てる）',  main: '🔮 読みを宣言する',   sub: '試合前に相手DF/GKの読みを3タップで宣言' },
@@ -39,7 +40,9 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
   const [editOpen, setEditOpen] = useState(false);
   const info = loopPhaseInfo(loopState.nextMatch);
   const meta = PHASE_META[info.phase];
-  const others = ['predict', 'verify', 'practice'].filter(p => p !== info.phase);
+  // 隠している道具は、位相の主ボタン・副ボタンにも出さない
+  const phaseOn = (p) => p === 'verify' || (p === 'predict' && FEATURES.loop) || (p === 'practice' && FEATURES.builder);
+  const others = ['predict', 'verify', 'practice'].filter(p => p !== info.phase && phaseOn(p));
   return (
     <div className="hub-screen animate-in">
       <div className="hub-hero">
@@ -47,7 +50,8 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
         <div className="hub-title">先に読んだ方が、選択肢を持てる</div>
       </div>
 
-      {/* 位相ヘッダ（タップで試合日設定） */}
+      {/* 位相ヘッダ（タップで試合日設定）。試合日・読みを隠している間は出さない */}
+      {FEATURES.loop && (
       <div className="loop-head" onClick={() => setEditOpen(true)}>
         {info.mode === 'match-week' ? (
           <div className="loop-head-days">
@@ -59,10 +63,11 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
         )}
         <div className="loop-head-phase">{meta.icon} {meta.label}　<span className="loop-head-edit">📅 試合日を設定</span></div>
       </div>
+      )}
 
       {/* 前回の宣言→できた？（検証位相ではフル表示、他位相は1行に畳む） */}
       {declaration && (
-        info.phase === 'verify' ? (
+        (info.phase === 'verify' || !FEATURES.loop) ? (
           <div className="hub-declare">
             {declaration.done === true ? (
               <div className="hub-declare-text">✅ 達成した宣言：「{declaration.text}」
@@ -87,7 +92,7 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
       )}
 
       {/* 試合前の読みを書いたあと、ホームに「書いてある」ことが分かるようにする */}
-      {pendingYomi > 0 && (
+      {FEATURES.loop && pendingYomi > 0 && (
         <div className="loop-declare-mini">🔮 試合前の読み：{pendingYomi}件（試合のあと「5分振り返り」で答え合わせ）</div>
       )}
 
@@ -102,20 +107,31 @@ function LoopHome({ loopState, onSetNextMatch, declaration, decSnooze, mentalDec
         </div>
       )}
 
-      {/* 位相別の主ボタン1つ＋副2つ */}
-      <button className="loop-main-btn" onClick={() => onAction(info.phase)}>
-        <span className="loop-main-btn-title">{meta.main}</span>
-        <span className="loop-main-btn-sub">{meta.sub}</span>
-      </button>
-      <div className="loop-sub-row">
-        {others.map(p => (
-          <button key={p} className="loop-sub-btn" onClick={() => onAction(p)}>{PHASE_META[p].main}</button>
-        ))}
-      </div>
+      {/* 位相別の主ボタン1つ＋副2つ（いまの位相の道具を隠しているときは、5分振り返りを主ボタンにする） */}
+      {(() => {
+        const mainPhase = phaseOn(info.phase) ? info.phase : 'verify';
+        const m = PHASE_META[mainPhase];
+        const subs = others.filter(p => p !== mainPhase);
+        return (
+          <React.Fragment>
+            <button className="loop-main-btn" onClick={() => onAction(mainPhase)}>
+              <span className="loop-main-btn-title">{m.main}</span>
+              <span className="loop-main-btn-sub">{FEATURES.loop ? m.sub : '試合や練習を1枚のカードにする（4軸：良かった点・課題・改善案・次の一手）'}</span>
+            </button>
+            {subs.length > 0 && (
+              <div className="loop-sub-row">
+                {subs.map(p => (
+                  <button key={p} className="loop-sub-btn" onClick={() => onAction(p)}>{PHASE_META[p].main}</button>
+                ))}
+              </div>
+            )}
+          </React.Fragment>
+        );
+      })()}
 
       {/* 下段：モジュール格納・リファレンス・ヘルプ（App側から children で注入） */}
       {children}
-      {editOpen && <MatchDateEditor nextMatch={loopState.nextMatch} onSave={onSetNextMatch} onClose={() => setEditOpen(false)} />}
+      {FEATURES.loop && editOpen && <MatchDateEditor nextMatch={loopState.nextMatch} onSave={onSetNextMatch} onClose={() => setEditOpen(false)} />}
     </div>
   );
 }
@@ -159,7 +175,7 @@ function YomiWizard({ card, onSave, onExit }) {
 }
 
 // 検証位相：試合後5分。カード起点(1タップ)→読みの丸付け→4軸振り返り(既存フロー)→宣言。
-function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, onPickIssue, onExit, onShareYomi }) {
+function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, onPickIssue, onExit, onShareYomi, showStar = true }) {
   // 再開対象: reflect 未接続の直近カード（読み宣言済みを優先）
   const pending = cards.find(c => !c.reflect && (c.yomi || []).length) || cards.find(c => !c.reflect);
   const initial = (resumeCardId && cards.find(c => c.id === resumeCardId)) || pending || null;
@@ -226,10 +242,12 @@ function CardFlow({ cards, nextMatch, resumeCardId, onUpsert, onStartReflect, on
             <div className="tb-card-k">✓ 振り返り済み</div>
             <div className="tb-card-v">{(live.reflect.crumbs || []).join(' › ')}</div>
             {live.next && <div className="tb-card-v">🎯 宣言：「{live.next}」</div>}
+            {showStar && (
             <button className="tb-ghost-btn" style={{ marginTop: 6 }}
               onClick={() => save({ ...live, star: !live.star })}>
               {live.star ? '⭐ 効いた技に登録済み（タップで外す）' : '☆ 効いた技に載せる（マイ・プレイブック）'}
             </button>
+            )}
           </div>
           <button className="tb-next-btn" style={{ marginTop: 10 }} onClick={() => onPickIssue(live)}>
             🎯 このカードから課題を1つ選ぶ →（課題解決へ）

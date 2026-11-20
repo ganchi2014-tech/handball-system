@@ -124,10 +124,20 @@ function getProgress(phase, histLen) {
 // ─────────────────────────────────────────────
 // ハブのモジュール定義
 // ─────────────────────────────────────────────
-// 「練習を組む」（テーマ×レベル×時間でプランを作る画面）を出すかどうか。
-// 2026-11-20 オーナー指示で一旦消した（辞書に寄せる）。戻すときは true にするだけでよい。
-// 画面・データ（drillThemes.json など）・保存済みのプランは消していない。
-const FEATURE_PLAN = false;
+// どの道具を画面に出すかの旗。2026-11-20 オーナー決定で「辞書に特化」するため、下の6つを一旦隠した。
+// 戻すときは、その行を true にするだけでよい。
+// 隠しているだけで、画面のプログラム・データ・選手の端末に保存済みの記録は消していない
+// （記録は「データの書き出し」で持ち出せる）。
+// 出しているもの：辞書・質問・課題解決・用語集・逆引き・振り返る・5分振り返り・チームと繋ぐ・データの書き出し。
+const FEATURES = {
+  plan: false,      // 練習を組む（テーマ×レベル×時間でプランを作る）
+  builder: false,   // 課題ビルダー（今週の課題 → 練習）
+  loop: false,      // 試合日の設定・読みを宣言する（ホームの位相の枠）
+  gk: false,        // GK予測
+  pv: false,        // ポスト認知
+  playbook: false,  // マイ・プレイブック
+};
+const FEATURE_PLAN = FEATURES.plan;
 
 const HUB_MODULES_ALL = [
   {
@@ -179,7 +189,7 @@ const HUB_MODULES_ALL = [
     enabled: true,
   },
 ];
-const HUB_MODULES = HUB_MODULES_ALL.filter(m => FEATURE_PLAN || m.id !== 'plan');
+const HUB_MODULES = HUB_MODULES_ALL.filter(m => FEATURES[m.id] !== false);
 
 // 振り返り10モードから「逆引きリファレンス」へ降格した3モード（設計書1-5）
 const REFERENCE_MODES = ['janken', 'context', 'gk'];
@@ -190,4 +200,4 @@ const REFERENCE_MODES = ['janken', 'context', 'gk'];
 //   データ構造を変える時は上げるのではなく、lsGet 側に旧形式→新形式のマイグレーションを実装すること（破棄禁止）。
 // ─────────────────────────────────────────────
 
-export { FEINT_LEGEND, AXIS_MAP, axisStyle, MODES, getProgress, HUB_MODULES, REFERENCE_MODES, FEATURE_PLAN };
+export { FEINT_LEGEND, AXIS_MAP, axisStyle, MODES, getProgress, HUB_MODULES, HUB_MODULES_ALL, REFERENCE_MODES, FEATURE_PLAN, FEATURES };

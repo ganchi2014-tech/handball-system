@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest';
 import { DICT_FILES, splitSections } from '../app/src/lib/dict.js';
 import { renderMarkdown } from '../app/src/lib/markdown.js';
 import { normalizeFavs } from '../app/src/lib/dictFav.js';
-import { HUB_MODULES, FEATURE_PLAN } from '../app/src/lib/appData.js';
+import { HUB_MODULES, HUB_MODULES_ALL, FEATURE_PLAN, FEATURES } from '../app/src/lib/appData.js';
 import { buildChatReply, chatSolveMatches, chatGlossaryHit, CHAT_SAFETY_NOTE } from '../app/src/lib/chat.js';
 import { buildSections } from './helpers/sections.js';
 import QUESTIONS from '../app/src/data/questions.json';
@@ -202,5 +202,16 @@ describe('「練習を組む」を一旦消した（2026-11-20）', () => {
     expect(FEATURE_PLAN).toBe(false);
     expect(HUB_MODULES.some(m => m.id === 'plan')).toBe(false);
     expect(HUB_MODULES.some(m => m.id === 'dictionary')).toBe(true);
+  });
+});
+
+describe('辞書に特化：記録の道具と課題ビルダーを一旦隠した（2026-11-20）', () => {
+  it('ホームのカードは、振り返る・質問・辞書・課題解決の4つ', () => {
+    expect(HUB_MODULES.map(m => m.id)).toEqual(['reflect', 'chat', 'dictionary', 'solve']);
+  });
+  it('隠しているだけで、道具の定義は消していない（旗を true にすれば戻る）', () => {
+    const all = HUB_MODULES_ALL.map(m => m.id);
+    for (const id of ['plan', 'gk', 'pv', 'playbook']) expect(all, id).toContain(id);
+    expect(Object.keys(FEATURES).sort()).toEqual(['builder', 'gk', 'loop', 'plan', 'playbook', 'pv']);
   });
 });

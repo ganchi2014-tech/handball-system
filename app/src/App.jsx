@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ALL_TAGS, DICT_FILES, DICT_SECTION_COUNT, GLOSSARY, splitSections } from './lib/dict.js';
 import { renderMarkdown } from './lib/markdown.js';
-import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, REFERENCE_MODES, axisStyle, getProgress, FEATURE_PLAN } from './lib/appData.js';
+import { AXIS_MAP, FEINT_LEGEND, HUB_MODULES, MODES, REFERENCE_MODES, axisStyle, getProgress, FEATURE_PLAN, FEATURES } from './lib/appData.js';
 import { QUESTIONS, RESULTS, SOLVE_DATA } from './lib/content.js';
 import { DRILL_THEMES, DURATIONS, LEVELS, POSITIONS, POSITION_RECOMMENDED, buildPlan } from './lib/plan.js';
 import { CHAT_SUGGESTIONS, buildChatReply } from './lib/chat.js';
@@ -495,7 +495,20 @@ function App() {
   }, []);
   const ONBOARD_STEPS = [
     { icon: '🤾‍♂️', title: 'HANDBALL LAB へようこそ', desc: '近江兄弟社高校ハンドボール部の戦術ガイド。\n「わからない」をその場で解決します。' },
-    { icon: '🧭',   title: '7つの使い方', desc: `🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言\n💬 質問 — チャットで聞くと辞書から回答\n📖 辞書 — ${DICT_FILES.length}章${DICT_SECTION_COUNT}節から探す\n🎯 課題解決 — ○○できないを3ステップで\n🛠 今週の課題 — できなかった場面から課題を自作（課題ビルダー）\n🧤 GK予測 — シュートコースの読みを記録・照合\n🧲 ポスト認知 — DFの見え方→予測→照合` },
+    (() => {
+      // 出している道具だけを並べる（隠している道具は案内にも出さない）
+      const lines = [
+        '🤾 振り返る — プレーを自己問答→「次に試すこと」を宣言',
+        '💬 質問 — チャットで聞くと辞書から回答',
+        `📖 辞書 — ${DICT_FILES.length}章${DICT_SECTION_COUNT}節から探す`,
+        '🎯 課題解決 — ○○できないを3ステップで',
+        FEATURES.plan && '📋 練習 — テーマ・レベル・時間から練習プランを作る',
+        FEATURES.builder && '🛠 今週の課題 — できなかった場面から課題を自作（課題ビルダー）',
+        FEATURES.gk && '🧤 GK予測 — シュートコースの読みを記録・照合',
+        FEATURES.pv && '🧲 ポスト認知 — DFの見え方→予測→照合',
+      ].filter(Boolean);
+      return { icon: '🧭', title: `${lines.length}つの使い方`, desc: lines.join('\n') };
+    })(),
     { icon: '📲',   title: 'ホーム画面に追加しよう', desc: 'アプリとして入れておくと体育館（オフライン）でも開けて、記録も消えにくくなります。\n\niPhone：共有ボタン →「ホーム画面に追加」\nAndroid：ブラウザのメニュー →「アプリをインストール」' },
     { icon: '✨',   title: '始めましょう', desc: 'まずは「🤾 振り返る」で最近の1プレーを1つだけ。\n困ったら右下の 📘 用語 をタップ。ヘルプはホームから何度でも開けます。' },
   ];
@@ -1078,15 +1091,15 @@ function App() {
       setPlanResult(null);
       setPhase('plan');
     }
-    else if (modId === 'gk') {
+    else if (modId === 'gk' && FEATURES.gk) {
       setGkView({ name: 'home' });
       setPhase('gk');
     }
-    else if (modId === 'pv') {
+    else if (modId === 'pv' && FEATURES.pv) {
       setPvView({ name: 'home' });
       setPhase('pv');
     }
-    else if (modId === 'playbook') setPhase('playbook');
+    else if (modId === 'playbook' && FEATURES.playbook) setPhase('playbook');
   };
 
   // 辞書一覧→詳細遷移時に一覧側のスクロール位置を覚えておく
@@ -1276,9 +1289,9 @@ function App() {
           reflectCount={matchCards.length}
           pendingYomi={matchCards.filter(c => !c.reflect).reduce((n, c) => n + (c.yomi || []).filter(y => y.target && y.claim && y.hit == null).length, 0)}
           onAction={(p) => {
-            if (p === 'predict') setPhase('yomi');
+            if (p === 'predict') { if (FEATURES.loop) setPhase('yomi'); }
             else if (p === 'verify') setPhase('card');
-            else { setTbView({ name: 'home' }); setPhase('build'); }
+            else if (FEATURES.builder) { setTbView({ name: 'home' }); setPhase('build'); }
           }}
         >
           <div className="hub-cards">
@@ -1314,7 +1327,7 @@ function App() {
             style={{marginTop: 12}}
             onClick={handleOnboardOpen}
           >🌱 初めての方はこちら</button>
-          {fbEnabled && (
+          {fbEnabled && FEATURES.loop && (
             <button
               className="help-btn"
               style={{marginTop: 8}}
@@ -1352,6 +1365,7 @@ function App() {
       {phase === 'card' && (
         <CardFlow cards={matchCards} nextMatch={loopState.nextMatch}
           resumeCardId={activeCardIdRef.current}
+          showStar={FEATURES.playbook}
           onUpsert={upsertCard} onExit={handleBackToHub}
           onShareYomi={canShare ? handleShareYomi : null}
           onStartReflect={(c) => { activeCardIdRef.current = c.id; setPhase('start'); }}
@@ -2688,7 +2702,7 @@ function App() {
                 setPhase('card'); setMode(null); setHistory([]);
                 setResultId(null); setCurrentQ(null); setSelected(null); setNextStep('');
               }}>
-              ← カードに戻る（読みの丸付け・課題選び）
+              {FEATURES.loop ? '← カードに戻る（読みの丸付け・課題選び）' : '← カードに戻る（課題選び）'}
             </button>
           )}
           <button className="reset-btn" onClick={handleReset}>
